@@ -76,7 +76,7 @@
     {
       "address": "0x171ea / 0x04516 / 0x04a62 / 0x17274 / 0x1415a",
       "name": "continuous-calculus expression orchestration",
-      "scope": "Prepared ordinary COMP syntax preflight, separate bound/point/tolerance expressions and shared body callbacks; local-X restoration, callback-success channel independent of error records, and matrix/vector reference cleanup against explicit typed bank dimensions and cells. Physical real derivative evaluation stages point/tolerance in native order, uses the RAM-backed Richardson driver and preserves early expression-error publication independently of successful F-valued records."
+      "scope": "Prepared ordinary COMP syntax preflight, separate bound/point/tolerance expressions and shared body callbacks; local-X restoration, callback-success channel independent of error records, and matrix/vector reference cleanup against explicit typed bank dimensions and cells. Physical real derivative evaluation stages point/tolerance in native order, uses the RAM-backed Richardson driver and preserves early expression-error publication independently of successful F-valued records. The explicit physical transport entry also stages integral bounds and tolerance after their native delimiters, uses the RAM-backed integral driver, exposes inherited callback error sinks and live sampled-X updates, and commits physical output/cursor in native order. The C4 twenty-byte backend remains unsupported."
     },
     {
       "address": "0x16058 / 0x16118",
@@ -138,7 +138,9 @@
     "tools/test_eval_environment_c.py",
     "tools/test_eval_rich_parser_c.py",
     "tools/test_stats_value_c.py",
-    "tools/test_numeric_derivative_storage_c.py"
+    "tools/test_numeric_derivative_storage_c.py",
+    "tools/test_eval_integral_physical_c.py",
+    "tools/test_numeric_integral_storage_c.py"
   ],
   "unsupported_behavior": "explicit FX_EVAL_UNIMPLEMENTED and offending token; no host libm or CPU/ROM fallback"
 }

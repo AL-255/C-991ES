@@ -1,5 +1,6 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 #include "fx_eval.h"
+#include "fx_eval_transport.h"
 #include "fx_eval_rich.h"
 #include "../platform/fx_platform.h"
 #include "fx_tokens.h"
@@ -12,6 +13,7 @@
 #include "../numeric/fx_combinatorics.h"
 #include "../numeric/fx_logbase.h"
 #include "../numeric/fx_integral.h"
+#include "../numeric/fx_integral_storage.h"
 #include "../numeric/fx_derivative.h"
 #include "../numeric/fx_derivative_storage.h"
 #include "../numeric/fx_surd_components.h"
@@ -38,6 +40,7 @@ typedef struct {
     fx_eval_variables *variables;
     fx_linalg_bank *linear_algebra;
     fx_eval_storage *storage;
+    const fx_eval_transport *transport;
     fx_number *random_seed;
     const fx_calculus_control *control;
     uint8_t base_radix;
@@ -1508,6 +1511,9 @@ typedef struct {
     fx_eval_status host_failure;
     uint8_t unsupported_token, finite_series, sampled, device_started;
     uint32_t cancellation_checks;
+    uint16_t *physical_cursor;
+    uint16_t error_sink;
+    uint8_t physical_integral;
 } calculus_call;
 
 static int calculus_cancelled(void *userdata)
@@ -1593,11 +1599,41 @@ static void calculus_expression_finish(parser *p, fx_complex *value)
     }
 }
 
+/*169C0 and CDE4 retain EA+ word alignment. The first eight-byte store
+ * uses the requested address; its final word starts at the next even EA. */
+static void physical_record_store(fx_eval_storage *storage, uint16_t address,
+                                  const fx_number *value)
+{
+    memcpy(storage->ram + address, value->bytes, 8);
+    memcpy(storage->ram + address + 8u - (address & 1u), value->bytes + 8, 2);
+}
+
+static void integral_publish_x(const fx_number *x, void *userdata)
+{
+    calculus_call *call = userdata;
+    parser *p = call->parent;
+    /*522A scalar publication retains the imaginary record in these modes. */
+    memcpy(p->storage->ram + 0x8276, x->bytes, 10);
+    variables_from_storage(p);
+    bank_from_storage(p);
+}
+
+static void integral_callback_context(uint16_t sink, uint16_t *cursor, void *userdata)
+{
+    calculus_call *call = userdata;
+    call->error_sink = sink;
+    call->physical_cursor = cursor;
+}
+
 static fx_numeric_status calculus_evaluate(fx_number *out, const fx_number *x, void *userdata)
 {
     calculus_call *call = userdata;
     parser callback = *call->parent;
     fx_complex value;
+    if (call->physical_integral && callback.transport->before_sample)
+        callback.transport->before_sample(callback.storage,
+            (uint16_t)(callback.transport->input_address + call->body_start),
+            call->error_sink, callback.transport->userdata);
     callback.position = call->body_start;
     callback.length = call->body_end;
     callback.status = FX_EVAL_OK;
@@ -1617,11 +1653,16 @@ static fx_numeric_status calculus_evaluate(fx_number *out, const fx_number *x, v
         variables_from_storage(&callback);
         bank_from_storage(&callback);
     }
-    callback.variables->values[FX_VARIABLE_X][0] = *x;
-    variables_to_storage(&callback); /*522A publishes local scalar X. */
+    if (!call->physical_integral) {
+        callback.variables->values[FX_VARIABLE_X][0] = *x;
+        variables_to_storage(&callback); /*522A publishes local scalar X. */
+    }
     expression(&callback, &value, 0);
     call->callback_position = callback.position;
     call->sampled = 1;
+    if (call->physical_cursor)
+        *call->physical_cursor = (uint16_t)(callback.transport->input_address +
+                                           callback.position + 1u);
     if (callback.status == FX_EVAL_OK && peek(&callback)) callback.status = FX_EVAL_SYNTAX;
     calculus_expression_finish(&callback, &value);
     if (callback.status == FX_EVAL_OK && call->finite_series && callback.storage &&
@@ -1645,7 +1686,14 @@ static fx_numeric_status calculus_evaluate(fx_number *out, const fx_number *x, v
         call->unsupported_token = callback.unsupported;
         return FX_NUMERIC_UNIMPLEMENTED;
     }
-    if (callback.status) fx_number_error(out, (unsigned)callback.status);
+    if (callback.status) {
+        fx_number_error(out, (unsigned)callback.status);
+        /*17250 writes actual evaluator errors at inherited ER8. The
+         * quadrature pair's ROM node sink is immutable and rejects writes. */
+        if (call->physical_integral && callback.storage && call->error_sink >= 0x8000 &&
+            call->error_sink <= 65526u)
+            physical_record_store(callback.storage, call->error_sink, out);
+    }
     else *out = value.real;
     if (callback.calculus_token == 0x6a || callback.calculus_token == 0x6b)
         return (fx_numeric_status)(callback.status ? FX_CALCULUS_EVALUATION_ERROR : FX_CALCULUS_EVALUATION_OK);
@@ -1663,7 +1711,19 @@ static void calculus(parser *p, fx_complex *out, uint8_t token)
     calculus_call call = {.parent = p, .finite_series = token == 0x69 || token == 0x5d};
     fx_calculus_control control = {calculus_cancelled, &call};
     int has_tolerance = 0;
+    int closing_consumed = 0;
+    int lower_comma_consumed = 0;
+    int upper_comma_consumed = 0;
     int physical_derivative = p->storage && token == 0x6b;
+    int physical_integral = p->storage && p->transport && token == 0x6a;
+    call.physical_integral = (uint8_t)physical_integral;
+    call.error_sink = p->transport ? p->transport->output_address : 0;
+    fx_integral_storage integral_storage = {
+        p->storage ? p->storage->ram : NULL,
+        p->storage ? p->storage->ram_size : 0
+    };
+    unsigned integral_native_status = 0;
+    uint16_t integral_cursor = 0;
     fx_derivative_storage derivative_storage = {
         p->storage ? p->storage->ram : NULL,
         p->storage ? p->storage->ram_size : 0
@@ -1704,15 +1764,40 @@ static void calculus(parser *p, fx_complex *out, uint8_t token)
         bank_from_storage(p);
         if (derivative_preparation != FX_NUMERIC_OK) { unsupported(p, token); goto restore; }
     }
-    if (token != 0x6b) {
+    if (physical_integral) {
+        /*04718 requires the lower argument's comma before850A staging. */
         if (peek(p) != ',') { p->status = FX_EVAL_SYNTAX; goto restore; }
         ++p->position;
+        lower_comma_consumed = 1;
+        variables_to_storage(p);
+        fx_numeric_status prepared = fx_integral_storage_lower(&integral_storage, &lower.real);
+        variables_from_storage(p);
+        bank_from_storage(p);
+        if (prepared != FX_NUMERIC_OK) { unsupported(p, token); goto restore; }
+    }
+    if (token != 0x6b) {
+        if (!lower_comma_consumed) {
+            if (peek(p) != ',') { p->status = FX_EVAL_SYNTAX; goto restore; }
+            ++p->position;
+        }
         expression(p, &upper, 0);
         calculus_expression_finish(p, &upper);
         if (p->status != FX_EVAL_OK) goto restore;
     }
-    if ((token == 0x6a || token == 0x6b) && peek(p) == ',') {
-        ++p->position;
+    if (physical_integral) {
+        /*171EA has consumed the upper delimiter before04738's bound store.
+         * Cache its meaning before a physical input alias can overwrite it. */
+        if (peek(p) == ')') { ++p->position; closing_consumed = 1; }
+        else if (peek(p) == ',') { ++p->position; upper_comma_consumed = 1; }
+        variables_to_storage(p);
+        fx_numeric_status prepared = fx_integral_storage_upper(&integral_storage, &upper.real);
+        variables_from_storage(p);
+        bank_from_storage(p);
+        if (prepared != FX_NUMERIC_OK) { unsupported(p, token); goto restore; }
+    }
+    if ((token == 0x6a || token == 0x6b) &&
+        (upper_comma_consumed || (!closing_consumed && peek(p) == ','))) {
+        if (!upper_comma_consumed) ++p->position;
         expression(p, &tolerance, 0);
         calculus_expression_finish(p, &tolerance);
         if (p->status != FX_EVAL_OK) goto restore;
@@ -1728,7 +1813,38 @@ static void calculus(parser *p, fx_complex *out, uint8_t token)
         bank_from_storage(p);
         if (derivative_preparation != FX_NUMERIC_OK) { unsupported(p, token); goto restore; }
     }
-    if (token == 0x69)
+    if (physical_integral) {
+        /* Default upper171EA consumes its closing token before0476C.
+         * Explicit tolerance04756 backs that token up before04758. */
+        if (!has_tolerance && !closing_consumed && peek(p) == ')') {
+            ++p->position;
+            closing_consumed = 1;
+        }
+        if (has_tolerance && peek(p) == ')') closing_consumed = 1;
+        integral_cursor = (uint16_t)(p->transport->input_address + p->position +
+            (has_tolerance && peek(p) == ')' ? 1u : 0u));
+        fx_numeric_status prepared = fx_integral_storage_tolerance(&integral_storage,
+            has_tolerance ? &tolerance.real : NULL, integral_cursor, &integral_native_status);
+        variables_from_storage(p);
+        bank_from_storage(p);
+        if (prepared != FX_NUMERIC_OK) { unsupported(p, token); goto restore; }
+        if (integral_native_status) {
+            fx_number_error(&result, integral_native_status);
+            status = FX_NUMERIC_OK;
+        } else {
+            status = fx_number_integral_storage(&result, &integral_storage,
+                calculus_evaluate, &call, integral_publish_x,
+                p->transport->output_address, integral_callback_context,
+                &control, &integral_native_status, &integral_cursor);
+            if (status == FX_NUMERIC_OK) {
+                if (integral_native_status) fx_number_error(&result, integral_native_status);
+                if (integral_native_status == 0 || integral_native_status == 1)
+                    p->position = (uint16_t)(integral_cursor - p->transport->input_address);
+            }
+        }
+        variables_from_storage(p);
+        bank_from_storage(p);
+    } else if (token == 0x69)
         status = fx_number_sum(&result, &lower.real, &upper.real, calculus_evaluate, &call, &control);
     else if (token == 0x5d)
         status = fx_number_product(&result, &lower.real, &upper.real, calculus_evaluate, &call, &control);
@@ -1773,8 +1889,10 @@ static void calculus(parser *p, fx_complex *out, uint8_t token)
     }
     /* Extra arguments are rejected after the native callbacks have run. */
     p->calculus_mode = 0;
-    if (peek(p) == ')') ++p->position;
-    else if (!omitted_closing(p)) p->status = FX_EVAL_SYNTAX;
+    if (!closing_consumed) {
+        if (peek(p) == ')') ++p->position;
+        else if (!omitted_closing(p)) p->status = FX_EVAL_SYNTAX;
+    }
 restore:
     p->variables->values[FX_VARIABLE_X][0] = saved_x.real;
     p->options.math_output = exact;
@@ -1831,13 +1949,14 @@ static void store_result(parser *p, fx_complex *value)
     p->terminal_operator = 0xff;
 }
 
-static fx_eval_status evaluate(const uint8_t *input, size_t length,
+static fx_eval_status evaluate_transported(const uint8_t *input, size_t length,
                            const fx_eval_options *options,
                            const fx_eval_environment *environment, const fx_eval_state *state,
                            const fx_calculus_control *control, uint8_t selected_base,
                            const fx_number *initial_secondary,
                            const fx_number *prior_answer, fx_eval_storage *storage,
-                           fx_number *random_seed, fx_eval_effects *effects, fx_eval_result *result)
+                           fx_number *random_seed, fx_eval_effects *effects, fx_eval_result *result,
+                           const fx_eval_transport *transport)
 {
     parser p;
     fx_complex value;
@@ -1860,6 +1979,7 @@ static fx_eval_status evaluate(const uint8_t *input, size_t length,
     if (!variables) { fx_eval_variables_clear(&local_variables); variables = &local_variables; }
     p.variables = variables;
     p.storage = storage;
+    p.transport = transport;
     p.random_seed = random_seed ? random_seed : &local_seed;
     p.linear_algebra = state && state->linear_algebra ? state->linear_algebra : &local_linear_algebra;
     p.control = control;
@@ -1935,7 +2055,33 @@ static fx_eval_status evaluate(const uint8_t *input, size_t length,
         (p.status != FX_EVAL_OK || !(p.environment.screen & 0x40)) &&
         p.status != FX_EVAL_POLAR_PAIR && p.status != FX_EVAL_RECTANGULAR_PAIR && p.status != FX_EVAL_QUOTIENT_PAIR)
         result->value[1] = *initial_secondary;
+    if (transport && p.status >= 0) {
+        physical_record_store(storage, transport->output_address, &result->value[0]);
+        if (p.options.calculation_context == 0xc4 ||
+            (p.status == FX_EVAL_OK && (p.environment.screen & 0x40)) ||
+            p.status == FX_EVAL_POLAR_PAIR || p.status == FX_EVAL_RECTANGULAR_PAIR ||
+            p.status == FX_EVAL_QUOTIENT_PAIR)
+            physical_record_store(storage, (uint16_t)(transport->output_address + 10),
+                                  &result->value[1]);
+        else memcpy(result->value[1].bytes,
+                    storage->ram + transport->output_address + 10, 10);
+        uint16_t cursor = (uint16_t)(transport->input_address + result->consumed);
+        storage->ram[transport->cursor_address] = (uint8_t)cursor;
+        storage->ram[transport->cursor_address + 1u] = (uint8_t)(cursor >> 8);
+    }
     return p.status;
+}
+
+static fx_eval_status evaluate(const uint8_t *input, size_t length,
+    const fx_eval_options *options, const fx_eval_environment *environment,
+    const fx_eval_state *state, const fx_calculus_control *control, uint8_t selected_base,
+    const fx_number *initial_secondary, const fx_number *prior_answer,
+    fx_eval_storage *storage, fx_number *random_seed, fx_eval_effects *effects,
+    fx_eval_result *result)
+{
+    return evaluate_transported(input, length, options, environment, state, control,
+        selected_base, initial_secondary, prior_answer, storage, random_seed,
+        effects, result, NULL);
 }
 
 fx_eval_status fx_evaluate_with_state(const uint8_t *input, size_t length,
@@ -2065,4 +2211,37 @@ fx_eval_status fx_evaluate_prepared_random(const uint8_t *input, size_t length,
     uint8_t selected_base = environment ? environment->selected_base : FX_BASE_DEC;
     return evaluate(input, length, options, environment, state, control,
                     selected_base, initial_secondary, prior_answer, NULL, seed, effects, result);
+}
+
+fx_eval_status fx_evaluate_prepared_physical(size_t input_length,
+    const fx_eval_options *options, const fx_eval_environment *environment,
+    const fx_eval_state *state, const fx_calculus_control *control,
+    const fx_number *prior_answer, fx_eval_storage *storage,
+    const fx_eval_transport *transport, fx_eval_effects *effects, fx_eval_result *result)
+{
+    if (!storage || !storage->ram || storage->ram_size != 65536u || !transport ||
+        !result || !input_length || transport->input_address < 0x8000u ||
+        input_length > 65536u - transport->input_address ||
+        transport->cursor_address < 0x8000u || transport->cursor_address > 65534u ||
+        transport->output_address < 0x8000u || transport->output_address > 65516u)
+        return FX_EVAL_UNIMPLEMENTED;
+    fx_eval_options prepared = options ? *options : fx_eval_default_options();
+    if (!options) {
+        prepared.calculation_context = storage->ram[0x80f9];
+        prepared.math_output = storage->ram[0x8106];
+        prepared.angle_unit = storage->ram[0x8105];
+    }
+    if (prepared.calculation_context != storage->ram[0x80f9]) return FX_EVAL_UNIMPLEMENTED;
+    fx_eval_environment globals = environment ? *environment : fx_eval_default_environment();
+    if (!environment) {
+        globals.screen = storage->ram[0x80fc]; globals.prior_operation = storage->ram[0x80f5];
+        globals.complex_format = storage->ram[0x810c]; globals.restricted_state = storage->ram[0x8124];
+        globals.display_mode = storage->ram[0x8102]; globals.digits = storage->ram[0x8103];
+        globals.selected_base = storage->ram[0x80fa];
+    }
+    fx_number secondary;
+    memcpy(secondary.bytes, storage->ram + transport->output_address + 10, 10);
+    return evaluate_transported(storage->ram + transport->input_address, input_length,
+        &prepared, &globals, state, control, globals.selected_base, &secondary,
+        prior_answer, storage, NULL, effects, result, transport);
 }

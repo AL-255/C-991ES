@@ -106,7 +106,10 @@ explicit seed; legacy value APIs begin with a local zero seed for each call.
 Prepared BASE word APIs keep selected-byte, global-mode and operation-mode
 policies separate from the typed BASE-N UI APIs.
 
-Physical real differentiation stages the point before explicit tolerance parsing, then reads and writes its Richardson workspace in RAM. Callback and cancellation changes to that workspace remain visible. Stored surds converted to decimal publish the six components in native order. The standalone physical integral API has separately staged bounds, tolerance and callback context; its complete expression integration and C4 twenty-byte calculus contract remain pending.
+Physical real differentiation stages the point before explicit tolerance parsing, then reads and writes its Richardson workspace in RAM. Callback and cancellation changes to that workspace remain visible. Stored surds converted to decimal publish the six components in native order. `fx_evaluate_prepared_physical` accepts explicit input, cursor-word and output addresses for live RAM evaluation. Its real integral path stages bounds and tolerance in native order, preserves delimiter decisions across input/workspace aliases, and publishes sampled X before callback evaluation. The distinct C4 twenty-byte calculus backend remains unsupported.
+Exact Pol/Rec results currently retain their value/cursor behavior but omit some SURD workspace writes in physical RAM. Those coordinate side effects and ordinary INPUT integration of the explicit transport API remain pending.
+
+The raw rational value API preserves unchecked packed fraction fields through admission, ordered component products, Euclidean reduction, quotient/remainder packing and marker restoration. Its result and native error status are separate from host unsupported status. REF/RREF reuses this API for scalar fraction arithmetic and fraction-preferred division; copied malformed pivot operands retain ordered conversion. Numerical scratch/MMIO and original odd-pointer marshaling remain outside this value API.
 
 CALC dependency scanning and the prepared CALC/SOLVE outer controller now
 compose coefficient prompts, guess input, result commits, replay and error

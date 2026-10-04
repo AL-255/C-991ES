@@ -1,0 +1,66 @@
+{
+  "basis": "Reviewed static semantic spans and original value/API checkpoints for raw rational arithmetic, including 29 newly credited preferred-divide wrapper instructions independently visited by 20 original branch-control traces. Physical scratch/pointer/register effects are understood where documented but remain outside the portable value ABI. This ledger measures semantic understanding, not implementation completion.",
+  "ranges": [
+    {
+      "start": "0x194ec",
+      "end": "0x1954c",
+      "scope": "Prepared raw integer admission: leading-zero shortcut, eight-pair low-nibble count, binary sign subtraction and paired exponent threshold without canonical decimal validation.",
+      "source": "csrc/numeric/fx_raw_rational.c"
+    },
+    {
+      "start": "0x198d4",
+      "end": "0x1994e",
+      "scope": "Prepared ordinary add/subtract/multiply/divide rational-versus-decimal admission, selector adjustment, native ordered component arithmetic or decimal conversion fallback; no physical numerical scratch ABI.",
+      "source": "csrc/numeric/fx_raw_rational.c"
+    },
+    {
+      "start": "0x1994e",
+      "end": "0x199b0",
+      "scope": "Raw numerator error/zero ordering, GCD component reduction, reduced denominator1 cleanup, raw divmod and final packed fraction entry; retained error-divisor native budget boundaries return explicit portable noncommit.",
+      "source": "csrc/numeric/fx_raw_rational.c"
+    },
+    {
+      "start": "0x199b2",
+      "end": "0x19aea",
+      "scope": "Raw paired digit budget, whole/remainder/denominator packed-field OR and decimal shift count, rawsign preservation, fraction-plus-whole divide/add/cleanup fallback; all historical92 output packing gaps closed against native checkpoints.",
+      "source": "csrc/numeric/fx_raw_rational.c"
+    },
+    {
+      "start": "0x19aea",
+      "end": "0x19be6",
+      "scope": "Prepared finite raw sign fold, long quotient/remainder, stored-prefix decrement, binary quotient counts, normalization and signed-zero restoration. Direct17070 native returned calls match;47 fixed native budget boundaries are explicit host noncommit rather than fabricated errors.",
+      "source": "csrc/numeric/fx_raw_rational.c"
+    },
+    {
+      "start": "0x19c00",
+      "end": "0x19c76",
+      "scope": "Finite raw Euclidean GCD: one unsigned exponent-byte sort, mantissa remainders unfolded across decimal positions, whole-coordinate swaps without re-sort, final paired sign fold. Initial helper error/pointer branches are not credited here.",
+      "source": "csrc/numeric/fx_raw_rational.c"
+    },
+    {
+      "start": "0x19d9a",
+      "end": "0x19e48",
+      "scope": "Prepared native ordered cross-products for ADD/SUB/MUL/DIV, including right-first denominator product and divisor rawsign-to1/numerator paired5 adjustment before reduction; constant52CE branch policy reviewed.",
+      "source": "csrc/numeric/fx_raw_rational.c"
+    },
+    {
+      "start": "0x19e48",
+      "end": "0x19f1a",
+      "scope": "Understood preferred-divide control flow/value policy: native division selector7, admission flag5 initialization bypassing ordinary both-plain shortcut, threshold11 vs ordinary threshold12, ordered rational components or decimal divide fallback; physical scratch/stack/register effects are external to the value implementation.",
+      "source": "csrc/numeric/fx_raw_rational.c"
+    },
+    {
+      "start": "0x1c6f0",
+      "end": "0x1c748",
+      "scope": "Already-admitted scalar ordinary binary arithmetic, marker capture/clear, produced fraction/error decimal conversion and operation-specific marker restoration, final record and independent low-header error status. Surd branches and physical serialization/register ABI are external.",
+      "source": "csrc/numeric/fx_raw_rational.c"
+    },
+    {
+      "start": "0x1ca4a",
+      "end": "0x1ca6e",
+      "scope": "Understood preferred-divide scalar wrapper control flow: marker/error admission selects the numeric leaf or canonicalF3, then external result publication, independent native status and return. The portable API implements only value/result/status policy; original serialization addresses, pointer alignment, saved registers and stack effects are not modeled.",
+      "source": "csrc/numeric/fx_raw_rational.c"
+    }
+  ],
+  "partial_blocks": []
+}

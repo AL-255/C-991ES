@@ -14,10 +14,11 @@
  * stride-three coordinates. Larger shapes, work-record overlaps with the bank/dimension tables,
  * CPU-frame overlaps, odd/wrapped addresses, and unsupported compact-surd
  * conversion aliases return UNIMPLEMENTED, retaining preceding RAM effects.
- * Unchecked malformed fractions in CA3E division or pivot comparison are
- * explicit host gaps; their native rational core can return finite values
- * unlike the standalone decimal converter. Other scalar arithmetic retains
- * its proven marked-fraction converter-error fallback. Wrapped vector NOT
+ * Prepared2x/marked6x scalar fractions retain raw rational arithmetic,
+ * including CA3E's fraction-preferred division before scalar conversion.
+ * Copied malformed pivot-comparison fractions use the ordered raw converter.
+ * Returned numeric errors remain distinct from host helper gaps; those gaps
+ * retain preceding RAM effects without committing the result. Wrapped vector NOT
  * admits the proven calculation contexts6/7. No CPU frames are emitted. */
 fx_numeric_status fx_eval_rich_reduce_after_storage(fx_eval_rich_result *out,
     fx_eval_storage *storage, const fx_complex *current,

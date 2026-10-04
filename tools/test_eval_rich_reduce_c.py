@@ -68,7 +68,7 @@ SOURCES = ['parse/fx_eval_rich_reduce.c', 'parse/fx_eval_rich.c',
            'linalg/fx_linalg.c', 'complex/fx_complex_dispatch.c',
            'complex/fx_complex.c', 'complex/fx_complex_angle.c',
            'complex/fx_complex_round.c', 'numeric/fx_numeric.c',
-           'numeric/fx_surd_components.c',
+           'numeric/fx_surd_components.c', 'numeric/fx_raw_rational.c',
            'numeric/fx_transcend.c', 'numeric/fx_power.c', 'numeric/fx_root.c',
            'numeric/fx_combinatorics.c', 'numeric/fx_logbase.c',
            'trig/fx_trig.c', 'trig/fx_trig_math.c', 'trig/fx_trig_inverse.c',
@@ -242,15 +242,16 @@ def main():
                'cancel','callback','pair','private_pair','initial_payload90','initial_pair40',
                'initial_ram_sha256','mutations'}
     wide_cases = fixture['cases']
-    if fixture['schema'] != 'prepared-rich-wide-inputs-v1' or len(wide_cases) != 1215:
-        raise ValueError('Expected1215 retained wide input-only recipes')
+    if fixture['schema'] != 'prepared-rich-wide-inputs-v1' or len(wide_cases) != 2511:
+        raise ValueError('Expected2511 retained input-only recipes (1215 wide +1296 raw caller)')
     if any(set(case) != allowed for case in wide_cases):
         raise ValueError('Wide fixture contains fields outside the input-only recipe')
-    if [case['id'] for case in wide_cases] != list(range(1215)):
+    if [case['id'] for case in wide_cases] != list(range(2511)):
         raise ValueError('Wide fixture IDs must be consecutive')
     for case in wide_cases:
         rows,columns = case['requested_shape']
-        if rows not in (1,2) or not 4 <= columns <= (9 if rows == 1 else 6):
+        if not ((rows in (1,2) and 4 <= columns <= (9 if rows == 1 else 6)) or
+                (rows,columns) == (3,3)):
             raise ValueError('Wide fixture outside sufficient literal nine-record domain')
         if case['selector'] not in (16,17) or len(bytes.fromhex(case['initial_payload90'])) != 90 or len(bytes.fromhex(case['initial_pair40'])) != 40:
             raise ValueError('Invalid wide numerical input recipe')
@@ -633,7 +634,7 @@ def main():
                     data = list(cells)
                     data[position] = record
                     case(selector, context, data=data, callback=True,
-                         host_gap='Malformed zero-denominator fraction reaches unchecked rational arithmetic or comparison conversion',
+                         host_gap=None,
                          label='unchecked-zero-denominator')
             for identity in (10, 11, 13, 14, 15):
                 for record in exact[-2:]:
@@ -670,7 +671,7 @@ def main():
                      mutations=((reached,0x8a00,errors[3]),),label=final_label)
             case(selector,context,callback=True,
                  mutations=((1,0x8406,bytes.fromhex('24000000000000000301')),),
-                 host_gap='A callback installs a malformed fraction after prepared storage; unchecked comparison arithmetic remains a boundary',
+                 host_gap=None,
                  label='callback-malformed-fraction-boundary')
             for address,reason in ((0x829e,'Physical working pair overlaps a physical bank'),
                                    (0x80e0,'Physical working pair overlaps dimension metadata'),
@@ -752,8 +753,7 @@ def main():
             pair=int(recipe['pair'],16),private_pair=recipe['private_pair'],
             updates=((int(recipe['pair'],16),pair_record),),
             label=recipe['label'],input_hash=recipe['initial_ram_sha256'],fixture_id=recipe['id'],
-            host_gap='Malformed zero-denominator fraction reaches unchecked rational arithmetic or comparison conversion'
-                if recipe['label']=='unchecked-zero-denominator' else None)
+            host_gap=None)
     for _ in actual_abi:
         counts['compiled_public_ABI'] += 1
     python_modules_end = local_python_inputs()
@@ -776,7 +776,7 @@ def main():
         comparison='Original16538 through16588; current20/other20, independent status, actual polling, temporary mask, dimensions32, all1440 physical bank bytes, and64KiB persistent RAM/MMIO plus callback snapshots. Excludes only8000..80DB scalar arithmetic arena and actually written native CPU-frame bytes.',
         planned_limits=['Zero dimensions retain native9. Positive literal stride3 coordinates require3*(rows-1)+columns<=9, a sufficient nine-record domain; identity12 column is actual80F9. Other native returning/nonreturning dimensions are not inferred from this guard.',
             'Physical work-record/bank or CPU-frame overlaps are separate named architectural boundaries.',
-            'Malformed fractional arithmetic/conversion and opposite-sign physical classifier pool aliases are individually observed boundaries; preceding persistent RAM and callback states are compared at the reached original kernel entry.',
+            'Prepared scalar fraction arithmetic and copied comparison conversion retain their native order; opposite-sign physical classifier pool aliases remain individually observed boundaries with preceding persistent RAM and callback states compared at the reached original kernel entry.',
             'The callback return value controls the native timer answer; native CPU-frame/arena mutation is outside this comparison.'],
         input_hashes_start=start_hashes,input_hashes_end=end_hashes,source_changes=changed,
         python_modules_start=python_modules_start,python_modules_end=python_modules_end,

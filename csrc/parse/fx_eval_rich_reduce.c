@@ -2,6 +2,7 @@
 #include "fx_eval_rich_reduce.h"
 #include "fx_eval_surd_workspace.h"
 #include "../numeric/fx_raw_fraction_convert.h"
+#include "../numeric/fx_raw_rational.h"
 #include "../platform/fx_result_classify.h"
 #include <string.h>
 
@@ -124,26 +125,6 @@ static int zero(reduction *w, const matrix *m, unsigned index, int tiny)
     absolute(w,&value,&value);
     return w->host == FX_NUMERIC_OK && fx_number_exponent(&value) <= -11;
 }
-static fx_numeric_status malformed_fraction(fx_number *out,
-    const fx_number *a, const fx_number *b, unsigned header)
-{
-    const fx_number *operand[2] = {a,b};
-    unsigned index;
-    for (index = 0; index < 2; ++index)
-        if ((operand[index]->bytes[0] & 0xf0u) == header) {
-            fx_rational fraction;
-            fx_number converted;
-            fx_numeric_status status;
-            if (fx_rational_decode(&fraction,operand[index]) == FX_NUMERIC_OK) continue;
-            status = fx_raw_fraction_convert(&converted,operand[index]);
-            if (status != FX_NUMERIC_OK) return status;
-            if (converted.bytes[0] >= 0xf0) {
-                fx_number_error(out,3); return FX_NUMERIC_OK;
-            }
-            return FX_NUMERIC_UNIMPLEMENTED;
-        }
-    return FX_NUMERIC_INVALID;
-}
 static void arithmetic(reduction *w, fx_number *out, const fx_number *a,
     const fx_number *b, fx_binary_op operation, uint16_t physical_a,
     uint16_t physical_b)
@@ -156,9 +137,15 @@ static void arithmetic(reduction *w, fx_number *out, const fx_number *a,
     if (a->bytes[0] >= 0xf0 || b->bytes[0] >= 0xf0) {
         fx_number_error(out,3); return;
     }
+    if ((a->bytes[0] & 0xb0u) == 0x20u ||
+        (b->bytes[0] & 0xb0u) == 0x20u) {
+        unsigned native_status;
+        /* The scalar caller stores products before its later record check;
+         * a returned numeric error is independent of the host gap status. */
+        w->host = fx_raw_rational_binary(out,a,b,operation,0,&native_status);
+        return;
+    }
     w->host = fx_number_binary(out,a,b,operation);
-    if (w->host == FX_NUMERIC_INVALID)
-        w->host = malformed_fraction(out,a,b,0x60);
 }
 static void check_number(reduction *w, const fx_number *value)
 {
@@ -181,13 +168,10 @@ static void divide(reduction *w, fx_number *out, const fx_number *a,
      * that core even when the standalone fraction converter returns F3.
      * Do not substitute the separately proven scalar-conversion fallback. */
     if ((left.bytes[0] & 0xf0u) == 0x20 || (right.bytes[0] & 0xf0u) == 0x20) {
-        fx_rational fraction;
-        if (((left.bytes[0] & 0xf0u) == 0x20 &&
-             fx_rational_decode(&fraction,&left) != FX_NUMERIC_OK) ||
-            ((right.bytes[0] & 0xf0u) == 0x20 &&
-             fx_rational_decode(&fraction,&right) != FX_NUMERIC_OK)) {
-            w->host = FX_NUMERIC_UNIMPLEMENTED; return;
-        }
+        unsigned native_status;
+        w->host = fx_raw_rational_binary(out,&left,&right,FX_DIVIDE,1,
+            &native_status);
+        return;
     }
     /*94EC constructs a fraction only for its bounded integral packer. */
     if (left.bytes[0] < 10 && right.bytes[0] < 10 &&
@@ -267,7 +251,9 @@ static void compare_prepare(reduction *w, fx_number *value)
         fx_rational fraction;
         if ((value->bytes[0] & 0xb0u) == 0x20 &&
             fx_rational_decode(&fraction,value) != FX_NUMERIC_OK) {
-            w->host = FX_NUMERIC_UNIMPLEMENTED; return;
+            /*15C82 converts this copied fraction before the next copied
+             * operand, even if conversion returns a numeric error record. */
+            w->host = fx_raw_fraction_convert(value,value); return;
         }
         value->bytes[0] &= (uint8_t)~0x40u;
         w->host = fx_number_to_decimal(value,value);

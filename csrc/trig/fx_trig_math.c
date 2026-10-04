@@ -291,6 +291,7 @@ fx_numeric_status fx_trig_evaluate(fx_number *out, const fx_number *angle,
                                   int exact_math, unsigned *matched)
 {
     fx_number decimal;
+    if (!out) return FX_NUMERIC_INVALID;
     fx_numeric_status status = fx_trig_decimal(&decimal, angle, function, unit);
     if (matched) *matched = 0;
     if (status != FX_NUMERIC_OK) return status;

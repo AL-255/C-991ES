@@ -1,0 +1,33 @@
+{
+  "subsystem": "Prepared scalar raw-rational arithmetic",
+  "implementation_style": "Readable high-level component arithmetic; existing packed decimal primitives reused; no assembly lift, CPU/ROM execution or host libm in implementation",
+  "sources": [
+    "csrc/numeric/fx_raw_rational.c",
+    "csrc/numeric/fx_raw_rational.h"
+  ],
+  "verified": {
+    "test": "tools/test_raw_rational_c.py",
+    "report": "analysis/c-verification/raw_rational.json",
+    "checks": 1320642,
+    "native_calls": 14815,
+    "native_returned": 14801,
+    "handled_each_optimization": 14781,
+    "optimizations": [
+      "O2",
+      "O3"
+    ]
+  },
+  "prepared_context": [
+    "Ordinary decimal and unchecked 2x/marked6x fraction records; operation ADD/SUB/MUL/DIV with separately selected fraction-preferredDIV entry",
+    "Complete 10-byte record and independent native status, exact original product/admission/GCD/divmod/field packing/cleanup/marker order",
+    "Both value inputs copied before one terminal record/status commit; full and partial output/input aliases supported",
+    "Input-only fixtures and fresh unchanged original ROM oracle, including all14 budget-boundary and20 separately named outside-domain controls"
+  ],
+  "remaining": [
+    "Production callers and original physical numerical scratch/MMIO",
+    "Original odd-address EA-aligned pointer marshaling",
+    "Compact-surd and unsupported scalar-header branches",
+    "General malformed inputs beyond bounded prepared helper contracts;14 native fixed-budget boundaries remain UNIMPLEMENTED/noncommit"
+  ],
+  "full_firmware_complete": false
+}

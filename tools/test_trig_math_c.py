@@ -185,6 +185,20 @@ def main():
         check('complete_wrapper', [status, bytes(output.bytes).hex(), bool(matched.value), bytes(source.bytes).hex()],
               [0, expected.hex(), native_match, record.hex()], [name, record.hex(), function, unit, exact])
 
+    # Reject a missing destination before numeric or error publication.
+    for name, record, function, unit in [
+        ('null-output-normal', literal('30'), 0, 0),
+        ('null-output-initial-error', bytes([0xf3]) + bytes(9), 0, 0),
+        ('null-output-tangent-pole', literal('90'), 2, 0),
+    ]:
+        source = Number.from_buffer_copy(record)
+        matched = C.c_uint(0xdeadbeef)
+        status = lib.fx_trig_evaluate(None, C.byref(source), function, unit,
+                                      1, C.byref(matched))
+        check('wrapper_null_output',
+              [status, bytes(source.bytes).hex(), matched.value],
+              [-1, record.hex(), 0xdeadbeef], name)
+
     report = {'cases': sum(counts.values()), 'groups': counts, 'failures': len(failures),
               'mismatches': failures, 'seed': '0x1a2d4', 'random_cases': args.random_cases,
               'scope': 'native1ACEC coordinate pairs, all9 explicit angle conversions1C340, complete forward numeric cores1C59E/1C58C/1C57A and full wrappers16268/16272/16308',
