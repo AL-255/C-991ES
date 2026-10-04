@@ -1,0 +1,24 @@
+{
+  "basis": "Individually inspected original instructions in the pinned complete.asm listing, reconciled with the handwritten parser and fresh native whole-parser/control comparisons. This is semantic understanding, not full mode or alias implementation coverage. Overlapping addresses count once.",
+  "ranges": [
+    {
+      "start": "0x1673e",
+      "end": "0x16758",
+      "scope": "Compact operator-code arithmetic maps logical/additive/multiplicative/dot operators to precedence ranks; operation47 dot receives rank6 above product rank5.",
+      "source": "csrc/parse/fx_eval.c"
+    },
+    {
+      "start": "0x1700c",
+      "end": "0x1702a",
+      "scope": "Constant token dispatch separates static constants and dynamic function-table entries, calls the selected routine with ER12 output, and propagates its status directly rather than applying arithmetic preflight error normalization.",
+      "source": "csrc/parse/fx_eval.c"
+    },
+    {
+      "start": "0x1724c",
+      "end": "0x1727c",
+      "scope": "Actual evaluator errors publish canonical F(status) to inherited ER8 while preserving return status; successful rich headers60..7F or90+ require screen1 and invoke1415A cleanup while preserving R2.",
+      "source": "csrc/parse/fx_eval.c"
+    }
+  ],
+  "partial_blocks": []
+}

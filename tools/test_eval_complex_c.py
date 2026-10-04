@@ -43,7 +43,7 @@ def main():
     build = ROOT / 'analysis/build/eval-complex'
     build.mkdir(parents=True, exist_ok=True)
     source_names = [
-        'parse/fx_eval_storage.c', 'parse/fx_eval_finish.c', 'parse/fx_tokens.c', 'data/fx_rom_data.c',
+        'parse/fx_eval_rich.c','parse/fx_eval_rich_unary.c','parse/fx_eval_rich_reduce.c','parse/fx_eval_surd_workspace.c','platform/fx_platform.c','platform/fx_result_classify.c','numeric/fx_raw_decimal_exp.c', 'stats/fx_stats.c', 'stats/fx_stats_value.c', 'parse/fx_eval_storage.c', 'parse/fx_eval_finish.c', 'parse/fx_tokens.c', 'data/fx_rom_data.c',
         'numeric/fx_numeric.c', 'numeric/fx_random.c', 'numeric/fx_transcend.c', 'numeric/fx_power.c',
         'numeric/fx_base.c', 'numeric/fx_base_literal.c',
         'numeric/fx_sexagesimal.c', 'numeric/fx_quotient_remainder.c',

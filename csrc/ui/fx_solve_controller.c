@@ -490,12 +490,18 @@ static int cancelled(void *userdata)
 static int expression_cancelled(void *userdata)
 {
     solve_callback *callback=userdata;
-    /* Continuous-calculus functions publish their local X before polling.
-     * The outer SOLVE iteration's chosen variable remains independently
-     * published by evaluate_equation, and the expression restores its X. */
-    fx_store_variable_records(callback->platform,FX_VARIABLE_X,
-        callback->state->variables.values[FX_VARIABLE_X]);
-    return cancelled(userdata);
+    fx_solve_controller *s=callback->state;
+    if (s->expression) {
+        /* A custom typed expression callback retains the host-poll adapter.
+         * Its calculus implementation need not own platform5550. */
+        fx_store_variable_records(callback->platform,FX_VARIABLE_X,
+            s->variables.values[FX_VARIABLE_X]);
+        return cancelled(userdata);
+    }
+    /* Default prepared-storage expressions own X publication and5550.
+     * The enclosing SOLVE numerical driver keeps its own cancelled wrapper. */
+    return s->cancellation.cancelled &&
+           s->cancellation.cancelled(s->cancellation.userdata);
 }
 static fx_solve_ui_status solve(fx_platform *p, fx_solve_controller *s)
 {

@@ -97,7 +97,7 @@ admitted left and right records for the SOLVE callback bridge.
 `fx_evaluate_prepared_with_storage` adds physical temporary-bank copies and
 the shared allocation/equation mask; the ordinary typed APIs retain their
 separate-bank contract. Physical terminal cleanup commits cells in native
-order and preserves partial changes on errors. Prepared rich numerical dispatch includes physical matrix/vector arithmetic, unary operations and REF/RREF. Its complete expression integration and matrix/vector mode grammar remain pending.
+order and preserves partial changes on errors. The physical parser dispatches supported matrix/vector arithmetic, unary operations and REF/RREF after storage allocation, retaining partial writes, native admission masks and error cursors. A whole-parser corpus compares status, both result records and observable RAM against the original. Complete matrix/vector mode grammar and UI remain pending. Raw8A loads the stored Y mean through the physical statistics table; its dynamic-constant errors retain the native preflight policy.
 
 The random frontend shares one packed seed across Ran#, RanInt and calculus
 callbacks. Physical evaluation publishes each draw at 821C..8225 immediately,

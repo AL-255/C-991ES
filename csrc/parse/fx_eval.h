@@ -102,7 +102,8 @@ fx_eval_status fx_evaluate_controlled(const uint8_t *input, size_t length,
                            const fx_calculus_control *control, fx_eval_result *result);
 /* Prepared COMP continuous-calculus callbacks admit stored matrix/vector
  * references and perform1415A cleanup against the supplied bank. Arithmetic
- * on rich references still requires the separately prepared rich dispatcher.
+ * on rich references requires the physical-storage entry point below, which
+ * composes the prepared rich dispatcher after physical operand staging.
  * State, input and result must occupy separate host storage. */
 fx_eval_status fx_evaluate_with_state(const uint8_t *input, size_t length,
                            const fx_eval_options *options, const fx_eval_state *state,

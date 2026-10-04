@@ -24,7 +24,7 @@
       "scope": "All input token categories, literal bases, precedence, function dispatch, variables, errors and mode constraints",
       "status": "partial",
       "manifest": "parse/manifest.json",
-      "implemented_subset": "Shared supported COMP/CMPLX and BASE-N grammar, scalar variables and stores, random/RanInt with eager live seed effects and numerical calculus preflight. Prepared physical rich numerical leaves are independently verified; complete rich expression and mode grammar remain pending."
+      "implemented_subset": "Shared supported COMP/CMPLX and BASE-N grammar, scalar variables and stores, random/RanInt with eager live seed effects and numerical calculus preflight. Supported physical rich arithmetic, unary operations and REF/RREF compose with storage staging and terminal cleanup, with a separate original-ROM whole-parser corpus. Stored Y-mean raw8A reads the physical statistics table. Complete rich expression and mode grammar remain pending."
     },
     {
       "id": "numeric",

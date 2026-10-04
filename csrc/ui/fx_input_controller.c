@@ -129,15 +129,10 @@ typedef struct { fx_platform *platform; fx_input_controller *state; } cancellati
 static int cancelled(void *userdata)
 {
     cancellation_context *c=userdata;
-    /* Native calculus installs local X before sampling cancellation. */
-    fx_store_variable_records(c->platform,FX_VARIABLE_X,
-                              c->state->variables.values[FX_VARIABLE_X]);
-    fx_host_control_state host;
-    (void)fx_host_control_begin(c->platform,&host);
-    int requested=c->state->cancellation.cancelled &&
-                  c->state->cancellation.cancelled(c->state->cancellation.userdata);
-    if (!requested) put_byte(c->platform,0x8e00,0);
-    return fx_host_control_finish(c->platform,&host);
+    /* The prepared-storage calculus driver publishes X and owns5550.
+     * This callback only notifies the supplied cancellation observer. */
+    return c->state->cancellation.cancelled &&
+           c->state->cancellation.cancelled(c->state->cancellation.userdata);
 }
 
 static fx_input_status start_error(fx_platform *p, fx_input_controller *s)

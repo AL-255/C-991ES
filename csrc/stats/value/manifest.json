@@ -1,0 +1,18 @@
+{
+  "subsystem": "prepared stored Y-mean dynamic constant",
+  "implementation": "high-level portable C99, no CPU or ROM execution",
+  "full_subsystem_complete": false,
+  "implemented_routines": [
+    {"address": "0x13448", "name": "Y-mean wrapper", "scope": "prepared physical table view, selector1, existing high-level mean arithmetic"},
+    {"address": "0x13472", "name": "statistics value cleanup/copy tail", "scope": "ten-byte numeric result and native status, separate host output"}
+  ],
+  "reused_routines": ["0x12D8E", "0x13150", "0x12FE2", "0x05096", "0x05110", "0x1CEF0"],
+  "verification": "analysis/c-verification/stats_value.json",
+  "test": "tools/test_stats_value_c.py",
+  "input_recipes": "analysis/native-fixtures/stats-mean-y/inputs.json",
+  "gaps": [
+    "Arbitrary malformed raw table records requiring unchecked native conversion",
+    "Oversized row-count/data aliases overlapping expression input, caller output or original CPU frame",
+    "Whole171F4 grammar and persistent outer-result storage are verified separately by the parser owner"
+  ]
+}

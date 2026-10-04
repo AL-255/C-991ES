@@ -101,12 +101,17 @@
     {
       "address": "0x163f0..0x16538 / 0x1694c..0x1699a",
       "name": "physical evaluator prestaging",
-      "scope": "Prepared 64KiB storage view, low-four-bit physical slot dimensions, ascending word payload copies, first-free temporary reservation, wrapped releases and scalar/rich operand swaps. Unary and binary prestaging preserve physical scalar-bank aliases before an explicitly unsupported rich numerical leaf."
+      "scope": "Prepared 64KiB storage view, low-four-bit physical slot dimensions, ascending word payload copies, first-free temporary reservation, wrapped releases and scalar/rich operand swaps. Supported rich arithmetic/unary/REF/RREF leaves execute after staging, preserving native masks, partial commits, cancellation and cleanup."
     },
     {
       "address": "0x1415a / 0x17274",
       "name": "physical terminal reference cleanup",
       "scope": "Prepared storage entry uses all16 physical identities, captured dimensions, native row-stride3 and byte-sized cell-index wrap, per-cell live writes and partial commits before error. Terminal evaluation preserves its incoming status independently of the leaf error record. Cell extents outside829E..883D and malformed decimals outside the numeric cleanup contract remain explicitly unsupported."
+    },
+    {
+      "address": "0x17012 / 0x13448",
+      "name": "stored Y-mean dynamic constant",
+      "scope": "Raw8A reads the physical statistics table, with mode-dependent row stride, frequency fields and integer cleanup; dynamic-constant errors bypass arithmetic error-to-zero preflight normalization."
     }
   ],
   "gaps": [
@@ -114,7 +119,7 @@
     "function dispatch and mode constraints",
     "rich variable/object references and remaining mode-dependent grammar",
     "full error/recovery behavior in other contexts, expression editing and keyboard integration",
-    "Rich numerical leaf dispatch is in integration; current unsupported routes retain proven prestaging side effects.",
+    "Complete rich grammar and malformed/wide numerical domains remain partial; unsupported leaves retain proven prestaging side effects.",
     "Complete SOLVE expression/controller interactions beyond the prepared callback and key-event workflow, and other calculation-mode grammar remain pending.",
     "Numerical CPU scratch clobbers and arbitrary caller-output/CPU-frame aliases are outside the named storage entry point."
   ],
@@ -130,7 +135,9 @@
     "tools/test_eval_coordinate_c.py",
     "tools/test_eval_storage_c.py",
     "tools/test_eval_finish_c.py",
-    "tools/test_eval_environment_c.py"
+    "tools/test_eval_environment_c.py",
+    "tools/test_eval_rich_parser_c.py",
+    "tools/test_stats_value_c.py"
   ],
   "unsupported_behavior": "explicit FX_EVAL_UNIMPLEMENTED and offending token; no host libm or CPU/ROM fallback"
 }
