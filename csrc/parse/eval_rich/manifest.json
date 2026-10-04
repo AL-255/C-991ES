@@ -4,6 +4,7 @@
   "sources": [
     "csrc/parse/fx_eval_rich.c",
     "csrc/parse/fx_eval_rich_unary.c",
+    "csrc/parse/fx_eval_rich_reduce.c",
     "csrc/parse/fx_eval_surd_workspace.c"
   ],
   "public_api": "csrc/parse/fx_eval_rich.h",
@@ -30,6 +31,10 @@
     "13": "dot",
     "14": "cross",
     "15": "matrix multiply",
+    "16": "matrix row echelon form",
+    "17": "matrix reduced row echelon form",
+    "21": "wrapped vector normal rounding",
+    "22": "wrapped vector bitwise NOT",
     "162": "wrapped acosh",
     "163": "wrapped atanh",
     "164": "wrapped natural exponential"
@@ -61,7 +66,7 @@
       "direct_surd_native_calls": 172,
       "callbacks": 380,
       "callback_RAM_snapshots": 1840,
-      "pins": 66
+      "pins": 68
     },
     "O3": {
       "test_command": "python3 tools/test_eval_rich_c.py --optimization O3",
@@ -76,7 +81,25 @@
       "native_execution_boundaries": 178,
       "finite_host_gaps": 127,
       "wide_norm_controls": 480,
-      "pins": 67
+      "pins": 69
+    },
+    "reduce": {
+      "test": "tools/test_eval_rich_reduce_c.py",
+      "test_commands": [
+        "python3 tools/test_eval_rich_reduce_c.py",
+        "python3 tools/test_eval_rich_reduce_c.py --optimization O3"
+      ],
+      "report": "analysis/c-verification/eval_rich_reduce.json",
+      "canonical_report_optimization": "O3",
+      "checks_per_optimization": 118351,
+      "native_calls_per_optimization": 5427,
+      "handled": 5357,
+      "explicit_host_boundaries": 70,
+      "boundary_kernel_entry_RAM_observations": 52,
+      "callback_RAM_snapshots": 49315,
+      "boundary_callback_RAM_snapshots": 584,
+      "pins": 67,
+      "public_dispatcher": "The actual public dispatcher selects the reduction leaf and applies shared cleanup once; no test-only dispatch or cleanup path is substituted."
     }
   },
   "native_evidence": [
@@ -90,6 +113,7 @@
     "Explicit recorded native fault/instruction-limit and finite implementation gaps remain retained and replayed; an instruction limit does not prove eternal nonreturn",
     "Matrix output index10 and above aliases native CPU pointer/loop descriptors; no fabricated descriptor or CPU frame is generated",
     "Wide square determinant/inverse, C4 round CPU-save overflow, bounded giant-vector traversal and specific opposed-surd/round workspace overlaps remain explicit host gaps",
+    "REF/RREF supports finite dimensions 0..3; live wide dimensions, working-pair/CPU-local overlap and individually retained malformed comparison/division or lexical classifier conversions remain explicit prepared host boundaries. Of 70 boundaries, 52 preserve exact original reached-kernel-entry RAM and preceding callback observations; the other 18 retain output noncommit.",
     "Integer GCD/factor components beyond int64 and unproved malformed finite conversions return UNIMPLEMENTED with preceding physical commits retained",
     "Physical interrupt/key timing is external; callbacks provide the prepared polling responses"
   ],
