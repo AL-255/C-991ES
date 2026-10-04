@@ -4,6 +4,7 @@
 #include "../format/fx_format.h"
 #include "../format/fx_format_base.h"
 #include "fx_result_format_state.h"
+#include "../numeric/fx_surd_components.h"
 
 static uint8_t read_byte(const fx_render *render, uint16_t address)
 {
@@ -26,6 +27,16 @@ int fx_display_special_real_number(fx_render *render, const fx_number *value,
     if (value && !error && (mode == 137 || render->memory[0x8127]
                           || (mode != 2 && (render->memory[0x80ff] & 0x10)))) return -1;
     if (mode == 2) base_indicator(render);
+    /*37BC formats a caller-owned copy. Compact real values leave the
+     * ordered six-component view in the persistent pool as part of17576. */
+    fx_number prepared;
+    if (value) {
+        prepared=*value;value=&prepared;
+        if ((render->memory[0x80f9]==6 || render->memory[0x80f9]==7) &&
+            (value->bytes[0]&0xf0)==0x80 &&
+            fx_surd_components_emit_copy(render->memory,value)!=FX_NUMERIC_OK)
+            return 0;
+    }
     uint8_t text[512] = {0};
     size_t length = 0;
     if (value) {

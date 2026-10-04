@@ -1,11 +1,14 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 #include "fx_input_controller.h"
+#include "fx_equation_controller.h"
+#include "../parse/fx_eval_transport.h"
 #include "fx_error_boundary.h"
 #include "fx_input_prepare.h"
 #include "fx_input_recover.h"
 #include "fx_input_codec.h"
 #include "fx_input_display.h"
 #include "fx_editor.h"
+#include "fx_linalg_controller.h"
 #include "../platform/fx_persistent.h"
 #include "../platform/fx_result_classify.h"
 #include "../platform/fx_boot_events.h"
@@ -86,10 +89,14 @@ fx_input_status fx_input_controller_begin(fx_platform *p, fx_input_controller *s
         if (fx_replay_recall(p)) return FX_INPUT_UNIMPLEMENTED;
         select_initial_format(p); return complete(s,2);
     }
-    if (context->calculation_mode!=0xc1 && context->calculation_mode!=0xc4)
+    if (context->calculation_mode!=0xc1 && context->calculation_mode!=0xc4 &&
+        context->calculation_mode!=6 && context->calculation_mode!=7 &&
+        (context->calculation_mode!=0x45 || byte_at(p,0x80fa)<1 || byte_at(p,0x80fa)>2))
         return FX_INPUT_UNIMPLEMENTED;
     if (!byte_at(p,context->display_address)) return complete(s,0);
-    if (screen!=1 && screen!=0xa0) return FX_INPUT_UNIMPLEMENTED;
+    if (screen!=1 && screen!=0xa0 && !(context->calculation_mode==0x45 && screen==21) &&
+        !((context->calculation_mode==6 || context->calculation_mode==7) &&
+          (screen==19 || screen==20))) return FX_INPUT_UNIMPLEMENTED;
     if (context->special_view && !(screen==0xa0 && byte_at(p,0x80fd)==2))
         return FX_INPUT_UNIMPLEMENTED;
     put_word(p,0x812c,context->display_address);
@@ -147,7 +154,18 @@ static fx_input_status commit_result(fx_platform *p, fx_input_controller *s)
 {
     fx_result_clear_flags(p); select_initial_format(p); put_byte(p,0x80fe,3);
     uint8_t tag=byte_at(p,s->context.result_address)&0xf0;
-    if (tag==0x60 || tag==0x90) return FX_INPUT_UNIMPLEMENTED;
+    if (tag==0x60 || tag==0x90) {
+        /* F414: retain the numerical reference/imaginary bytes. Only the
+         * bank answer, screen and cursor are committed here. */
+        fx_eval_storage storage={p->ram,65536u,p->rom,p->rom_size};
+        put_byte(p,0x80fc,tag==0x60 ? 19 : 20);
+        uint8_t header=byte_at(p,s->context.result_address);
+        if (fx_eval_storage_copy_slot(&storage,3,header)!=FX_NUMERIC_OK)
+            return FX_INPUT_UNIMPLEMENTED;
+        put_byte(p,0x80fa,3); fx_result_reset_layout(p);
+        s->context.return_value=0;
+        return complete(s,0);
+    }
     if (s->evaluator_status==0 || s->evaluator_status==36) {
         if (s->context.calculation_mode!=0xc4) zero_imaginary(p,s->context.result_address);
     } else if (s->evaluator_status==34) {
@@ -161,6 +179,27 @@ static fx_input_status commit_result(fx_platform *p, fx_input_controller *s)
         if (byte_at(p,(uint16_t)(s->context.result_address+10))==0x70)
             zero_imaginary(p,s->context.result_address);
         else put_byte(p,0x80ff,20);
+    }
+    if(s->context.calculation_mode==0x45 && byte_at(p,0x80fc)==21) {
+        put_byte(p,0x80ff,0);fx_result_clear_display_state(p);
+        if(fx_equation_commit_coefficient(p,s->context.result_address))return FX_INPUT_UNIMPLEMENTED;
+        s->context.return_value=0;return complete(s,0);
+    }
+    /* E680/E75E: bank coefficient editing is a physical cell route,
+     * distinct from the83FD variable-list coefficient views below. */
+    if (byte_at(p,0x80fc)==19 || byte_at(p,0x80fc)==20) {
+        if (byte_at(p,0x80ff)&16) zero_imaginary(p,s->context.result_address);
+        put_byte(p,0x80ff,0); fx_result_clear_display_state(p);
+        uint8_t native_status;
+        if (fx_linalg_ui_store_cell(p,s->context.result_address,
+                byte_at(p,0x80fa),byte_at(p,0x811d),byte_at(p,0x811e),
+                &native_status)!=FX_NUMERIC_OK) return FX_INPUT_UNIMPLEMENTED;
+        fx_render render={p->rom,p->rom_size,p->ram};
+        uint16_t dims=(uint16_t)(0x80e0+2u*byte_at(p,0x80fa));
+        if (fx_linalg_selection_event(&render,byte_at(p,dims),
+                byte_at(p,(uint16_t)(dims+1)),0xed)<0)
+            return FX_INPUT_UNIMPLEMENTED;
+        s->context.return_value=0; return complete(s,0);
     }
     /* F4D2..F506: special coefficient views commit one list cell without
      * touching Ans, PreAns or replay, and clear the named D9EE return. */
@@ -219,27 +258,24 @@ static fx_input_status evaluate(fx_platform *p, fx_input_controller *s)
         byte_at(p,0x810c),byte_at(p,0x8124),byte_at(p,0x8102),
         byte_at(p,0x8103),byte_at(p,0x80fa)};
     fx_eval_state evaluator_state={&s->variables,NULL};
-    fx_number retained[2]; load_records(p,s->context.result_address,retained);
     fx_number prior_answer;
     for (unsigned n=0;n<10;++n) prior_answer.bytes[n]=byte_at(p,(uint16_t)(0x828a+n));
-    fx_eval_result result;
+    fx_eval_result result={0};
     cancellation_context cancellation={p,s};
     fx_calculus_control control={cancelled,&cancellation};
     fx_eval_storage storage={p->ram,65536u,p->rom,p->rom_size};
-    fx_eval_status status=fx_evaluate_prepared_with_storage(s->input,length+1,&options,
-        &environment,&evaluator_state,&control,&retained[1],&prior_answer,
-        &storage,NULL,&result);
+    fx_eval_source source={s->current_source,s->context.result_address,NULL,NULL};
+    uint16_t returned_source=s->current_source;
+    fx_eval_status status=fx_evaluate_prepared_source(length+1,&options,
+        &environment,&evaluator_state,&control,&prior_answer,
+        &storage,&source,&returned_source,NULL,&result);
     put_byte(p,0x8124,(uint8_t)(byte_at(p,0x8124)&~1u));
     s->unsupported_token=result.unsupported_token;
     if (status<0) return status==FX_EVAL_RESOURCE_LIMIT ? FX_INPUT_RESOURCE_LIMIT : FX_INPUT_UNIMPLEMENTED;
     s->evaluator_status=(uint8_t)status;
-    if (status>=32 && result.consumed<=length && !s->input[result.consumed]) ++result.consumed;
-    s->current_source=(uint16_t)(s->current_source+result.consumed);
-    if (status>0 && status<32) {
-        /* Native1724E constructs only the real error record. */
-        for (unsigned n=0;n<10;++n)
-            put_byte(p,(uint16_t)(s->context.result_address+n),result.value[0].bytes[n]);
-    } else write_records(p,s->context.result_address,result.value);
+    s->current_source=returned_source;
+    /* The addressed parser has published the actual result buffer. Retain
+     * its current physical secondary bytes and operand/workspace aliases. */
     commit_variables(p,s);
     if (status>0 && status<32) {
         uint8_t cursor=(uint8_t)((uint8_t)s->current_source-(uint8_t)s->prepared_source);

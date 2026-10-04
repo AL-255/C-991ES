@@ -22,7 +22,7 @@ class Context(C.Structure):
 MODULES = ['ui/fx_input_recover','platform/fx_platform','platform/fx_boot',
            'platform/fx_host_bridge','platform/fx_persistent','ui/fx_keys',
            'ui/fx_cursor','ui/fx_editor','ui/fx_natural_editor','parse/fx_tokens',
-           'numeric/fx_numeric','complex/fx_complex','format/fx_format','format/fx_format_base',
+           'numeric/fx_numeric','numeric/fx_surd_components','numeric/fx_raw_decimal_parts','numeric/fx_raw_decimal_divide','numeric/fx_raw_decimal_multiply_add','complex/fx_complex','format/fx_format','format/fx_format_base',
            'render/fx_render','render/fx_render_context','render/fx_render_memory',
            'render/fx_layout_validate','render/fx_result_special','render/fx_result_format_state',
            'data/fx_rom_data']

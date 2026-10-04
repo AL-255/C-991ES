@@ -25,8 +25,8 @@ def main():
     ap.add_argument('--no-report',action='store_true')
     args=ap.parse_args()
     build=ROOT/'analysis/build/ui-controller';build.mkdir(parents=True,exist_ok=True)
-    sources=['csrc/ui/fx_ui_controller.c','csrc/ui/fx_construct_editor.c',
-             *['csrc/'+m+'.c' for m in MODULES]]
+    sources=list(dict.fromkeys(['csrc/ui/fx_ui_controller.c','csrc/ui/fx_construct_editor.c',
+             *['csrc/'+m+'.c' for m in MODULES]]))
     library=build/'ui.so'
     subprocess.run(['gcc','-std=c99','-O2','-Wall','-Wextra','-Werror','-shared','-fPIC',
                     '-Wl,--no-undefined','-I',str(ROOT/'csrc'),*[str(ROOT/f) for f in sources],'-o',str(library)],check=True)

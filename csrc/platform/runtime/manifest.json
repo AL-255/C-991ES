@@ -1,0 +1,34 @@
+{
+  "subsystem": "named high-level runtime scheduler",
+  "implementation": "Handwritten C composition of existing boot, main, whole INPUT, UI, MODE/SETUP and nested MATRIX/VECTOR bank controllers. No instruction execution or translated firmware.",
+  "complete": false,
+  "proof": {
+    "suite": "runtime",
+    "original_sequences": 16,
+    "native_checkpoints_per_optimization": 343,
+    "checks_per_optimization": 1048,
+    "optimizations": [
+      "O2",
+      "O3"
+    ],
+    "native_entry": "0x6f82",
+    "native_entry_set_once_per_sequence": true,
+    "numerical_workspace_residual_observations": 34,
+    "retained_body_controls": 6,
+    "completed_body_controls": 1,
+    "pending_body_controls": 5
+  },
+  "limits": [
+    "Numeric arena 0x8000..0x80db discrepancies remain explicitly archived at 34 witnessed checkpoints.",
+    "Dedicated screens, parameter-menu wrapper, rich/TABLE whole INPUT and unusual numeric/format dependencies are typed body/gap requests.",
+    "Welcome/diagnostic/raw reset composition lacks new uninterrupted startup proof.",
+    "Timers use explicit host acknowledgement; ordinary key packets stay host owned; physical_input is sampled by boot events only.",
+    "Numerical evaluation remains a bounded semantic operation rather than a resumable algorithm."
+  ],
+  "sources": [
+    "csrc/platform/fx_runtime.c",
+    "csrc/platform/fx_runtime.h"
+  ],
+  "fixture": "analysis/native-fixtures/runtime/inputs.json",
+  "verifier": "tools/test_runtime_c.py"
+}

@@ -57,4 +57,9 @@ fx_table_status fx_table_generate(uint8_t ram[65536],
     uint16_t source_pointer_word, const fx_table_control *control,
     fx_table_result *result);
 
+/* The evaluator source is a named caller-owned cursor. Only calculator
+ * data RAM is modeled; no native CPU pointer word is synthesized. */
+fx_table_status fx_table_generate_source(uint8_t ram[65536],
+    uint16_t *source, const fx_table_control *control, fx_table_result *result);
+
 #endif

@@ -259,7 +259,7 @@ static int storage_valid(const fx_integral_storage *storage) {
 
 static int scalar_context(const fx_integral_storage *storage) {
     unsigned mode = storage->ram[0x80f9];
-    return mode == 0xc1 || mode == 6 || mode == 7;
+    return mode == 0xc1 || mode == 6 || mode == 7 || mode == 0x88;
 }
 
 static int overlaps_ram(const fx_integral_storage *storage,const void *object,size_t size) {

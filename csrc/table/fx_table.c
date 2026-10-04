@@ -72,23 +72,19 @@ static int commit(uint8_t *ram, unsigned column, unsigned row,
     write_number(ram, (uint16_t)(0x82eeu + 10u * (stride * (row - 1u) + column)), number);
     return 1;
 }
-fx_table_status fx_table_generate(uint8_t ram[65536],
-    uint16_t source_pointer_word, const fx_table_control *control,
+static fx_table_status generate_source(uint8_t ram[65536],
+    uint16_t beginning, const fx_table_control *control,
     fx_table_result *result)
 {
     fx_number start, end, step, quotient, difference, output, x;
     fx_decimal start_value, end_value, step_value, quotient_value;
     fx_table_status status;
     fx_table_result progress = {0, 0, 0, 0, 0};
-    uint16_t beginning, cursor; unsigned rows, row;
+    uint16_t cursor; unsigned rows, row;
     int evaluator_status, poll_status, committed;
     if (!ram || !control || !control->evaluate || !result) return FX_TABLE_INVALID;
-    /* The named API has a RAM view, not a segment-zero ROM/MMIO read bus.
-     * A source-pointer word crossing that boundary is an explicit host gap. */
-    if (source_pointer_word < 0x8000 || source_pointer_word == 0xffff)
-        return FX_TABLE_UNIMPLEMENTED;
     if (ram[0x80f9] != 0x88) return FX_TABLE_UNIMPLEMENTED;
-    beginning = cursor = read_word(ram, source_pointer_word);
+    cursor = beginning;
     progress.source = cursor;
     start = read_number(ram, 0x829e); end = read_number(ram, 0x82a8);
     step = read_number(ram, 0x82b2);
@@ -161,7 +157,34 @@ fx_table_status fx_table_generate(uint8_t ram[65536],
     status = FX_TABLE_OK;
 finish:
     progress.source = cursor;
-    write_word(ram, source_pointer_word, cursor);
     *result = progress;
+    return status;
+}
+
+/* The named source is host-owned, replacing only F12A's CPU-local word.
+ * Mathematical row effects and external callbacks use the same live RAM. */
+fx_table_status fx_table_generate_source(uint8_t ram[65536],
+    uint16_t *source, const fx_table_control *control, fx_table_result *result)
+{
+    fx_table_status status;
+    if (!ram || !source || !control || !control->evaluate || !result)
+        return FX_TABLE_INVALID;
+    if (ram[0x80f9] != 0x88) return FX_TABLE_UNIMPLEMENTED;
+    status = generate_source(ram, *source, control, result);
+    *source = result->source;
+    return status;
+}
+
+/* The old physical-word ABI preserves every live alias and final writeback. */
+fx_table_status fx_table_generate(uint8_t ram[65536],
+    uint16_t source_pointer_word, const fx_table_control *control,
+    fx_table_result *result)
+{
+    fx_table_status status;
+    if (!ram || !control || !control->evaluate || !result) return FX_TABLE_INVALID;
+    if (source_pointer_word < 0x8000 || source_pointer_word == 0xffff ||
+        ram[0x80f9] != 0x88) return FX_TABLE_UNIMPLEMENTED;
+    status = generate_source(ram, read_word(ram, source_pointer_word), control, result);
+    write_word(ram, source_pointer_word, result->source);
     return status;
 }

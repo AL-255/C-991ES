@@ -1,0 +1,32 @@
+{
+  "implementation": [
+    "csrc/parse/fx_eval_table.h",
+    "csrc/parse/fx_eval.c",
+    "csrc/table/fx_table_runtime.c",
+    "csrc/table/fx_table_device.c",
+    "csrc/table/fx_table_expression_display.c",
+    "csrc/table/fx_table_presentation.c",
+    "csrc/table/fx_table_range.c"
+  ],
+  "test": "tools/test_table_composition_c.py",
+  "verification": "analysis/c-verification/table_composition.json",
+  "original_entries": [
+    "0x0171ea",
+    "0x0171f4",
+    "0x01f12a",
+    "0x008282",
+    "0x00e22a",
+    "0x00de7e",
+    "0x01ee7c"
+  ],
+  "scope": "Prepared actual TABLE88 subordinate composition. Every C evaluator/row/poll/painter outcome is computed from the prepared live input; original outcomes are only comparisons.",
+  "boundaries": [
+    "Whole main and D9EE admission/command routing remain separate runtime work. A coarse SPECIAL_CONTEXT request is earlier than F12A.",
+    "DE7E range prompt stops at DF34 before its whole D9EE input action.",
+    "Natural/saved-Math restoration limits of the retained TABLE controller remain explicit.",
+    "All120 original grid top-byte iterator nonreturns remain explicit; C returns a boundary with matching E2B4 prefix before CPU-local-array overrun.",
+    "Old physical row kernel keeps its three ROM/wrapped source-word bus limits.",
+    "Numerical CPU registers and native active CPU frames are excluded; named caller records/cursors/context are compared."
+  ],
+  "full_TABLE_mode_complete": false
+}

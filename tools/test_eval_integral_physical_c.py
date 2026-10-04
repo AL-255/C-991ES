@@ -147,7 +147,8 @@ def different(row):
  return (row['native']['status']!=row['actual']['status'] or
   row['native']['cursor']!=row['actual']['cursor'] or
   row['native']['pair']!=row['actual']['pair'] or
-  bool(row['ram_differences']) or not row['poll_snapshots_match'])
+  bool(row['ram_differences']) or not row['poll_snapshots_match'] or
+  row['native']['callbacks']!=row['actual']['callbacks'])
 # These fixed IDs are the twelve explicit, distinct20-byte complex contracts.
 # A new unsupported case cannot silently expand the declared limit domain.
 LIMIT_IDS=frozenset(range(144,156))
@@ -175,11 +176,11 @@ for row in rows:
  assert all(int(address,16)in allowed or 0x850a<=int(address,16)<0x85d0
   or 0x8900<=int(address,16)<0x8914 for address,_,_ in row['ram_differences'])
  limits.append(row)
-assert len(limits) in (0,12), 'Complex implementation cannot silently retain a partial declared boundary'
+assert not limits, 'Adopted C4 integral must match all twelve historical returning controls'
 matching=[row for row in rows if row not in limits and not different(row)]
 failures=[row for row in rows if row not in limits and different(row)]
-checks=len(rows)*5+len(abi_expected)+3+len(limits)*4+1
-report=dict(explicit_limit_case_ids=sorted(LIMIT_IDS),explicit_limit_host_policy='No RAM mutation, no callbacks/polls, consumed0, untouched physical output/cursor, unsupported6A; exact12 nativeC4 return shapes and bounded physical differences',fixture_sha256=FIXTURE_SHA256,compiled_artifact_sha256=compiled_hash_before,abi_sizes_offsets=abi_actual,python_helper_hashes=helper_hashes,status='pass'if not failures and not changes else 'fail',
+checks=len(rows)*6+len(abi_expected)+3+len(limits)*4+1
+report=dict(explicit_limit_case_ids=sorted(LIMIT_IDS),explicit_limit_host_policy='The twelve historical prepared C4 returning controls now require native parity. Their previous fixed-seed no-mutation policy remains diagnostic history only. Additional C4 quadrature can reach04696 native CPU-local paired-copy overflow after a proved callback/workspace prefix; that separate boundary is explicitly unsupported.',fixture_sha256=FIXTURE_SHA256,compiled_artifact_sha256=compiled_hash_before,abi_sizes_offsets=abi_actual,python_helper_hashes=helper_hashes,status='pass'if not failures and not changes else 'fail',
  optimization=args.optimization,cases=len(rows),checks=checks,
  matching_native_calls=len(matching),explicit_native_returning_limits=len(limits),
  comparison='Original171F4 status, consumed cursor, physical output pair, fullpersistentRAM80DC..FFFF outside observed activeCPUframe, and exact5550 cancellation workspace snapshots; numeric8000..80DB CPUscratch excluded. All504 original inputs replayed unfiltered; C4 distinct20-bytebackend remains explicit.',
@@ -199,4 +200,4 @@ if not args.no_report:
   'tools/c_verification.py','tools/c_build_inputs.py']+[str(path.relative_to(ROOT))for path in (ROOT/'tools/nxu8/vendor/SimU8').glob('*.h')]
  report=write_report('analysis/c-verification/eval_integral_physical.json',report,
   sorted(set(dependencies)),'tools/test_eval_integral_physical_c.py')
-print(json.dumps({k:v for k,v in report.items()if k not in ('mismatches','explicit_limits','input_hashes','verification')}))
+print(json.dumps({k:report[k] for k in ('status','optimization','cases','checks','matching_native_calls','explicit_native_returning_limits','original_calls','original_callbacks','original_polls','source_changes')}))

@@ -60,7 +60,7 @@ int fx_display_real_linear_result(fx_render *r, uint16_t address, fx_box *final_
     uint8_t selection = selection_byte & 15;
     uint8_t font = r->memory[0x811f];
     if ((font != 6 && font != 7 && font != 10) || r->memory[0x8127] || (r->memory[0x80ff] & 0x10)
-        || (mode != 1 && mode != 65 && mode != 129 && mode != 193 && mode != 136)
+        || (mode != 1 && mode != 65 && mode != 129 && mode != 193 && mode != 136 && !(mode == 0x45 && r->memory[0x80fa]>=1 && r->memory[0x80fa]<=2))
         || !fx_display_has_formula_view(r) || selection >= 14 || address < 0x8000 || address > 0xffec)
         return -1;
     int natural = r->memory[0x8106] && (mode & 0xc0);

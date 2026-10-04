@@ -55,6 +55,14 @@ fx_numeric_status fx_complex_cleanup(fx_complex *out, const fx_complex *in);
  * guard replaces only the real component, matching the original entry. */
 fx_numeric_status fx_complex_magnitude(fx_complex *out, const fx_complex *in,
                                        int exact_math);
+/* Optional mathematical square-root policy for a prepared data workspace.
+ * It executes at the actual root step, after ordered magnitude arithmetic.
+ * NULL preserves the ordinary value-only API. No CPU state is supplied. */
+typedef fx_numeric_status (*fx_complex_square_root)(fx_number *out,
+    const fx_number *input, int exact_math, void *userdata);
+fx_numeric_status fx_complex_magnitude_prepared(fx_complex *out,
+    const fx_complex *in, int exact_math, fx_complex_square_root root,
+    void *userdata);
 /* Native1CBFC permits a zero imaginary input only. Negative real inputs
  * produce a positive imaginary root; compact real surds are made decimal
  * before rooting. Admission errors preserve the input imaginary record. */

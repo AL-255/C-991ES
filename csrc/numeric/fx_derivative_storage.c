@@ -236,7 +236,7 @@ static int storage_valid(const fx_derivative_storage *storage) {
 }
 static int scalar_context(const fx_derivative_storage *storage) {
     unsigned mode=storage->ram[0x80f9];
-    return mode==0xc1 || mode==6 || mode==7;
+    return mode == 0xc1 || mode == 6 || mode == 7 || mode == 0x88;
 }
 static fx_number load_record(const derivative_context *context, unsigned address) {
     fx_number value;memcpy(value.bytes,context->storage->ram+address,10);return value;

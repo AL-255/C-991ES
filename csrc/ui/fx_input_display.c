@@ -83,7 +83,7 @@ int fx_input_draw_linear_expression(fx_platform *p)
 {
     if (!p || !p->ram || !p->rom) return -1;
     uint8_t mode=byte_at(p,0x80f9);
-    if (mode!=0xc1 && mode!=0xc4) return -1;
+    if (mode!=0xc1 && mode!=0xc4 && mode!=6 && mode!=7 && mode!=0x45) return -1;
     uint16_t source=word_at(p,0x812c);
     uint8_t origin=byte_at(p,0x8116),row=byte_at(p,0x8117);
     int first=first_visible(p,source,origin,byte_at(p,0x8114));

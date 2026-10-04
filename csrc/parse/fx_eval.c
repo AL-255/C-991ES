@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 #include "fx_eval.h"
 #include "fx_eval_transport.h"
+#include "fx_eval_surd_workspace.h"
 #include "fx_eval_rich.h"
 #include "../platform/fx_platform.h"
 #include "fx_tokens.h"
@@ -14,6 +15,7 @@
 #include "../numeric/fx_logbase.h"
 #include "../numeric/fx_integral.h"
 #include "../numeric/fx_integral_storage.h"
+#include "../numeric/fx_c4_integral_storage.h"
 #include "../numeric/fx_derivative.h"
 #include "../numeric/fx_derivative_storage.h"
 #include "../numeric/fx_surd_components.h"
@@ -26,6 +28,7 @@
 #include "../complex/fx_complex_angle.h"
 #include "../complex/fx_complex_round.h"
 #include "../stats/fx_stats_value.h"
+#include "../stats/fx_stats.h"
 #include <string.h>
 
 typedef struct {
@@ -46,7 +49,7 @@ typedef struct {
     uint8_t base_radix;
     uint8_t calculus_mode, calculus_token, preflight_mode;
     uint8_t preflight_constant_error;
-    uint8_t terminal_operator;
+    uint8_t terminal_operator, table_continuation;
     fx_number secondary, prior_answer;
     fx_eval_status status;
     uint8_t unsupported;
@@ -367,7 +370,10 @@ static void binary(parser *p, fx_complex *left, const fx_complex *right, fx_bina
         else accept_operation(p, &output.real, status);
         if (p->status == FX_EVAL_OK) *left = output;
     } else {
-        fx_numeric_status status = fx_number_binary(&output.real, &left->real, &right->real, op);
+        fx_numeric_status status = p->storage && exact_math(p) ?
+            fx_eval_surd_workspace_binary(&output.real, p->storage->ram,
+                &left->real, &right->real, 0, 0, op) :
+            fx_number_binary(&output.real, &left->real, &right->real, op);
         accept_operation(p, &output.real, status);
         if (p->status == FX_EVAL_OK) *left = output;
     }
@@ -611,9 +617,44 @@ static int solve_suffix_admitted(const parser *p)
 
 static void primary_value(parser *p, fx_complex *out);
 
+/* Dynamic constant64 dispatches13620: population deviation of physical Y.
+ * TABLE keeps this statistical constant available even outside STAT mode. */
+static void table_population_y(parser *p, fx_complex *out)
+{
+    fx_number cells[255*3],sample;
+    if(!p->storage){unsupported(p,peek(p));return;}
+    const uint8_t *ram=p->storage->ram;
+    unsigned columns=ram[0x810e] && !(ram[0x8138]&128) ? 3u : 2u;
+    unsigned frequency=ram[0x8109]!=0,width=2u+frequency;
+    fx_stats_table table={cells,ram[0x80de],2,(uint8_t)frequency};
+    for(unsigned row=0;row<table.rows;row++){
+        fx_number_zero(&cells[width*row]);
+        memcpy(cells[width*row+1].bytes,ram+0x82ee + 10*(columns*row+1),10);
+        if(frequency)memcpy(cells[width*row+2].bytes,
+            ram+0x82ee + 10*(columns*row+(ram[0x80fa]==1 ? 1u : 2u)),10);
+        /*1CEC0/real arithmetic classify foreign A..E table headers as
+         * Math3. They do not become a ROM-addressable rich reference. */
+        unsigned header=cells[width*row+1].bytes[0]>>4;
+        if(header>=10 && header<=14){fx_number_error(&out->real,3);p->status=FX_EVAL_MATH;return;}
+        if(frequency){
+            header=cells[width*row+2].bytes[0]>>4;
+            if(header>=10 && header<=14){fx_number_error(&out->real,3);p->status=FX_EVAL_MATH;return;}
+        }
+    }
+    int status=fx_stats_deviations(&out->real,&sample,&table,1);
+    if(status<0){unsupported(p,peek(p));return;}
+    if(out->real.bytes[0]>=0xf0)p->status=FX_EVAL_MATH;
+}
+
 static void primary(parser *p, fx_complex *out)
 {
     uint8_t token = peek(p);
+    /* Native TABLE continuation rejects calculus and coordinate prefixes
+     * before argument admission (16B44/16B54). */
+    if (p->table_continuation && (token == 0x5d ||
+        (token >= 0x69 && token <= 0x6d))) {
+        p->status = FX_EVAL_SYNTAX; return;
+    }
     /*16BA8 rejects a restricted RanInt prefix before its operator push. */
     if (token == 0xc2 && (p->environment.screen & 0x40)) {
         p->status = FX_EVAL_SYNTAX;
@@ -780,6 +821,17 @@ static void primary_value(parser *p, fx_complex *out)
         if (fx_number_scientific_constant(&out->real, decoded.value) != FX_NUMERIC_OK)
             unsupported(p, token);
         else ++p->position;
+    } else if (token == 0xac && p->options.calculation_context == 0x88) {
+        table_population_y(p,out);
+        if(p->status==FX_EVAL_OK)++p->position;
+    } else if (fx_decode_evaluator_token(token, p->options.calculation_context).kind == 6 &&
+               fx_decode_evaluator_token(token, p->options.calculation_context).value == 48 &&
+               p->storage && !p->storage->ram[0x80de]) {
+        /* Dynamic X population deviation13418 takes12DE6's empty-table
+         * admission before any sampling or persistent cache publication. */
+        fx_number_error(&out->real, 3);
+        p->status = FX_EVAL_MATH;
+        if (p->preflight_mode == 2) p->preflight_constant_error = 1;
     } else if (token == 0x8a) {
         stored_y_mean(p, out);
         if (p->status == FX_EVAL_OK) ++p->position;
@@ -938,7 +990,8 @@ static void primary_value(parser *p, fx_complex *out)
     } else if (token == 0 || token == ')' || token == ',') p->status = FX_EVAL_SYNTAX;
     else {
         fx_evaluator_token decoded = fx_decode_evaluator_token(token, p->options.calculation_context);
-        if (decoded.kind == 2 || decoded.kind == 3 || decoded.kind == 8 || decoded.kind == 15)
+        if (decoded.kind == 2 || decoded.kind == 3 || decoded.kind == 8 || decoded.kind == 15 ||
+            (p->table_continuation && decoded.kind == 10))
             p->status = FX_EVAL_SYNTAX;
         else unsupported(p, token);
     }
@@ -949,7 +1002,7 @@ static int implicit_start(uint8_t token, uint8_t context)
 {
     fx_evaluator_token decoded = fx_decode_evaluator_token(token, context);
     return token == 0x8a || token == 0x8c || variable_slot(token, context) >= 0 || token == '(' || token == 0x80 || token == 0x81 || token == 0x82 || function_prefix(token) ||
-           (decoded.kind == 6 && decoded.value < 40) || decoded.kind == 7 ||
+           (decoded.kind == 6 && (decoded.value < 40 || decoded.value == 48)) || decoded.kind == 7 ||
            (context == 2 && token >= 0x50 && token <= 0x53);
 }
 
@@ -1009,6 +1062,58 @@ static void conversion(parser *p, fx_complex *out, fx_evaluator_token decoded)
     if (p->status == FX_EVAL_MATH) --p->position;
 }
 
+static fx_numeric_status coordinate_square_root(fx_number *out,
+    const fx_number *input, int exact, void *userdata)
+{
+    fx_eval_storage *storage = userdata;
+    return fx_eval_surd_workspace_sqrt(out, storage->ram, input, exact);
+}
+
+/* Physical Rec preserves each exact multiplication's live SURD workspace.
+ * These writes occur while each coordinate is computed, before the next
+ * trigonometric value and multiplication are evaluated. */
+static fx_numeric_status coordinates_from_polar_storage(parser *p,
+    fx_complex *out, const fx_complex *in, fx_angle_unit unit)
+{
+    fx_complex source = *in, result;
+    fx_number sine, cosine, decimal;
+    fx_decimal radius;
+    fx_numeric_status status;
+    if (source.real.bytes[0] >= 0xf0 || source.imaginary.bytes[0] >= 0xf0) {
+        fx_number_error(&out->real, 3); fx_number_error(&out->imaginary, 3);
+        return FX_NUMERIC_OK;
+    }
+    source.real.bytes[0] &= (uint8_t)~0x40;
+    status = fx_number_kind(&source.real) == FX_NUMBER_SURD ?
+        fx_surd_components_convert_copy(p->storage->ram, &decimal, &source.real) :
+        fx_number_to_decimal(&decimal, &source.real);
+    if (status != FX_NUMERIC_OK) return status;
+    if (fx_decimal_decode(&radius, &decimal) != FX_NUMERIC_OK) return FX_NUMERIC_INVALID;
+    if (radius.sign < 0) {
+        fx_number_error(&out->real, 3); fx_number_error(&out->imaginary, 3);
+        return FX_NUMERIC_OK;
+    }
+    /* Trig's prepared SURD angle conversion is a separate physical seam.
+     * Ordinary angles can compose the already verified ordered products. */
+    if (fx_number_kind(&source.imaginary) == FX_NUMBER_SURD)
+        return FX_NUMERIC_UNIMPLEMENTED;
+    status = fx_trig_evaluate(&sine, &source.imaginary, FX_SINE, unit, exact_math(p), 0);
+    if (status == FX_NUMERIC_OK)
+        status = fx_eval_surd_workspace_binary(&result.imaginary, p->storage->ram,
+            &sine, &source.real, 0, 0, FX_MULTIPLY);
+    if (status == FX_NUMERIC_OK)
+        status = fx_trig_evaluate(&cosine, &source.imaginary, FX_COSINE, unit, exact_math(p), 0);
+    if (status == FX_NUMERIC_OK)
+        status = fx_eval_surd_workspace_binary(&result.real, p->storage->ram,
+            &source.real, &cosine, 0, 0, FX_MULTIPLY);
+    if (status != FX_NUMERIC_OK) return status;
+    if (result.real.bytes[0] >= 0xf0 || result.imaginary.bytes[0] >= 0xf0) {
+        fx_number_error(&result.real, 3); fx_number_error(&result.imaginary, 3);
+    }
+    *out = result;
+    return FX_NUMERIC_OK;
+}
+
 static void coordinates(parser *p, fx_complex *out, uint8_t token)
 {
     fx_complex second, operands, converted, active;
@@ -1041,6 +1146,9 @@ static void coordinates(parser *p, fx_complex *out, uint8_t token)
         p->status = FX_EVAL_SYNTAX;
         return;
     }
+    /* The closing token was read by the delimiter reduction before16168
+     * publishes X/Y. Its byte may belong to those physical destinations. */
+    int closed = peek(p) == ')';
     if (p->preflight_mode == 1) fx_complex_zero(out);
     else {
         if (!real_only_admitted(p, &second) || !real_only_admitted(p, out)) {
@@ -1053,8 +1161,12 @@ static void coordinates(parser *p, fx_complex *out, uint8_t token)
         operands.imaginary = second.real;
         fx_angle_unit unit = (fx_angle_unit)(p->options.angle_unit - 4);
         fx_numeric_status status = token == 0x6c ?
-            fx_complex_to_polar(&converted, &operands, unit, exact_math(p)) :
-            fx_complex_from_polar(&converted, &operands, unit, exact_math(p));
+            (p->storage ? fx_complex_to_polar_prepared(&converted, &operands,
+                unit, exact_math(p), coordinate_square_root, p->storage) :
+                fx_complex_to_polar(&converted, &operands, unit, exact_math(p))) :
+            (p->storage && fx_number_kind(&operands.imaginary) != FX_NUMBER_SURD ?
+                coordinates_from_polar_storage(p, &converted, &operands, unit) :
+                          fx_complex_from_polar(&converted, &operands, unit, exact_math(p)));
         if (status != FX_NUMERIC_OK) { unsupported(p, token); return; }
         uint8_t native_status = 0;
         status = fx_complex_firmware_status(&native_status,
@@ -1064,11 +1176,29 @@ static void coordinates(parser *p, fx_complex *out, uint8_t token)
         if (native_status) { p->status = (fx_eval_status)native_status; return; }
         /*16168 stores raw coordinates before16562 cleanup or later syntax
          * validation. COMP leaves the imaginary bank records untouched. */
-        p->variables->values[FX_VARIABLE_X][0] = converted.real;
-        p->variables->values[FX_VARIABLE_Y][0] = converted.imaginary;
-        if (p->options.calculation_context == 0xc4) {
-            fx_number_zero(&p->variables->values[FX_VARIABLE_X][1]);
-            fx_number_zero(&p->variables->values[FX_VARIABLE_Y][1]);
+        const fx_number *coordinates[] = {&converted.real, &converted.imaginary};
+        for (unsigned index = 0; index < 2; ++index) {
+            unsigned slot = FX_VARIABLE_X + index;
+            p->variables->values[slot][0] = *coordinates[index];
+            if (p->storage)
+                memcpy(p->storage->ram + 0x8226 + 10 * slot,
+                       coordinates[index]->bytes, 10);
+            if (p->options.calculation_context == 0xc4) {
+                fx_number_zero(&p->variables->values[slot][1]);
+                if (p->storage)
+                    memcpy(p->storage->ram + 0x8408 + 10 * slot,
+                           p->variables->values[slot][1].bytes, 10);
+            }
+        }
+        /* A physical source is zero-terminated live RAM. Publication can
+         * replace its former terminator; retain the bounded RAM capacity
+         * when the supplied source interval overlaps the written banks. */
+        if (p->transport) {
+            size_t begin = p->transport->input_address, end = begin + p->length;
+            if ((begin < 0x828a && end > 0x8276) ||
+                (p->options.calculation_context == 0xc4 &&
+                 begin < 0x846c && end > 0x8458))
+                p->length = 65536u - begin;
         }
         p->secondary = converted.imaginary;
         fx_complex_zero(&active);
@@ -1076,7 +1206,7 @@ static void coordinates(parser *p, fx_complex *out, uint8_t token)
         accept_real_result(p, out, &active, FX_NUMERIC_OK);
         if (p->status != FX_EVAL_OK) return;
     }
-    if (peek(p) == ')') ++p->position;
+    if (closed) ++p->position;
     else if (!omitted_closing(p)) p->status = FX_EVAL_SYNTAX;
 }
 
@@ -1335,7 +1465,7 @@ static void expression(parser *p, fx_complex *out, unsigned minimum)
             precedence = 10; op = token == '+' ? FX_ADD : FX_SUBTRACT;
         } else if (token == 0x4e || token == 0x4f || token == 0x5f) {
             precedence = 20; op = token == 0x4e ? FX_MULTIPLY : FX_DIVIDE;
-        } else if (p->options.calculation_context == 2 && token == 0x2f) {
+        } else if ((p->options.calculation_context == 0x88 || p->options.calculation_context == 2) && token == 0x2f) {
             precedence = 30; op = FX_MULTIPLY;
         } else if (token == 0x9e) {
             /*1673E..16754 gives operation47 rank6, above rank5 product. */
@@ -1514,6 +1644,7 @@ typedef struct {
     uint16_t *physical_cursor;
     uint16_t error_sink;
     uint8_t physical_integral;
+    fx_number sample_imaginary;
 } calculus_call;
 
 static int calculus_cancelled(void *userdata)
@@ -1618,6 +1749,16 @@ static void integral_publish_x(const fx_number *x, void *userdata)
     bank_from_storage(p);
 }
 
+static void integral_publish_x_c4(const fx_complex *x, void *userdata)
+{
+    calculus_call *call = userdata;
+    parser *p = call->parent;
+    memcpy(p->storage->ram + 0x8276, &x->real, 10);
+    memcpy(p->storage->ram + 0x8458, &x->imaginary, 10);
+    variables_from_storage(p);
+    bank_from_storage(p);
+}
+
 static void integral_callback_context(uint16_t sink, uint16_t *cursor, void *userdata)
 {
     calculus_call *call = userdata;
@@ -1681,6 +1822,7 @@ static fx_numeric_status calculus_evaluate(fx_number *out, const fx_number *x, v
             else unsupported(&callback, callback.calculus_token);
         }
     }
+    call->sample_imaginary = value.imaginary;
     if (callback.status < 0) {
         call->host_failure = callback.status;
         call->unsupported_token = callback.unsupported;
@@ -1700,6 +1842,14 @@ static fx_numeric_status calculus_evaluate(fx_number *out, const fx_number *x, v
     return FX_NUMERIC_OK;
 }
 
+static fx_numeric_status calculus_evaluate_c4(fx_complex *out, const fx_complex *x, void *userdata)
+{
+    calculus_call *call = userdata;
+    fx_numeric_status status = calculus_evaluate(&out->real, &x->real, userdata);
+    out->imaginary = call->sample_imaginary;
+    return status;
+}
+
 static void calculus(parser *p, fx_complex *out, uint8_t token)
 {
     /*16B44/16BA8 reject every calculus prefix in equation screens before
@@ -1716,6 +1866,9 @@ static void calculus(parser *p, fx_complex *out, uint8_t token)
     int upper_comma_consumed = 0;
     int physical_derivative = p->storage && token == 0x6b;
     int physical_integral = p->storage && p->transport && token == 0x6a;
+    int paired_integral = physical_integral && p->options.calculation_context == 0xc4;
+    fx_complex paired_result;
+    fx_complex_zero(&paired_result);
     call.physical_integral = (uint8_t)physical_integral;
     call.error_sink = p->transport ? p->transport->output_address : 0;
     fx_integral_storage integral_storage = {
@@ -1732,7 +1885,9 @@ static void calculus(parser *p, fx_complex *out, uint8_t token)
     unsigned derivative_native_status = 0;
     if (p->calculus_mode) { p->status = FX_EVAL_SYNTAX; return; }
     if (p->options.calculation_context != 0xc1 &&
-        !(p->storage && (p->options.calculation_context == 6 || p->options.calculation_context == 7))) {
+        !(p->storage && (p->options.calculation_context == 6 || p->options.calculation_context == 7 ||
+            (p->options.calculation_context == 0x88 && !p->table_continuation))) &&
+        !paired_integral) {
         unsupported(p, token); return;
     }
     fx_complex_zero(&saved_x);
@@ -1770,7 +1925,9 @@ static void calculus(parser *p, fx_complex *out, uint8_t token)
         ++p->position;
         lower_comma_consumed = 1;
         variables_to_storage(p);
-        fx_numeric_status prepared = fx_integral_storage_lower(&integral_storage, &lower.real);
+        fx_numeric_status prepared = paired_integral ?
+            fx_c4_integral_lower(&integral_storage, &lower) :
+            fx_integral_storage_lower(&integral_storage, &lower.real);
         variables_from_storage(p);
         bank_from_storage(p);
         if (prepared != FX_NUMERIC_OK) { unsupported(p, token); goto restore; }
@@ -1790,7 +1947,9 @@ static void calculus(parser *p, fx_complex *out, uint8_t token)
         if (peek(p) == ')') { ++p->position; closing_consumed = 1; }
         else if (peek(p) == ',') { ++p->position; upper_comma_consumed = 1; }
         variables_to_storage(p);
-        fx_numeric_status prepared = fx_integral_storage_upper(&integral_storage, &upper.real);
+        fx_numeric_status prepared = paired_integral ?
+            fx_c4_integral_upper(&integral_storage, &upper) :
+            fx_integral_storage_upper(&integral_storage, &upper.real);
         variables_from_storage(p);
         bank_from_storage(p);
         if (prepared != FX_NUMERIC_OK) { unsupported(p, token); goto restore; }
@@ -1823,8 +1982,11 @@ static void calculus(parser *p, fx_complex *out, uint8_t token)
         if (has_tolerance && peek(p) == ')') closing_consumed = 1;
         integral_cursor = (uint16_t)(p->transport->input_address + p->position +
             (has_tolerance && peek(p) == ')' ? 1u : 0u));
-        fx_numeric_status prepared = fx_integral_storage_tolerance(&integral_storage,
-            has_tolerance ? &tolerance.real : NULL, integral_cursor, &integral_native_status);
+        fx_numeric_status prepared = paired_integral ?
+            fx_c4_integral_tolerance(&integral_storage, has_tolerance ? &tolerance : NULL,
+                integral_cursor, &integral_native_status) :
+            fx_integral_storage_tolerance(&integral_storage,
+                has_tolerance ? &tolerance.real : NULL, integral_cursor, &integral_native_status);
         variables_from_storage(p);
         bank_from_storage(p);
         if (prepared != FX_NUMERIC_OK) { unsupported(p, token); goto restore; }
@@ -1832,7 +1994,13 @@ static void calculus(parser *p, fx_complex *out, uint8_t token)
             fx_number_error(&result, integral_native_status);
             status = FX_NUMERIC_OK;
         } else {
-            status = fx_number_integral_storage(&result, &integral_storage,
+            if (paired_integral) {
+                status = fx_c4_integral_run(&paired_result, &integral_storage,
+                    calculus_evaluate_c4, &call, integral_publish_x_c4,
+                    p->transport->output_address, integral_callback_context,
+                    &control, &integral_native_status, &integral_cursor);
+                result = paired_result.real;
+            } else status = fx_number_integral_storage(&result, &integral_storage,
                 calculus_evaluate, &call, integral_publish_x,
                 p->transport->output_address, integral_callback_context,
                 &control, &integral_native_status, &integral_cursor);
@@ -1876,6 +2044,7 @@ static void calculus(parser *p, fx_complex *out, uint8_t token)
         goto restore;
     }
     fx_complex_zero(out);
+    if (paired_integral) *out = paired_result;
     out->real = result;
     if (fx_number_kind(&result) == FX_NUMBER_ERROR) {
         p->status = (fx_eval_status)(result.bytes[0] & 15);
@@ -1895,6 +2064,7 @@ static void calculus(parser *p, fx_complex *out, uint8_t token)
     }
 restore:
     p->variables->values[FX_VARIABLE_X][0] = saved_x.real;
+    if (paired_integral) p->variables->values[FX_VARIABLE_X][1] = saved_x.imaginary;
     p->options.math_output = exact;
     p->calculus_mode = 0;
     p->calculus_token = 0;
@@ -1928,6 +2098,9 @@ static void store_result(parser *p, fx_complex *value)
     /*170A0 requires the store token to be followed by the input terminator.
      * No variable write occurs until syntax and scalar admission succeed. */
     if (peek(p) && peek(p) != ':') { p->status = FX_EVAL_SYNTAX; return; }
+    /*170B8..170C0 validates a continued store terminator, then returns
+     * at its token without committing the ordinary variable transaction. */
+    if (p->table_continuation) { p->position = position; return; }
     if (fx_number_kind(&value->real) == FX_NUMBER_ERROR ||
         fx_number_kind(&value->real) == FX_NUMBER_UNSUPPORTED) {
         p->position = position; p->status = FX_EVAL_SYNTAX; return;
@@ -1956,7 +2129,7 @@ static fx_eval_status evaluate_transported(const uint8_t *input, size_t length,
                            const fx_number *initial_secondary,
                            const fx_number *prior_answer, fx_eval_storage *storage,
                            fx_number *random_seed, fx_eval_effects *effects, fx_eval_result *result,
-                           const fx_eval_transport *transport)
+                           const fx_eval_transport *transport, uint16_t *named_cursor, uint8_t table_continuation)
 {
     parser p;
     fx_complex value;
@@ -1975,6 +2148,7 @@ static fx_eval_status evaluate_transported(const uint8_t *input, size_t length,
     if (!input || !length) { fx_number_error(&result->value[0], 2); return FX_EVAL_SYNTAX; }
     memset(&p, 0, sizeof p);
     p.terminal_operator = 0xff;
+    p.table_continuation = table_continuation == 1;
     p.input = input; p.length = length;
     if (!variables) { fx_eval_variables_clear(&local_variables); variables = &local_variables; }
     p.variables = variables;
@@ -1986,17 +2160,25 @@ static fx_eval_status evaluate_transported(const uint8_t *input, size_t length,
     p.base_radix = selected_base;
     p.options = options ? *options : fx_eval_default_options();
     p.environment = environment ? *environment : fx_eval_default_environment();
+    if (p.table_continuation) {
+        p.environment.restricted_state |= 1;
+        if (storage) storage->ram[0x8124] |= 1;
+    }
     if (prior_answer) p.prior_answer = *prior_answer;
     else if (storage) memcpy(p.prior_answer.bytes, storage->ram + 0x828a, 10);
     if (storage) {
         if (state && state->variables) variables_to_storage(&p);
         else variables_from_storage(&p);
-        storage->ram[0x8125] = p.options.calculation_context == 6 ? 0x18 : 0;
+        if (!p.table_continuation)
+            storage->ram[0x8125] = p.options.calculation_context == 6 ? 0x18 : 0;
         bank_from_storage(&p);
     }
     if (p.options.calculation_context != 0xc1 && p.options.calculation_context != 0xc4 &&
         p.options.calculation_context != 2 &&
-        !(storage && (p.options.calculation_context == 6 || p.options.calculation_context == 7)))
+        !(storage && (p.options.calculation_context == 6 || p.options.calculation_context == 7 ||
+          (p.options.calculation_context == 0x45 && p.environment.screen == 21 &&
+           storage->ram[0x80fa]>=1 && storage->ram[0x80fa]<=2))) &&
+        !(table_continuation && p.options.calculation_context == 0x88))
         p.status = FX_EVAL_UNIMPLEMENTED;
     else if (p.options.calculation_context == 2 && selected_base != FX_BASE_BIN &&
              selected_base != FX_BASE_OCT && selected_base != FX_BASE_DEC && selected_base != FX_BASE_HEX)
@@ -2008,27 +2190,40 @@ static fx_eval_status evaluate_transported(const uint8_t *input, size_t length,
         else suffix = 1;
     }
     if (p.status == FX_EVAL_OK && !suffix) store_result(&p, &value);
-    if (p.status == FX_EVAL_OK && !suffix && peek(&p) != 0 &&
+    if (p.status == FX_EVAL_OK && !suffix &&
+        !(p.table_continuation && store_token(&p)) && peek(&p) != 0 &&
         (peek(&p) != ':' || (p.environment.screen & 0x40))) {
         fx_evaluator_token token = fx_decode_evaluator_token(peek(&p), p.options.calculation_context);
-        if (token.kind == 10 || peek(&p) == ')' || peek(&p) == ',' || peek(&p) == '.' ||
+        if (token.kind == 1 && token.value >= 99 && token.value <= 102 &&
+            p.options.calculation_context != 2) {
+            /* BASE literal prefixes are rejected by the ordinary grammar's
+             * post-read admission; they do not require a numerical leaf. */
+            ++p.position;
+            p.status = FX_EVAL_SYNTAX;
+        } else if (token.kind == 10 || peek(&p) == ')' || peek(&p) == ',' || peek(&p) == '.' ||
             (peek(&p) >= '0' && peek(&p) <= '9')) p.status = FX_EVAL_SYNTAX;
         else unsupported(&p, peek(&p));
     }
+    int finish_rejected = 0;
     if (p.status == FX_EVAL_OK &&
         (value.real.bytes[0] >= 0x90 ||
          (value.real.bytes[0] >= 0x60 && value.real.bytes[0] < 0x80))) {
         /*17258 tests the full header byte. Rich/error results require the
          * ordinary screen and retain the evaluator's success channel while
          *1415A independently cleans or rejects the reference. */
-        if (p.environment.screen != 1) p.status = FX_EVAL_SYNTAX;
+        if (p.environment.screen != 1) { p.status = FX_EVAL_SYNTAX; finish_rejected = 1; }
         else continuous_finish(&p, &value.real);
     }
     result->value[0] = value.real;
     result->value[1] = value.imaginary;
     result->consumed = p.position;
-    if (p.status == FX_EVAL_OK && p.position < p.length) ++result->consumed;
-    if (p.status == FX_EVAL_OK) {
+    /*171E0 leaves a successful continuation on its delimiter; error
+     * dispatch instead returns the post-read offending-token position. */
+    if (p.table_continuation) {
+        if (!finish_rejected && p.status != FX_EVAL_OK && p.status > 0 && p.position < p.length)
+            ++result->consumed;
+    } else if (p.status == FX_EVAL_OK && p.position < p.length) ++result->consumed;
+    if (p.status == FX_EVAL_OK && !p.table_continuation) {
         if (p.terminal_operator == 0x24) p.status = FX_EVAL_POLAR_PAIR;
         else if (p.terminal_operator == 0x25) p.status = FX_EVAL_RECTANGULAR_PAIR;
         else if (p.terminal_operator == 0x74) p.status = FX_EVAL_QUOTIENT_PAIR;
@@ -2057,7 +2252,7 @@ static fx_eval_status evaluate_transported(const uint8_t *input, size_t length,
         result->value[1] = *initial_secondary;
     if (transport && p.status >= 0) {
         physical_record_store(storage, transport->output_address, &result->value[0]);
-        if (p.options.calculation_context == 0xc4 ||
+        if ((p.options.calculation_context == 0xc4 && p.status == FX_EVAL_OK) ||
             (p.status == FX_EVAL_OK && (p.environment.screen & 0x40)) ||
             p.status == FX_EVAL_POLAR_PAIR || p.status == FX_EVAL_RECTANGULAR_PAIR ||
             p.status == FX_EVAL_QUOTIENT_PAIR)
@@ -2066,8 +2261,11 @@ static fx_eval_status evaluate_transported(const uint8_t *input, size_t length,
         else memcpy(result->value[1].bytes,
                     storage->ram + transport->output_address + 10, 10);
         uint16_t cursor = (uint16_t)(transport->input_address + result->consumed);
-        storage->ram[transport->cursor_address] = (uint8_t)cursor;
-        storage->ram[transport->cursor_address + 1u] = (uint8_t)(cursor >> 8);
+        if (named_cursor) *named_cursor = cursor;
+        else {
+            storage->ram[transport->cursor_address] = (uint8_t)cursor;
+            storage->ram[transport->cursor_address + 1u] = (uint8_t)(cursor >> 8);
+        }
     }
     return p.status;
 }
@@ -2081,7 +2279,39 @@ static fx_eval_status evaluate(const uint8_t *input, size_t length,
 {
     return evaluate_transported(input, length, options, environment, state, control,
         selected_base, initial_secondary, prior_answer, storage, random_seed,
-        effects, result, NULL);
+        effects, result, NULL, NULL, 0);
+}
+
+/* Draft primary-only TABLE callback. Raw255 is its success channel. Values
+ * on Syntax/Argument errors are outside TABLE's consumed-output contract. */
+int fx_evaluate_table_expression(const uint8_t *input, size_t length,
+    fx_eval_storage *storage, fx_eval_effects *effects, fx_eval_result *result)
+{
+    if (!storage || !storage->ram || storage->ram_size != 65536u ||
+        storage->ram[0x80f9] != 0x88) return FX_EVAL_UNIMPLEMENTED;
+    fx_eval_options options = {storage->ram[0x80f9],storage->ram[0x8106],storage->ram[0x8105]};
+    fx_eval_environment globals = {storage->ram[0x80fc],storage->ram[0x80f5],
+        storage->ram[0x810c],storage->ram[0x8124],storage->ram[0x8102],
+        storage->ram[0x8103],storage->ram[0x80fa]};
+    fx_eval_status status = evaluate_transported(input,length,&options,&globals,
+        NULL,NULL,globals.selected_base,NULL,NULL,storage,NULL,effects,result,NULL,NULL,1);
+    return status == FX_EVAL_OK ? 255 : status;
+}
+
+/* Actual88 ordinary parameter entry; continued completion is deliberately
+ * absent. The caller supplies its retained secondary and raw PreAns source. */
+int fx_evaluate_table_parameter(const uint8_t *input, size_t length,
+    fx_eval_storage *storage, const fx_number *retained_secondary,
+    const fx_number *prior_answer, fx_eval_result *result)
+{
+    if (!storage || !storage->ram || storage->ram_size != 65536u ||
+        storage->ram[0x80f9] != 0x88) return FX_EVAL_UNIMPLEMENTED;
+    fx_eval_options options = {storage->ram[0x80f9],storage->ram[0x8106],storage->ram[0x8105]};
+    fx_eval_environment globals = {storage->ram[0x80fc],storage->ram[0x80f5],
+        storage->ram[0x810c],storage->ram[0x8124],storage->ram[0x8102],
+        storage->ram[0x8103],storage->ram[0x80fa]};
+    return evaluate_transported(input,length,&options,&globals,NULL,NULL,
+        globals.selected_base,retained_secondary,prior_answer,storage,NULL,NULL,result,NULL,NULL,2);
 }
 
 fx_eval_status fx_evaluate_with_state(const uint8_t *input, size_t length,
@@ -2213,16 +2443,18 @@ fx_eval_status fx_evaluate_prepared_random(const uint8_t *input, size_t length,
                     selected_base, initial_secondary, prior_answer, NULL, seed, effects, result);
 }
 
-fx_eval_status fx_evaluate_prepared_physical(size_t input_length,
+static fx_eval_status evaluate_from_physical_source(size_t input_length,
     const fx_eval_options *options, const fx_eval_environment *environment,
     const fx_eval_state *state, const fx_calculus_control *control,
     const fx_number *prior_answer, fx_eval_storage *storage,
-    const fx_eval_transport *transport, fx_eval_effects *effects, fx_eval_result *result)
+    const fx_eval_transport *transport, uint16_t *named_cursor, uint8_t table_mode,
+    fx_eval_effects *effects, fx_eval_result *result)
 {
     if (!storage || !storage->ram || storage->ram_size != 65536u || !transport ||
         !result || !input_length || transport->input_address < 0x8000u ||
         input_length > 65536u - transport->input_address ||
-        transport->cursor_address < 0x8000u || transport->cursor_address > 65534u ||
+        (!named_cursor && (transport->cursor_address < 0x8000u ||
+                           transport->cursor_address > 65534u)) ||
         transport->output_address < 0x8000u || transport->output_address > 65516u)
         return FX_EVAL_UNIMPLEMENTED;
     fx_eval_options prepared = options ? *options : fx_eval_default_options();
@@ -2243,5 +2475,46 @@ fx_eval_status fx_evaluate_prepared_physical(size_t input_length,
     memcpy(secondary.bytes, storage->ram + transport->output_address + 10, 10);
     return evaluate_transported(storage->ram + transport->input_address, input_length,
         &prepared, &globals, state, control, globals.selected_base, &secondary,
-        prior_answer, storage, NULL, effects, result, transport);
+        prior_answer, storage, NULL, effects, result, transport, named_cursor, table_mode);
+}
+
+fx_eval_status fx_evaluate_prepared_physical(size_t input_length,
+    const fx_eval_options *options, const fx_eval_environment *environment,
+    const fx_eval_state *state, const fx_calculus_control *control,
+    const fx_number *prior_answer, fx_eval_storage *storage,
+    const fx_eval_transport *transport, fx_eval_effects *effects, fx_eval_result *result)
+{
+    return evaluate_from_physical_source(input_length, options, environment,
+        state, control, prior_answer, storage, transport, NULL, 0, effects, result);
+}
+
+fx_eval_status fx_evaluate_prepared_source(size_t input_length,
+    const fx_eval_options *options, const fx_eval_environment *environment,
+    const fx_eval_state *state, const fx_calculus_control *control,
+    const fx_number *prior_answer, fx_eval_storage *storage,
+    const fx_eval_source *source, uint16_t *returned_source,
+    fx_eval_effects *effects, fx_eval_result *result)
+{
+    if (!source || !returned_source) return FX_EVAL_UNIMPLEMENTED;
+    fx_eval_transport transport = {source->input_address, 0,
+        source->output_address, source->before_sample, source->userdata};
+    return evaluate_from_physical_source(input_length, options, environment,
+        state, control, prior_answer, storage, &transport, returned_source, 0,
+        effects, result);
+}
+
+/* Ordinary171F4 in actual TABLE mode88, with a named caller-owned source.
+ * Physical output and integral sample sinks use the common source transport. */
+int fx_evaluate_table_parameter_source(size_t input_length,
+    fx_eval_storage *storage, const fx_eval_source *source,
+    uint16_t *returned_source, const fx_number *prior_answer,
+    fx_eval_result *result)
+{
+    if (!storage || !storage->ram || storage->ram_size != 65536u ||
+        storage->ram[0x80f9] != 0x88 || !source || !returned_source)
+        return FX_EVAL_UNIMPLEMENTED;
+    fx_eval_transport transport = {source->input_address, 0,
+        source->output_address, source->before_sample, source->userdata};
+    return evaluate_from_physical_source(input_length,NULL,NULL,NULL,NULL,
+        prior_answer,storage,&transport,returned_source,2,NULL,result);
 }

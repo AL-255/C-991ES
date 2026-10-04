@@ -1,5 +1,6 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 #include "fx_ui_controller.h"
+#include "fx_equation_controller.h"
 #include "fx_input_display.h"
 #include "fx_input_recover.h"
 #include "fx_editor.h"
@@ -9,6 +10,7 @@
 #include "../render/fx_render.h"
 #include "../render/fx_result_complex.h"
 #include "../render/fx_result_pair.h"
+#include "../render/fx_result_linear.h"
 #include "../render/fx_result_special.h"
 #include "../parse/fx_tokens.h"
 #include "../complex/fx_complex.h"
@@ -116,7 +118,7 @@ static int prepare_edit(fx_platform *p)
     uint8_t token=read_byte(p,0x80f5);
     if (fx_editor_has_natural_input(p) && (token==0xae || token==0x9f)) token=0;
     uint8_t kind=fx_decode_evaluator_token(token,read_byte(p,0x80f9)).kind;
-    if ((kind==2 || kind==3 || kind==8) && insert(p,0x8b,0)<0) return -1;
+    if (!(read_byte(p,0x80f9)==0x45 && read_byte(p,0x80fc)==21) && (kind==2 || kind==3 || kind==8) && insert(p,0x8b,0)<0) return -1;
     return 0;
 }
 
@@ -143,14 +145,24 @@ static fx_ui_status admit_complex_result(fx_platform *p,fx_ui_controller *s)
 
 static fx_ui_status redraw(fx_platform *p,fx_ui_controller *s,int expression)
 {
-    if (s->context.special_view || read_byte(p,0x80fc)!=1)
+    uint8_t screen=read_byte(p,0x80fc);
+    int bank_screen=(s->context.calculation_mode==6 || s->context.calculation_mode==7)
+        && (screen==19 || screen==20);
+    if (s->context.special_view || (screen!=1 && !bank_screen && !(s->context.calculation_mode==0x45 && screen==21)))
         return request(s,FX_UI_REQUEST_SPECIAL_CONTEXT);
     fx_render r={p->rom,p->rom_size,p->ram};
-    if (expression) {
+    if (expression && (!bank_screen || read_byte(p,0x80fe)==1)) {
         int edit=read_byte(p,0x80fe)==1;
         write_byte(p,0x8126,(uint8_t)edit);
         if (!edit) write_byte(p,0x8114,0);
-        if (fx_editor_has_natural_input(p)) {
+        if (s->context.calculation_mode==0x45 && read_byte(p,0x80fc)==1) {
+            uint8_t index=read_byte(p,0x8113);
+            if(!index || index>3 || read_byte(p,0x80fa)>2)return FX_UI_UNIMPLEMENTED;
+            fx_clear_framebuffer(&r);
+            uint16_t caption=(uint16_t)(0x1a98+3u*(index-1u));
+            fx_draw_text(&r,0,1,&caption);
+            if(!read_byte(p,0x8106))write_byte(p,0x8126,1);
+        } else if (fx_editor_has_natural_input(p)) {
             uint8_t modifiers=read_byte(p,0x80f8);
             if (modifiers&128) write_byte(p,0x80f8,(uint8_t)((modifiers+128)&~8u));
             if (!fx_render_viewport(&r,NULL)) return FX_UI_UNIMPLEMENTED;
@@ -163,7 +175,9 @@ static fx_ui_status redraw(fx_platform *p,fx_ui_controller *s,int expression)
          * Its temporary result never replaces the persistent result pair. */
         fx_ui_status admitted=admit_complex_result(p,s);
         if (admitted!=FX_UI_COMPLETE) return admitted;
-        int displayed=read_byte(p,0x80ff)&16 ? fx_display_pair_result(&r,0x8140,NULL) :
+        int displayed=bank_screen ? fx_display_special_real_result(&r,0x8140,NULL) :
+            s->context.calculation_mode==0x45 && !(read_byte(p,0x80ff)&16) ?
+            (read_byte(p,0x8106) ? fx_display_real_math_result(&r,0x8140,NULL) : fx_display_real_linear_result(&r,0x8140,NULL)) : read_byte(p,0x80ff)&16 ? fx_display_pair_result(&r,0x8140,NULL) :
                                              fx_display_complex_result(&r,0x8140,NULL);
         if (displayed!=1) return FX_UI_UNIMPLEMENTED;
         if (fx_result_format_kind(p)==15 && prime_workspace(p))
@@ -480,8 +494,11 @@ fx_ui_status fx_ui_controller_tick(fx_platform *p,fx_ui_controller *s)
         return finish_action(p,s,s->input.handler_action);
     }
     if (s->phase!=UI_READY) return FX_UI_INVALID;
-    if ((s->context.calculation_mode!=0xc1 && s->context.calculation_mode!=0xc4) ||
-        (read_byte(p,0x80fc)!=1 && !(read_byte(p,0x80fc)==0xa0 &&
+    if ((s->context.calculation_mode!=0xc1 && s->context.calculation_mode!=0xc4 && s->context.calculation_mode!=6 &&
+         s->context.calculation_mode!=7 && (s->context.calculation_mode!=0x45 || read_byte(p,0x80fa)<1 || read_byte(p,0x80fa)>2)) ||
+        (read_byte(p,0x80fc)!=1 && !((s->context.calculation_mode==6 ||
+          s->context.calculation_mode==7) && (read_byte(p,0x80fc)==19 ||
+          read_byte(p,0x80fc)==20)) && !(s->context.calculation_mode==0x45 && read_byte(p,0x80fc)==21) && !(read_byte(p,0x80fc)==0xa0 &&
           read_byte(p,0x80fd)!=2)) || s->context.special_view)
         return request(s,FX_UI_REQUEST_SPECIAL_CONTEXT);
     if (s->refresh_only) return redraw(p,s,1);

@@ -158,7 +158,8 @@ int fx_display_complex_result(fx_render *r, uint16_t address, fx_box *box)
 {
     uint8_t mode=r->memory[0x80f9], selection=r->memory[0x8100]&15;
     uint8_t font=r->memory[0x811f];
-    if ((mode!=1 && mode!=65 && mode!=129 && mode!=193 && mode!=196 && mode!=136)
+    if ((mode!=1 && mode!=65 && mode!=129 && mode!=193 && mode!=196 && mode!=136
+        && mode!=6 && mode!=7)
         || (font!=6 && font!=7 && font!=10) || (r->memory[0x80ff]&0x10)
         || r->memory[0x8127] || (!fx_display_has_formula_view(r)
             && !(r->memory[0x80fc]==0xa0 && r->memory[0x80fd]==2))) return -1;

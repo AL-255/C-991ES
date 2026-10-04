@@ -11,6 +11,11 @@ fx_numeric_status fx_complex_argument(fx_complex *out, const fx_complex *in,
  * conversion errors18352 write F3 independently into both slots. */
 fx_numeric_status fx_complex_to_polar(fx_complex *out, const fx_complex *in,
                                       fx_angle_unit unit, int exact_math);
+/* Additive prepared root policy; all coordinate error/sign/order behavior
+ * is shared with the ordinary wrapper above. */
+fx_numeric_status fx_complex_to_polar_prepared(fx_complex *out,
+    const fx_complex *in, fx_angle_unit unit, int exact_math,
+    fx_complex_square_root root, void *userdata);
 fx_numeric_status fx_complex_from_polar(fx_complex *out, const fx_complex *in,
                                         fx_angle_unit unit, int exact_math);
 #endif

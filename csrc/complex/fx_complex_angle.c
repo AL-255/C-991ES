@@ -82,14 +82,15 @@ fx_numeric_status fx_complex_argument(fx_complex *out, const fx_complex *in,
     return status;
 }
 
-fx_numeric_status fx_complex_to_polar(fx_complex *out, const fx_complex *in,
-                                      fx_angle_unit unit, int exact_math)
+fx_numeric_status fx_complex_to_polar_prepared(fx_complex *out,
+    const fx_complex *in, fx_angle_unit unit, int exact_math,
+    fx_complex_square_root root, void *userdata)
 {
     fx_complex radius, result;
     fx_numeric_status status;
     if (!out || !in || unit < FX_DEGREES || unit > FX_GRADIANS ||
         (exact_math != 0 && exact_math != 1)) return FX_NUMERIC_INVALID;
-    status = fx_complex_magnitude(&radius, in, exact_math);
+    status = fx_complex_magnitude_prepared(&radius, in, exact_math, root, userdata);
     if (status == FX_NUMERIC_OK)
         status = argument_scalar(&result.imaginary, &in->real, &in->imaginary, unit);
     if (status != FX_NUMERIC_OK) return status;
@@ -103,6 +104,12 @@ fx_numeric_status fx_complex_to_polar(fx_complex *out, const fx_complex *in,
         in->real.bytes[0] >= 0xf0 || in->imaginary.bytes[0] >= 0xf0)
         coordinate_error(&result);
     *out = result; return FX_NUMERIC_OK;
+}
+
+fx_numeric_status fx_complex_to_polar(fx_complex *out, const fx_complex *in,
+                                      fx_angle_unit unit, int exact_math)
+{
+    return fx_complex_to_polar_prepared(out, in, unit, exact_math, NULL, NULL);
 }
 
 fx_numeric_status fx_complex_from_polar(fx_complex *out, const fx_complex *in,

@@ -23,4 +23,10 @@ fx_numeric_status fx_eval_surd_workspace_binary(fx_number *out,
     uint8_t storage_ram[65536], const fx_number *current, const fx_number *other,
     uint16_t physical_current, uint16_t physical_other, fx_binary_op operation);
 
+/* Ordered bounded exact square-root stages1C780. Initial expansion and
+ * numerator/denominator normalization are committed before result packing.
+ * Existing numeric kernels own numerical fallback and error records. */
+fx_numeric_status fx_eval_surd_workspace_sqrt(fx_number *out,
+    uint8_t storage_ram[65536], const fx_number *input, int exact_math);
+
 #endif

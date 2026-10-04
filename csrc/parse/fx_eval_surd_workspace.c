@@ -219,8 +219,8 @@ static unsigned classify(pool *p, unsigned input) {
         return 16;
     return 64;
 }
-static int expand(pool *p, unsigned input, unsigned out) {
-    fx_number n = read_number(p, input), parts[6]; fx_rational rational;
+static int expand_number(pool *p, const fx_number *number, unsigned out) {
+    fx_number n = *number, parts[6]; fx_rational rational;
     unsigned i, header = n.bytes[0] & 0xf0u; int64_t numerator;
     if (header == 0x80) {
         if (fx_surd_unpack(parts, &n) != FX_NUMERIC_OK) return 0;
@@ -239,6 +239,10 @@ static int expand(pool *p, unsigned input, unsigned out) {
         integer(p, out + 4, 1);
     } else return 0;
     empty_term(p, out); return 1;
+}
+static int expand(pool *p, unsigned input, unsigned out) {
+    fx_number number = read_number(p, input);
+    return expand_number(p, &number, out);
 }
 static fx_numeric_status fallback(pool *p, uint16_t physicalcurrent,
                                   fx_number *out, fx_binary_op op) {
@@ -364,4 +368,73 @@ fx_numeric_status fx_eval_surd_workspace_binary(fx_number *out,
                         operation == FX_SUBTRACT ? FX_ADD : operation);
     }
     return pack_pair(&p, out);
+}
+
+/*17A46 initializes the coefficient before factoring the supplied radicand.
+ * All factoring temporaries are private mathematical values; the committed
+ * coefficient/radicand pair belongs to the actual SURD component pool. */
+static int normalize_square_root(pool *p, unsigned input, unsigned output)
+{
+    fx_number original = read_number(p, input), residual;
+    int64_t raw;
+    uint64_t remaining, coefficient = 1;
+    integer(p, output, 1);
+    write_number(p, output + 1, &original);
+    if (fx_decimal_to_integer(&raw, &original) != FX_NUMERIC_OK || raw < 0)
+        return 0;
+    remaining = (uint64_t)raw;
+    for (uint64_t divisor = 2; divisor <= 97 && divisor <= remaining / divisor; ++divisor) {
+        uint64_t square = divisor * divisor;
+        while (remaining % square == 0) {
+            remaining /= square;
+            coefficient *= divisor;
+        }
+    }
+    integer(p, output, (int64_t)coefficient);
+    if (raw <= 1) residual = original;
+    else (void)fx_decimal_from_integer(&residual, (int64_t)remaining);
+    write_number(p, output + 1, &residual);
+    return 1;
+}
+
+fx_numeric_status fx_eval_surd_workspace_sqrt(fx_number *out,
+    uint8_t ram[65536], const fx_number *input, int exact_math)
+{
+    pool p = {ram, 0};
+    fx_number source;
+    fx_rational fraction;
+    fx_numeric_status status;
+    if (!out || !ram || !input) return FX_NUMERIC_INVALID;
+    source = *input;
+    if (!exact_math) return fx_number_sqrt(out, &source, 0);
+    if ((source.bytes[0] & 0xf0) == 0 && source.bytes[9] <= 1 &&
+        (source.bytes[9] == 0 || source.bytes[8] < 7)) {
+        /*11110 finishes its bounded rational recognition before17820.
+         * The recognized source remains the fallback input too. */
+        if (!fx_number_recognize_rational(&fraction, &source))
+            return fx_number_sqrt(out, &source, 1);
+        status = fx_rational_encode(&source, &fraction);
+        if (status != FX_NUMERIC_OK) return status;
+    }
+    if (source.bytes[0] & 0xf0) {
+        if ((source.bytes[0] & 0xf0) != 0x20 || source.bytes[9] != 1)
+            return fx_number_sqrt(out, &source, 1);
+    } else if (source.bytes[9] > 1 || (source.bytes[9] == 1 && source.bytes[8] >= 7))
+        return fx_number_sqrt(out, &source, 1);
+    if (!expand_number(&p, &source, 0)) return FX_NUMERIC_UNIMPLEMENTED;
+    /*1C7B0 checks representability after the initial six component writes. */
+    if (ram[address(3) + 8] >= 7 || ram[address(5) + 8] >= 4)
+        return fx_number_sqrt(out, &source, 1);
+    copy_number(&p, 3, 0);
+    if (!normalize_square_root(&p, 0, 3)) return FX_NUMERIC_UNIMPLEMENTED;
+    copy_number(&p, 5, 0);
+    if (!normalize_square_root(&p, 0, 5)) return FX_NUMERIC_UNIMPLEMENTED;
+    status = arithmetic(&p, 4, 6, 4, FX_MULTIPLY);
+    if (status == FX_NUMERIC_OK) status = arithmetic(&p, 5, 6, 5, FX_MULTIPLY);
+    if (status != FX_NUMERIC_OK) return status;
+    copy_number(&p, 1, 0);
+    write_number(&p, 6, &source);
+    /* Only now is the result packed. A format fallback retains all writes. */
+    status = pack_pair(&p, out);
+    return status == FX_NUMERIC_OK ? status : fx_number_sqrt(out, &source, 1);
 }

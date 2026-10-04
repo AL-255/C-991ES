@@ -2,6 +2,7 @@
 #include "../format/fx_format_budget.h"
 #include "fx_result_special.h"
 #include "fx_render_context.h"
+#include "../numeric/fx_surd_components.h"
 #include <string.h>
 
 int fx_display_linalg_cell(fx_render *render, const fx_number *number,
@@ -9,6 +10,17 @@ int fx_display_linalg_cell(fx_render *render, const fx_number *number,
 {
     if (!render || !render->memory || !row || row > 3 || !column || column > 3)
         return -1;
+    /*3EC0 reduces a compact cell through15C82/173FA while selecting its
+     * six-character budget. Keep the persistent component emission; the
+     * supplied-record API snapshots its source before those pool writes. */
+    fx_number prepared;
+    if (number) {
+        prepared=*number;number=&prepared;
+        if ((render->memory[0x80f9]==6 || render->memory[0x80f9]==7) &&
+            (number->bytes[0]&0xf0)==0x80 &&
+            fx_surd_components_emit_copy(render->memory,number)!=FX_NUMERIC_OK)
+            return 0;
+    }
     uint8_t text[32];
     fx_format_result result;
     if (fx_format_budget(number, 6, render->memory[0x8127] == 1,

@@ -1,0 +1,29 @@
+{
+  "implementation": [
+    "csrc/ui/fx_equation_controller.c",
+    "csrc/ui/fx_equation_result.c"
+  ],
+  "tests": [
+    "tools/test_equation_workflow_c.py",
+    "tools/test_equation_commit_c.py"
+  ],
+  "verification": [
+    "analysis/c-verification/equation_workflow.json",
+    "analysis/c-verification/equation_commit.json"
+  ],
+  "scope": "Prepared successful simultaneous linear2/3 coefficient grid, typed commits, later solve, root replay and return to coefficients.",
+  "complete": false,
+  "executes_original_firmware": false,
+  "implemented": [
+    "Legal row/column/page navigation",
+    "Physical odd-EA two-byte plus aligned eight-byte load-before-store coefficient copy",
+    "Whole INPUT coefficient commit bypassing scalar Ans/replay",
+    "Successful numerical solver, physical bank/root publication and replay labels",
+    "Retained independent state through five prepared workflows"
+  ],
+  "limits": [
+    "Whole-main EQN runtime integration, polynomial/INEQ/complex roots and singular/error/cancellation publication remain incomplete.",
+    "Workflows exclude numerical8000..80DB, inactive8640..87CF and actual witnessed CPU-frame writes; the independent grid8001 residual remains documented.",
+    "Complete coefficient commit controls compare all RAM outside witnessed CPU-frame writes."
+  ]
+}

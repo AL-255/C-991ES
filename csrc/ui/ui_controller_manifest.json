@@ -4,21 +4,81 @@
   "implementation_executes_firmware": false,
   "semantic_complete": false,
   "implemented_routines": [
-    {"address": "0xd9ee", "name": "fx_ui_controller_begin/tick/finish", "scope": "True ordinary COMP/CMPLX entry normalization, named context capture, data-token admission, all 31 valid command-table indices, semantic action redraw and native context return"},
-    {"address": "0x1de64", "name": "prepare_edit", "scope": "Ordinary new-input initialization and Ans insertion; nonordinary screen/mode policies are delegated"},
-    {"address": "0x1dec4", "name": "decoded_command", "scope": "Complete decoded command predicates for inclusive ranges 14..22 and 23..31"},
-    {"address": "0x1e60e", "name": "input_action/data_action", "scope": "Complete EE/EF and CE..DF token mapping through original ROM tables"},
-    {"address": "0x1e760", "name": "prepare_edit", "scope": "Ordinary Ans prefix admission, including natural fraction/root suppression"},
-    {"address": "0x1ed16", "name": "command", "scope": "Cached natural result horizontal navigation and shared busy-state policy"},
-    {"address": "0x1ed68", "name": "command", "scope": "Replay admission and index movement with native byte arithmetic; recall uses the shared persistent API"},
-    {"address": "0x1ee18", "name": "command/redraw", "scope": "Ordinary scalar imaginary clear, cursor-preserving result refresh and natural/linear expression presentation"},
-    {"address": "0x1ef34", "name": "start_result_error/fx_ui_controller_tick", "scope": "Nonblocking result-domain error wait, accepted token/result clear, cached cursor restore, saved editing input and E67C recovery"},
-    {"address": "0x1efc0", "name": "admit_complex_result", "scope": "CMPLX rectangular magnitude admission and metadata policy using host copies and shared numeric status APIs"},
-    {"address": "0x1f01a", "name": "command", "scope": "Ordinary reset/AC transaction composed from the shared recovery API"},
-    {"address": "0x1f04e", "name": "input_action", "scope": "Decoded command insertion, cursor/end policy and optional implicit evaluator transaction"},
-    {"address": "0x1f5c6", "name": "command", "scope": "Exact/decimal, mixed/improper, DMS, engineering and prime-factor display selection; delete, horizontal/replay navigation, base-selector writes and ordinary result refresh"},
-    {"address": "0x382e", "name": "polar_result_policy", "scope": "COMP default true and CMPLX polar setting with coordinate-result metadata overrides"},
-    {"address": "0x13c66", "name": "prime_workspace", "scope": "Persistent factor count, exponent slots and ten-byte factor records for ordinary unmarked/marker-stripped decimals; raw tagged trial arithmetic remains a capability request"}
+    {
+      "address": "0xd9ee",
+      "name": "fx_ui_controller_begin/tick/finish",
+      "scope": "True ordinary COMP/CMPLX entry normalization, named context capture, data-token admission, all 31 valid command-table indices, semantic action redraw and native context return; bounded matrix/vector6/7 bank screens19/20 and prepared linear2/3 EQN coefficient/result/replay contexts"
+    },
+    {
+      "address": "0x1de64",
+      "name": "prepare_edit",
+      "scope": "Ordinary new-input initialization and Ans insertion; nonordinary screen/mode policies are delegated"
+    },
+    {
+      "address": "0x1dec4",
+      "name": "decoded_command",
+      "scope": "Complete decoded command predicates for inclusive ranges 14..22 and 23..31"
+    },
+    {
+      "address": "0x1e60e",
+      "name": "input_action/data_action",
+      "scope": "Complete EE/EF and CE..DF token mapping through original ROM tables"
+    },
+    {
+      "address": "0x1e760",
+      "name": "prepare_edit",
+      "scope": "Ordinary Ans prefix admission, including natural fraction/root suppression"
+    },
+    {
+      "address": "0x1ed16",
+      "name": "command",
+      "scope": "Cached natural result horizontal navigation and shared busy-state policy"
+    },
+    {
+      "address": "0x1ed68",
+      "name": "command",
+      "scope": "Replay admission and index movement with native byte arithmetic; recall uses the shared persistent API"
+    },
+    {
+      "address": "0x1ee18",
+      "name": "command/redraw",
+      "scope": "Ordinary scalar imaginary clear, cursor-preserving result refresh and natural/linear expression presentation"
+    },
+    {
+      "address": "0x1ef34",
+      "name": "start_result_error/fx_ui_controller_tick",
+      "scope": "Nonblocking result-domain error wait, accepted token/result clear, cached cursor restore, saved editing input and E67C recovery"
+    },
+    {
+      "address": "0x1efc0",
+      "name": "admit_complex_result",
+      "scope": "CMPLX rectangular magnitude admission and metadata policy using host copies and shared numeric status APIs"
+    },
+    {
+      "address": "0x1f01a",
+      "name": "command",
+      "scope": "Ordinary reset/AC transaction composed from the shared recovery API"
+    },
+    {
+      "address": "0x1f04e",
+      "name": "input_action",
+      "scope": "Decoded command insertion, cursor/end policy and optional implicit evaluator transaction"
+    },
+    {
+      "address": "0x1f5c6",
+      "name": "command",
+      "scope": "Exact/decimal, mixed/improper, DMS, engineering and prime-factor display selection; delete, horizontal/replay navigation, base-selector writes and ordinary result refresh"
+    },
+    {
+      "address": "0x382e",
+      "name": "polar_result_policy",
+      "scope": "COMP default true and CMPLX polar setting with coordinate-result metadata overrides"
+    },
+    {
+      "address": "0x13c66",
+      "name": "prime_workspace",
+      "scope": "Persistent factor count, exponent slots and ten-byte factor records for ordinary unmarked/marker-stripped decimals; raw tagged trial arithmetic remains a capability request"
+    }
   ],
   "api": {
     "header": "csrc/ui/fx_ui_controller.h",
@@ -29,11 +89,11 @@
     "finish": "Consumes completion/reset and returns the original D9EE context byte 4, which is the value required by the main scheduler. F12A action codes must not replace this context value."
   },
   "gaps": [
-    "Specialized modes/screens, equation/TABLE range and matrix/vector UI policies are explicit SPECIAL_CONTEXT requests. Main menu/SETUP selection and the scheduler are caller-owned modules. C674 is the TABLE mode88/screen1 predicate, not a SOLVE predicate.",
+    "Remaining specialized modes/screens and TABLE range lifecycle request SPECIAL_CONTEXT. Matrix/vector bank and linear EQN coefficient/replay contexts are admitted; main menu/SETUP and runtime body integration remain caller-owned.",
     "BASE result-domain admission and full BASE UI transactions remain delegated. The ordinary command's base-selector writes are translated, but mode 2 is outside this entry's admitted contexts.",
     "Forced prime output for tagged rational/surd records returns RESULT_FORMAT. Two original calls successfully return; their full native RAM/LCD hashes and explicit C requests are retained in the report. Ordinary F1 admission rejects tagged operands before this path.",
     "Unsupported complex magnitude inputs return COMPLEX_ADMISSION. Rich numeric result tags and unsupported renderer/parser contexts retain the called APIs' explicit capability failures.",
-    "Shared F12A still reports native-success gaps for Pol 6C, Rec 6D and quotient/remainder operator 5F; the separate polar operator AF also lacks shared-parser integration; this controller does not claim those evaluator paths complete.",
+    "Shared supported Pol/Rec, quotient/remainder and AF expressions compose INPUT and presentation. Remaining SURD argument conversion, live alias domains and unsupported numerical/header cases remain bounded gaps.",
     "After an action, called numeric/layout workspaces 8000..80DB and 8640..87CF are excluded from full RAM comparison. Integral/derivative additionally exclude 850A..863F. Persistent result, editor, replay, factor table, LCD and MMIO state remain compared.",
     "The test measures and excludes the actual native CPU stack extent through 8DED; its deepest fixture reaches 8AF2. Production state is host-local. Physical instruction timing is not reproduced.",
     "Token FF indexes beyond the 31-entry command table into ROM data. The C interface bounds that malformed dispatch with an explicit RESULT_FORMAT request. Unbounded native strings are bounded by the host interface."

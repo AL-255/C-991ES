@@ -4,15 +4,16 @@
   "test": "tools/test_table_c.py",
   "verification": "analysis/c-verification/table.json",
   "original_entry": "0x004f26",
-  "scope": "Prepared actual TABLE mode88 row generation with an explicit171EA continuation1 evaluator callback and between-row device callback. Original execution exists only in the differential verifier.",
+  "scope": "Prepared actual TABLE mode88 row generation, dedicated high-level171EA continuation evaluator, parameter parsing, range/prompt and result presentation controllers. Original execution exists only in differential verifiers.",
   "implemented": [
     "Start/End decimal comparison, Step sign admission and decimal quotient cleanup followed by floor; at most30 rows for one function and20 for two",
     "Physical TABLE initialization, live function/phase/row-capacity settings, X publication and raw row-record column commits",
     "Raw255 evaluator success, Math3 row publication and continuation, syntax/error abort before that row, and retained prefix on cancellation",
-    "Second-pass G column updates preserving existing X/F records, live Step rereads, callback effects and source-pointer-word aliases"
+    "Second-pass G column updates preserving existing X/F records, live Step rereads, callback effects and source-pointer-word aliases",
+    "Dedicated continued TABLE evaluator and host-owned source API compose actual mode88, ordinary mode2 parameter parsing, physical calculus storage and bounded UI bodies without retagging calculation mode"
   ],
   "boundaries": [
-    "The callback receives actual calculation mode88 and continuation1; the current prepared handwritten evaluator does not yet implement this entry",
+    "Whole D9EE/main integration, saved Math/natural restoration and complete control/cancellation lifecycle remain incomplete; prepared subordinate bodies have separate finite differential proofs",
     "Only writable-RAM source-pointer words8000..FFFE are admitted; ROM words and wraparoundFFFF remain explicit host gaps",
     "CPU frames, the private60-byte numerical packet and arithmetic register arena8000..80DB are outside the named kernel API",
     "No original instruction execution, generic CPU/register model or instruction-address dispatcher is present in the implementation"

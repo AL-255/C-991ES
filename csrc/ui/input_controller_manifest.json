@@ -7,7 +7,7 @@
     {
       "address": "0x1f12a",
       "name": "fx_input_controller_begin/tick/finish",
-      "scope": "Prepared ordinary COMP/CMPLX input/evaluation transaction, history/result gates for modes45/12/4B, variable/Ans/replay commit, colon continuation, cancellation, nonblocking error wait/recovery and host reset/export boundaries"
+      "scope": "Prepared ordinary COMP/CMPLX input/evaluation transaction, history/result gates for modes45/12/4B, variable/Ans/replay commit, colon continuation, cancellation, nonblocking error wait/recovery and host reset/export boundaries; actual matrix/vector6/7 reference and scalar-cell routes and linear EQN45/screen21 coefficient commit"
     },
     {
       "address": "0x1ee7c",
@@ -44,20 +44,20 @@
     "begin": "PREPARED corresponds to native F2AC before evaluation; COMPLETE covers history/reset/empty gates.",
     "tick": "A prepared tick evaluates once, commits success or starts a wait. Waiting ticks consume semantic key/bridge events. EXPORT is nonterminal; RESET requests the host boot lifecycle.",
     "finish": "Consumes completion and returns native F12A action0 reset/no-op,1 editable recovery or2 result redraw.",
-    "present": "Refreshes ordinary action1/2 input, then a result when not editing, and updates replay navigation. Does not consume completion."
+    "present": "Refreshes ordinary action1/2 input, then a result when not editing, and updates replay navigation. Does not consume completion.",
+    "transport": "Live calculator input/output addresses and a separate host-owned returned source via fx_evaluate_prepared_source; no fabricated RAM cursor or host-pointer-derived address."
   },
   "gaps": [
     "D9EE typing/command dispatch and the calculator main scheduler are separate controllers; their implemented ordinary scope is documented in ui_controller_manifest.json and platform/main_loop_manifest.json.",
     "TABLE range preparation 4F26 and its C674 mode88/screen1 predicate, specialized screenC0 evaluator10000, equation/table evaluator138EE, mode88/89 transactions and nonordinary screens are not admitted by the ordinary evaluation entry.",
-    "Rich numeric tags60/90 and their16954 result controller are explicit UNIMPLEMENTED results.",
-    "Numeric subcall workspaces8000..80DB, forty ten-byte operand slots8640..87CF, and continuous-calculus working storage850A..863F are host-local in called APIs and excluded after evaluation. Inactive renderer layout slots8640..8707 inherit an existing parity gap.",
-    "CPU stack8B00..8DED and physical execution timing are outside this host-state interface. Native unbounded string/label loops are bounded; malformed and zero-length nonzero labels return an explicit error.",
+    "Numerical8000..80DB scratch remains excluded. Integral transactions now compare850A..87CF and poll850A..85CF; historical non-integral8640..87CF, derivative850A..863F and inactive non-integral renderer8640..8707 exclusions remain explicit in the verifier.",
+    "Only each original transaction\u2019s measured CPU-frame extent is excluded; production uses named host state. Physical instruction timing and unbounded malformed text are outside this interface.",
     "Ordinary linear rendering excludes TABLE range prefixes C674/10FE2 and unsupported numeric/font/render contexts remain delegated capability failures."
   ],
   "verification": {
     "tool": "tools/test_input_controller_c.py",
     "report": "analysis/c-verification/input_controller.json",
-    "cases": 13958,
+    "cases": 18738,
     "unsupported_native_fixtures": 0,
     "comparison": "Native checkpoints, handler/status/context return, all remaining64KiB RAM including records/tokens/LCD/MMIO, callback state, cancellation sample counts/X records and retained raw key pairs; exclusions are explicit in the canonical report.",
     "oracle": "Original ROM instruction execution through SimU8 with a test-only host5550/5564 response adapter; no firmware patch or skipped instruction."

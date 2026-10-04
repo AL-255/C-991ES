@@ -1,0 +1,72 @@
+{
+  "basis": "Private conservative instruction-level proposal from inspected static assembly, actual 120 navigation calls, 504 complete E680/E782 coefficient commits covering overlapping and odd sources, 63 complete successful E862 calls per optimization, and native retained first-root recall/display milestones. This records semantic understanding; it does not claim full EQN implementation. Only bounded independently explained caller spans are listed; numerical solver, classifier, storage-copy and rendering callees are credited by their existing subsystems. Root must audit exact instruction starts and unique overlap before publication. Root independently inspected all252 newly credited instructions against the high-level C, removed overlap with existing ledgers, and retained the assembly and independent boundary/workflow audit in analysis/equation-controller-audit. This semantic-understanding credit is independent of subsequent combined production parity tests.",
+  "ranges": [
+    {
+      "start": "0xeb6a",
+      "end": "0xec5c",
+      "scope": "Equation coefficient navigation prologue, ROM101C/1024 limits, decoded direction/ED selection, up/down/right and row/page advances plus saved return/clear-display state. Linear2/3 legal coordinates have120 native controls; unsupported literal coordinates remain outside implementation admission, with branch comparisons independently understood. Left branch is separate next range.",
+      "source": "csrc/ui/fx_equation_controller.c"
+    },
+    {
+      "start": "0xec5c",
+      "end": "0xeca6",
+      "scope": "Equation left navigation, byte column decrement, second-page return, prior-row wrapping using ROM row/column limits; no numeric or drawing callee bodies included.",
+      "source": "csrc/ui/fx_equation_controller.c"
+    },
+    {
+      "start": "0xe782",
+      "end": "0xe7c6",
+      "scope": "Prepared equation scalar commit: resolve literal 18*page+6*row+2*column ROM0FDE pointer, call5166/D142 physical scalar copy, advanceED viaEB6A, set80FD1 and return via E6DE which publishes80FE3. Physical odd-source and overlapping load-before-store semantics confirmed by504 complete original E680 calls over every admitted linear2/3 grid coordinate. Original caller CPU registers/frames are understood ABI, not implemented; delegated callee bodies excluded.",
+      "source": "csrc/ui/fx_equation_controller.c"
+    },
+    {
+      "start": "0xe862",
+      "end": "0xe88a",
+      "scope": "Equation outer prologue, clear8129, ED/F0 and80FD0 solver admission, delegated14F0C call and successful status0 branch. Singular/error branches startingE88A are excluded.",
+      "source": "csrc/ui/fx_equation_result.c"
+    },
+    {
+      "start": "0xe8cc",
+      "end": "0xe8d4",
+      "scope": "Successful result caller selector3 comparison and linear2/3 transfer to ordinary screen1 result admission. Polynomial validation body excluded.",
+      "source": "csrc/ui/fx_equation_result.c"
+    },
+    {
+      "start": "0xe8e6",
+      "end": "0xe8f6",
+      "scope": "Successful equation publication commits80FC1 then80FD2 and action0, retaining decodedEXE for following replay cycle; shared final epilogue separate.",
+      "source": "csrc/ui/fx_equation_result.c"
+    },
+    {
+      "start": "0xe900",
+      "end": "0xe906",
+      "scope": "Equation outer saved action return and saved-register/PC epilogue; named caller state replaces physicalCPU frames.",
+      "source": "csrc/ui/fx_equation_result.c"
+    },
+    {
+      "start": "0x15670",
+      "end": "0x156e0",
+      "scope": "Post-numerical prepared successful EQN result publication: clear8154, set812C, clear8113, copy bank4 to3, clear270bytes8406..8513, physicalstride30 root loop, delegated18724 pair cleanup andEA0C append, numerical status return. Callee bodies and numerical solver before15658 excluded. Already tracked error-unwind span156E0 onward excluded.",
+      "source": "csrc/ui/fx_equation_result.c"
+    },
+    {
+      "start": "0x10f30",
+      "end": "0x10f44",
+      "scope": "Equation replay label helper shared clear-framebuffer, selected8113 indexminus1 and selector branch. Quadratic-specificC236 transfer at10F10..10F30 excluded.",
+      "source": "csrc/ui/fx_ui_controller.c"
+    },
+    {
+      "start": "0x10f4c",
+      "end": "0x10f58",
+      "scope": "Linear2/3 replay labels use three-byte ROM1A98 records at selected indexminus1; polynomial four-byte label branch excluded.",
+      "source": "csrc/ui/fx_ui_controller.c"
+    },
+    {
+      "start": "0x10f62",
+      "end": "0x10f80",
+      "scope": "Equation label ROMtext copy tolocal then draw at0,1 and restorecaller frame; portable hostlabel bytes replaceCPUlocals. Text/render callee bodies excluded.",
+      "source": "csrc/ui/fx_ui_controller.c"
+    }
+  ],
+  "subsystem": "Prepared linear equation navigation, coefficient commit, result publication and replay labels"
+}

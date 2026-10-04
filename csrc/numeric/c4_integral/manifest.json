@@ -1,0 +1,28 @@
+{
+  "implementation": "csrc/numeric/fx_c4_integral_storage.c",
+  "header": "csrc/numeric/fx_c4_integral_storage.h",
+  "original_entries": [
+    "0471E",
+    "04738",
+    "04786",
+    "04A5C"
+  ],
+  "scope": "Prepared addressed C4 integral argument preparation, ordered adjacent-record transfer, paired sample/X publication and returned error/equal-bound domains. Scalar arithmetic stays scalar.",
+  "complete": false,
+  "executes_original_firmware": false,
+  "constant_pairs_verified_against_original_rom": 22,
+  "implemented": [
+    "Real transfer completes before reading live companion; overlaps retain original copy order",
+    "Lower/upper/explicit or default tolerance pairs, with native adjacent-table records",
+    "Paired X publication at8276/8458, callbacks, cancellation and saved X restoration",
+    "Equal-bound result(0,1) and error commit preserving live imaginary output",
+    "Quadrature workspace, callbacks and polls through the native04696 convergence boundary"
+  ],
+  "limits": [
+    "At04696 the original copies twenty bytes into a ten-byte CPU local and corrupts its frame; C retains the proved RAM/callback prefix and returns UNIMPLEMENTED.",
+    "C4 derivative/SUM/product are separate incomplete domains.",
+    "Malformed record and arbitrary dynamic alias domains are not fully proved; numerical8000..80DB and measured native CPU frames are outside the named API."
+  ],
+  "test": "tools/test_eval_integral_physical_c.py",
+  "verification": "analysis/c-verification/eval_integral_physical.json"
+}

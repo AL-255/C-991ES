@@ -48,6 +48,10 @@ def main():
                     str(ROOT / 'csrc/format/fx_format_base.c'),
                     str(ROOT / 'csrc/format/fx_format_budget.c'),
                     str(ROOT / 'csrc/numeric/fx_numeric.c'),
+                    str(ROOT / 'csrc/numeric/fx_surd_components.c'),
+                    str(ROOT / 'csrc/numeric/fx_raw_decimal_parts.c'),
+                    str(ROOT / 'csrc/numeric/fx_raw_decimal_divide.c'),
+                    str(ROOT / 'csrc/numeric/fx_raw_decimal_multiply_add.c'),
                     '-o', str(library_path)], check=True)
     lib = C.CDLL(str(library_path))
     ptr = C.POINTER(Render)
@@ -1037,6 +1041,7 @@ def main():
                'csrc/format/fx_format_base.c', 'csrc/format/fx_format_base.h',
                'csrc/format/fx_format_budget.c', 'csrc/format/fx_format_budget.h',
                'csrc/numeric/fx_numeric.c', 'csrc/numeric/fx_numeric.h',
+               'csrc/numeric/fx_surd_components.c','csrc/numeric/fx_surd_components.h','csrc/numeric/fx_raw_decimal_parts.c','csrc/numeric/fx_raw_decimal_parts.h','csrc/numeric/fx_raw_decimal_divide.c','csrc/numeric/fx_raw_decimal_divide.h','csrc/numeric/fx_raw_decimal_multiply_add.c','csrc/numeric/fx_raw_decimal_multiply_add.h',
                'analysis/verification/numeric-samples.json', 'tools/test_numeric_c.py', 'tools/c_verification.py']
     result = write_report(REPORT, result, sources, 'tools/test_render_c.py')
     write_report('analysis/c-verification/render.json', result, sources, 'tools/test_render_c.py')

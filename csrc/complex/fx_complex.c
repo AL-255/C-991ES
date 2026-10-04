@@ -308,8 +308,9 @@ static fx_numeric_status absolute_component(fx_number *out, const fx_number *in)
     return status;
 }
 
-fx_numeric_status fx_complex_magnitude(fx_complex *out, const fx_complex *in,
-                                       int exact_math)
+fx_numeric_status fx_complex_magnitude_prepared(fx_complex *out,
+    const fx_complex *in, int exact_math, fx_complex_square_root root,
+    void *userdata)
 {
     fx_complex result;
     fx_number real, imaginary, x, y, square_x, square_y, sum, ratio, one;
@@ -346,7 +347,9 @@ fx_numeric_status fx_complex_magnitude(fx_complex *out, const fx_complex *in,
         status = fx_number_integer_power(&square_x, &x, 2);
         if (status == FX_NUMERIC_OK) status = fx_number_integer_power(&square_y, &y, 2);
         if (status == FX_NUMERIC_OK) status = fx_decimal_binary(&sum, &square_x, &square_y, FX_ADD);
-        if (status == FX_NUMERIC_OK) status = fx_number_sqrt(&result.real, &sum, exact_math);
+        if (status == FX_NUMERIC_OK)
+            status = root ? root(&result.real, &sum, exact_math, userdata) :
+                            fx_number_sqrt(&result.real, &sum, exact_math);
     } else {
         /* Outside the safe square range, divide the smaller component by
          * the larger first; its stored square cannot overflow. */
@@ -358,12 +361,20 @@ fx_numeric_status fx_complex_magnitude(fx_complex *out, const fx_complex *in,
         if (status == FX_NUMERIC_OK) status = fx_number_integer_power(&ratio, &ratio, 2);
         (void)fx_decimal_from_integer(&one, 1);
         if (status == FX_NUMERIC_OK) status = fx_decimal_binary(&ratio, &ratio, &one, FX_ADD);
-        if (status == FX_NUMERIC_OK) status = fx_number_sqrt(&ratio, &ratio, 0);
+        if (status == FX_NUMERIC_OK)
+            status = root ? root(&ratio, &ratio, 0, userdata) :
+                            fx_number_sqrt(&ratio, &ratio, 0);
         if (status == FX_NUMERIC_OK)
             status = fx_number_binary(&result.real, &ratio, large ? &real : &imaginary, FX_MULTIPLY);
     }
     if (status == FX_NUMERIC_OK) *out = result;
     return status;
+}
+
+fx_numeric_status fx_complex_magnitude(fx_complex *out, const fx_complex *in,
+                                       int exact_math)
+{
+    return fx_complex_magnitude_prepared(out, in, exact_math, NULL, NULL);
 }
 
 fx_numeric_status fx_complex_sqrt(fx_complex *out, const fx_complex *in,
