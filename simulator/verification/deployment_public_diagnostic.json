@@ -1,0 +1,99 @@
+{
+  "schema": 1,
+  "status": "pass",
+  "release_commit": "05dd32c2fa5369b9b28cf7de03d3e00906797f65",
+  "ci_run_id": 37241988546,
+  "verified_utc": "2026-10-04T23:01:19.110024+00:00",
+  "public_http_report": "analysis/build/github-pages-diagnostic-run37241988546/public-http.json",
+  "public_http_report_sha256": "e853fed70b6308caf07351aa5394baf79943caad1c5bb3896f87e3c9ea5bcf7b",
+  "http_resources": {
+    "index.html": {
+      "url": "https://al-255.github.io/casio-explore/",
+      "final_url": "https://al-255.github.io/casio-explore/",
+      "status": 200,
+      "content_type": "text/html",
+      "bytes": 8103,
+      "sha256": "ed4fe670187000004cbb37dae5cfea665793efc728fec48d41bd91d6c0d6e18c"
+    },
+    "app.js": {
+      "url": "https://al-255.github.io/casio-explore/app.js",
+      "final_url": "https://al-255.github.io/casio-explore/app.js",
+      "status": 200,
+      "content_type": "application/javascript",
+      "bytes": 10751,
+      "sha256": "b0330d143e3510053a513c2fac0b658674950fb5368fee8302f9875a5df6d486"
+    },
+    "engine.js": {
+      "url": "https://al-255.github.io/casio-explore/engine.js",
+      "final_url": "https://al-255.github.io/casio-explore/engine.js",
+      "status": 200,
+      "content_type": "application/javascript",
+      "bytes": 4647,
+      "sha256": "bebe985819c42dfc8d0dbae45bc88361bb45130121e1176c6fc86cafcaba0aa8"
+    },
+    "styles.css": {
+      "url": "https://al-255.github.io/casio-explore/styles.css",
+      "final_url": "https://al-255.github.io/casio-explore/styles.css",
+      "status": 200,
+      "content_type": "text/css",
+      "bytes": 11480,
+      "sha256": "c5e1ff281873a2f30e8340e8c14cd3284d9912e84b85de3e52d023abda14c851"
+    },
+    "fx991sim.js": {
+      "url": "https://al-255.github.io/casio-explore/fx991sim.js",
+      "final_url": "https://al-255.github.io/casio-explore/fx991sim.js",
+      "status": 200,
+      "content_type": "application/javascript",
+      "bytes": 8200,
+      "sha256": "a2ef17728fad53fe2ae330849bade7eadd44dd1e4f33846e138cbcfae929bd77"
+    },
+    "fx991sim.wasm": {
+      "url": "https://al-255.github.io/casio-explore/fx991sim.wasm",
+      "final_url": "https://al-255.github.io/casio-explore/fx991sim.wasm",
+      "status": 200,
+      "content_type": "application/wasm",
+      "bytes": 478150,
+      "sha256": "eb1833e9d339a114f79bae22b9eaa2fe4326227b325931095b6fe5b9141609ca"
+    }
+  },
+  "actual_browser_executed_this_release": false,
+  "prior_actual_browser_report": "analysis/build/github-pages-next-run37239995288/public-browser/browser-report.json",
+  "prior_actual_browser_report_sha256": "0aa153197239c682b30bac39d10c0e48b8e4ce7af41a859d9a5c31e614fc40d7",
+  "prior_browser_release_commit": "480027e0208b6c565926fd80edcb2b6f2702b9a1",
+  "all_eight_current_ci_and_local_artifacts_equal_prior_browser_build": true,
+  "artifact_identity": {
+    "fx991sim.js": {
+      "sha256": "a2ef17728fad53fe2ae330849bade7eadd44dd1e4f33846e138cbcfae929bd77",
+      "bytes": 8200
+    },
+    "fx991sim.wasm": {
+      "sha256": "eb1833e9d339a114f79bae22b9eaa2fe4326227b325931095b6fe5b9141609ca",
+      "bytes": 478150
+    },
+    "index.html": {
+      "sha256": "ed4fe670187000004cbb37dae5cfea665793efc728fec48d41bd91d6c0d6e18c",
+      "bytes": 8103
+    },
+    "app.js": {
+      "sha256": "b0330d143e3510053a513c2fac0b658674950fb5368fee8302f9875a5df6d486",
+      "bytes": 10751
+    },
+    "styles.css": {
+      "sha256": "c5e1ff281873a2f30e8340e8c14cd3284d9912e84b85de3e52d023abda14c851",
+      "bytes": 11480
+    },
+    "engine.js": {
+      "sha256": "bebe985819c42dfc8d0dbae45bc88361bb45130121e1176c6fc86cafcaba0aa8",
+      "bytes": 4647
+    },
+    ".nojekyll": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "package.json": {
+      "sha256": "1239d4d885dcad42201a27ed9324f8f0f760b78700d8db9ced39a511cffe7eae",
+      "bytes": 18
+    }
+  },
+  "scope": "Fresh exact CI and public HTTP verification. Browser execution evidence is reused explicitly from the previous release because every compiled/site artifact is identical; no new browser or diagnostic-WASM execution is claimed. Full firmware completeness remains false."
+}

@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "status": "pass",
+  "run_id": 37241988546,
+  "release_commit": "05dd32c2fa5369b9b28cf7de03d3e00906797f65",
+  "run_url": "https://github.com/AL-255/casio-explore/actions/runs/37241988546",
+  "ci_report_sha256": "4e69cec197e8b81d4aadc00e608c6892f610214d9d46f33f1ffcc83494b75e3b",
+  "local_report_sha256": "d862ea5de156e29862c4617b9795a5dab3fcf3a91f62da197b9577c821ae7093",
+  "source_pins_equal": 248,
+  "artifacts_equal": {
+    "fx991sim.js": {
+      "sha256": "a2ef17728fad53fe2ae330849bade7eadd44dd1e4f33846e138cbcfae929bd77",
+      "bytes": 8200
+    },
+    "fx991sim.wasm": {
+      "sha256": "eb1833e9d339a114f79bae22b9eaa2fe4326227b325931095b6fe5b9141609ca",
+      "bytes": 478150
+    },
+    "index.html": {
+      "sha256": "ed4fe670187000004cbb37dae5cfea665793efc728fec48d41bd91d6c0d6e18c",
+      "bytes": 8103
+    },
+    "app.js": {
+      "sha256": "b0330d143e3510053a513c2fac0b658674950fb5368fee8302f9875a5df6d486",
+      "bytes": 10751
+    },
+    "styles.css": {
+      "sha256": "c5e1ff281873a2f30e8340e8c14cd3284d9912e84b85de3e52d023abda14c851",
+      "bytes": 11480
+    },
+    "engine.js": {
+      "sha256": "bebe985819c42dfc8d0dbae45bc88361bb45130121e1176c6fc86cafcaba0aa8",
+      "bytes": 4647
+    },
+    ".nojekyll": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "package.json": {
+      "sha256": "1239d4d885dcad42201a27ed9324f8f0f760b78700d8db9ced39a511cffe7eae",
+      "bytes": 18
+    }
+  },
+  "compiler_common_inputs": 9,
+  "compiler_configuration_differences": [],
+  "prior_deployed_artifacts_identical": true,
+  "scope": "Exact CI source/artifact/compiler provenance; no new browser/diagnostic-WASM execution is claimed.",
+  "successful_build_completed_utc": "2026-10-04T22:58:52Z",
+  "successful_deploy_completed_utc": "2026-10-04T22:59:07Z",
+  "actual_ci_build_report": "analysis/build/github-pages-diagnostic-run37241988546/provenance/build-report.json"
+}

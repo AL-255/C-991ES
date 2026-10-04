@@ -42,7 +42,7 @@
       "scope": "Python transports requests to the compiled native C session; JavaScript draws returned pixels"
     },
     "static_webassembly": {
-      "status": "actual_ci_and_public_http_browser_proofs_pass",
+      "status": "actual_ci_http_and_identical_artifact_browser_evidence_pass",
       "builder": "simulator/build_web.py",
       "output_directory": "simulator/dist",
       "deployment_workflow": ".github/workflows/pages.yml",
@@ -53,7 +53,7 @@
       "emscripten_build_commit": "f6264d4a4dd9ba24a9f0a5702835a44d1463de13",
       "compiler_temporary_directory": "analysis/build/simulator-wasm/compiler-tmp",
       "builder_python_requirement": "Python3.9 or newer",
-      "build_report_sha256": "702c2f37f0559b614d19ac430e5f4e208e57230f2c2f7932b452a9ee1bd7d5a5",
+      "build_report_sha256": "d862ea5de156e29862c4617b9795a5dab3fcf3a91f62da197b9577c821ae7093",
       "javascript_artifact_sha256": "a2ef17728fad53fe2ae330849bade7eadd44dd1e4f33846e138cbcfae929bd77",
       "wasm_artifact_sha256": "eb1833e9d339a114f79bae22b9eaa2fe4326227b325931095b6fe5b9141609ca",
       "session_lifetime": "Opaque C session in the page module; reload creates fresh memory",
@@ -78,19 +78,37 @@
       },
       "deployment_verification": {
         "status": "pass",
-        "release_commit": "480027e0208b6c565926fd80edcb2b6f2702b9a1",
-        "ci_run_id": 37239995288,
-        "ci_run_url": "https://github.com/AL-255/casio-explore/actions/runs/37239995288",
-        "ci_summary": "simulator/verification/deployment_ci_current.json",
-        "ci_summary_sha256": "3793474d342c8c89b9948b7ac4419f04929fea1866260fbe79a7d7e5129ed83f",
-        "ci_build_report_sha256": "0d0d9d2ed80c62bf72085253dc55f6fe6c19a4ee7f390e9fe3bd3a04f7b05b77",
-        "public_summary": "simulator/verification/deployment_public_current.json",
-        "public_summary_sha256": "48c0c8472a397a724ee6521d64ec27dd2aade645e381bb5316eef9c805db9495",
-        "public_http_full_proof_sha256": "62a391111b31be02944999a2d732ad30c2a6da859153dc2324937cedc1ff79e6",
-        "public_browser_full_proof_sha256": "0aa153197239c682b30bac39d10c0e48b8e4ce7af41a859d9a5c31e614fc40d7",
-        "public_browser_completed_utc": "2026-10-04T22:29:38.699034+00:00",
-        "scope": "Actual public HTTP and desktop/mobile browser checks. Full firmware completeness remains false."
-      }
+        "release_commit": "05dd32c2fa5369b9b28cf7de03d3e00906797f65",
+        "ci_run_id": 37241988546,
+        "ci_run_url": "https://github.com/AL-255/casio-explore/actions/runs/37241988546",
+        "ci_summary": "simulator/verification/deployment_ci_diagnostic.json",
+        "ci_summary_sha256": "fb923f8152e74f29eca06a10e0e236674b4c8f41b147d8297ba4856e6bdbaa17",
+        "ci_build_report_sha256": "4e69cec197e8b81d4aadc00e608c6892f610214d9d46f33f1ffcc83494b75e3b",
+        "public_summary": "simulator/verification/deployment_public_diagnostic.json",
+        "public_summary_sha256": "ccc22e1b896a452d6c7bca1fe9d5966de78715de947ab5693c326cf9bf5a0227",
+        "public_http_full_proof_sha256": "e853fed70b6308caf07351aa5394baf79943caad1c5bb3896f87e3c9ea5bcf7b",
+        "actual_browser_executed_this_release": false,
+        "prior_actual_browser_report_sha256": "0aa153197239c682b30bac39d10c0e48b8e4ce7af41a859d9a5c31e614fc40d7",
+        "browser_evidence_reused_by_identical_artifact_hashes": true,
+        "scope": "Fresh exact CI and public HTTP verification. Browser execution evidence is reused explicitly from the previous release because every compiled/site artifact is identical; no new browser or diagnostic-WASM execution is claimed. Full firmware completeness remains false."
+      },
+      "deployment_history": [
+        {
+          "status": "pass",
+          "release_commit": "480027e0208b6c565926fd80edcb2b6f2702b9a1",
+          "ci_run_id": 37239995288,
+          "ci_run_url": "https://github.com/AL-255/casio-explore/actions/runs/37239995288",
+          "ci_summary": "simulator/verification/deployment_ci_current.json",
+          "ci_summary_sha256": "3793474d342c8c89b9948b7ac4419f04929fea1866260fbe79a7d7e5129ed83f",
+          "ci_build_report_sha256": "0d0d9d2ed80c62bf72085253dc55f6fe6c19a4ee7f390e9fe3bd3a04f7b05b77",
+          "public_summary": "simulator/verification/deployment_public_current.json",
+          "public_summary_sha256": "48c0c8472a397a724ee6521d64ec27dd2aade645e381bb5316eef9c805db9495",
+          "public_http_full_proof_sha256": "62a391111b31be02944999a2d732ad30c2a6da859153dc2324937cedc1ff79e6",
+          "public_browser_full_proof_sha256": "0aa153197239c682b30bac39d10c0e48b8e4ce7af41a859d9a5c31e614fc40d7",
+          "public_browser_completed_utc": "2026-10-04T22:29:38.699034+00:00",
+          "scope": "Actual public HTTP and desktop/mobile browser checks. Full firmware completeness remains false."
+        }
+      ]
     }
   },
   "api": {
