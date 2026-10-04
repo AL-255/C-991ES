@@ -47,22 +47,49 @@ static int numeric_result(integral_context *context, fx_number *value,
     return 1;
 }
 
-static int binary(integral_context *context, fx_number *out,
-                   const fx_number *a, const fx_number *b, fx_binary_op op) {
+static fx_numeric_status binary_record(fx_number *out, const fx_number *a,
+                                        const fx_number *b, fx_binary_op op) {
     fx_number first, second;
+    fx_numeric_status status;
+    /* AB64 clears bit40 on every non-F header before scalar dispatch.
+     * Consequently a surviving61 reference uses its raw rational payload;
+     * this is distinct from15C82, which rejects the unmasked header. */
+    if ((fx_number_kind(a) != FX_NUMBER_DECIMAL && fx_number_kind(a) != FX_NUMBER_RATIONAL) ||
+        (fx_number_kind(b) != FX_NUMBER_DECIMAL && fx_number_kind(b) != FX_NUMBER_RATIONAL)) {
+        fx_number_error(out, 3); return FX_NUMERIC_OK;
+    }
     /* Ordinary scalar wrappers load rational components as decimals before
      * operating; they do not use the exact rational arithmetic dispatcher. */
     if (fx_number_kind(a) == FX_NUMBER_RATIONAL) {
-        if (!numeric_result(context, &first, fx_number_to_decimal(&first, a))) return 0;
+        status = fx_number_to_decimal(&first, a);
+        if (status != FX_NUMERIC_OK) return status;
         first.bytes[0] |= a->bytes[0] & 0x40; a = &first;
     }
     if (fx_number_kind(b) == FX_NUMBER_RATIONAL) {
-        if (!numeric_result(context, &second, fx_number_to_decimal(&second, b))) return 0;
+        status = fx_number_to_decimal(&second, b);
+        if (status != FX_NUMERIC_OK) return status;
         second.bytes[0] |= b->bytes[0] & 0x40; b = &second;
     }
-    fx_numeric_status status = op == FX_SUBTRACT ?
-        fx_decimal_subtract_cancel(out, a, b) : fx_decimal_binary(out, a, b, op);
-    return numeric_result(context, out, status);
+    if (fx_number_kind(a) == FX_NUMBER_ERROR || fx_number_kind(b) == FX_NUMBER_ERROR) {
+        fx_number_error(out, 3); return FX_NUMERIC_OK;
+    }
+    return op == FX_SUBTRACT ? fx_decimal_subtract_cancel(out, a, b) :
+                             fx_decimal_binary(out, a, b, op);
+}
+
+static int binary(integral_context *context, fx_number *out,
+                   const fx_number *a, const fx_number *b, fx_binary_op op) {
+    return numeric_result(context, out, binary_record(out, a, b, op));
+}
+
+/* Midpoint weights at045c6/045da are computed without a native status gate.
+ * Preserve an arithmetic F3 until a checked pair operation detects it. */
+static int binary_unchecked(integral_context *context, fx_number *out,
+                             const fx_number *a, const fx_number *b,
+                             fx_binary_op op) {
+    fx_numeric_status status = binary_record(out, a, b, op);
+    if (status != FX_NUMERIC_OK) { context->host_status = status; return 0; }
+    return 1;
 }
 
 static int cleanup(integral_context *context, fx_number *value) {
@@ -71,10 +98,13 @@ static int cleanup(integral_context *context, fx_number *value) {
 
 static int decimal(integral_context *context, fx_number *out,
                     const fx_number *in) {
-    if (!numeric_result(context, out, fx_number_to_decimal(out, in))) return 0;
+    fx_number value = *in;
+    if (fx_number_kind(&value) == FX_NUMBER_SURD &&
+        !numeric_result(context, &value, fx_number_to_decimal(&value, &value))) return 0;
+    if (value.bytes[0] > 0x4f) { context->native_error = 3; return 0; }
     /*15c82 clears the scalar metadata after radical/rational conversion. */
-    out->bytes[0] &= (uint8_t)~0x40;
-    return 1;
+    value.bytes[0] &= (uint8_t)~0x40;
+    return numeric_result(context, out, fx_number_to_decimal(out, &value));
 }
 
 static int absolute(integral_context *context, fx_number *value) {
@@ -103,6 +133,13 @@ static int compare(const fx_number *a, const fx_number *b) {
 static int evaluate(integral_context *context, fx_number *value,
                      const fx_number *x) {
     fx_numeric_status status = context->function(value, x, context->userdata);
+    if ((int)status == FX_CALCULUS_EVALUATION_ERROR) {
+        context->native_error = 3; return 0;
+    }
+    if ((int)status == FX_CALCULUS_EVALUATION_OK) {
+        if (fx_number_kind(value) == FX_NUMBER_ERROR) return 1;
+        status = FX_NUMERIC_OK;
+    }
     if (!numeric_result(context, value, status)) return 0;
     if (fx_number_kind(value) == FX_NUMBER_SURD)
         return numeric_result(context, value, fx_number_to_decimal(value, value));
@@ -156,8 +193,8 @@ static int quadrature(integral_context *context, fx_number *result,
     if (!binary(context, &center, upper, lower, FX_ADD) ||
         !binary(context, &center, &center, &two, FX_DIVIDE) ||
         !evaluate(context, &value, &center) ||
-        !binary(context, &gauss, &gauss_center, &value, FX_MULTIPLY) ||
-        !binary(context, &kronrod, &kronrod_center, &value, FX_MULTIPLY)) return 0;
+        !binary_unchecked(context, &gauss, &gauss_center, &value, FX_MULTIPLY) ||
+        !binary_unchecked(context, &kronrod, &kronrod_center, &value, FX_MULTIPLY)) return 0;
     for (index = 0; index < 3; ++index) {
         if (!poll(context) || !pair(context, &value, &center, &halfwidth, &common_nodes[index].node) ||
             !weighted_add(context, &kronrod, &value, &common_nodes[index].kronrod) ||

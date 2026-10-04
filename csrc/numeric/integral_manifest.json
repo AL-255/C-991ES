@@ -11,7 +11,7 @@
   "constant_data": "Original10-byte BCD node/weight records ROM0x2b08..0x2bc6",
   "token": "0x6a",
   "api": "fx_number_integral(out,lower,upper,tolerance_or_NULL,function,userdata,control)",
-  "callback_contract": "Local X is passed to the host function in exactly the native0x171ea evaluation order. Native expression integration saves/restores globalX through its outer dispatcher; that global variable transaction is owned by the parser integration.",
+  "callback_contract": "Local X follows native0x171ea order. Legacy zero+F means evaluation failure; positive named OK/ERROR distinguishes native condition from successful F-valued variables. Midpoint arithmetic gates and surviving rich raw-record scalar interpretation are preserved. The parser owns native globalX save/restore and actual bank cleanup.",
   "verification": "analysis/c-verification/numeric_integral.json",
   "test": "python3 tools/test_numeric_integral_c.py --random-cases 1000",
   "notes": "csrc/numeric/integral/EXECUTION.md",

@@ -65,6 +65,8 @@ static void divide(reduction *work, fx_number *out, const fx_number *a,
         fx_number_error(out, 3); return;
     }
     if (left.bytes[0] < 10 && right.bytes[0] < 10 &&
+        fx_number_fractional_status(&left) == 0 &&
+        fx_number_fractional_status(&right) == 0 &&
         fx_decimal_to_integer(&numerator, &left) == FX_NUMERIC_OK &&
         fx_decimal_to_integer(&denominator, &right) == FX_NUMERIC_OK && denominator) {
         fx_rational fraction;

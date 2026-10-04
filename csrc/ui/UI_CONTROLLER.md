@@ -1,0 +1,23 @@
+# Ordinary outer input controller
+
+`fx_ui_controller` implements the ordinary COMP/CMPLX entry at D9EE in readable C. It composes the existing editor, result display, persistent history, F12A evaluator transaction and error controller. Its temporary context and waits belong to the host. Production code does not execute firmware or materialize a CPU stack frame in calculator RAM.
+
+`begin` consumes the mapped key token already stored at 80F5. It normalizes key policy, selects the native font, captures the named context and clears the replay-navigation flag when required. `FX_UI_PREPARED` corresponds to DA58 before the command is executed. The scanning controller and main menu/SETUP selection remain the caller's responsibility.
+
+`tick` admits ordinary screen 1 COMP/CMPLX contexts. Data tokens pass through the original CE..DF mapping and CMPLX restriction tables. New-input initialization inserts Ans for operators that require a left operand, while natural fraction/root constructs suppress that prefix. The editor receives either a byte token or a structured construct, preserving the decoded-key distinction.
+
+All 31 valid command-table entries have semantic cases. They cover reset/AC, deletion, cursor movement, cached result scrolling, replay navigation, decoded command insertion, explicit and implicit evaluation, exact/decimal and mixed/improper toggles, DMS, engineering steps, prime-factor selection, base-selector writes and ordinary result refresh. Evaluation composes the frozen F12A controller rather than repeating its parser and commit policies.
+
+The action result controls expression and numeric redraw. A result-only scroll preserves the expression. Ordinary refresh uses the natural viewport or linear label renderer, then B070 result rendering when the current state displays a result. CMPLX rectangular admission evaluates magnitude on host copies: it does not replace the persistent result pair. The 382E policy defaults true for COMP; CMPLX uses its polar setting with coordinate-result metadata overrides. This distinction is covered by negative scalar DMS and large CMPLX editing-refresh regressions.
+
+Prime output also reproduces the persistent 13C66 factor table for ordinary decimal records. It writes the factor count at 846C, exponent slots beginning at 846D and ten-byte factor records beginning at 847A. Trial division retains the native stored-byte termination and slot advancement order. Forced tagged rational/surd prime output remains an explicit subordinate request, with successful native fixtures retained in the report.
+
+Result-domain errors use an explicit nonblocking state. The controller stores the previous result state, begins error 3, and exposes `WAIT`, nonterminal `EXPORT` or host `RESET`. An accepted key writes 80F5/80F7, clears the result, restores the cached cursor/input where required and applies shared E67C recovery. Raw host key bytes are retained until the host clears the consumed pair.
+
+`finish` returns the original D9EE context byte 4. The main scheduler must use this context value; the nested F12A action 0/1/2 is a separate redraw decision. `HANDLER_REQUEST` identifies a semantic subordinate operation. `resume` accepts its action and context return without calling a ROM address.
+
+The canonical suite passes 13,906 checks at 4,000 random cases. It compares true entry preparation, native return/context, the remaining 64 KiB RAM, persistent records/tokens, LCD/MMIO and host callback observations. Error retry/export/reset, continuous cancellation and sampled X records are included. A separate 234-check suite follows the actual cold or retained reset call chain through boot E6, first wait, typing `1+2` and EXE in COMP/CMPLX.
+
+The oracle adapter measures the actual native stack extent instead of assuming a fixed boundary; the deepest fixture reaches 8AF2. That stack through 8DED is excluded. After an action, called numeric/layout scratch at 8000..80DB and 8640..87CF remains excluded; integral/derivative additionally exclude 850A..863F. The continuous boot suite records each remaining arithmetic-workspace difference explicitly. These limits prevent a claim of complete internal RAM equivalence.
+
+Specialized modes/screens, full BASE UI admission, equation/TABLE range input and unsupported rich result/controller contexts remain delegated requests. C674 is the TABLE mode88/screen1 predicate, and 4F26 evaluates its start/end/step fields; these entries are not the numerical SOLVE kernel. Shared evaluator Pol/Rec/polar capability gaps remain visible. See the [manifest](ui_controller_manifest.json), [canonical report](../../analysis/c-verification/ui_controller.json) and [true boot integration report](../../analysis/c-verification/boot_main_ui.json).

@@ -31,11 +31,16 @@ def main():
  sources=['csrc/linalg/fx_linalg.c','csrc/complex/fx_complex.c','csrc/complex/fx_complex_round.c','csrc/numeric/fx_numeric.c']
  headers=['csrc/linalg/fx_linalg.h','csrc/complex/fx_complex.h','csrc/complex/fx_complex_round.h','csrc/numeric/fx_numeric.h']
  library=build/'linalg.so'
- subprocess.run(['gcc','-std=c99','-O2','-Wall','-Wextra','-Werror','-pedantic','-shared','-fPIC',*(str(ROOT/x) for x in sources),'-o',str(library)],check=True)
+ # Expose the actual private numerical selector only in the test library.
+ # Production keeps the same public ABI and never includes an oracle.
+ wrapper=build/'fraction-wrapper.c'
+ wrapper.write_text('#include "'+str(ROOT/sources[0])+'"\nfx_numeric_status linalg_fraction_test(fx_number *out,const fx_number *a,const fx_number *b){return fraction_divide(out,a,b);}\n')
+ subprocess.run(['gcc','-std=c99','-O2','-Wall','-Wextra','-Werror','-pedantic','-shared','-fPIC',str(wrapper),*(str(ROOT/x) for x in sources[1:]),'-o',str(library)],check=True)
  lib=C.CDLL(str(library));lib.fx_decimal_parse.argtypes=[C.POINTER(Number),C.c_char_p];lib.fx_rational_encode.argtypes=[C.POINTER(Number),C.POINTER(Rational)];lib.fx_surd_pack.argtypes=[C.POINTER(Number),C.POINTER(Number)]
  lib.fx_linalg_binary.argtypes=[C.POINTER(Result),C.POINTER(Value),C.POINTER(Value),C.c_int,C.POINTER(Context)]
  lib.fx_linalg_scalar.argtypes=[C.POINTER(Result),C.POINTER(Value),C.POINTER(Number),C.c_int,C.POINTER(Context)]
  lib.fx_linalg_unary.argtypes=[C.POINTER(Result),C.POINTER(Value),C.c_int,C.POINTER(Context)]
+ lib.linalg_fraction_test.argtypes=[C.POINTER(Number),C.POINTER(Number),C.POINTER(Number)]
  oracle=build/'oracle';oracle.mkdir(exist_ok=True)
  helper=oracle/'linalg-oracle.c'
  helper.write_text('#define harness_run original_harness_run\n#include "'+str(ROOT/'tools/nxu8/harness.c')+'"\n#undef harness_run\nint harness_run(uint64_t limit,uint32_t stop,bool callback){return original_harness_run(limit,stop,callback); }\nint linalg_run(uint64_t limit,uint32_t stop,uint32_t poll){for(uint64_t i=0;i<limit;++i){uint32_t pc=harness_get_pc();if(pc==stop)return100;if(pc==poll)return104;int status=original_harness_run(1,stop,false);if(status!=103)return status;}return103;}\n'.replace('return100','return 100').replace('return104','return 104').replace('return103','return 103'))
@@ -138,6 +143,36 @@ def main():
   for coords in [[3,4,99],[0,3,99],[1,2,3],[-1,-2,3]]:
    v=value(9,0,1,3,[literal(x) for x in coords]+[literal(97)]*6)
    run('unary',3,v,context=Context(exact_math,0,0,0),label='magnitude-permission')
+ # Original94EC eligibility is evaluated on each operand, before fraction
+ # construction. Exponent14 remains eligible and its decimal fallback is
+ # cleaned; exponent15 uses ordinary division and keeps its guard digits.
+ for atext in ['0','1','-1','3','-3','123456789','1e15','-1e15']:
+  for btext in ['0','3','17','999999999','1234567890','99999999999999',
+                '1.23456789012345e14','1.23456789012345e15',
+                '-1.23456789012345e15','1e18']:
+   for markers in range(4):
+    left=Number.from_buffer_copy(literal(atext));right=Number.from_buffer_copy(literal(btext))
+    left.bytes[0]|=0x40 if markers&1 else 0;right.bytes[0]|=0x40 if markers&2 else 0
+    out=Number();host=lib.linalg_fraction_test(C.byref(out),C.byref(left),C.byref(right))
+    m.reset();settings(m);put(0x8900,bytes(left));put(0x8920,bytes(right));m.er(0,0x8900);m.er(2,0x8920);m.call(0x1ca3e,limit=3000000)
+    native_calls+=1;detail={'a':atext,'b':btext,'markers':markers,'entry':'0x1ca3e'}
+    check('fraction-eligibility',host,0,detail)
+    check('fraction-eligibility',bytes(out).hex(),bytes(m.ram[0x8900:0x890a]).hex(),detail)
+    check('fraction-eligibility',out.bytes[0]&15 if out.bytes[0]>=0xf0 else 0,m.reg(0),detail)
+ for text in ['1','-1','3','-3','9999999999999','99999999999999',
+              '999999999999999','1.23456789012345e14','1e15','1.23456789012345e15',
+              '-1.23456789012345e15','1.00000000000001e15',
+              '9.22337203685477e18','-9.22337203685477e18']:
+  diagonal=literal(text)
+  for size in [1,2,3]:
+   payload=[literal(0)]*9
+   for coordinate in range(size):payload[4*coordinate]=diagonal if coordinate==size-1 else literal(1)
+   v=value(6,0,size,size,payload)
+   run('unary',2,v,label='fraction-fallback-inverse-'+text)
+   if size>1:
+    inverse=Result();assert lib.fx_linalg_unary(C.byref(inverse),C.byref(v),2,C.byref(Context(1,0,0,0)))==0
+    rhs=value(6,1,size,1,[literal(2),literal(91),literal(92),literal(3),literal(93),literal(94),literal(4),literal(95),literal(96)])
+    run('binary',2,inverse.value,rhs,label='fraction-fallback-solution-'+text)
  # Cancellation boundaries after preparation, determinants, cofactor groups and
  # scalar updates distinguish temp-buffer commits from in-place partial writes.
  for dimension in [1,2,3]:

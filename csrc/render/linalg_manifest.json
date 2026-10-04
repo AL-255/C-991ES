@@ -1,0 +1,36 @@
+{
+  "subsystem": "prepared matrix/vector display",
+  "source": "csrc/render/fx_result_linalg.c",
+  "public_api": "csrc/render/fx_result_linalg.h",
+  "implementation_style": "Readable high-level C using separately translated glyph rasterization and finite numeric serialization; ROM fonts/tables are data only",
+  "entry_points": {
+    "3EC0": "one compact grid cell",
+    "3E74": "active-cell grid",
+    "EEB4": "slot caption",
+    "EEDA": "bracket geometry",
+    "EDEC": "cursor navigation and selection/cache reset",
+    "ECE8-current-view": "prepared current-slot full display",
+    "1D7C6-nonnull": "selected real/zero-imaginary cache"
+  },
+  "verified": {
+    "checks": 78276,
+    "native_calls": 13123,
+    "report": "analysis/c-verification/render_linalg.json",
+    "test": "tools/test_render_linalg_c.py"
+  },
+  "contract": [
+    "Matrix and vector share fixed nine-cell storage with row stride three; input numeric records and inactive slots remain unchanged.",
+    "Canonical dimensions1..3, one-based coordinates and slots0..3; mode6 MATRIX and mode7 VECTOR, editor screens19 and20.",
+    "Compact grid fields use native3500 budget6; selected field is inverted and each cell returns composition mode tozero.",
+    "The full selected-value line updates8140..8153 and8100 selection/cache state, followed by native font7 right-aligned rendering.",
+    "All512LCDbytes,384RAMframebufferbytes,8100..815F andF031 are compared, including randomized map/composition/settings state."
+  ],
+  "remaining": [
+    "Physical key scanning, user-slot switching, editor numeric mutation and evaluator matrix dispatch.",
+    "Foreign6x/9x scalar cell records spellERROR in compact grids; full-value foreign-reference fallback remains unsupported.",
+    "Selected-value small/extended exponent branches remain unsupported by the shared special-result controller; compact grid branches are verified.",
+    "Selected-value native26-byte CPU-stack serialization overflow is an explicit portable API boundary; native faults are recorded in the test report.",
+    "Whole native numeric scratch and CPU-stack memory parity is outside the prepared display API."
+  ],
+  "full_firmware_complete": false
+}

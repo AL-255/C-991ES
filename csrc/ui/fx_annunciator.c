@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 #include "fx_annunciator.h"
-#include "../complex/fx_complex.h"
+#include "../platform/fx_result_classify.h"
 
 enum {
     ROW_BUFFER = 0x87d0, LCD_ROW = 0xf800, ROW_BYTES = 12,
@@ -20,21 +20,10 @@ static void indicator(fx_platform *p, unsigned byte, uint8_t mask)
     fx_data_write(p, 0, address, (uint8_t)(read_byte(p, address) | mask));
 }
 
-static int classify_record(fx_platform *p, uint16_t address, uint8_t *classification)
-{
-    fx_number record;
-    unsigned i;
-    for (i = 0; i < sizeof(record.bytes); ++i)
-        record.bytes[i] = read_byte(p, (uint16_t)(address + i));
-    /* Use the native admission/sign predicate, including compact surds which
-     * classify as nonzero after their decimal conversion cancels to zero.
-     * The shared value API owns host scratch, not the native numeric RAM. */
-    return fx_scalar_numeric_classify(classification, &record);
-}
-
 int fx_annunciator_draw(fx_platform *p)
 {
-    uint8_t modifiers, mode, classification, value;
+    uint8_t modifiers, mode, value;
+    fx_result_classification result;
     unsigned i;
     int status;
     if (!p || !p->ram) return -1;
@@ -48,16 +37,17 @@ int fx_annunciator_draw(fx_platform *p)
     if (modifiers & 0x01) indicator(p, 1, 0x02);
     if (modifiers & 0x02) indicator(p, 2, 0x40);
 
-    status = classify_record(p, FIRST_SCALAR, &classification);
+    status = fx_result_classify_address(p, FIRST_SCALAR, 0, &result);
     if (status) return status;
-    if (classification != 1) indicator(p, 1, 0x10);
+    if (result.classification != 1) indicator(p, 1, 0x10);
 
     mode = read_byte(p, MODE);
     if (mode == 0xc4) {
         indicator(p, 4, 0x80);
-        status = classify_record(p, SECOND_SCALAR, &classification);
+        status = fx_result_classify_address(p, SECOND_SCALAR,
+                                             result.continuation, &result);
         if (status) return status;
-        if (classification != 1) indicator(p, 1, 0x10);
+        if (result.classification != 1) indicator(p, 1, 0x10);
     }
     if (mode == 3) indicator(p, 3, 0x40);
     if (mode == 6) indicator(p, 5, 0x40);

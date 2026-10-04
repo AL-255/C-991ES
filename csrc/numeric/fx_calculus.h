@@ -10,6 +10,17 @@
 typedef fx_numeric_status (*fx_calculus_function)(fx_number *value,
                                                  const fx_number *x,
                                                  void *userdata);
+/* Integral/derivative evaluator adapters may return these positive statuses
+ * to distinguish the native evaluator's success/failure condition from the
+ * value record. A successful evaluation may contain an F-valued variable;
+ * its later arithmetic, rather than the callback, then determines failure.
+ * Legacy FX_NUMERIC_OK plus an F record retains its failure semantics.
+ * Negative statuses retain the host-failure channel. Sum/product adapters
+ * continue using the legacy callback contract above. */
+typedef enum {
+    FX_CALCULUS_EVALUATION_OK = 1,
+    FX_CALCULUS_EVALUATION_ERROR = 2
+} fx_calculus_evaluation_status;
 typedef int (*fx_calculus_cancel)(void *userdata);
 typedef struct {
     fx_calculus_cancel cancelled;

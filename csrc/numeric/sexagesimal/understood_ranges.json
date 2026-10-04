@@ -1,0 +1,8 @@
+{
+  "basis": "Individually inspected half-open prepared DMS/conversion/constant spans. Shared exact and ordinary numeric dispatchers, token decoding and formatting are separately inventoried; calls do not claim unlisted callees.",
+  "ranges": [
+    {"start": "0x16a7e", "end": "0x16b34", "scope": "Prepared DMS reducer: pending component stack contract, signed seconds/3600 then minutes/60 accumulation, degree addition, final error/cleanup status and raw exponent/sign threshold for marker40", "source": "csrc/numeric/fx_sexagesimal.c"},
+    {"start": "0x161a6", "end": "0x161f2", "scope": "Decoded conversion path: special selector branch detection, all40 paired factor indices, Celsius/Fahrenheit subtraction/division versus multiplication/addition order, scalar preparation and final cleanup", "source": "csrc/numeric/fx_sexagesimal.c"},
+    {"start": "0x17034", "end": "0x17040", "scope": "Decoded scientific constant index-times-ten and original264A table-record insertion", "source": "csrc/numeric/fx_sexagesimal.c"}
+  ]
+}

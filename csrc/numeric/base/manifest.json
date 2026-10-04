@@ -1,0 +1,112 @@
+{
+  "subsystem": "BASE-N prepared numeric kernels",
+  "implementation": "Readable portable C99 integer and packed-decimal value algorithms; no ROM execution, CPU emulator or host floating point",
+  "api": "csrc/numeric/fx_base.h",
+  "implemented_routines": [
+    {
+      "address": "0x15a0e",
+      "name": "32-bit two's-complement negation",
+      "scope": "All uint32_t bit patterns with defined unsigned arithmetic"
+    },
+    {
+      "address": "0x15a1e",
+      "name": "biased decimal magnitude extraction",
+      "scope": "Canonical ordinary decimal records across all stored signs/exponents; ten-digit extraction after adding10^10"
+    },
+    {
+      "address": "0x15a94",
+      "name": "BCD magnitude to word",
+      "scope": "Ten decimal digits modulo2^32; original BIN carry and pre-negation failure behavior"
+    },
+    {
+      "address": "0x15b00",
+      "name": "signed word to BCD magnitude",
+      "scope": "All32-bit words; BIN signed16 admission and unchanged destination on range rejection"
+    },
+    {
+      "address": "0x15a64",
+      "name": "BCD magnitude record serialization",
+      "scope": "Valid serializer inputs, canonical zero and signed32 decimal records"
+    },
+    {
+      "address": "0x15c1c",
+      "name": "NOT",
+      "scope": "Prepared valid signed16 BIN and signed32 other-radix inputs, fractional integer extraction"
+    },
+    {
+      "address": "0x15c46",
+      "name": "NEG",
+      "scope": "Decimal word extraction; signed32 minimum and BIN positive overflow reject with nativeR0=3 and original record retained"
+    },
+    {
+      "address": "0x15d62",
+      "name": "OR",
+      "scope": "Prepared32-bit operands including sign-extended BIN words"
+    },
+    {
+      "address": "0x15d9e",
+      "name": "XOR",
+      "scope": "Prepared32-bit operands including sign-extended BIN words"
+    },
+    {
+      "address": "0x15dda",
+      "name": "XNOR",
+      "scope": "Prepared32-bit operands; complement of all32 XOR result bits"
+    },
+    {
+      "address": "0x15e1e",
+      "name": "AND",
+      "scope": "Prepared32-bit operands including sign-extended BIN words"
+    },
+    {
+      "address": "0x15e82",
+      "name": "range admission",
+      "scope": "R0=0,R6=2 ordinary mathematical bounds and explicit canonical raw headers0/2/4/6/8/F sign/tag dispatch; strict CD60 header rejection retained"
+    },
+    {
+      "address": "0x15ed6",
+      "name": "stored scalar BASE-N preparation",
+      "scope": "Post-bank-fetch scalar decimal/rational/surd conversion, metadata removal, F3 stored-error normalization, truncation then range check; bank copying and secondary clearing are caller-owned"
+    },
+    {
+      "address": "0x1d040",
+      "name": "truncate toward zero",
+      "scope": "Ordinary decimal value preparation and successful scalar division conversion/truncation, including marked/rational/surd quotients; no native scratch claim"
+    },
+    {
+      "address": "0x15f34",
+      "name": "ADD wrapper",
+      "scope": "Prepared mode2 canonical decimal/marked/rational/surd/error scalars; exact arithmetic then raw E82 check, computed record retained on range error, every F* input normalized toF3"
+    },
+    {
+      "address": "0x15f40",
+      "name": "SUBTRACT wrapper",
+      "scope": "Prepared mode2 canonical decimal/marked/rational/surd/error scalars; exact arithmetic then raw E82 check, computed record retained on range error, every F* input normalized toF3"
+    },
+    {
+      "address": "0x15f4c",
+      "name": "MULTIPLY wrapper",
+      "scope": "Prepared mode2 canonical decimal/marked/rational/surd/error scalars; exact arithmetic then raw E82 check, computed record retained on range error, every F* input normalized toF3"
+    },
+    {
+      "address": "0x15f58",
+      "name": "DIVIDE wrapper",
+      "scope": "Prepared mode2 canonical decimal/marked/rational/surd/error scalars; exact quotient then scalar conversion/truncation without range validation, every F* input normalized toF3"
+    },
+    {
+      "address": "0x16828",
+      "name": "radix literal parser",
+      "scope": "Digit-token scan, all256 token termination/error classifications, leading-zero capacity, BIN16/OCT11/DEC10/HEX8 significant-digit budgets, signed input interpretation, selected-radix range rejection, exact status/cursor/first-record partial writes"
+    }
+  ],
+  "gaps": [
+    "Shared expression grammar/precedence, variable bank copy and controller integration are separate parser/controller work",
+    "Raw marked/exact/error operands remain unsupported in direct word/unary/logical conversion; prepared arithmetic admits canonical raw scalars without prior bank preparation",
+    "Malformed BCD/compact records and input/output-token storage overlap are outside the documented APIs",
+    "Logical operators ignoring invalid BIN carry/serialization errors can hang in the original; those raw-invalid paths return explicit UNIMPLEMENTED",
+    "Full RAM scratch/register writes and mode/keyboard controllers are separate subsystems"
+  ],
+  "verification": "tools/test_numeric_base_c.py",
+  "test_report": "analysis/c-verification/numeric_base.json",
+  "immutable_raw_regression": "analysis/regressions/base-raw-scalar-arithmetic.json"
+}

@@ -1,0 +1,21 @@
+{
+  "subsystem":"ordinary input/evaluation transaction and linear expression display",
+  "ranges":[
+    {"start":"0xc034","end":"0xc046","scope":"Initial format policy for EXE versus other accepted tokens, tail-calling the separately documented persistent setter","source":"csrc/ui/fx_input_controller.c"},
+    {"start":"0x1f12a","end":"0x1f1d4","scope":"F12A semantic context/continuation capture and complete mode45/12/4B initial history/result/reset gates; host state replaces CPU locals","source":"csrc/ui/fx_input_controller.c"},
+    {"start":"0x1f272","end":"0x1f2b8","scope":"Input-address routing, direct/natural preparation, pending-colon source selection, saved twenty-byte result and preparation-failure/display-port boundary; specialized dispatch excluded","source":"csrc/ui/fx_input_controller.c"},
+    {"start":"0x1f35e","end":"0x1f3d6","scope":"Ordinary evaluator dispatch, status/cursor remapping, error admission, accepted-token clear, saved result restoration and EC72 retry decision; called kernels/controllers have separate ledgers","source":"csrc/ui/fx_input_controller.c"},
+    {"start":"0x1f3e4","end":"0x1f414","scope":"Ordinary E67C retry/no-op decision and success flags/format/result-state initialization with explicit rich-tag capability boundary","source":"csrc/ui/fx_input_controller.c"},
+    {"start":"0x1f438","end":"0x1f440","scope":"Success status0/36 test and dispatch to remaining metadata policies; specialized screenC0 branch excluded","source":"csrc/ui/fx_input_controller.c"},
+    {"start":"0x1f464","end":"0x1f4d2","scope":"Scalar imaginary clear and status34/35/37 metadata. Metadata is statically implemented; coordinate parser calls are explicit unverified capability gaps","source":"csrc/ui/fx_input_controller.c"},
+    {"start":"0x1f50a","end":"0x1f550","scope":"COMP prior-Ans preservation, optional imaginary-clear host transformation and native Ans commit through shared persistent APIs","source":"csrc/ui/fx_input_controller.c"},
+    {"start":"0x1f558","end":"0x1f5a6","scope":"Consumed-colon continuation, pending source, replay append, result/empty return. The FCbit7/FD3 specialized-screen transition is statically understood but not admitted by the ordinary API","source":"csrc/ui/fx_input_controller.c"},
+    {"start":"0x36f0","end":"0x375c","scope":"Complete token-label pointer/descriptor expansion and COMP alternate table; zero-length nonzero labels are bounded unsupported inputs","source":"csrc/ui/fx_input_display.c"},
+    {"start":"0x81b0","end":"0x8282","scope":"Complete expanded-label horizontal admission and backward cursor scan using original byte arithmetic","source":"csrc/ui/fx_input_display.c"},
+    {"start":"0x8282","end":"0x82a2","scope":"Ordinary linear-row host buffers, source and row initialization; TABLE range prefix branch excluded","source":"csrc/ui/fx_input_display.c"},
+    {"start":"0x82ba","end":"0x838a","scope":"Ordinary visible-label assembly, cursor capture, row padding, drawing and scroll/end markers; CPU stack strings replaced by host arrays","source":"csrc/ui/fx_input_display.c"},
+    {"start":"0x1eec8","end":"0x1eeea","scope":"Ordinary refresh edit-state policy and natural-versus-linear row selection","source":"csrc/ui/fx_input_controller.c"},
+    {"start":"0x1ef04","end":"0x1ef34","scope":"Natural viewport call/return and nonediting cursor reset/screen eligibility before ordinary refresh; specialized earlier refresh dispatch excluded","source":"csrc/ui/fx_input_controller.c"},
+    {"start":"0xdc64","end":"0xdc78","scope":"Outer ordinary replay-navigation flag after presentation when statebit5 is clear and replay count positive","source":"csrc/ui/fx_input_controller.c"}
+  ]
+}

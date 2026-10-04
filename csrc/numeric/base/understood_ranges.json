@@ -1,0 +1,12 @@
+{
+  "basis": "Individually inspected BASE-N numeric instruction spans, translated as integer and decimal-value algorithms. Value APIs do not claim RAM scratch/register equivalence; unlisted callees are not inferred from calls.",
+  "ranges": [
+    {"start":"0x15a0e","end":"0x15b90","scope":"32-bit two's-complement negation; biased ten-digit decimal extraction; BCD magnitude conversion modulo 2^32 and BIN carry admission; signed32/BIN signed16 serialization and decimal normalization", "source":"csrc/numeric/fx_base.c"},
+    {"start":"0x15c1c","end":"0x15c82","scope":"Prepared integer NOT and checked two's-complement NEG; minimum signed word rejection and unchanged record on failure; raw unchecked serializer hang is explicitly unsupported", "source":"csrc/numeric/fx_base.c"},
+    {"start":"0x15d62","end":"0x15e5a","scope":"Prepared 32-bit OR/XOR/XNOR/AND with decimal operand conversion and signed serialization; invalid BIN carry/serializer paths are explicitly unsupported", "source":"csrc/numeric/fx_base.c"},
+    {"start":"0x15e82","end":"0x15ed6","scope":"Mode2 successful-operation range admission; zero fast path, signed16 BIN versus signed32 other masks, inclusive negative/exclusive positive limit, skip for other mode or prior status", "source":"csrc/numeric/fx_base.c"},
+    {"start":"0x15f34","end":"0x15f6e","scope":"ADD/SUBTRACT/MULTIPLY computed-value range checks; successful mode2 DIV truncation toward zero without range check", "source":"csrc/numeric/fx_base.c"},
+    {"start":"0x15ed6","end":"0x15f00","scope":"Stored-scalar fetch adapter control: mode2 conversion/truncation/range check and R2 status, preserved context; bank-copy effects are delegated and not claimed by value API", "source":"csrc/numeric/fx_base.c"},
+    {"start":"0x16808","end":"0x1694c","scope":"Radix literal digit packing/scanning, prefix selection, zero suppression, significant widths, lexical/selected-base ranges, signed interpretation, error partial record writes and returned cursor/status/kind; scratch digit buffer is not exported", "source":"csrc/numeric/fx_base_literal.c"}
+  ]
+}

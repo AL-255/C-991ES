@@ -37,7 +37,7 @@ class Events(C.Structure):
 
 
 MODULES = ['platform/fx_boot_events', 'platform/fx_diagnostic_contrast',
-           'platform/fx_platform', 'platform/fx_boot', 'platform/fx_host_bridge',
+           'platform/fx_result_classify', 'platform/fx_platform', 'platform/fx_boot', 'platform/fx_host_bridge',
            'ui/fx_keys', 'ui/fx_cursor', 'ui/fx_key_wait', 'ui/fx_key_controller',
            'ui/fx_key_dispatch', 'ui/fx_annunciator', 'ui/fx_editor', 'ui/fx_natural_editor',
            'parse/fx_tokens', 'numeric/fx_numeric', 'complex/fx_complex',
@@ -87,7 +87,7 @@ def main():
 
     def initial():
         data = bytearray(background)
-        for a, v in [(0x80f9, 0xc1), (0x80fa, 1), (0x80fb, 1), (0x80fc, 1),
+        for a, v in [(0x80f9, 0xc1), (0x80fa, 1), (0x80fb, 0), (0x80fc, 1),
                      (0x80fd, 0), (0x80fe, 1), (0x80ff, 0), (0x80dd, 0),
                      (0x80dc, 3), (0x80f8, 0xa7), (0x80f4, 0), (0x8112, 17),
                      (0x811b, 10), (0x811f, 10), (0x8118, 0), (0x8119, 1),
@@ -328,9 +328,9 @@ def main():
         native.call(0x6fe6)
         equal(f'boot_diagnostic_reset:{port}')
 
-    # Complete7044 chain with ordinary header disabled by80FB=1. Native
-    # numeric-header classification belongs to separately verified1DB34;
-    # no operand/header memory is excluded or artificially copied here.
+    # Complete7044 chain with the ordinary1DB34 header enabled. Its address
+    # classifier preserves all numeric workspaces; no persistent operand or
+    # header memory is excluded or copied from the oracle.
     for contrast in [0, 4, 17, 29, 31, 255]:
         restore(); put(0x8112, contrast)
         state = Events(); assert lib.fx_boot_diagnostic_sequence_begin(C.byref(p), C.byref(state)) == 0
@@ -349,7 +349,7 @@ def main():
                              f'pattern_advance:{contrast}/{pattern}') == 0
         assert state.phase == 3
         # Expanded contrast handler's key-controller begin remains part of
-        # this full comparison, and this prepared caller suppresses header.
+        # this full comparison, including all native classifier scratch.
         assert lib.fx_boot_events_tick(C.byref(p), C.byref(state), None) == 0
         run(0x1d8a4, advance=True)
         equal(f'sequence_contrast_begin:{contrast}')
@@ -394,7 +394,7 @@ def main():
               'explicit_c_bounds_cases': sum(bounded.values()), 'explicit_c_bounds_counts': bounded,
               'comparison': 'Full RAM/MMIO and callback, excluding only nativeCPU stack8D00..8DED',
               'architecture_test': '7334 CPU flag-test result is supplied at native7286; no C CPU or flag model',
-              'sequence_preparation': 'Full7044 uses80FB=1 to bypass the separately implemented1DB34 header classifier scratch policy; all other persistent RAM compared',
+              'sequence_preparation': 'Full7044 uses ordinary80FB=0 with the native annunciator and classifier workspaces included in complete RAM comparison',
               'failures': 0}
     write_report('analysis/c-verification/boot_events.json', report,
                  SOURCES+sorted(headers)+['tools/c_verification.py', 'tools/test_platform_c.py',

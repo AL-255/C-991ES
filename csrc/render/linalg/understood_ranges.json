@@ -1,0 +1,42 @@
+{
+  "subsystem": "prepared matrix/vector grid display and cursor navigation",
+  "policy": "Half-open exact semantic instruction spans. Canonical scalar cells, one-based indices and dimensions1..3; renderer/numeric callees, physical key scanning, CPU stack contents and foreign rich-reference scalar fallback excluded.",
+  "ranges": [
+    {
+      "start": "0x3e74",
+      "end": "0x3f3a",
+      "scope": "Fixed-stride active-cell pointer traversal, six-character compact decimal formatting, left padding/final-six-byte selection, row/column positions, selected-cell inversion and composition-mode reset; budget formatter3500 and rasterizer callees separately understood",
+      "source": "csrc/render/fx_result_linalg.c"
+    },
+    {
+      "start": "0xed1e",
+      "end": "0xed4c",
+      "scope": "Prepared current-slot pointer selection using the ROM nine-cell tables and one-based selected coordinates, with selected-record cache refresh; user-key admission controller follows outside this span",
+      "source": "csrc/render/fx_result_linalg.c"
+    },
+    {
+      "start": "0xed64",
+      "end": "0xedc0",
+      "scope": "Prepared current-slot dimensions, clear/caption/bracket/grid composition, font transition and selected real-value line; special-result formatter handles its existing supported contexts, native text stack overflow is explicitly reported by the portable API",
+      "source": "csrc/render/fx_result_linalg.c"
+    },
+    {
+      "start": "0xedec",
+      "end": "0xef18",
+      "scope": "All byte-key row/column navigation with boundary status and selection/cache reset after movement, slot caption data lookup and matrix/vector bracket positions/decorations; physical key scan, user-slot switching and reset callee excluded",
+      "source": "csrc/render/fx_result_linalg.c"
+    },
+    {
+      "start": "0x1d7c6",
+      "end": "0x1d7dc",
+      "scope": "Selected-value cache wrapper saves the source and zeros the ten-byte imaginary cache; scalar copy/zero callees excluded",
+      "source": "csrc/render/fx_result_linalg.c"
+    },
+    {
+      "start": "0x1d7f0",
+      "end": "0x1d800",
+      "scope": "Nonnull selected scalar record copied to8140 and wrapper return; omitted middle block creates a null-source error record and remains outside this typed display API",
+      "source": "csrc/render/fx_result_linalg.c"
+    }
+  ]
+}

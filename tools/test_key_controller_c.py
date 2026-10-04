@@ -27,12 +27,12 @@ class Controller(C.Structure):
 
 MODULES = ['ui/fx_key_controller', 'ui/fx_key_wait', 'ui/fx_annunciator',
            'ui/fx_cursor', 'ui/fx_keys', 'ui/fx_key_dispatch', 'ui/fx_editor',
-           'ui/fx_natural_editor', 'platform/fx_platform', 'platform/fx_host_bridge',
+           'ui/fx_natural_editor', 'platform/fx_result_classify', 'platform/fx_platform', 'platform/fx_host_bridge',
            'numeric/fx_numeric', 'complex/fx_complex', 'parse/fx_tokens',
            'render/fx_render', 'render/fx_layout_validate', 'data/fx_rom_data']
 SOURCES = ['csrc/'+module+'.c' for module in MODULES]
-EXCLUDED = [(0x8000, 0x8060), (0x8640, 0x867c), (0x8d00, 0x8dee)]
-PERSISTENT = [(0, 0x8000), (0x8060, 0x8640), (0x867c, 0x8d00), (0x8dee, 65536)]
+EXCLUDED = [(0x8d00, 0x8dee)]
+PERSISTENT = [(0, 0x8d00), (0x8dee, 65536)]
 INSTRUMENTATION = r'''
 #include "csrc/platform/fx_platform.h"
 #include <string.h>
@@ -304,7 +304,7 @@ def main():
               'seed':0x1db34,'scope':'nonblocking native1DB34 through token return, host export retry, modifier retry, or prepared1824E reset request; header3D62 and host-owned1D802 state',
               'input':'prepared original emulator RAM; all raw key pairs, modifier/context table one-hot keys and timed event injection',
               'output':'full persistent RAM/LCD/MMIO, callback, token/event, descriptor and blink fields, exact8E00/01/02 CPU-store counts; no synthetic native locals',
-              'limitation':'native CPU stack8D00..8DED and classifier scratch8000..805F/8640..867B excluded. Physical wall-clock scheduling, reset execution, menus and outer input/evaluator controllers remain separate. Malformed strings/records, cursor height growth and CPU-local aliases are bounded explicit gaps.'}
+              'limitation':'native CPU stack8D00..8DED excluded; complete classifier RAM/MMIO is compared. Physical wall-clock scheduling, reset execution, menus and outer input/evaluator controllers remain separate. Malformed strings/records, cursor height growth and CPU-local aliases are bounded explicit gaps.'}
     if not args.no_report:
         headers = [path[:-2]+'.h' for path in SOURCES if (ROOT/(path[:-2]+'.h')).exists()]
         write_report('analysis/c-verification/key_controller.json',report,

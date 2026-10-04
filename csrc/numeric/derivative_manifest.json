@@ -1,0 +1,17 @@
+{
+  "subsystem": "real-richardson-differentiation",
+  "implementation": "Readable handwritten C99 central differences, initial finite-decimal step selection and Richardson extrapolation; no CPU or ROM execution and no host floating-point substitute",
+  "implemented_routines": [
+    {"address": "0x04a62..0x04aee", "name": "central-difference sampling", "scope": "LocalX plus thenminus callback order, original cancellation-suppressed difference, division by2h, normalization and integer cleanup"},
+    {"address": "0x04aee..0x04dcc", "name": "derivative precision and extrapolation driver", "scope": "Prepared real point/tolerance contract, default1e-10, explicit positive toleranceF8 gate, halved-step Richardson triangle, relative error, decade-gated best estimate, nativeF1/F3/FB and finite limits"},
+    {"address": "0x04dcc..0x04f26", "name": "initial step probe", "scope": "Signed decimal-power step with minimum1e-93, repeated point validation, at most7domain/relative-ratio probes, original0.9..1.1 gate and step/10 fallback"}
+  ],
+  "token": "0x6b",
+  "api": "fx_number_derivative(out,point,tolerance_or_NULL,function,userdata,control)",
+  "callback_contract": "LocalX follows native0x171ea order. Legacy zero+F means evaluation failure; positive named OK/ERROR distinguishes native condition from successful F-valued variables. Initial probes preserve ignored-condition/record error checks and ordinary arithmetic's bit40 masking. The parser owns native globalX save/restore, bank cleanup and token consumption.",
+  "verification": "analysis/c-verification/numeric_derivative.json",
+  "test": "python3 tools/test_numeric_derivative_c.py --random-cases 1000",
+  "notes": "csrc/numeric/derivative/EXECUTION.md",
+  "gaps": ["Standalone API does not parse expression tokens", "Complex callbacks and malformed BCD are excluded", "Reset/keyscan execution is outside the prepared native oracle"],
+  "completion": "Prepared real scalar differentiation only; complete firmware equivalence remains unproven"
+}

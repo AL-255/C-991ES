@@ -1,0 +1,10 @@
+{
+  "basis":"Inspected instruction spans and original-ROM final RAM/MMIO fixtures; prepared canonical component domain only. No general arithmetic scratch or CPU-state implementation is implied.",
+  "ranges":[
+    {"start":"0x1ccf6","end":"0x1cd60","scope":"Raw record admission, zero/sign classes and mixed-sign compact-surd decimal classification with argument snapshots, full numeric workspaces and typed continuation","source":"csrc/platform/fx_result_classify.c"},
+    {"start":"0x1cd8a","end":"0x1cd90","scope":"Classification result return; native CPU stack is excluded from C semantics","source":"csrc/platform/fx_result_classify.c"},
+    {"start":"0x178a4","end":"0x179a4","scope":"First-zero triplet, six compact-surd BCD component expansion and raw one/two/three-digit constructors; prepared canonical BCD inputs","source":"csrc/platform/fx_result_classify.c"},
+    {"start":"0x17576","end":"0x17616","scope":"Fixed component workspace0 decimal evaluation, first-zero skip, sqrt/multiply/divide ordering and plain final addition/storage; complete final observable arithmetic fields","source":"csrc/platform/fx_result_classify.c"},
+    {"start":"0x1bac4","end":"0x1bae4","scope":"Snapshot external two-byte field and even-advanced eight-byte tail, reversed finite workspace store; raw direct aliases admitted outside CPU stack","source":"csrc/platform/fx_result_classify.c"}
+  ]
+}

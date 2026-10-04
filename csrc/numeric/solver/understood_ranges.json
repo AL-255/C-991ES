@@ -1,0 +1,9 @@
+{
+  "basis": "Individually inspected prepared EQN numeric spans, translated into matrix formulas, stable quadratic evaluation and ordered Cardano/trigonometric cubic formulas. Unlisted scalar callees and history/display controller instructions are not inferred.",
+  "ranges": [
+    {"start":"0x112f6","end":"0x11860","scope":"Prepared linear diagnostic branch trees, fixed determinant/minor formulas, ordinary scalar loading, exact-zero short circuits and checked nonzero multiplication underflow; initial display reset effects are delegated","source":"csrc/numeric/fx_solver_classifier.c"},
+    {"start":"0x14f0c","end":"0x15658","scope":"Input coefficient banking, named matrix/linear composition, native normalization, quadratic/cubic formulas and all discriminant branches with exact/result-order/cancellation policies; numerical work banks are observable","source":"csrc/numeric/fx_solver.c"},
+    {"start":"0x156e0","end":"0x15740","scope":"Solver error unwind and radian cosine/angle stepping/shifted-root formula helpers; display/history span15658..156e0 excluded","source":"csrc/numeric/fx_solver.c"},
+    {"start":"0x1876c","end":"0x1878a","scope":"Two plain scalar records select fraction-preferred divide; all other scalar types select generic division, with native status preserved","source":"csrc/numeric/fx_solver.c"}
+  ]
+}

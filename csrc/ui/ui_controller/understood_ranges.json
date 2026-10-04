@@ -1,0 +1,29 @@
+{
+  "subsystem": "ordinary outer input command lifecycle",
+  "ranges": [
+    {"start": "0xd9ee", "end": "0xdb00", "scope": "Entry normalization, font/context capture, replay flag, refresh dispatch, decoded command/table index and semantic action selection, CE..DF mapping and continuation guard; CPU locals replaced by named host state", "source": "csrc/ui/fx_ui_controller.c"},
+    {"start": "0xdb9a", "end": "0xdbac", "scope": "CMPLX data-token restriction through the original ROM table", "source": "csrc/ui/fx_ui_controller.c"},
+    {"start": "0xdbe0", "end": "0xdc46", "scope": "Equals eligibility, integral token suppression, ordinary prepare/edit insertion and expression/result redraw decision", "source": "csrc/ui/fx_ui_controller.c"},
+    {"start": "0xdc52", "end": "0xdca4", "scope": "CMPLX result-domain admission, result draw, replay navigation/context return and second decoded-command predicate dispatch; BASE admission call immediately before this span is excluded", "source": "csrc/ui/fx_ui_controller.c"},
+    {"start": "0x1de64", "end": "0x1de8a", "scope": "New-input edit-state and admission guards, ordinary context admission and initializer action; specialized screen transition excluded", "source": "csrc/ui/fx_ui_controller.c"},
+    {"start": "0x1de9c", "end": "0x1dea8", "scope": "Ordinary initialization followed by Ans prefix policy; later mode 0C field clearing excluded", "source": "csrc/ui/fx_ui_controller.c"},
+    {"start": "0x1debc", "end": "0x1def8", "scope": "Prepare-input return and complete decoded command predicates for ranges 14..22 and 23..31", "source": "csrc/ui/fx_ui_controller.c"},
+    {"start": "0x1e60e", "end": "0x1e63e", "scope": "Complete EE/EF and CE..DF mappings through the ROM label tables", "source": "csrc/ui/fx_ui_controller.c"},
+    {"start": "0x1e65c", "end": "0x1e67c", "scope": "Ordinary natural-input suppression and supplied-zero linear result clear; TABLE range/mode 89 earlier branches excluded", "source": "csrc/ui/fx_ui_controller.c"},
+    {"start": "0x1e760", "end": "0x1e79c", "scope": "Ans insertion eligibility with ordinary screen/special guards and natural fraction/root suppression", "source": "csrc/ui/fx_ui_controller.c"},
+    {"start": "0x1e7aa", "end": "0x1e7b8", "scope": "Ans byte insertion and return; mode-specific prefix CB/CF branches excluded", "source": "csrc/ui/fx_ui_controller.c"},
+    {"start": "0x1ed16", "end": "0x1ee18", "scope": "Complete cached natural-result horizontal scrolling, busy state, replay index admission/movement/recall and persistent real-result special display wrapper", "source": "csrc/ui/fx_ui_controller.c"},
+    {"start": "0x1ee18", "end": "0x1ee34", "scope": "Result refresh guard for TABLE range/saved Math contexts; called specialized handlers excluded", "source": "csrc/ui/fx_ui_controller.c"},
+    {"start": "0x1ee54", "end": "0x1ee7c", "scope": "Ordinary scalar imaginary clear and result display preserving the editor cursor; earlier mode 89 empty-view branch excluded", "source": "csrc/ui/fx_ui_controller.c"},
+    {"start": "0x1ef34", "end": "0x1ef8c", "scope": "Complete result-domain error wait/recovery composition, accepted-token/result clear, cached cursor and old state 4 backup restoration with host wait state", "source": "csrc/ui/fx_ui_controller.c"},
+    {"start": "0x1efc0", "end": "0x1f01a", "scope": "Complete rectangular complex magnitude result admission and error transition; numeric workspaces remain host-local", "source": "csrc/ui/fx_ui_controller.c"},
+    {"start": "0x1f01a", "end": "0x1f04e", "scope": "Reset/AC handler context guards and shared E67C/E71E recovery return policy; nonordinary context requests remain delegated", "source": "csrc/ui/fx_ui_controller.c"},
+    {"start": "0x1f04e", "end": "0x1f08c", "scope": "Decoded command kind, saved-result/special/mode guards and return; mode-specific field guard immediately after this span excluded", "source": "csrc/ui/fx_ui_controller.c"},
+    {"start": "0x1f098", "end": "0x1f12a", "scope": "Mapped command insertion, ordinary prepare/edit and cursor/end policy, implicit evaluation admission, nested F12A transaction and direct wrapper entries", "source": "csrc/ui/fx_ui_controller.c"},
+    {"start": "0x1f5c6", "end": "0x1f828", "scope": "Exact/decimal, mixed/improper, DMS, prime and engineering selection, delete, cached horizontal and replay navigation handlers; nonordinary eligibility guards are understood but specialized contexts are not admitted", "source": "csrc/ui/fx_ui_controller.c"},
+    {"start": "0x1f828", "end": "0x1f846", "scope": "Base-selector ROM write and edit-state guard; BASE result-domain admission body excluded", "source": "csrc/ui/fx_ui_controller.c"},
+    {"start": "0x1f854", "end": "0x1f8a0", "scope": "Base-selector ordinary real display return, default result clear and result refresh including mandatory EFC0 admission before linear editing refresh", "source": "csrc/ui/fx_ui_controller.c"},
+    {"start": "0x382e", "end": "0x3876", "scope": "Complete scalar/CMPLX polar-result policy and coordinate-result metadata overrides", "source": "csrc/ui/fx_ui_controller.c"},
+    {"start": "0x13c66", "end": "0x13d74", "scope": "Complete trial prime sequence through 997 and persistent factor count/exponent/record ordering; raw tagged divmod semantics are not covered by the ordinary decimal adapter", "source": "csrc/ui/fx_ui_controller.c"}
+  ]
+}

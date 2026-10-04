@@ -1,0 +1,9 @@
+{
+  "basis": "Inspected main caller instructions and independent original-ROM final RAM/MMIO fixtures. UI, menu and specialized-screen bodies are retained semantic requests; prepared return checkpoints do not claim those callees.",
+  "ranges": [
+    {"start":"0xd7ae","end":"0xd9ea","scope":"Initial wait state, outer key lifecycle, token/menu gates, ordinary and specialized screen dispatch, retained menu result, actual handler-return policy and framebuffer flush","source":"csrc/platform/fx_main_loop.c"},
+    {"start":"0xde1c","end":"0xde7e","scope":"FC/FD admission and screen selection with bounded terminated expression transfer, item/result-state reset and flag/cache clearing","source":"csrc/platform/fx_main_loop.c"},
+    {"start":"0x1dde4","end":"0x1de1e","scope":"Ordinary input routing from screen, result-state, data-token and command construct conditions","source":"csrc/platform/fx_main_loop.c"},
+    {"start":"0x51b2","end":"0x51be","scope":"Store actual returned key token and mark command admission","source":"csrc/platform/fx_main_loop.c"}
+  ]
+}

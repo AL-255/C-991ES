@@ -4,7 +4,7 @@
     {
       "start": "0x003d62",
       "end": "0x003e74",
-      "scope": "Complete twelve-byte annunciator row clear, modifier/scalar/mode/angle/format/math/result/history indicator selection and LCD copy; numeric scratch, CPU stack and physical device timing excluded.",
+      "scope": "Complete twelve-byte annunciator row clear, modifier/scalar/mode/angle/format/math/result/history indicators and LCD copy; address classifier preserves all numeric workspaces and continuation; CPU stack and physical timing excluded.",
       "source": "csrc/ui/fx_annunciator.c"
     }
   ]

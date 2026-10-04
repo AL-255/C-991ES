@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Compare the standalone CPU-free C executable's records, tokens and PBM with ROM output."""
 import argparse
+import ctypes as C
 import json
 import random
 import subprocess
@@ -19,7 +20,14 @@ def main():
     subprocess.run(['cmake', '-S', str(ROOT / 'csrc'), '-B', str(build), '-DCMAKE_BUILD_TYPE=Release'], check=True)
     subprocess.run(['cmake', '--build', str(build), '-j4'], check=True)
     executable = build / 'fx991c'
-    m = Machine((ROOT / 'firmware/fx-991es-plus-c-ver4.bin').read_bytes(), ROOT / 'analysis/build/cli/oracle')
+    oracle_dir = ROOT / 'analysis/build/cli/oracle-calculus'
+    oracle_dir.mkdir(parents=True, exist_ok=True)
+    subprocess.run(['gcc', '-std=c99', '-O2', '-Wall', '-Wextra', '-Werror', '-shared', '-fPIC',
+                    str(ROOT / 'tools/nxu8/calculus_expression_events.c'),
+                    str(ROOT / 'tools/nxu8/vendor/SimU8/core.c'),
+                    '-o', str(oracle_dir / 'nxu8-harness.so')], check=True)
+    m = Machine((ROOT / 'firmware/fx-991es-plus-c-ver4.bin').read_bytes(), oracle_dir)
+    m.lib.calculus_expression_call.argtypes = [C.c_uint32, C.c_uint64, C.c_uint]
     rng = random.Random(0xb070)
     inputs = [bytes.fromhex('2898393938292d9839393729294f3939'), b'6\x4f2(1+2)',
               b'1\xae3', b'1\x4f3', b'1\xae2\xae3', b'\x81', b'\x82', b'\x98998)',
@@ -36,6 +44,10 @@ def main():
     inputs += [b'A', b'3\x47', b'\x88\x602)', b'\x63\x602)', b'\xc3\x602)',
                b'\x69X,1,3)', b'\x5dX,1,3)', b'\x69\x98X),1,3)',
                b'\x69X\x75,1,3)', b'\x5d\x88X),1,4)']
+    inputs += [b'\x6aX,0,1)', b'\x6aX,1,0)', b'\x6aX\x75,0,1)',
+               b'\x6a\x98X),0,1)', b'\x6a\xa0X),0,90)', b'\x6aX,0,1,.01)',
+               b'\x6bX,1)', b'\x6bX\x75,3)', b'\x6bX\x76,2)',
+               b'\x6b\x98X),1)', b'\x6b\xa0X),30)', b'\x6bX,1,.01)']
     for _ in range(100):
         a, b, c = (str(rng.randrange(1, 100)).encode() for _ in range(3))
         inputs.append(b'(' + a + b'\xae' + b + b'-\x98' + c + b'))')
@@ -49,6 +61,7 @@ def main():
                       b'\xae\xbb\xb8(\x98\xb8998\xb9-\x98\xb8997\xb9)\xb9\xb899\xb9\xbc']
     display_inputs += [b'\x9f\xbb\xb83\xb9\xb88\xb9\xbc', b'\x68\xb82\xba8\xb9',
                        b'\xa88)', b'5\x57', b'5\xbf2', b'10\x25']
+    display_inputs += [b'\x6a\xb8X\xba0\xba1\xb9', b'\x6b\xb8X\x75\xba3\xb9']
     complex_inputs = [b'\x80', b'2\x80', b'1+2\x80', b'\x601-\x80',
                       b'\x98\x601)', b'\x98\x602)', b'(1+2\x80)(3+4\x80)',
                       b'(1+\x80)\x4f(2+\x80)', b'(1+\x80)\xae(2+\x80)',
@@ -83,21 +96,12 @@ def main():
                 m.ram[address] = value
 
     def evaluate(tokens):
-        if not any(token in (0x5d, 0x69) for token in tokens):
+        if not any(token in (0x5d, 0x69, 0x6a, 0x6b) for token in tokens):
             m.call(0x171f4)
             return
-        #5550 asks the emulator host to service a timer;5564 samples8E00.
-        # Supply a no-cancel response while executing every original opcode.
-        sentinel = 0x2fffe
-        m.lib.harness_set_sp(0x8dee)
-        m.lib.harness_set_lr(sentinel)
-        m.lib.harness_set_pc(0x171f4)
-        for _ in range(3000000):
-            if m.lib.harness_get_pc() == 0x5564: m.ram[0x8e00] = 0
-            status = m.lib.harness_run(1, sentinel, False)
-            if status == 100: return
-            assert status == 103, (tokens.hex(), status, hex(m.lib.harness_get_pc()))
-        raise AssertionError((tokens.hex(), 'native calculus call did not return'))
+        # The compiled adapter answers5550/5564 without skipping an opcode.
+        status = m.lib.calculus_expression_call(0x171f4, 200000000, 0)
+        assert status == 100, (tokens.hex(), status, hex(m.lib.harness_get_pc()))
 
     for tokens, display, complex_mode in cases:
         prepare(complex_mode)
@@ -184,7 +188,8 @@ def main():
         'comparison': 'Standalone executable JSON status,20-byte record,consumed pointer,formatter tokens and all96x32 PBM pixels versus original171F4/C034/C060/B070/3CFC.',
         'scope': 'Prepared ordinary Math COMP and rectangular CMPLX contexts, including structured input; no reset/key UI or other modes'}
     report = data if options.no_report else write_report('analysis/c-verification/cli.json', data,
-        sources + ['tools/c_build_inputs.py', 'tools/c_verification.py', 'tools/trace_natural_result.py'], 'tools/test_cli_c.py')
+        sources + ['tools/c_build_inputs.py', 'tools/c_verification.py', 'tools/trace_natural_result.py',
+                   'tools/nxu8/calculus_expression_events.c'], 'tools/test_cli_c.py')
     print(json.dumps({k: v for k, v in report.items() if k != 'tested_inputs_sha256'}, indent=2))
 
 

@@ -58,8 +58,9 @@ def main():
     build.mkdir(parents=True, exist_ok=True)
     output = build / 'eval.so'
     sources = ['parse/fx_eval.c', 'parse/fx_tokens.c', 'data/fx_rom_data.c',
-               'numeric/fx_numeric.c', 'numeric/fx_transcend.c', 'numeric/fx_power.c', 'numeric/fx_root.c', 'numeric/fx_calculus.c', 'numeric/fx_combinatorics.c', 'numeric/fx_logbase.c',
+               'numeric/fx_numeric.c', 'numeric/fx_transcend.c', 'numeric/fx_power.c', 'numeric/fx_root.c', 'numeric/fx_calculus.c', 'numeric/fx_integral.c', 'numeric/fx_derivative.c', 'numeric/fx_combinatorics.c', 'numeric/fx_logbase.c',
                'complex/fx_complex.c', 'complex/fx_complex_angle.c', 'complex/fx_complex_round.c', 'complex/fx_complex_dispatch.c',
+        'linalg/fx_linalg.c', 'linalg/fx_linalg_store.c',
                'trig/fx_trig.c', 'trig/fx_trig_math.c', 'trig/fx_trig_inverse.c', 'trig/fx_trig_hyperbolic.c',
                'format/fx_format.c', 'render/fx_render.c', 'render/fx_render_context.c', 'render/fx_layout.c', 'render/fx_layout_validate.c']
     subprocess.run(['gcc', '-std=c99', '-O2', '-Wall', '-Wextra', '-Werror', '-shared', '-fPIC',

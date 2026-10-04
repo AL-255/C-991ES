@@ -9,7 +9,9 @@ single-variable recall suffix and equation-mode `=0` when needed. It retains
 the display backup, then validates natural fields and exports their evaluator
 syntax. A continuation uses the native low-byte pointer subtraction when
 adjusting `812C`; natural export instead updates the tracked root while walking
-display constructs. `fx_input_prepare_saved_solve` restores `85AA` first.
+display constructs. The historically named `fx_input_prepare_saved_solve`
+restores the saved TABLE expression at `85AA` first. The public name is retained
+for compatibility; this entry is not the numerical SOLVE kernel.
 The variable-suffix predicate also retains the native low-byte length test:
 an oversized257/513-character source beginning with a variable is treated like
 a one-character source by that predicate.

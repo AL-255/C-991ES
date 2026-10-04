@@ -64,21 +64,26 @@ def main():
                 'radical': b'\x98X)', 'reciprocal': b'1\x4fX', 'division_error': b'1\x4f0',
                 'shifted_pole': b'1\x4f(X-A)'}
 
-    def native(a, b, tolerance, coefficient, formula, abort):
+    def native(a, b, tolerance, coefficient, formula, abort, evaluation_mode=0,reference_dimensions=False):
         oracle.harness_init(rom_buffer, len(rom)); ram = oracle.harness_ram().contents
         for address, value in [(0x80f9, 0xc1), (0x80f5, 0xf0), (0x8105, 4), (0x8106, 1), (0x8121, 1)]: ram[address] = value
+        ram[0x80fc] = int(bool(evaluation_mode))
         for address, value in [(0x812c, 0x8200), (0x8190, 0x8200)]: ram[address] = value & 255; ram[address+1] = value >> 8
         tokens = b'\x6a' + formulas[formula] + b',B,C' + (b',D' if tolerance is not None else b'') + b')\0'
         for index, value in enumerate(tokens): ram[0x8200 + index] = value
         for address, record in [(0x823a, coefficient), (0x8244, a), (0x824e, b),
                                 (0x8258, tolerance or bytes(10)), (0x8276, initial_x)]:
             for index, value in enumerate(record): ram[address+index] = value
+        if reference_dimensions:
+            identity = coefficient[0] & 15
+            ram[0x80e0+2*identity] = ram[0x80e1+2*identity] = 1
+            for index,value in enumerate(literal('1')): ram[0x829e+90*identity+index] = value
         for index, value in enumerate([0x90,0x81,0,0x83]): oracle.harness_set_reg(index, value)
         status = oracle.integral_oracle_call(0x171f4, 200000000, abort)
         assert status == 100, (status, tokens.hex())
         return bytes(ram[0x8300:0x8314]), [bytes(native_x[i]).hex() for i in range(native_count.value)], native_polls.value, bytes(ram[0x8276:0x8280]), tokens
 
-    def run(a, b, tolerance, coefficient, formula, abort, alias=0, host_error=0):
+    def run(a, b, tolerance, coefficient, formula, abort, alias=0, host_error=0, evaluation_mode=0,reference_dimensions=False):
         lower = Number.from_buffer_copy(a); upper = Number.from_buffer_copy(b)
         tol = Number.from_buffer_copy(tolerance) if tolerance is not None else None
         value = Number.from_buffer_copy(coefficient); out = Number.from_buffer_copy(literal('123'))
@@ -118,14 +123,30 @@ def main():
             polls.append(1); return int(bool(abort and len(polls) == abort))
 
         control = Control(cancel, None)
+        legacy_function = function
+        if evaluation_mode:
+            @Function
+            def function(result, x, userdata):
+                status = legacy_function(result,x,userdata)
+                if status != 0: return status
+                # Ordinary80FC1 bare-variable cleanup1415A turns unsupported
+                # F headers into F3. Zero-dimension6/9 references become F9;
+                # the evaluator preserves its success condition in both cases.
+                if formula == 'constant':
+                    header = coefficient[0] >> 4
+                    if header == 15 or header in (6,9) and not reference_dimensions:
+                        C.memset(result,0,10); result.contents.bytes[0] = 0xf9 if header in (6,9) else 0xf3
+                # Loading bare A preserves its F-valued record with native
+                # evaluator success. Arithmetic/domain failures use ERROR.
+                return 1 if formula == 'constant' or lib.fx_number_kind(result) != 15 else 2
         target = lower if alias == 1 else upper if alias == 2 else tol if alias == 3 else out
         status = lib.fx_number_integral(C.byref(target), C.byref(lower), C.byref(upper),
                                          C.byref(tol) if tol is not None else None, function, None, C.byref(control))
         return status, bytes(target.bytes), calls, len(polls)
 
-    def case(group, first, last, tolerance, coefficient, formula, abort=0, aliases=False):
-        records, xs, polls, restored, tokens = native(first, last, tolerance, coefficient, formula, abort)
-        actual = run(first, last, tolerance, coefficient, formula, abort)
+    def case(group, first, last, tolerance, coefficient, formula, abort=0, aliases=False,evaluation_mode=0,reference_dimensions=False):
+        records, xs, polls, restored, tokens = native(first, last, tolerance, coefficient, formula, abort,evaluation_mode,reference_dimensions)
+        actual = run(first, last, tolerance, coefficient, formula, abort,evaluation_mode=evaluation_mode,reference_dimensions=reference_dimensions)
         expected = [0, records[:10].hex(), xs, polls]
         detail = [tokens.hex(), first.hex(), last.hex(), tolerance.hex() if tolerance is not None else None, coefficient.hex(), abort]
         def check(name, got, wanted):
@@ -135,7 +156,7 @@ def main():
         check('native_imaginary_zero_and_X_restore', [records[10:].hex(), restored.hex()], [bytes(10).hex(), initial_x.hex()])
         if aliases:
             for alias in range(1, 4 if tolerance is not None else 3):
-                actual = run(first, last, tolerance, coefficient, formula, abort, alias)
+                actual = run(first, last, tolerance, coefficient, formula, abort, alias,evaluation_mode=evaluation_mode,reference_dimensions=reference_dimensions)
                 check('output_alias', [actual[0], actual[1].hex(), actual[2], actual[3]], expected)
 
     one, zero = literal('1'), literal('0')
@@ -172,6 +193,16 @@ def main():
         case('tolerance_records',zero,one,tolerance,one,'radical',aliases=True)
     for formula in ['constant', 'radical']:
         for abort in [1,2,7,8,20]: case('native_cancellation', zero, one, None, one, formula, abort, True)
+    for code in range(16):
+        coefficient = bytes([0xf0|code])+bytes(9)
+        for first,last in [(zero,one),(one,one),(one,zero)]:
+            case('native_success_with_F_variable',first,last,None,coefficient,'constant',aliases=True,evaluation_mode=1)
+    for header in [0x61,0x91]:
+        coefficient = bytes([header])+bytes.fromhex('a30000000000000301')
+        case('native_success_with_zero_dimension_reference',zero,one,None,coefficient,'constant',aliases=True,evaluation_mode=1)
+        case('native_backed_reference_arithmetic',zero,one,None,coefficient,'constant',aliases=True,evaluation_mode=1,reference_dimensions=True)
+    for formula in ['constant','identity','square','radical','division_error']:
+        case('extended_evaluation_status',zero,one,None,one,formula,aliases=True,evaluation_mode=1)
     for index in range(args.random_cases):
         a = rng.randrange(-20,21); b = rng.randrange(-20,21)
         coefficient = rational(rng.randrange(-99,100), rng.randrange(1,100)) if index % 2 else literal(rng.randrange(-99,100))

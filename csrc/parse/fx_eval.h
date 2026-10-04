@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include "../numeric/fx_numeric.h"
 #include "../numeric/fx_calculus.h"
+#include "../linalg/fx_linalg_store.h"
 
 typedef enum {
     FX_EVAL_OK = 0,
@@ -12,6 +13,7 @@ typedef enum {
     FX_EVAL_SYNTAX = 2,
     FX_EVAL_MATH = 3,
     FX_EVAL_ARGUMENT = 8,
+    FX_EVAL_CONVERGENCE = 11,
     FX_EVAL_UNIMPLEMENTED = -1,
     FX_EVAL_RESOURCE_LIMIT = -2
 } fx_eval_status;
@@ -38,6 +40,15 @@ typedef struct {
 } fx_eval_variables;
 void fx_eval_variables_clear(fx_eval_variables *variables);
 
+/* Separate typed storage preserves the ordinary variable-bank ABI. NULL
+ * members select fresh zero banks for this evaluation. Matrix/vector cells
+ * can change during the native expression-finish cleanup, even if the
+ * returned reference becomes an error. */
+typedef struct {
+    fx_eval_variables *variables;
+    fx_linalg_bank *linear_algebra;
+} fx_eval_state;
+
 fx_eval_options fx_eval_default_options(void);
 /* Calculator INPUT tokens, not ASCII math or recursive DISPLAY tokens.
  * COMP(C1) and CMPLX(C4) share this grammar; CMPLX preserves both records.
@@ -54,10 +65,18 @@ fx_eval_status fx_evaluate(const uint8_t *input, size_t length,
 fx_eval_status fx_evaluate_with_variables(const uint8_t *input, size_t length,
                            const fx_eval_options *options, fx_eval_variables *variables,
                            fx_eval_result *result);
-/* The shared COMP parser also supports finite sums/products with local X.
- * Optional cancellation observes the native poll after X is installed;
+/* The shared COMP parser supports sums/products, adaptive integrals and
+ * Richardson derivatives with local X and default/explicit tolerances.
+ * Optional cancellation observes native polling and the current sample X;
  * global X is restored on every outcome, with native Math-off conversion. */
 fx_eval_status fx_evaluate_controlled(const uint8_t *input, size_t length,
                            const fx_eval_options *options, fx_eval_variables *variables,
+                           const fx_calculus_control *control, fx_eval_result *result);
+/* Prepared COMP continuous-calculus callbacks admit stored matrix/vector
+ * references and perform1415A cleanup against the supplied bank. Arithmetic
+ * on rich references still requires the separately prepared rich dispatcher.
+ * State, input and result must occupy separate host storage. */
+fx_eval_status fx_evaluate_with_state(const uint8_t *input, size_t length,
+                           const fx_eval_options *options, const fx_eval_state *state,
                            const fx_calculus_control *control, fx_eval_result *result);
 #endif

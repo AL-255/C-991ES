@@ -1,0 +1,16 @@
+{
+  "subsystem": "sexagesimal-composition-unit-conversions-scientific-constants",
+  "implementation": "Readable handwritten C99 numeric composition and scalar conversion; original immutable constant records only, no CPU or ROM instruction execution and no host floating-point arithmetic",
+  "implemented_routines": [
+    {"address": "0x16a7e..0x16b34", "name": "prepared degree-minute-second reducer", "scope": "One to three signed scalar components, original seconds/3600 then minutes/60 then degrees addition, decimal preparation, final cleanup, F3 records and magnitude-dependent DMS marker"},
+    {"address": "0x161a6..0x161f2", "name": "prepared decoded unit conversion", "scope": "All40 zero-based selectors,20 original stored factors, even multiplication/odd division, original Celsius/Fahrenheit32 offset order, scalar preparation, metadata and cleanup; three-digit selector branch excluded"},
+    {"address": "0x17034..0x17040", "name": "scientific-constant insertion", "scope": "All40 decoded constant selectors copy original ten-byte records without added numeric cleanup"}
+  ],
+  "constant_data": ["Original20 conversion factors at0x2814..0x28dc", "Original offset32 at0x2622", "Original40 scientific constant records at0x264a..0x27da"],
+  "apis": ["fx_number_sexagesimal(out,components,count1..3)", "fx_number_unit_convert(out,input,selector0..39)", "fx_number_scientific_constant(out,index0..39)"],
+  "verification": "analysis/c-verification/numeric_sexagesimal.json",
+  "test": "python3 tools/test_numeric_sexagesimal_c.py --random-cases1000",
+  "notes": "csrc/numeric/sexagesimal/EXECUTION.md",
+  "gaps": ["DMS component grammar and outer unary minus belong to parser integration", "Three-digit conversion selector and model capability limits remain separate parser policy", "Complex records, rich backing contexts, malformed BCD and keyboard/display execution are excluded"],
+  "completion": "Prepared real scalar kernels and decoded table insertion only; full firmware equivalence remains unproven"
+}

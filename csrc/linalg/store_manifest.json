@@ -1,0 +1,88 @@
+{
+  "subsystem": "prepared shared matrix/vector storage bank",
+  "implementation_style": "Readable high-level C: nine fixed numerical slots, dimension comparisons, explicit metadata copy, bit-mask temporary allocation and descending two-byte cell copies. Production contains no ROM/CPU code, assembly translation or host floating point.",
+  "source": "csrc/linalg/fx_linalg_store.c",
+  "public_api": "csrc/linalg/fx_linalg_store.h",
+  "representation": {
+    "slots": 9,
+    "reference_bytes": 10,
+    "dimension_bytes_per_slot": 2,
+    "physical_cells_per_slot": 9,
+    "cell_bytes": 10,
+    "native_dimensions_base": "80E0",
+    "native_payload_base": "829E",
+    "native_slot_bytes": 90,
+    "named_slots": {
+      "A": 0,
+      "B": 1,
+      "C": 2,
+      "Ans": 3
+    },
+    "temporary_slots": [
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "matrix_header": "6x",
+    "vector_header": "9x",
+    "matrix_context": 6,
+    "vector_context": 7,
+    "bank_shared_between_kinds": true
+  },
+  "raw_reference_tokens": {
+    "C8": "MatA, except PreAns in COMP C1",
+    "C9": "MatB",
+    "CA": "MatC",
+    "CB": "MatAns",
+    "CC": "VctA",
+    "CD": "VctB",
+    "CE": "VctC",
+    "CF": "VctAns"
+  },
+  "entry_points": {
+    "005074": "one-based slot,row,column scalar address",
+    "00D2D8": "preserve same-shape object; define/clear if dimension changed",
+    "015BA8": "first free temporary slot4..8",
+    "015BBC": "reserve temporary mask bit",
+    "015BCA": "release temporary mask bit",
+    "01648E": "prepared persistent-to-temporary copy/reference-byte rewrite stage",
+    "01694C": "copy explicit source/destination slots",
+    "016954": "copy referenced object into shared Ans slot3",
+    "01695C": "copy dimension word and all90 bytes",
+    "017068": "prepared reference early dimension-word admission",
+    "01D2C6": "define dimensions and clear all90 payload bytes",
+    "01D2FC": "clear eighteen dimension bytes and810 payload bytes; UI cursor callee remains outside numerical bank",
+    "01D362": "write scalar cell via descending words",
+    "01D3C4": "read scalar cell via descending words"
+  },
+  "native_policies": [
+    "All matrix/vector names share slots0..3; kind exists in reference header, not an independent vector bank.",
+    "Context6 initializes temporary mask18, reserving slots7/8; context7 initializes00. Low bitmap bits are preserved by choose/reserve/release.",
+    "Reset clears storage but preserves independently managed temporary_mask; begin_evaluation is separate.",
+    "Whole dimension word zero rejects a reference with status9 and preserves the output; nonzero partial dimension words are admitted, then rejected by consuming numerical leaves.",
+    "Early reference status is not inferred from final F9 records: complete171F4 preserves prior status0 across final1415A cleanup for partial dimensions.",
+    "Cell UI access accepts slots0..5 and upper bounds. Positive one-based coordinates1..3 are the explicit host prepared contract; native zero/invalid raw address arithmetic excluded.",
+    "Cell copy order is five descending16-bit words; partial overlaps are preserved by raw byte pointer access to prevent compiler struct-array non-overlap assumptions.",
+    "Full object and Ans copies include all inactive cells; same-shape dimension requests preserve all cells; shape changes clear all90 bytes.",
+    "Temporary construction preserves all reference metadata except low slot nibble; already-temporary references bypass allocation; exhausted allocation returns status7 without bank mutation."
+  ],
+  "verified": {
+    "checks": 14859,
+    "native_calls": 4627,
+    "optimization_variants": [
+      "O2",
+      "O3"
+    ],
+    "report": "analysis/c-verification/linalg_store.json",
+    "test": "tools/test_linalg_store_c.py"
+  },
+  "remaining": [
+    "Full typed parser dispatch and operand stack integration",
+    "Persistent matrix/vector UI ownership and mode transitions",
+    "Complete result/controller answer persistence",
+    "Physical cancellation/controller events"
+  ],
+  "full_firmware_complete": false
+}

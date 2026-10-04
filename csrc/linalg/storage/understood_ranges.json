@@ -1,0 +1,54 @@
+{
+  "basis": "Independently inspected storage/reference instruction spans and original-ROM differential comparison of complete18 dimension bytes,810 payload bytes, mask, records/status and partial aliases. This is a conservative documented static-understanding lower bound, not full parser/controller completion. Core arithmetic/display callees and unsupplied UI/controller state are excluded.",
+  "ranges": [
+    {
+      "start": "0x5074",
+      "end": "0x5096",
+      "scope": "One-based numerical slot,row,column address maps slot*90 + ((row-1)*3+column-1)*10 into829E fixed backing; caller bounds and other numeric array families excluded.",
+      "source": "csrc/linalg/fx_linalg_store.c"
+    },
+    {
+      "start": "0xd2d8",
+      "end": "0xd312",
+      "scope": "Object dimension ensure compares both stored bytes with requested rows/columns; exact same shape preserves payload, changed shape invokes full slot definition/clear. Pointer-register ABI and unrelated UI caller excluded.",
+      "source": "csrc/linalg/fx_linalg_store.c"
+    },
+    {
+      "start": "0x15ba8",
+      "end": "0x15bda",
+      "scope": "First-free temporary slot4..8 from bits80/40/20/10/08, full-allocation zero result, individual mark/release preserving other bitmap bits.",
+      "source": "csrc/linalg/fx_linalg_store.c"
+    },
+    {
+      "start": "0x1648e",
+      "end": "0x164a8",
+      "scope": "Prepared persistent-reference temporary allocation, exhausted status7 branch, full reference-byte kind preservation/low-slot rewrite, original storage copy and allocation mask update; subsequent operation selection and scalar/array leaves excluded.",
+      "source": "csrc/linalg/fx_linalg_store.c"
+    },
+    {
+      "start": "0x1694c",
+      "end": "0x1699c",
+      "scope": "Explicit-slot and referenced-Ans copy wrappers; low-nibble source/destination resolution; dimension-word copy plus45 ascending word copies covering all90 payload bytes, including inactive cells; argument preservation.",
+      "source": "csrc/linalg/fx_linalg_store.c"
+    },
+    {
+      "start": "0x17068",
+      "end": "0x1708e",
+      "scope": "Prepared numerical reference dimension-word-zero rejection preserves work record with status9; nonzero partial/full dimensions construct exact ten-byte reference and status0, reporting value position4 to caller; preceding implicit multiplication parser guard excluded.",
+      "source": "csrc/linalg/fx_linalg_store.c"
+    },
+    {
+      "start": "0x1d2c6",
+      "end": "0x1d31a",
+      "scope": "Define any prepared slot dimension bytes and clear all90 cells; full bank reset clears18 dimension and810 payload bytes while invoking external UI cursor reset. The separately managed temporary bitmap is untouched; UI cursor callee and equation-specific3x3 initializer excluded.",
+      "source": "csrc/linalg/fx_linalg_store.c"
+    },
+    {
+      "start": "0x1d362",
+      "end": "0x1d426",
+      "scope": "Numerical cell write/read with slot<=5 and dimension upper-bound admission; status2 retains bank/record on rejection; one-based address helper and five descending word transfers preserve partial-overlap propagation. Native unchecked zero-coordinate address arithmetic explicitly outside safe prepared API but statically understood; unrelated numeric copy callee excluded.",
+      "source": "csrc/linalg/fx_linalg_store.c"
+    }
+  ],
+  "partial_blocks": []
+}

@@ -1,0 +1,8 @@
+{
+  "basis": "Individually inspected half-open real differentiation spans, checked against complete native expressions and an independent read-only review. Parser/global-variable errors are outside the scalar callback API; calls do not imply understanding of unlisted arithmetic, rounding, variable or evaluator callees.",
+  "ranges": [
+    {"start": "0x04a62", "end": "0x04aee", "scope": "Complete central-difference callback pair: localX plus thenminus, cancellation-suppressed scalar difference, division by2h, decimal normalization, integer cleanup and sample-error return", "source": "csrc/numeric/fx_derivative.c"},
+    {"start": "0x04aee", "end": "0x04dcc", "scope": "Inspected derivative parsing/callback boundary and complete precision/step/Richardson driver: positive explicit tolerance, default precision, ordered triangular extrapolation, cancel polls, relative error, decade-gated best estimate, tiny-estimate suppression, default/explicit exhaustion and native return paths", "source": "csrc/numeric/derivative/EXECUTION.md"},
+    {"start": "0x04dcc", "end": "0x04f26", "scope": "Initial finite-decimal step selection: zero-point and signed decimal-power rule, minimum1e-93, repeated point/probe evaluation, ordinary ratio0.9..1.1 gate, retryable domain/ratio-overflow probes and7-attempt step/10 fallback", "source": "csrc/numeric/fx_derivative.c"}
+  ]
+}

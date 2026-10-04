@@ -37,8 +37,7 @@ The canonical suite compares every persistent RAM/MMIO byte and callback,
 excluding only the native CPU stack 8D00..8DED. It covers host responses,
 all port bytes and read-test results, ROM metadata/checksum branches, all
 mode-byte boot tails, welcome decision/timeout boundaries and complete 7044
-chains. The complete-chain fixture uses 80FB=1 so the delegated 1DB34 header
-classifier does not introduce its separately documented numeric workspace
-scratch difference. No scratch bytes are excluded or copied during those
-chains. CPU register/pointer manipulation exists only in the original-ROM
+chains. The complete-chain fixture uses ordinary 80FB=0 with the delegated
+1DB34 header enabled. All classifier workspaces are included in these complete
+RAM comparisons. No scratch bytes are excluded or copied during those chains. CPU register/pointer manipulation exists only in the original-ROM
 test oracle.

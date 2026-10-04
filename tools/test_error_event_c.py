@@ -24,7 +24,7 @@ class ErrorEvent(C.Structure):
 MODULES = ['ui/fx_error_event','ui/fx_error_display','ui/fx_key_controller',
            'ui/fx_key_wait','ui/fx_annunciator','ui/fx_cursor','ui/fx_keys',
            'ui/fx_key_dispatch','ui/fx_editor','ui/fx_natural_editor',
-           'platform/fx_platform','platform/fx_host_bridge','platform/fx_boot',
+           'platform/fx_result_classify', 'platform/fx_platform','platform/fx_host_bridge','platform/fx_boot',
            'numeric/fx_numeric','complex/fx_complex','parse/fx_tokens',
            'format/fx_format','format/fx_format_base','render/fx_render',
            'render/fx_render_context','render/fx_render_memory',

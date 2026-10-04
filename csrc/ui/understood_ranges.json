@@ -227,7 +227,7 @@
     {
       "start": "0x3d62",
       "end": "0x3e74",
-      "scope": "Complete annunciator bit construction and twelve-byte LCD row copy; shared scalar classification is a value API with explicit native scratch exclusion",
+      "scope": "Complete twelve-byte annunciator row clear, modifier/scalar/mode/angle/format/math/result/history indicators and LCD copy; address classifier preserves all numeric workspaces and continuation; CPU stack and physical timing excluded.",
       "source": "csrc/ui/fx_annunciator.c"
     },
     {

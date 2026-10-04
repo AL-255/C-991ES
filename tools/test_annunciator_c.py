@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Verify high-level003D62 annunciators against the independent original ROM.
 
-The C implementation has no CPU runtime, register frame or native numeric
-workspace. Every persistent write is compared, including the twelve-byte LCD
+The C implementation has no CPU runtime or register frame. Numeric
+workspaces are reconstructed from their documented decimal fields. Every persistent write is compared, including the twelve-byte LCD
 copy, and scalar input records remain immutable. GPL-3.0-or-later.
 """
 import argparse
@@ -18,13 +18,14 @@ from test_platform_c import Platform
 from trace_natural_result import settings
 
 
-SOURCES = ['csrc/ui/fx_annunciator.c', 'csrc/complex/fx_complex.c',
+SOURCES = ['csrc/ui/fx_annunciator.c', 'csrc/platform/fx_result_classify.c',
            'csrc/numeric/fx_numeric.c', 'csrc/platform/fx_platform.c']
-# Native CCF6 loads8000..8009 and saves arguments805C..805F. Opposite-sign
-# compact surds also use the scalar workspaces800A..8059 and8640..867B.
-# These numeric scratch writes are absent from the shared value classifier.
-EXCLUDED = [(0x8000, 0x8060), (0x8640, 0x867c), (0x8d00, 0x8dee)]
-PERSISTENT = [(0, 0x8000), (0x8060, 0x8640), (0x867c, 0x8d00), (0x8dee, 65536)]
+# Complete final RAM parity, including native classifier workspaces. Repeated
+# intermediate arithmetic store counts are not a semantic arithmetic API.
+EXCLUDED = [(0x8d00, 0x8dee)]
+NUMERIC = [(0x8000, 0x8060), (0x8640, 0x867c)]
+PERSISTENT = [(0, 0x8d00), (0x8dee, 65536)]
+COUNTED = [(0,0x8000),(0x8060,0x8640),(0x867c,0x8d00),(0x8dee,65536)]
 ROW, LCD, WIDTH = 0x87d0, 0xf800, 12
 SETTINGS = [0x80f8, 0x80f9, 0x8105, 0x8102, 0x8106, 0x80fe, 0x8129]
 BASE = [0, 193, 4, 0, 0, 1, 0]
@@ -59,11 +60,13 @@ void __wrap_fx_data_write(fx_platform *p, uint8_t s, uint16_t a, uint8_t v)
 {
     if (!s && a >= 0x8000) {
         ++fx_annunciator_test_writes[a];
+        if ((a >= 0x87d0 && a < 0x87dc) || (a >= 0xf800 && a < 0xf80c)) {
         if (fx_annunciator_test_events < 64) {
             fx_annunciator_test_addresses[fx_annunciator_test_events] = a;
             fx_annunciator_test_values[fx_annunciator_test_events] = v;
         }
         ++fx_annunciator_test_events;
+        }
     }
     __real_fx_data_write(p, s, a, v);
 }
@@ -147,13 +150,11 @@ def main():
                 differences = [(hex(a), actual[a], expected[a]) for a in range(start, end)
                                if actual[a] != expected[a]]
                 raise AssertionError((group, detail, 'memory', differences[:20]))
+        for start,end in COUNTED:
             if actual_writes[8*start:8*end] != expected_writes[8*start:8*end]:
                 differences = [(hex(a), writes[a], native.ram_writes[a]) for a in range(start, end)
                                if writes[a] != native.ram_writes[a]]
                 raise AssertionError((group, detail, 'write count', differences[:20]))
-        # Only the original row buffer and LCD row belong to the value API.
-        for start, end in ((0, ROW), (ROW+WIDTH, LCD), (LCD+WIDTH, 65536)):
-            assert actual[start:end] == before[start:end], (group, detail, 'surrounding memory')
         for address, source in ((0x8226, first), (0x8408, second)):
             assert actual[address:address+10] == expected[address:address+10] == source
             assert not any(writes[address:address+10])
@@ -162,8 +163,8 @@ def main():
         assert all(writes[LCD+offset] == 1 for offset in range(WIDTH))
         assert lib.fx_take_callback(C.byref(platform)) == native.lib.harness_callback()
         assert platform.status == 0
-        # Retain evidence for every excluded native numeric address observed.
-        for start, end in EXCLUDED[:2]:
+        # Retain evidence for every native numeric address compared.
+        for start, end in NUMERIC:
             scratch_writes.update(a for a in range(start, end) if native.ram_writes[a])
         record(group)
 
@@ -186,7 +187,7 @@ def main():
                 size, value = int(fields[5]), int(fields[6], 16)
                 for offset in range(size):
                     destination = (address+offset) & 65535
-                    if segment == 0 and destination >= 0x8000 and persistent(destination):
+                    if segment == 0 and destination >= 0x8000 and (ROW <= destination < ROW+WIDTH or LCD <= destination < LCD+WIDTH):
                         expected_events.append((destination, (value >> (8*offset)) & 255))
             assert events() == expected_events, (group, 'ordered bus writes', events(), expected_events)
             record('ordered_native_persistent_bus_writes')
@@ -231,22 +232,23 @@ def main():
     assert bytes(ram) == before and missing_ram.callback_pending == 0x42
     record('invalid_arguments_do_not_write')
 
-    # Inject the value classifier's explicit negative statuses to verify the
+    # Inject the address classifier's explicit negative statuses to verify the
     # caller's failure boundary without inventing an oracle outcome for a
     # malformed scalar. The row retains preceding native-order writes and
     # the old LCD row survives. Successful classification itself is covered
     # by all the original-ROM comparisons above.
     failing_classifier = build/'failing_classifier.c'
     failing_classifier.write_text(r'''
-#include "csrc/complex/fx_complex.h"
+#include "csrc/platform/fx_result_classify.h"
 int test_fail_at, test_fail_status, test_classifier_calls;
-fx_numeric_status fx_scalar_numeric_classify(uint8_t *classification,
-                                             const fx_number *input)
+fx_numeric_status fx_result_classify_address(fx_platform *platform,
+    uint16_t source, uint16_t companion, fx_result_classification *result)
 {
-    (void)input;
+    (void)platform; (void)source;
     if (++test_classifier_calls == test_fail_at)
         return (fx_numeric_status)test_fail_status;
-    *classification = 4;
+    result->classification = 4;
+    result->continuation = companion;
     return FX_NUMERIC_OK;
 }
 ''')
@@ -275,14 +277,14 @@ fx_numeric_status fx_scalar_numeric_classify(uint8_t *classification,
         'cases': sum(counts.values()), 'domains': counts, 'failures': 0,
         'random_cases': args.random_cases, 'seed': '0x3d62',
         'input': 'identical persistent RAM/MMIO, seven arbitrary settings bytes, canonical decimal/rational/compact-surd/error records8226 and8408, and retained callback events',
-        'output': 'complete persistent RAM/LCD/MMIO and per-address bus write counts; selected ordered write traces; immutable scalar sources and surrounding buffers; callback parity',
+        'output': 'complete persistent RAM/LCD/MMIO including all numeric scratch, per-address bus counts outside arithmetic scratch; selected ordered header writes; immutable scalar sources; callbacks',
         'scope': 'original003D62 through003E74return: complete twelve-byte87D0rowclear, modifier/numeric/mode/angle/format/math/result/history indicators and complete F800copy',
         'excluded_native_memory': [{'start':hex(start), 'end_exclusive':hex(end),
                                     'reason':'CPU call stack' if start == 0x8d00 else 'shared scalar classifier numeric scratch'}
                                    for start,end in EXCLUDED],
         'observed_native_numeric_scratch_addresses': [hex(address) for address in sorted(scratch_writes)],
-        'limitation': 'native numeric scratch and CPU stack side effects are absent; malformed compact-surds outside the shared classifier value domain, physical LCD timing and outer controllers remain outside this routine API; no full firmware completion claim'},
-        [*SOURCES, 'csrc/ui/fx_annunciator.h', 'csrc/complex/fx_complex.h',
+        'limitation': 'CPU stack effects are absent; malformed compact-surds outside the prepared BCD classifier domain, physical LCD timing and outer controllers remain outside this routine API; no full firmware completion claim'},
+        [*SOURCES, 'csrc/ui/fx_annunciator.h', 'csrc/platform/fx_result_classify.h',
          'csrc/numeric/fx_numeric.h', 'csrc/platform/fx_platform.h',
          'tools/test_platform_c.py', 'tools/trace_natural_result.py', 'tools/c_verification.py'],
         'tools/test_annunciator_c.py')

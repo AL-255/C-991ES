@@ -1,0 +1,24 @@
+{
+  "subsystem": "Prepared EQN simultaneous and polynomial solver kernels",
+  "implementation": "Readable portable C99 formulas in native finite-decimal operation order; no ROM execution, instruction interpreter or host floating point",
+  "api": "csrc/numeric/fx_solver.h",
+  "implemented_routines": [
+    {"address":"0x14f0c","name":"prepared equation solver","scope":"Modes1/2 linear systems and3/4 quadratic/cubic; coefficient banking, rational recognition, leading normalization, partial work state and prepared cancellation checks through15658"},
+    {"address":"0x150b2","name":"stable quadratic formula","scope":"Zero constant, repeated root, nonreal conjugate pair and positive discriminant cancellation-avoiding branch, native ordering and exact policy"},
+    {"address":"0x15248","name":"cubic discriminant preparation","scope":"Stored P/Q/H formulas, native finite operation order and d=0 quadratic reduction"},
+    {"address":"0x153ca","name":"Cardano branch","scope":"Ordered square/cube roots, real root and conjugate pair, inequality real-only policy"},
+    {"address":"0x1552e","name":"repeated cubic roots","scope":"Simple/repeated ordering, two distinct results or one triple root, retained duplicate scratch"},
+    {"address":"0x15596","name":"three-real cubic roots","scope":"Atan argument with signed pi/2 fallback, 2pi stepping, radian cosine plus special-result recognition, original result ordering"},
+    {"address":"0x1876c","name":"fraction-preferred division selector","scope":"Plain decimal eligibility via native integer/fractional test; exact fraction packing or ordinary scalar divide"},
+    {"address":"0x156c6","name":"post-solver numerical cleanup","scope":"Independent8724 cleanup of active complex roots; history/display/event callbacks are excluded"}
+    ,{"address":"0x112f6","name":"dependent/inconsistent linear classification","scope":"Original2×2 zero tree and3×3 ordered determinant/minor tables; zero-pivot/error shortcuts, checked-product underflow and thirteen-digit cancellation suppression"}
+  ],
+  "gaps": [
+    "Result bank transfer, history, display and equation editor/controller are separate subsystems",
+    "Physical timer/keyboard behavior is replaced by a prepared cancellation response",
+    "Malformed BCD/compact records and rich-reference headers outside scalar formats are unsupported",
+    "Full scalar-kernel scratch/register side effects are outside this named value/work-bank API"
+  ],
+  "verification": "tools/test_numeric_solver_c.py",
+  "test_report": "analysis/c-verification/numeric_solver.json"
+}

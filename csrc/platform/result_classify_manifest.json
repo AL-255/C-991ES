@@ -1,0 +1,21 @@
+{
+  "subsystem": "address-based result classification and numeric workspace effects",
+  "implementation": "Handwritten readable C; original instructions execute only in independent tests",
+  "sources": ["csrc/platform/fx_result_classify.c", "csrc/platform/fx_result_classify.h"],
+  "implemented_routines": [
+    {"address":"0x1ccf6", "name":"fx_result_classify_address", "scope":"Raw header admission, zero/negative/positive classes, wrapping sign-byte addition and opposite-sign compact-surd decimal conversion; complete persistent numeric workspace and typed continuation"},
+    {"address":"0x178a4..0x179a4", "name":"compact component expansion", "scope":"Six canonical BCD component records, first-zero coefficient shortcut, three-digit radicands and raw positive-zero constructors"},
+    {"address":"0x17576..0x17616", "name":"component decimal evaluation", "scope":"Fixed component workspace0: sqrt/coefficient/denominator order, first-zero skip, guard fields, aligned smaller operand and final plain addition/storage"},
+    {"address":"0x1bac4..0x1bae4", "name":"operand field loading", "scope":"Saved argument before external record snapshot, reversed finite workspace order and native even-tail advancement for odd source aliases"}
+  ],
+  "api":"fx_result_classify_address(platform, source, companion, result) returns a numerical status; result retains class and semantic continuation needed by consecutive header calls. No CPU state or CPU locals are stored by C.",
+  "prepared_domain":[
+    "Opposite-sign compact surds have canonical BCD coefficients0..99, radicands0..999, denominators0..99 and sign pair1/6; numeric-workspace source aliases and address wrap are excluded for conversion.",
+    "Direct classification branches admit arbitrary byte records and overlapping operand/argument bus sources.",
+    "Sources intersecting native CPU stack8D00..8DED are rejected before writes. Unsupported conversion inputs retain only native argument/load prefix effects.",
+    "Final RAM/MMIO parity includes8000..805F and8640..867B. Intermediate arithmetic store counts and instruction ordering are not a mathematical API contract."
+  ],
+  "verification":["tools/test_result_classify_c.py", "analysis/c-verification/result_classify.json", "tools/test_annunciator_c.py", "tools/test_key_controller_c.py", "tools/test_boot_events_c.py"],
+  "understanding_ranges":"csrc/platform/result_classify/understood_ranges.json",
+  "gaps":["Malformed compact-surds and CPU-stack aliases are explicit prepared-domain exclusions.", "General arbitrary-address finite arithmetic scratch APIs and physical CPU/peripheral timing remain outside this adapter."]
+}

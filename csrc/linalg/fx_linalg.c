@@ -53,7 +53,12 @@ static fx_numeric_status fraction_divide(fx_number *out, const fx_number *a,
     if ((b->bytes[0] & 0xf0) != 0 && (b->bytes[0] & 0xf0) != 0x20) {
         fx_number_error(out, 3); return FX_NUMERIC_OK;
     }
+    /* Native94EC admits only bounded integer operands to fraction packing.
+     * Larger integers retain ordinary division's guard digits; eligible
+     * inputs still receive the fraction encoder's decimal cleanup. */
     if (a->bytes[0] < 10 && b->bytes[0] < 10 &&
+        fx_number_fractional_status(a) == 0 &&
+        fx_number_fractional_status(b) == 0 &&
         fx_decimal_to_integer(&numerator, a) == FX_NUMERIC_OK &&
         fx_decimal_to_integer(&denominator, b) == FX_NUMERIC_OK && denominator) {
         fx_rational ratio;

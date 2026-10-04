@@ -22,7 +22,7 @@
   "prepared_policy": [
     "Native CPU stack8D00..8DED is excluded; every other RAM/MMIO byte and callback is compared.",
     "The display-only adapter accepts the architectural7334 result at native7286. The standard host lifecycle supplies its verified A5 success result.",
-    "Complete7044 tests retain80FB=1 to bypass the separately verified1DB34 annunciator/classifier scratch policy; no numeric or header bytes are excluded from these full-sequence comparisons.",
+    "Complete 7044 tests use ordinary 80FB=0 with all annunciator/classifier workspaces compared; only CPU stack bytes are excluded.",
     "Welcome stable-pair preparation at1E51C covers matrix rows unavailable from a single passive nativeF040 byte.",
     "ROM checksum/version variants are deterministic test images changing metadata only; executable instructions and fonts remain original."
   ],

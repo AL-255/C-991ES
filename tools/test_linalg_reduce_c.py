@@ -82,6 +82,18 @@ def main():
      v=value(3,3,[literal(x) for x in f])
      for cancel in range(82):
       for reduced in [0,1]:run(v,reduced,Context(1,0,0,cancel),label='cancellation')
+    # Native1CA3E tests original94EC integer eligibility before packing a
+    # fraction. An exponent15 pivot must keep ordinary division's guards;
+    # eligible exponent14 decimal fallbacks still receive integer cleanup.
+    for text in ['99999999999999','1.23456789012345e14','1e15',
+                 '1.23456789012345e15','-1.23456789012345e15']:
+     for rows,cols,data in [(1,2,[text,1,97,98,99,96,95,94,93]),
+                            (2,2,[text,1,97,0,1,98,95,96,99]),
+                            (2,3,[text,1,2,0,1,3,95,96,99])]:
+      for reduced in [0,1]:
+       for alias in [False,True]:
+        run(value(rows,cols,[literal(x) for x in data]),reduced,
+            label='fraction-eligibility-'+text,alias=alias)
     for i in range(args.random_cases):
      pool=[ints,ints+exact,ints+errors+marked,dec][i%4];v=value(rng.randrange(1,4),rng.randrange(1,4),[rng.choice(pool) for _ in range(9)])
      run(v,i%2,Context(i%2,0,0,rng.choice([0,0,0,1,2,5,10,20,40,60])),label='random-'+str(i),alias=bool(i%2))

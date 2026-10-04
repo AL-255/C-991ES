@@ -76,6 +76,29 @@ Cancellation returns F1. Final results receive native integer cleanup.
 
 ## Verification boundary
 
+Integral and derivative adapters can distinguish an evaluator's native
+success/failure condition from its value record using the positive
+`FX_CALCULUS_EVALUATION_OK` and `FX_CALCULUS_EVALUATION_ERROR` statuses.
+Legacy zero plus an F record still means callback failure. Negative returns
+remain host failures and leave the output untouched. Sum/product retain the
+legacy contract.
+
+A successful bare-variable callback may carry an F record after the
+evaluator's `0x1415A` cleanup. The integral ignores its two endpoint values;
+it also does not check the midpoint weight multiplications at `0x045C6` and
+`0x045DA`. The first checked symmetric-pair addition then detects F3, after
+five callbacks and one poll. This order is preserved by checked and unchecked
+arithmetic helpers, without adding or suppressing callbacks.
+
+The two scalar preparation paths differ. `0x15C82` rejects an unmasked
+header above `0x4F`, leaving that value unchanged. Ordinary `0x1BFxx`
+arithmetic first calls `0x1AB64`, which clears bit40 on every non-F header.
+Thus a surviving backed `0x61` matrix reference is interpreted as its raw
+rational payload by ordinary arithmetic; the matrix cells are not projected
+into a scalar. A zero-dimension reference instead becomes F9 during callback
+cleanup. These behaviors are tested against complete native expressions with
+explicit bank dimensions and cell contents.
+
 `tools/test_numeric_integral_c.py` executes complete original native
 expressions and compares all ten scalar output bytes, the native twenty-byte
 real/imaginary record, every callback X record in order, every cancel poll,

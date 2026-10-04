@@ -10,14 +10,14 @@
       "scope": "Full startup, persistent state, power management, peripheral interactions and emulator callbacks",
       "status": "partial",
       "manifest": "platform/manifest.json",
-      "implemented_subset": "Prepared boot and emulator host bridge, typed persistent variable/result/display state, replay append/eviction/recall and diagnostic contrast UI; full lifecycle scheduling and remaining boot diagnostics are pending"
+      "implemented_subset": "Prepared boot and emulator host bridge, typed persistent variable/result/display state, replay append/eviction/recall and diagnostic contrast UI; main routing/key-wait scheduler and typed UI/menu/screen completion are available; full subordinate lifecycle integration and remaining boot diagnostics are pending"
     },
     {
       "id": "keyboard_ui",
       "scope": "Keyboard scanning, editing, cursor, menus, history and mode setup",
       "status": "partial",
       "manifest": "ui/manifest.json",
-      "implemented_subset": "Prepared key controllers, editors/cursors, input export/equation normalization, error dialog/key acceptance and editable/cached-result cursor restoration; prepared input error/reset recovery is available; full input handler and mode UI remain pending"
+      "implemented_subset": "Prepared key controllers, editors/cursors, input export/equation normalization, error dialog/key acceptance and editable/cached-result cursor restoration; ordinary input evaluation/variable/Ans/replay commit, cancellation/error/reset/export continuation and linear/natural expression/result presentation. Ordinary outer typing/command dispatch is available; subordinate menus, specialized contexts and mode UI remain pending"
     },
     {
       "id": "parser",
@@ -42,13 +42,13 @@
       "id": "advanced_math",
       "scope": "Numerical integration/differentiation/sums, solving, combinatorics, random functions and complex arithmetic",
       "status": "partial",
-      "implemented_subset": "Factorial/permutations/combinations/percent, shared COMP/CMPLX expressions, scalar absolute/conjugation/argument, finite sum/product expression orchestration and prepared adaptive Gauss-Kronrod integration. Differentiation, solver, integration expression orchestration and random functions remain pending"
+      "implemented_subset": "Factorial/permutations/combinations/percent, shared COMP/CMPLX expressions, scalar absolute/conjugation/argument, finite sum/product, adaptive Gauss-Kronrod integral and Richardson derivative expression orchestration with native sample order, cancellation and X restoration. Prepared linear/quadratic/cubic solvers and native degeneracy diagnostics are available; generic SOLVE, solver UI orchestration and random functions remain pending"
     },
     {
       "id": "calculation_modes",
       "scope": "Statistics, distributions, equation, matrix, vector, table and base-N modes, constants and unit conversions",
       "status": "partial",
-      "implemented_subset": "Prepared statistics/regression kernels and table editor/cache/normal distribution kernels; matrix/vector arithmetic, determinant/inverse, REF/RREF and preparation kernels; equation/inequality result display and BASE-N integer formatting. Complete mode input/UI, object allocation/editing/display, equation solving, table mode, constants and conversions remain pending"
+      "implemented_subset": "Prepared statistics/regression kernels and table editor/cache/normal distribution kernels; matrix/vector arithmetic, determinant/inverse, REF/RREF, numeric preparation, typed slot storage, prepared rich operand dispatch/allocation and grid/caption/cursor display; equation/inequality result display; BASE-N word conversion, arithmetic/logic, radix literals, stored-scalar preparation and integer formatting; prepared DMS composition, all stored unit-conversion factors and scientific-constant records; linear/quadratic/cubic equation kernels and native failure diagnostics. Complete mode grammar/UI and object allocation/editing, equation coefficient/history/display orchestration, table mode and constants/conversion token integration remain pending"
     },
     {
       "id": "format",
@@ -66,7 +66,7 @@
       "id": "end_to_end",
       "scope": "Runnable calculator with original expression and key-sequence input/output behavior",
       "status": "partial",
-      "implemented_subset": "Supported COMP arithmetic, fractions, square/cube/nth roots, powers, factorial/percent/nPr/nCr, forward/inverse trig and hyperbolic, single/two-argument logarithms and exponentials through records, formatter tokens, layout and LCD; structured display-to-input conversion and error cursor mapping. Prepared editor, cursor and nonblocking host key-wait/controller and annunciator APIs; complete key UI and other mode pipelines remain pending; shared CMPLX expression evaluation and prepared rectangular output composed through natural display tokens and LCD pixels; prepared scalar variable transactions and finite sum/product expressions now share the evaluator grammar. Prepared input recovery and nonblocking diagnostic lifecycle are available; full keyboard handler and calculator lifecycle scheduling remain pending"
+      "implemented_subset": "Supported COMP arithmetic, fractions, square/cube/nth roots, powers, factorial/percent/nPr/nCr, forward/inverse trig and hyperbolic, single/two-argument logarithms and exponentials through records, formatter tokens, layout and LCD; structured display-to-input conversion and error cursor mapping. Prepared editor, cursor and nonblocking host key-wait/controller and annunciator APIs; complete key UI and other mode pipelines remain pending; shared CMPLX expression evaluation and prepared rectangular output composed through natural display tokens and LCD pixels; prepared scalar variable transactions and finite sum/product, integral and derivative expressions now share the evaluator grammar. Prepared input recovery and nonblocking diagnostic lifecycle are available; ordinary input transaction and presentation controllers are available; ordinary outer typing/command dispatch and main scheduling are available; subordinate menus and specialized calculator lifecycle integration remain pending"
     },
     {
       "id": "verification",

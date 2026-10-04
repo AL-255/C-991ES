@@ -8,6 +8,8 @@
 #include "../numeric/fx_root.h"
 #include "../numeric/fx_combinatorics.h"
 #include "../numeric/fx_logbase.h"
+#include "../numeric/fx_integral.h"
+#include "../numeric/fx_derivative.h"
 #include "../complex/fx_complex_dispatch.h"
 #include "../complex/fx_complex_angle.h"
 #include <string.h>
@@ -18,8 +20,9 @@ typedef struct {
     unsigned depth;
     fx_eval_options options;
     fx_eval_variables *variables;
+    fx_linalg_bank *linear_algebra;
     const fx_calculus_control *control;
-    uint8_t calculus_mode, scan_only;
+    uint8_t calculus_mode, calculus_token, scan_only;
     fx_eval_status status;
     uint8_t unsupported;
 } parser;
@@ -112,7 +115,7 @@ static void calculus(parser *p, fx_complex *out, uint8_t token);
 
 static int function_prefix(uint8_t token)
 {
-    return token == 0x5d || token == 0x69 || token == 0x63 || token == 0x88 || token == 0xc3 || token == 0x98 || token == 0xa8 || token == 0x68 || (token >= 0x70 && token <= 0x73) ||
+    return token == 0x5d || (token >= 0x69 && token <= 0x6b) || token == 0x63 || token == 0x88 || token == 0xc3 || token == 0x98 || token == 0xa8 || token == 0x68 || (token >= 0x70 && token <= 0x73) ||
            (token >= 0x90 && token <= 0x93) || (token >= 0xa0 && token <= 0xa3) ||
            (token >= 0xb0 && token <= 0xb2);
 }
@@ -172,6 +175,14 @@ static void load_variable(parser *p, fx_complex *out, unsigned slot)
     for (unsigned index = 0; index < 2; ++index) {
         unsigned header = components[index]->bytes[0] >> 4;
         fx_number_type kind = fx_number_kind(components[index]);
+        /* A direct error-valued load can succeed as an expression; the
+         * continuous driver then detects it at its original arithmetic site.
+         * This differs from a failed operation that produces the same F3. */
+        if ((header == 6 || header == 9 || header == 15) &&
+            (p->calculus_token == 0x6a || p->calculus_token == 0x6b)) {
+            if (p->scan_only) fx_complex_zero(out);
+            continue;
+        }
         if ((header != 0 && header != 2 && header != 4 && header != 8) ||
             (kind != FX_NUMBER_DECIMAL && kind != FX_NUMBER_RATIONAL && kind != FX_NUMBER_SURD)) {
             if (p->scan_only) {
@@ -181,7 +192,9 @@ static void load_variable(parser *p, fx_complex *out, unsigned slot)
                 fx_complex_zero(out);
                 return;
             }
-            if (p->calculus_mode == 1) { p->status = FX_EVAL_MATH; return; }
+            if (p->calculus_mode == 1 && p->calculus_token != 0x6a && p->calculus_token != 0x6b) {
+                p->status = FX_EVAL_MATH; return;
+            }
             unsupported(p, peek(p)); return;
         }
         /* 51CA invokes173FA when18212 denies natural output. This path
@@ -218,7 +231,7 @@ static void primary(parser *p, fx_complex *out)
         static const uint8_t pi[10] = {0x03,0x14,0x15,0x92,0x65,0x35,0x89,0x80,0x00,0x01};
         memcpy(out->real.bytes, token == 0x81 ? e : pi, 10);
         ++p->position;
-    } else if (token == 0x5d || token == 0x69) {
+    } else if (token == 0x5d || (token >= 0x69 && token <= 0x6b)) {
         calculus(p, out, token);
     } else if (function_prefix(token)) {
         fx_complex output = *out, second_argument;
@@ -460,19 +473,45 @@ static void expression(parser *p, fx_complex *out, unsigned minimum)
 
 typedef struct {
     parser *parent;
-    size_t body_start, body_end;
+    size_t body_start, body_end, callback_position;
     int64_t next_x;
     fx_eval_status host_failure;
-    uint8_t unsupported_token;
+    uint8_t unsupported_token, finite_series, sampled;
 } calculus_call;
 
 static int calculus_cancelled(void *userdata)
 {
     calculus_call *call = userdata;
     parser *p = call->parent;
-    /* Native04330/04426 installs X before5550 polls cancellation. */
-    (void)fx_decimal_from_integer(&p->variables->values[FX_VARIABLE_X][0], call->next_x++);
+    /* Series04330/04426 installs the next X before5550 polls cancellation.
+     * Quadrature/Richardson polls retain the most recently sampled X. */
+    if (call->finite_series)
+        (void)fx_decimal_from_integer(&p->variables->values[FX_VARIABLE_X][0], call->next_x++);
     return p->control && p->control->cancelled && p->control->cancelled(p->control->userdata);
+}
+
+static void continuous_finish(parser *p, fx_number *value)
+{
+    unsigned header = value->bytes[0] >> 4;
+    if (header == 15) {
+        /*17274 ignores1415A's status, retaining successful evaluation EQ.
+         * The leaf rejects a non-matrix/vector rich kind with F3. */
+        fx_number_error(value, 3);
+    } else if (header == 6 || header == 9) {
+        unsigned identity = value->bytes[0] & 15;
+        fx_linalg_value input;
+        fx_linalg_result result;
+        fx_linalg_context context;
+        fx_linalg_context_default(&context);
+        context.exact_math = p->options.math_output;
+        if (fx_linalg_bank_value(&input, p->linear_algebra, value) != FX_NUMERIC_OK ||
+            fx_linalg_unary(&result, &input, FX_LINALG_INTEGER_CLEANUP, &context) != FX_NUMERIC_OK ||
+            fx_linalg_bank_store_value(p->linear_algebra, identity, &result.value) != FX_NUMERIC_OK) {
+            unsupported(p, 0);
+            return;
+        }
+        *value = result.value.reference;
+    }
 }
 
 static fx_numeric_status calculus_evaluate(fx_number *out, const fx_number *x, void *userdata)
@@ -488,7 +527,12 @@ static fx_numeric_status calculus_evaluate(fx_number *out, const fx_number *x, v
     callback.scan_only = 0;
     callback.variables->values[FX_VARIABLE_X][0] = *x;
     expression(&callback, &value, 0);
+    call->callback_position = callback.position;
+    call->sampled = 1;
     if (callback.status == FX_EVAL_OK && peek(&callback)) callback.status = FX_EVAL_SYNTAX;
+    if (callback.status == FX_EVAL_OK &&
+        (callback.calculus_token == 0x6a || callback.calculus_token == 0x6b))
+        continuous_finish(&callback, &value.real);
     if (callback.status < 0) {
         call->host_failure = callback.status;
         call->unsupported_token = callback.unsupported;
@@ -496,22 +540,26 @@ static fx_numeric_status calculus_evaluate(fx_number *out, const fx_number *x, v
     }
     if (callback.status) fx_number_error(out, (unsigned)callback.status);
     else *out = value.real;
+    if (callback.calculus_token == 0x6a || callback.calculus_token == 0x6b)
+        return (fx_numeric_status)(callback.status ? FX_CALCULUS_EVALUATION_ERROR : FX_CALCULUS_EVALUATION_OK);
     return FX_NUMERIC_OK;
 }
 
 static void calculus(parser *p, fx_complex *out, uint8_t token)
 {
-    fx_complex saved_x, lower, upper, ignored;
+    fx_complex saved_x, lower, upper, tolerance, ignored;
     fx_number result, decimal_lower;
     uint8_t exact = p->options.math_output;
-    calculus_call call = {p, 0, 0, 0, FX_EVAL_OK, 0};
+    calculus_call call = {.parent = p, .finite_series = token == 0x69 || token == 0x5d};
     fx_calculus_control control = {calculus_cancelled, &call};
+    int has_tolerance = 0;
     if (p->calculus_mode) { p->status = FX_EVAL_SYNTAX; return; }
     if (p->options.calculation_context != 0xc1) { unsupported(p, token); return; }
     fx_complex_zero(&saved_x);
     load_variable(p, &saved_x, FX_VARIABLE_X);
     if (p->status != FX_EVAL_OK) return;
     ++p->position;
+    p->calculus_token = token;
     call.body_start = p->position;
     p->calculus_mode = 255;
     p->scan_only = 1;
@@ -525,16 +573,34 @@ static void calculus(parser *p, fx_complex *out, uint8_t token)
     p->scan_only = 0;
     expression(p, &lower, 0);
     if (p->status != FX_EVAL_OK) goto restore;
-    if (peek(p) != ',') { p->status = FX_EVAL_SYNTAX; goto restore; }
-    ++p->position;
-    expression(p, &upper, 0);
-    if (p->status != FX_EVAL_OK) goto restore;
+    if (token != 0x6b) {
+        if (peek(p) != ',') { p->status = FX_EVAL_SYNTAX; goto restore; }
+        ++p->position;
+        expression(p, &upper, 0);
+        if (p->status != FX_EVAL_OK) goto restore;
+    }
+    if ((token == 0x6a || token == 0x6b) && peek(p) == ',') {
+        ++p->position;
+        expression(p, &tolerance, 0);
+        if (p->status != FX_EVAL_OK) goto restore;
+        has_tolerance = 1;
+    }
     if (fx_number_to_decimal(&decimal_lower, &lower.real) == FX_NUMERIC_OK)
         (void)fx_decimal_to_integer(&call.next_x, &decimal_lower);
     p->calculus_mode = 1;
-    fx_numeric_status status = token == 0x69 ?
-        fx_number_sum(&result, &lower.real, &upper.real, calculus_evaluate, &call, &control) :
-        fx_number_product(&result, &lower.real, &upper.real, calculus_evaluate, &call, &control);
+    fx_numeric_status status;
+    if (token == 0x69)
+        status = fx_number_sum(&result, &lower.real, &upper.real, calculus_evaluate, &call, &control);
+    else if (token == 0x5d)
+        status = fx_number_product(&result, &lower.real, &upper.real, calculus_evaluate, &call, &control);
+    else if (token == 0x6a)
+        status = fx_number_integral(&result, &lower.real, &upper.real,
+                                    has_tolerance ? &tolerance.real : NULL,
+                                    calculus_evaluate, &call, &control);
+    else
+        status = fx_number_derivative(&result, &lower.real,
+                                      has_tolerance ? &tolerance.real : NULL,
+                                      calculus_evaluate, &call, &control);
     if (status != FX_NUMERIC_OK) {
         if (call.host_failure) {
             p->status = call.host_failure;
@@ -546,6 +612,11 @@ static void calculus(parser *p, fx_complex *out, uint8_t token)
     out->real = result;
     if (fx_number_kind(&result) == FX_NUMBER_ERROR) {
         p->status = (fx_eval_status)(result.bytes[0] & 15);
+        /* Integral4A4C preserves the last body evaluation cursor for F3/FB;
+         * cancellation4A52 restores the saved post-argument position.
+         * Derivative4DBC restores it for every driver outcome. */
+        if (token == 0x6a && p->status != FX_EVAL_CANCELLED && call.sampled)
+            p->position = call.callback_position;
         if (p->status == FX_EVAL_CANCELLED && peek(p) == ')') ++p->position;
         goto restore;
     }
@@ -557,6 +628,7 @@ restore:
     p->variables->values[FX_VARIABLE_X][0] = saved_x.real;
     p->options.math_output = exact;
     p->calculus_mode = 0;
+    p->calculus_token = 0;
     p->scan_only = 0;
 }
 
@@ -600,13 +672,15 @@ static void store_result(parser *p, fx_complex *value)
         p->variables->values[slot][1] = stored.imaginary;
 }
 
-fx_eval_status fx_evaluate_controlled(const uint8_t *input, size_t length,
-                           const fx_eval_options *options, fx_eval_variables *variables,
+fx_eval_status fx_evaluate_with_state(const uint8_t *input, size_t length,
+                           const fx_eval_options *options, const fx_eval_state *state,
                            const fx_calculus_control *control, fx_eval_result *result)
 {
     parser p;
     fx_complex value;
     fx_eval_variables local_variables;
+    fx_linalg_bank local_linear_algebra = {0};
+    fx_eval_variables *variables = state ? state->variables : NULL;
     fx_complex_zero(&value);
     if (!result) return FX_EVAL_SYNTAX;
     memset(result, 0, sizeof *result);
@@ -615,6 +689,7 @@ fx_eval_status fx_evaluate_controlled(const uint8_t *input, size_t length,
     p.input = input; p.length = length;
     if (!variables) { fx_eval_variables_clear(&local_variables); variables = &local_variables; }
     p.variables = variables;
+    p.linear_algebra = state && state->linear_algebra ? state->linear_algebra : &local_linear_algebra;
     p.control = control;
     p.options = options ? *options : fx_eval_default_options();
     if (p.options.calculation_context != 0xc1 && p.options.calculation_context != 0xc4)
@@ -625,7 +700,7 @@ fx_eval_status fx_evaluate_controlled(const uint8_t *input, size_t length,
     result->value[1] = value.imaginary;
     if (p.status == FX_EVAL_OK && peek(&p) != 0) {
         fx_evaluator_token token = fx_decode_evaluator_token(peek(&p), p.options.calculation_context);
-        if (token.kind == 10 || peek(&p) == ')' || peek(&p) == '.' ||
+        if (token.kind == 10 || peek(&p) == ')' || peek(&p) == ',' || peek(&p) == '.' ||
             (peek(&p) >= '0' && peek(&p) <= '9')) p.status = FX_EVAL_SYNTAX;
         else unsupported(&p, peek(&p));
     }
@@ -637,6 +712,14 @@ fx_eval_status fx_evaluate_controlled(const uint8_t *input, size_t length,
     }
     result->unsupported_token = p.unsupported;
     return p.status;
+}
+
+fx_eval_status fx_evaluate_controlled(const uint8_t *input, size_t length,
+                           const fx_eval_options *options, fx_eval_variables *variables,
+                           const fx_calculus_control *control, fx_eval_result *result)
+{
+    fx_eval_state state = {variables, NULL};
+    return fx_evaluate_with_state(input, length, options, &state, control, result);
 }
 
 fx_eval_status fx_evaluate_with_variables(const uint8_t *input, size_t length,

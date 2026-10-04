@@ -1,0 +1,53 @@
+{
+  "subsystem": "typed MATRIX/VECTOR evaluator dispatch",
+  "implementation_style": "Readable high-level C operand admission, bitmap and bank operations, and numerical-kernel selection; no parser, ROM execution, generated instruction lifts or host floating point",
+  "source": "csrc/linalg/fx_linalg_dispatch.c",
+  "public_api": "csrc/linalg/fx_linalg_dispatch.h",
+  "entry_points": {
+    "16336": "prepared unary/binary evaluator operand admission and rich dispatch",
+    "163D0": "right work record and previous left real record selection",
+    "163F8..16534": "rich type, temporary allocation/release, operation selection",
+    "15BDA": "scalar-left multiplication exchanges real operands",
+    "16562": "scalar-only post-leaf integer cleanup and native evaluator status"
+  },
+  "raw_tokens": {
+    "C0": "determinant",
+    "C1": "transpose",
+    "5A": "REF",
+    "5B": "RREF",
+    "63": "matrix absolute or vector magnitude",
+    "B3": "display round",
+    "60": "negate",
+    "75": "matrix square",
+    "76": "matrix cube",
+    "77": "matrix inverse",
+    "2B": "add",
+    "2D": "subtract",
+    "4E": "scale/matrix multiply/vector cross",
+    "4F": "divide by scalar",
+    "9E": "vector dot",
+    "5E": "rich general-power restriction",
+    "9F/BE/BF/68": "rich nthroot/permutation/combination/two-argument logbase admission rejection"
+  },
+  "verified": {
+    "report": "analysis/c-verification/linalg_dispatch.json",
+    "test": "tools/test_linalg_dispatch_c.py",
+    "checks": 89960,
+    "native_calls": 11758
+  },
+  "prepared_context": [
+    "Mutable nine-slot bank with rows/columns0..3 and complete90-byte backing per slot; valid rich reference IDs0..8.",
+    "MATRIX6/VECTOR7 contexts, display mode/digits and finite numeric selector explicit; magnitude resolves18212 permission tofalse because context bit6 isclear.",
+    "Full20-byte unary work output; binary output retains the right work record's imaginary bytes. Complete171F4 preserves its caller output's secondten bytes.",
+    "Ordinary arithmetic admits high-F error headers as rich candidates; F0..F3 copy persistent slots, F4..FF reuse/skip storage, literal release counts alias modulo8. Numerical kind rejection avoids invalid bank access.",
+    "Cancellation responses count native timer checks at5564; physical key/interrupt timing is external.",
+    "Input/output record aliases supported; inputs inside mutable bank storage are excluded. Inactive cells, reference metadata and late partial mutations retained."
+  ],
+  "remaining": [
+    "Shared parent-owned parser integration and workspace/UI side effects.",
+    "Vector-tag REF/RREF and rich conjugate/argument select unrelated native routines after index adjustment and remainUNIMPLEMENTED.",
+    "Genuine matrix/vector IDs9..15 and dimensions exceeding3 are outside the safe typed bank ABI.",
+    "Physical timer/key cancellation controller."
+  ],
+  "full_firmware_complete": false
+}

@@ -13,7 +13,7 @@
     {
       "address": "0x3d62",
       "name": "annunciator_row",
-      "scope": "All twelve native indicator bytes and their LCD copy; scalar classification reused as a value API"
+      "scope": "All twelve native indicator bytes, LCD copy and address-based scalar classification including complete arithmetic workspace effects"
     }
   ],
   "api": {
@@ -29,13 +29,13 @@
     "Physical wall-clock timer scheduling, interrupt state, CPU-frame aliases and native unbounded/malformed buffers are outside this host-state interface",
     "Canonical visible cursor fonts6/7/10 and bounded heights0..10 inherit key-wait domain restrictions; uncaptured height growth returns explicit unsupported status",
     "Reset execution, menus and parent00D9EE input/evaluator/replay/error controllers remain separate subsystems",
-    "Native classification scratch8000..805F/8640..867B and CPU stack8D00..8DED are excluded from persistent-memory differential scope"
+    "Native CPU stack 8D00..8DED is excluded; all classifier arithmetic workspaces are included in persistent-memory differential scope."
   ],
   "verification": {
     "tool": "tools/test_key_controller_c.py",
     "report": "analysis/c-verification/key_controller.json",
     "oracle": "Original ROM1DB34, nested1D802 and bridge/table/dispatch routines in independent SimU8",
-    "comparison": "Complete remaining RAM/LCD/MMIO, callback, token/event, retained raw pair, named descriptor/blink fields and exact stores at8E00/8E01/8E02",
+    "comparison": "Complete RAM/LCD/MMIO including classifier scratch, callback, token/event, retained raw pair, named descriptor/blink fields and exact stores at 8E00/8E01/8E02",
     "limitation": "Routine lifecycle and injected host events, not complete calculator boot-to-menu/evaluator I/O"
   }
 }

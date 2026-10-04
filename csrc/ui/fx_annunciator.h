@@ -8,7 +8,7 @@
  * Returns0 on success, -1 for an invalid platform, or the negative scalar
  * classifier status. A classifier failure retains the already cleared row
  * and preceding indicator writes, and does not copy the row to the LCD.
- * Native scalar workspace8000..805F and8640..867B and CPU stack effects are
- * intentionally absent; no layout/font settings or device timing are changed. */
+ * Native scalar workspaces 8000..805F and 8640..867B are preserved by the
+ * address classifier. CPU stack effects and device timing are outside this API. */
 int fx_annunciator_draw(fx_platform *platform);
 #endif
