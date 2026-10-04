@@ -1,0 +1,99 @@
+{
+  "loader_functions": [
+    {
+      "virtual_address": "0x414c20",
+      "writes": 1494
+    },
+    {
+      "virtual_address": "0x428c10",
+      "writes": 1495
+    },
+    {
+      "virtual_address": "0x43c9b0",
+      "writes": 1496
+    },
+    {
+      "virtual_address": "0x450860",
+      "writes": 1497
+    },
+    {
+      "virtual_address": "0x4649b0",
+      "writes": 1495
+    },
+    {
+      "virtual_address": "0x4785c0",
+      "writes": 690
+    }
+  ],
+  "write_count": 8167,
+  "write_sizes": {
+    "1": 6,
+    "2": 113,
+    "3": 3,
+    "4": 85,
+    "5": 1,
+    "6": 89,
+    "7": 1,
+    "8": 75,
+    "10": 83,
+    "11": 2,
+    "12": 85,
+    "13": 1,
+    "14": 90,
+    "15": 4,
+    "16": 7529
+  },
+  "explicitly_written_bytes": 125396,
+  "written_ranges": [
+    {
+      "start": "0x0",
+      "end_exclusive": "0x2cf1"
+    },
+    {
+      "start": "0x2cf2",
+      "end_exclusive": "0x2ee3"
+    },
+    {
+      "start": "0x2ee4",
+      "end_exclusive": "0x31a7"
+    },
+    {
+      "start": "0x31a8",
+      "end_exclusive": "0x31bb"
+    },
+    {
+      "start": "0x31bc",
+      "end_exclusive": "0xf084"
+    },
+    {
+      "start": "0xf800",
+      "end_exclusive": "0xf84e"
+    },
+    {
+      "start": "0x10000",
+      "end_exclusive": "0x1f8da"
+    },
+    {
+      "start": "0x1ffd0",
+      "end_exclusive": "0x1fff0"
+    },
+    {
+      "start": "0x1fff4",
+      "end_exclusive": "0x20000"
+    }
+  ],
+  "highest_written_address": "0x1ffff",
+  "unwritten_fill_byte": "0x00",
+  "installer": "fx-991ES PLUS C Emulator Ver.4.00.exe",
+  "installer_sha256": "78a5b28f586fe097571973b9adb73194f51af87d9d7f6bb51338688dcb1e3984",
+  "payload": "fx_991es_plus_c_emulator.exe",
+  "payload_sha256": "ae338dbecd5f2723cfc0f6415c3f5702710ab7199b014f39b2fac4b36bd71c79",
+  "firmware_file": "fx-991es-plus-c-ver4.bin",
+  "firmware_size": 131072,
+  "firmware_sha256": "28b5c3907a67426a1601dbf82ebf62b850333e889fcc958d698786d3e5f5fb7d",
+  "firmware_address_range": "0x00000-0x1ffff",
+  "code_memory_file": "fx-991es-plus-c-ver4-code-memory.bin",
+  "code_memory_size": 196608,
+  "code_memory_sha256": "db2914945be2fac68bf20535edd1ce7b4e24ad1bed1117dc76a182f6f879cffb",
+  "code_memory_address_range": "0x00000-0x2ffff"
+}

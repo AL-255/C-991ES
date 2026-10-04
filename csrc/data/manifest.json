@@ -1,0 +1,8 @@
+{
+  "source": "firmware/fx-991es-plus-c-ver4.bin",
+  "sha256": "28b5c3907a67426a1601dbf82ebf62b850333e889fcc958d698786d3e5f5fb7d",
+  "source_bytes": 131072,
+  "mapped_bytes": 196608,
+  "zero_tail_bytes": 65536,
+  "purpose": "Read-only constants, packed fonts, tables and vectors. No interpreter or instruction execution in high-level C implementation."
+}

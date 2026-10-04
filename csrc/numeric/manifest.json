@@ -1,0 +1,43 @@
+{
+  "subsystem": "numeric",
+  "implementation": "Readable portable C99 integer and decimal-digit algorithms; no CPU emulator or original firmware execution in implementation",
+  "implemented_routines": [
+    {"address": "0x1d08c", "name": "unsigned byte number constructor", "scope": "All 256 byte inputs, including canonical zero"},
+    {"address": "0x1d142", "name": "copy ten-byte numeric record", "scope": "Complete record copy; overlapping host buffers supported"},
+    {"address": "0x1d12c", "name": "copy twenty-byte complex numeric record", "scope": "Complete complex record copy; overlapping host buffers supported"},
+    {"address": "0x1d1a2", "name": "special-marker predicate", "scope": "Exact first-low-nibble and last-byte-high-nibble checks"},
+    {"address": "0x1cfde", "name": "decimal exponent extraction", "scope": "Raw record exponent/sign behavior, including marker/error sentinel"},
+    {"address": "0x17616", "name": "compact surd packing", "scope": "Six normal integral components with nonnegative radicands and positive denominators; coefficient/denominator99 and radicand999 compact limits, scalar rational collapse and numeric fallback"},
+    {"address": "0x178ba", "name": "compact surd expansion", "scope": "Both radical terms and exact canonical empty-first-term workspace"},
+    {"address": "0x16058", "name": "rational construction", "scope": "Integral numerator/denominator records; reduced mixed-record encoding and ten-nibble digit-budget decimal fallback"},
+    {"address": "0x1bfa4", "name": "decimal addition", "scope": "Signed decimal inputs with optional header marker40, sixteen-digit alignment, exponent range errors"},
+    {"address": "0x1bfb8", "name": "decimal subtraction", "scope": "Signed decimal inputs with optional header marker40, sixteen-digit alignment, exponent range errors"},
+    {"address": "0x1bfcc", "name": "decimal multiplication", "scope": "Signed decimal inputs with optional header marker40, schoolbook decimal product, exponent range errors"},
+    {"address": "0x1bfe0", "name": "decimal division", "scope": "Signed decimal inputs with optional header marker40, integer long division, exponent/divide-zero errors"},
+    {"address": "0x1c902", "name": "rational to decimal conversion", "scope": "Decimal/error record copy and rational mixed-record conversion, including post-division low-mantissa cleanup"},
+    {"address": "0x17576", "name": "surd to decimal conversion", "scope": "Two signed radical terms; original square-root, coefficient multiplication, denominator division, then term addition order"},
+    {"address": "0x1cef0", "name": "small low-mantissa residue cleanup", "scope": "Plain and marked decimal records; nondecimal inputs unchanged"},
+    {"address": "0x1cabe", "name": "fractional-digit predicate", "scope": "Decimal records, including native exponent14 upper eligibility limit"},
+    {"address": "0x11110", "name": "surd operand rational preprocessor", "scope": "Unmarked decimal operand recognition through integer cleanup and continued-fraction interval search; exponent range-8..6 and ten-nibble result budget"},
+    {"address": "0x10962", "name": "continued-fraction interval recognition", "scope": "Portable integer interval recursion with decimal long division for scales above uint64_t; original forty-mantissa-unit radius"},
+    {"address": "0x1c780", "name": "square root", "scope": "Decimal path including exponent-prefix remainder bias; Math-mode decimal fraction recognition, integral/rational bounded exact roots, square-factor normalization and native numeric fallbacks"},
+    {"address": "0x17a46", "name": "bounded radical square-factor normalization", "scope": "Original candidate limit97, including coefficient/denominator reduction"},
+    {"address": "0x15f34", "name": "evaluator addition", "scope": "Real decimal, rational and compact surd operands, exact two-term preservation and numeric fallback"},
+    {"address": "0x15f40", "name": "evaluator subtraction", "scope": "Real decimal, rational and compact surd operands, exact two-term preservation and numeric fallback"},
+    {"address": "0x15f4c", "name": "evaluator multiplication", "scope": "Real decimal, rational and compact surd operands, bounded radical normalization and numeric fallback"},
+    {"address": "0x15f58", "name": "evaluator division", "scope": "Real decimal, rational and compact surd operands; conjugate denominator construction and finite-component eligibility checks"},
+    {"address": "0x1ce70", "name": "negate numeric record", "scope": "Decimal, rational and compact surd sign-field behavior, including empty radical term signs"},
+    {"address": "0x1c3fa", "name": "finite decimal remainder and quotient", "scope": "Unmarked decimal operands with nonzero divisor; fifteen-digit quotient workspace and native early stopping; negative divisor returns dividend/zero"},
+    {"address": "0x15f00", "name": "evaluator integer power fast paths", "scope": "Real exponents-1,0,2,3 only; exact radical paths and header-marker clearing"}
+  ],
+  "gaps": [
+    "Direct surd packing from nonintegral component records; special-marker quotient/remainder and error propagation outside validated inputs",
+    "General integer/noninteger powers, roots other than square root, logarithms, exponentials, trigonometric and hyperbolic functions",
+    "Complex arithmetic and conversion; combinatorics, random generation, base-N arithmetic",
+    "Statistical, matrix, vector, integration, differentiation, equation and numerical-solver subsystems",
+    "Routine-level global side effects and exhaustive numeric-state equivalence outside the exposed record API"
+  ],
+  "verification": "analysis/c-verification/numeric.json",
+  "test": "python3 tools/test_numeric_c.py --random-cases 5000",
+  "completion": "Partial subsystem implementation; full numeric firmware equivalence is not established"
+}

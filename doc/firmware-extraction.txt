@@ -1,0 +1,49 @@
+Extracted firmware: CASIO fx-991ES PLUS C Emulator Ver.4.00
+
+Outputs
+  firmware/fx-991es-plus-c-ver4.bin
+    131,072 bytes (128 KiB), addresses 0x00000 through 0x1ffff.
+    Contains all ROM bytes supplied by the emulator, with gaps filled by zero.
+
+  firmware/fx-991es-plus-c-ver4-code-memory.bin
+    196,608 bytes (192 KiB), addresses 0x00000 through 0x2ffff.
+    Includes the additional empty 64 KiB bank allocated by the emulator.
+
+  firmware/extraction.json
+    Source and output SHA-256 hashes, loader addresses, write counts,
+    and ranges of explicitly supplied bytes.
+
+Reproduction
+  From the repository root, run:
+    python3 tools/extract_firmware.py
+
+  Requires Python 3, 7z, and GNU objdump. No Python packages are required.
+  Optional arguments: --installer PATH --output DIRECTORY
+  The script checks the payload hash because loader addresses are specific
+  to the bundled version. Windows code is never executed.
+
+Method and validation
+  The outer executable contains an MSI resource. Its embedded Data1.cab
+  contains fx_991es_plus_c_emulator.exe. The firmware is encoded as immediate
+  values in six x86 loader routines, rather than a standalone ROM resource.
+
+  Emulator initialization at virtual address 0x413600 sets code memory to
+  0x00000-0x2ffff and its default word to zero, then calls the six loaders
+  at 0x41369c-0x4136b5. They invoke SimU8.dll!WriteCodeMemory(address,
+  byte_count, buffer), through import address 0x4841ec.
+
+  The extractor tracks stack buffers and register values, including partial
+  registers, and reconstructs all 8,167 writes in their original call order.
+  It rejects missing buffer bytes, uninitialized registers, unexpected
+  instructions, overlapping writes, and out-of-range addresses.
+
+  The loaders explicitly supply 125,396 bytes. The highest supplied address
+  is 0x1ffff. Unwritten addresses use the emulator's zero default.
+  The recovered bytes at 0x1fff4 contain the identifier LY727XA.
+
+  Data2.cab contains a second application executable with nine differing
+  bytes outside the ROM loaders. Independently reconstructing its ROM
+  produced exactly the same firmware.
+
+  These files recover the firmware supplied by this emulator. Equivalence
+  to a ROM read from a physical calculator has not been tested.

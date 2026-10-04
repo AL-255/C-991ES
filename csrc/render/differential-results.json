@@ -1,0 +1,2023 @@
+{
+  "status": "pass",
+  "rom_sha256": "28b5c3907a67426a1601dbf82ebf62b850333e889fcc958d698786d3e5f5fb7d",
+  "implementation": "readable high-level C; ROM used only as constant data",
+  "oracle": "original ROM executed by separately implemented SimU8 CPU",
+  "comparison_scope": "semantic return values, unpacked glyph bytes, settings, and framebuffer/LCD bytes; CPU scratch registers and call-stack bytes excluded",
+  "controller_comparison_scope": "tokens, selection and viewport settings, active metric cache slots, history record0x9800..0x98ff, framebuffer and LCD; unused numeric workspaces remain documented gaps (0x8006/inactive0x8640slots in the viewport branch;0x8000..0x8009 in the legacy branch)",
+  "tests": {
+    "address_mapping_exhaustive": 131072,
+    "font_decoding_all_character_bytes": 768,
+    "font_destination_wrap_and_font_alias": 150,
+    "byte_compositor_exhaustive": 1638400,
+    "compositor_address_and_default_modes": 56,
+    "single_pixel": 3078,
+    "glyph_compositing_edges_and_random": 5555,
+    "text_bounds": 24,
+    "bresenham_line_edges_and_random": 1168,
+    "vertical_decoration_all_bytes": 256,
+    "framebuffer_transfer_rows": 32,
+    "framebuffer_clear_bytes": 384,
+    "display_fill_pattern_and_selection_bits": 1280,
+    "framebuffer_clear_rows_including_16bit_wrap": 158,
+    "framebuffer_scroll_rows": 32,
+    "documented_original_row_stack_faults": 322,
+    "result_vertical_space_and_height_wrap": 2011,
+    "construct_token_classifiers": 512,
+    "display_context_predicates_and_setup_selector": 655360,
+    "layout_pass_and_font_state": 1027,
+    "box_vertical_merge_random_including_malformed": 10000,
+    "recursive_layout_measure_and_draw": 682,
+    "editor_cursor_geometry_and_metadata": 9436,
+    "setup_view_cursor_layout": 480,
+    "display_token_reverse_spans": 27969,
+    "display_token_forward_spans": 21600,
+    "layout_world_coordinates_clipping_and_scroll": 96,
+    "all_four_repetend_styles_measure_and_draw": 24,
+    "documented_original_stack_corruption_faults": 2,
+    "viewport_controller_8c56": 81,
+    "viewport_fallback_copy_and_remeasure": 12,
+    "ordinary_real_result_controller_b070_and_lcd": 10710,
+    "ordinary_real_legacy_result_controller_b070_and_lcd": 10890
+  },
+  "total_cases": 2533627,
+  "original_invalid_input_faults": [
+    {
+      "x": 3,
+      "native_fault": "Firmware routine 0x3a8a: status=101, pc=0x83700, last=0x3b82",
+      "frame_pointer_byte_after": 94
+    },
+    {
+      "x": 7,
+      "native_fault": "Firmware routine 0x3a8a: status=101, pc=0x83700, last=0x3b82",
+      "frame_pointer_byte_after": 6
+    }
+  ],
+  "original_invalid_row_faults": [
+    {
+      "routine": "0x38b0",
+      "row": 33,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 34,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 35,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 36,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 37,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 38,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 39,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 40,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 41,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 42,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 43,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 44,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 45,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 46,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 47,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 48,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 49,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 50,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 51,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 52,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 53,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 54,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 55,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 56,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 57,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 58,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 59,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 60,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 61,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 62,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 63,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 64,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 65,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 66,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 67,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 68,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 69,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 70,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 71,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 72,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 73,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 74,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 75,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 76,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 77,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 78,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 79,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 80,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 81,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 82,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 83,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 84,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 85,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 86,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 87,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 88,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 89,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 90,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 91,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 92,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 93,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 94,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 95,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 96,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 97,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 98,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 99,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 100,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 101,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 102,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 103,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 104,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 105,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 106,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 107,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 108,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 109,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 110,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 111,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 112,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 113,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 114,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 115,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 116,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 117,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 118,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 119,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 120,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 121,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 122,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 123,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 124,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 125,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 126,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 127,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 128,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 129,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "50a317781e5e66946cb91e7d461855beae286c905fc9667d7472dcfb605a3ed3"
+    },
+    {
+      "routine": "0x38b0",
+      "row": 130,
+      "native_fault": "Firmware routine 0x38b0: status=101, pc=0x46f82, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 32,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x50000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 33,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x90000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 34,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xa2b0c, last=0x395e",
+      "framebuffer_sha256": "40b06b25bb1a86c74a0efd13460d7cd82c7a9aa1d405626105e19b247b1856f9"
+    },
+    {
+      "routine": "0x3922",
+      "row": 35,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xbeccc, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 36,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0x6f84, last=0x6f84",
+      "framebuffer_sha256": "5926ec94e8d8fcb9061977df63abe91a33ec6ad7ee0f78e49f3e3311d9d6a892"
+    },
+    {
+      "routine": "0x3922",
+      "row": 37,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x90000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 38,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xafbdc, last=0x395e",
+      "framebuffer_sha256": "4bd2e4b8c56c6d1c9731cdb09500b48eba3d5c8e940ea599a94d2963bd542221"
+    },
+    {
+      "routine": "0x3922",
+      "row": 39,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xbbc9c, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 40,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "7605457c2764eabcc99da10e9e7f85bedf56fa96dee0007b7c3caeff508956bd"
+    },
+    {
+      "routine": "0x3922",
+      "row": 41,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x90000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 42,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "6bc9ca49b90b5991789c20cbba55ebb03e41c3defc2352f7de0ed7be6dbd5f6b"
+    },
+    {
+      "routine": "0x3922",
+      "row": 43,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xb8c6c, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 44,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x50000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 45,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xd2e0e, last=0x395e",
+      "framebuffer_sha256": "7d35983c5a22a1793154c674638ba751d8b515f55c2b7b041981f67b35d00db5"
+    },
+    {
+      "routine": "0x3922",
+      "row": 46,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x40000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 47,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x516f6, last=0x395e",
+      "framebuffer_sha256": "ff0e71e5534589c67a2ba44c6037affc98fff79b12f8c9534b04e70c33e00dcc"
+    },
+    {
+      "routine": "0x3922",
+      "row": 48,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xc0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 49,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xdfede, last=0x395e",
+      "framebuffer_sha256": "52c117f0ef438db75f8955c78aca21c97e0a132cd8244b1490a9f386495c583f"
+    },
+    {
+      "routine": "0x3922",
+      "row": 50,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x40000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 51,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "e315d65f26f16dd3653b4ddf26800a08a4230097f37a256a7768e31f81457518"
+    },
+    {
+      "routine": "0x3922",
+      "row": 52,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xc0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 53,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "fd37df6e2a7dcf74ac0f45d54721b8787054ed78891446e1460dd550c88cd0ff"
+    },
+    {
+      "routine": "0x3922",
+      "row": 54,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x40000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 55,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x80000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 56,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x92a0a, last=0x395e",
+      "framebuffer_sha256": "b13ea2306cf29ee926159f492259db026a3876f720a316abcf02aa56bc4638ba"
+    },
+    {
+      "routine": "0x3922",
+      "row": 57,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xaebcc, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 58,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xd8e6e, last=0x112f4",
+      "framebuffer_sha256": "23b1a4e12cdb5a4b5c73129260faba09b7e73ac6db56b2a122a4fa2acb27adda"
+    },
+    {
+      "routine": "0x3922",
+      "row": 59,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x80000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 60,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x9fada, last=0x395e",
+      "framebuffer_sha256": "65b2246643cabb2a181f29352165673783e41ffd64feab4c983a99426a98883c"
+    },
+    {
+      "routine": "0x3922",
+      "row": 61,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xabb9c, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 62,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "b2eed09b66606c1300b5b02d313cebb46724aee9572b6fcbf85273fa294fa3ec"
+    },
+    {
+      "routine": "0x3922",
+      "row": 63,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x80000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 64,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "87d431ed6faae97bd6dbf5df128877ae76e5b4e74df6f04e9c2c72e1d72a6b7b"
+    },
+    {
+      "routine": "0x3922",
+      "row": 65,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xa8b6c, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 66,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x40000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 67,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xc2d0e, last=0x395e",
+      "framebuffer_sha256": "940fdd3c54bfdc1d1d213ffebec02155c22f5c34dd3e3f49a6a84e17db54bebd"
+    },
+    {
+      "routine": "0x3922",
+      "row": 68,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 69,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x415f6, last=0x395e",
+      "framebuffer_sha256": "ae1d5e21b759b6620cdab2b3001784c989e89dc6af8e477664bda8b64e747910"
+    },
+    {
+      "routine": "0x3922",
+      "row": 70,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xb0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 71,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xcfdde, last=0x395e",
+      "framebuffer_sha256": "b912afa697617ce3780beddff8ccae57651f3cf893430e68506e0cfbaef16a5f"
+    },
+    {
+      "routine": "0x3922",
+      "row": 72,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 73,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "6cf48725aa5e7853b8ee43cf6756d0381df48493b5c9b67367d63fc7031a0313"
+    },
+    {
+      "routine": "0x3922",
+      "row": 74,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xb0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 75,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "eb5caf63ccadec0023e491dee5d61f9d71da5672ffd3af971c38255e251c8bff"
+    },
+    {
+      "routine": "0x3922",
+      "row": 76,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 77,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x70000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 78,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x8290a, last=0x395e",
+      "framebuffer_sha256": "de3f30ecd2935fea80adc8376cb4cbec49ae995fa5921c7111fa53ff013d8dda"
+    },
+    {
+      "routine": "0x3922",
+      "row": 79,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xf0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 80,
+      "native_fault": "Firmware routine 0x3922: status=3, pc=0x1692, last=0x1690",
+      "framebuffer_sha256": "c165dfd03988b889a18ceedd07a3148f2666fb1bd57809978c26f2e70b4991e6"
+    },
+    {
+      "routine": "0x3922",
+      "row": 81,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x70000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 82,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x8f9da, last=0x395e",
+      "framebuffer_sha256": "05acfbc09aabc7099f0c4a4b1daaaa9b37e0305fe29a04e712fef15ffc301d51"
+    },
+    {
+      "routine": "0x3922",
+      "row": 83,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xf0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 84,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "4be0ca1dcbf5972272e6de1de598bf244405a378a87ea35ffa067cf9e628502b"
+    },
+    {
+      "routine": "0x3922",
+      "row": 85,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x70000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 86,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "3ee5e88130d721ccd29f147c329d2a408e14385f11ec44fe4318337975ed162a"
+    },
+    {
+      "routine": "0x3922",
+      "row": 87,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xf0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 88,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xa0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 89,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xb2c0c, last=0x395e",
+      "framebuffer_sha256": "74cbbc1616c42459d0cf7a0a6e6b95e6cb05b6f496972444e92a9af07805c0a9"
+    },
+    {
+      "routine": "0x3922",
+      "row": 90,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0x6f84, last=0x6f84",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 91,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x314f4, last=0x395e",
+      "framebuffer_sha256": "3214db328f67d5faad1872605da2488e07427271c39fdb33cb2681e53a5f90bd"
+    },
+    {
+      "routine": "0x3922",
+      "row": 92,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xa0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 93,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xbfcdc, last=0x395e",
+      "framebuffer_sha256": "767960b2aa6031a331e2e78f5f3e20e33dfb62bfdfbe76757ce7aa7f796757db"
+    },
+    {
+      "routine": "0x3922",
+      "row": 94,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0x6f84, last=0x6f84",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 95,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "3d7ae45c262591cf97759425078629aef2576e094eb627404229942ad2e3833d"
+    },
+    {
+      "routine": "0x3922",
+      "row": 96,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xa0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 97,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "92899b60aef981b3ce3fea9aeb50f4ee584a6121c11c8ea008eb8a5b842ad5fe"
+    },
+    {
+      "routine": "0x3922",
+      "row": 98,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0x6f84, last=0x6f84",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 99,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x60000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 100,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x72808, last=0x395e",
+      "framebuffer_sha256": "9ef958505164f1683d329b6407e5c311d954ed9c42d952de9788649ecbb06d72"
+    },
+    {
+      "routine": "0x3922",
+      "row": 101,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xe0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 102,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xf10f0, last=0x395e",
+      "framebuffer_sha256": "e4ffa7d5522b748b897f43aad2709f62952e004dd1a84c719cff4d13aea47b68"
+    },
+    {
+      "routine": "0x3922",
+      "row": 103,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x60000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 104,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x7f8d8, last=0x395e",
+      "framebuffer_sha256": "7911cbb2ef50f2f9f5bc496abb00ab70b5c08afe706891b7c6b5ca112e1c2af1"
+    },
+    {
+      "routine": "0x3922",
+      "row": 105,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xe0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 106,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "9336963ce66c415fbdbd2ed0b7286b8fa7dfafd2525be33b4177498f75f32208"
+    },
+    {
+      "routine": "0x3922",
+      "row": 107,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x60000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 108,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x7c8a8, last=0x395e",
+      "framebuffer_sha256": "678ecb170bbb2f51655a9aeb8c96feef3b801ec4ebceb3288dbb34b11868acba"
+    },
+    {
+      "routine": "0x3922",
+      "row": 109,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xe0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 110,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x90000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 111,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xa2b0c, last=0x395e",
+      "framebuffer_sha256": "bf64c9d3e99f9459c80dfd30fdbd212dad7279796dce874b4b06f9d52564e749"
+    },
+    {
+      "routine": "0x3922",
+      "row": 112,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xbeccc, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 113,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0x6f84, last=0x6f84",
+      "framebuffer_sha256": "1f5bc6a3fca1a8a14f90f4b739fecee2aa65d3a797b5ace36eae11a7ae025222"
+    },
+    {
+      "routine": "0x3922",
+      "row": 114,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x90000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 115,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xafbdc, last=0x395e",
+      "framebuffer_sha256": "74918d187e991005d2d3a803ddac2d8186086d34faf757cd87aa35b9d9835475"
+    },
+    {
+      "routine": "0x3922",
+      "row": 116,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xbbc9c, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 117,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "1dbd38341efbb09e73bb13ff90371a8ce1e230e9711cf0aeb78a429a82a491f2"
+    },
+    {
+      "routine": "0x3922",
+      "row": 118,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x90000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 119,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "56333cd7895aed97a121a8086d587c3488f7f3d5e9bc6cc583300090cbc6a079"
+    },
+    {
+      "routine": "0x3922",
+      "row": 120,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xb8c6c, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 121,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x50000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 122,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x62708, last=0x395e",
+      "framebuffer_sha256": "9681bf6a72aa0cfbc3fbc30cc2e3b348855205cc0f5fdf0c60cf92bab831a4ef"
+    },
+    {
+      "routine": "0x3922",
+      "row": 123,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xd0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 124,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xe0ff0, last=0x395e",
+      "framebuffer_sha256": "07194b7d81f20eee9c347f2fe2b6c506fd37a60e0c4290da4b6a514e0c36f206"
+    },
+    {
+      "routine": "0x3922",
+      "row": 125,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x50000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 126,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "8498423d86d964e31f5f169c00ac8e6bae7061b2993f3696892f44c76e3d50ac"
+    },
+    {
+      "routine": "0x3922",
+      "row": 127,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xd0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 128,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "b7c028c770831037e340809438e60408e0f71e619ca355640171b0a8b2f3ed6e"
+    },
+    {
+      "routine": "0x3922",
+      "row": 129,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x50000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 130,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xdceae, last=0x395e",
+      "framebuffer_sha256": "7bf67e8acc71d50e1581dacc4b613be7cd7983579bca4371dfd348d547a50841"
+    },
+    {
+      "routine": "0x3922",
+      "row": 131,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x40000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 132,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x80000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 133,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x92a0a, last=0x395e",
+      "framebuffer_sha256": "64bf2cad6a53d79db2a7234cac673fdcef52b589715f5e934bfab9b98059ad5b"
+    },
+    {
+      "routine": "0x3922",
+      "row": 134,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xaebcc, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 135,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xd8e6e, last=0x112f4",
+      "framebuffer_sha256": "84351ee438d5f8c7fe437bebfd8cc1b7d932052cb283dc0bcd4e2cf8e2ffdf65"
+    },
+    {
+      "routine": "0x3922",
+      "row": 136,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x80000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 137,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x9fada, last=0x395e",
+      "framebuffer_sha256": "e18bc4ea0e0f7553e693088b239da6cf368e89f5c6d41864a91ccf4bdd592021"
+    },
+    {
+      "routine": "0x3922",
+      "row": 138,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xabb9c, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 139,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "33aabe489b162d4516bcd70fdf3ebf0d01e252908e32d975266a6a05db645dc2"
+    },
+    {
+      "routine": "0x3922",
+      "row": 140,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x80000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 141,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "b99e9f2dfddbaddadc5c21a74a9b860c06c4c56e46dc65d67c147e3aaa851682"
+    },
+    {
+      "routine": "0x3922",
+      "row": 142,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xa8b6c, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 143,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x40000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 144,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x52606, last=0x395e",
+      "framebuffer_sha256": "60fce1d99e8926f55c30078c6d88253e3187f1a8b1eaea5e4701528853c88a5b"
+    },
+    {
+      "routine": "0x3922",
+      "row": 145,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xc0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 146,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xd0eee, last=0x395e",
+      "framebuffer_sha256": "bb67f8197e69ef57a483490b14247650d2b062b9ac856142849eab9fa8f5aafe"
+    },
+    {
+      "routine": "0x3922",
+      "row": 147,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x40000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 148,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "2f83f835fa4fe8cd2dd5c3fb9cbee3e1e63d6010c485d56f88107c907d4fa31b"
+    },
+    {
+      "routine": "0x3922",
+      "row": 149,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xc0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 150,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "d792571573d66b5eb727246662999d87062f0ca7e7aa7b9c7b57f47fc18a7c83"
+    },
+    {
+      "routine": "0x3922",
+      "row": 151,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x40000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 152,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xccdae, last=0x395e",
+      "framebuffer_sha256": "089fbf9beb1d387ce3ac76f5954bf08bc3f1e163f1274c7c606457a5132f9abf"
+    },
+    {
+      "routine": "0x3922",
+      "row": 153,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 154,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x70000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 155,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x8290a, last=0x395e",
+      "framebuffer_sha256": "7994ff2a22cc77a80818994357f73a557cfedfba2dc820ff6fd59a4bc8f43c99"
+    },
+    {
+      "routine": "0x3922",
+      "row": 156,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xf0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 157,
+      "native_fault": "Firmware routine 0x3922: status=3, pc=0x1692, last=0x1690",
+      "framebuffer_sha256": "70de6c4ba3b8a677694e0a9fac6e22765631612b2f2ebc56535903f44faddbc5"
+    },
+    {
+      "routine": "0x3922",
+      "row": 158,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x70000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 159,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x8f9da, last=0x395e",
+      "framebuffer_sha256": "370a364d07043ea550f919b2797284fb6d17021dff0830253e56d85f6ee80454"
+    },
+    {
+      "routine": "0x3922",
+      "row": 160,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xf0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 161,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "130bf00de68b60c85fb5cc534c5d38dbd2b16c3ee50101dc2c41d4a4effe5e55"
+    },
+    {
+      "routine": "0x3922",
+      "row": 162,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x70000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 163,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "94f20a4ea67c582e3275e653afd36524dc96fffb18d7947ad5148fe43f27c915"
+    },
+    {
+      "routine": "0x3922",
+      "row": 164,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xf0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 165,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 166,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x42506, last=0x395e",
+      "framebuffer_sha256": "0f86f607cd30585a0ddaa0b6bdfb4fe8759559407e1738ffdceababcbcbdd4a2"
+    },
+    {
+      "routine": "0x3922",
+      "row": 167,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xb0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 168,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xc0dee, last=0x395e",
+      "framebuffer_sha256": "1d3b82a0e5c09e870d1713748e3d3a1a225b32af0029d7aa874384ffc0766431"
+    },
+    {
+      "routine": "0x3922",
+      "row": 169,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 170,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "08e45749133d031890737ac61b2091ed4f0ce8d813e3e8f23efb354791b17e50"
+    },
+    {
+      "routine": "0x3922",
+      "row": 171,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xb0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 172,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "4edd049b4afbed0b745f429587962acf704c1d3db5ee6403ee1699905c4e3eb7"
+    },
+    {
+      "routine": "0x3922",
+      "row": 173,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 174,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "37fb2ab2a9516e44546cca2a8c36596d10ed0408d4791bcd7c7f810ff1d349c9"
+    },
+    {
+      "routine": "0x3922",
+      "row": 175,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0x6f84, last=0x6f84",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 176,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x60000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 177,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x72808, last=0x395e",
+      "framebuffer_sha256": "d75c29ea1b4a16daec8f49ce5268ae8dccbb7c915d4f02c8e8c53ec28199ffb2"
+    },
+    {
+      "routine": "0x3922",
+      "row": 178,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xe0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 179,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xf10f0, last=0x395e",
+      "framebuffer_sha256": "8c45a86d3319d5428fee09a5a02b5fefd0e8f9a49f5e75bec91eb264d7a128d1"
+    },
+    {
+      "routine": "0x3922",
+      "row": 180,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x60000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 181,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x7f8d8, last=0x395e",
+      "framebuffer_sha256": "94197f45200b0743f8890c1419db4fe5f492e94a97947daba48cffe39d78dff7"
+    },
+    {
+      "routine": "0x3922",
+      "row": 182,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xe0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 183,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "65a95b4cbc5c7bf20ce19ab2e5424e840023b2d96aeee9f6cec7c71a1250aaec"
+    },
+    {
+      "routine": "0x3922",
+      "row": 184,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x60000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 185,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x7c8a8, last=0x395e",
+      "framebuffer_sha256": "33e07c20a465d9a10c1ef90850a395dcbd0a9e0d891933163ec6d8173635ea32"
+    },
+    {
+      "routine": "0x3922",
+      "row": 186,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xe0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 187,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0x6f84, last=0x6f84",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 188,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x32404, last=0x395e",
+      "framebuffer_sha256": "aec9d72f0aa17aefd5ae9b1e6c369238201efd4951ba4510aa814a4e680d2e50"
+    },
+    {
+      "routine": "0x3922",
+      "row": 189,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xa0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 190,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xb0cec, last=0x395e",
+      "framebuffer_sha256": "b641975db8f0118d3afbd1586f68faeba2cf47265252de535e35f2771ac2da3f"
+    },
+    {
+      "routine": "0x3922",
+      "row": 191,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0x6f84, last=0x6f84",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 192,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "d38c80695022dc47523b31048b7597e74506d887ac84ab0dbd31e9786cf9d6ee"
+    },
+    {
+      "routine": "0x3922",
+      "row": 193,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xa0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 194,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "f61b391b7f23a6ae6325aa605f2870e48228649477b45f5e8699ebb0aef5cebc"
+    },
+    {
+      "routine": "0x3922",
+      "row": 195,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x90000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 196,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "0bade1d299fc2063822ef6b4c749020bcd2bc7c0727d746b88e5604ad42fbc77"
+    },
+    {
+      "routine": "0x3922",
+      "row": 197,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xb8c6c, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 198,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x50000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 199,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x62708, last=0x395e",
+      "framebuffer_sha256": "488b3c9e225d445263d589f2af485f081287f4ba5609e5437e304f89e1dc9b3d"
+    },
+    {
+      "routine": "0x3922",
+      "row": 200,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xd0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 201,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xe0ff0, last=0x395e",
+      "framebuffer_sha256": "667b6b6602d86bb95ec2eb6b942539257cfc7c0bdcd32f037e3c27acc24accec"
+    },
+    {
+      "routine": "0x3922",
+      "row": 202,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x50000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 203,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "147fbf99da52e22fe1ef433540b89315a33441b1d45d7535a8a43f35bba11013"
+    },
+    {
+      "routine": "0x3922",
+      "row": 204,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xd0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 205,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "d043cfe2ea252d3f62fff5c71135ce746a74e5d38bcf2dec734b4404946c02fb"
+    },
+    {
+      "routine": "0x3922",
+      "row": 206,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x50000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 207,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x6c7a8, last=0x395e",
+      "framebuffer_sha256": "6876032700a9343621651fa961911fde62025572b826e9d4644dcc882c08dbac"
+    },
+    {
+      "routine": "0x3922",
+      "row": 208,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xd0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 209,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xbfcdc, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 210,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0x6f84, last=0x6f84",
+      "framebuffer_sha256": "292fe1c64a5180f60b2b17621b788fdc65d57eeabae99942acc3e7c789418fb0"
+    },
+    {
+      "routine": "0x3922",
+      "row": 211,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x90000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 212,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xa0bec, last=0x395e",
+      "framebuffer_sha256": "c2654aac0d6ed4dbb94564e554ca690dd64461ff4e3d8ecc853970f4b8c975be"
+    },
+    {
+      "routine": "0x3922",
+      "row": 213,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xbccac, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 214,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "d5e0b47732efc84e1ea252083b735702fc766ea63c440e407c90a3764f415bd0"
+    },
+    {
+      "routine": "0x3922",
+      "row": 215,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x90000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 216,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "61ea58f315f746c5a95ea24f63ec0c67413484a68287035151ddff74e12d52a0"
+    },
+    {
+      "routine": "0x3922",
+      "row": 217,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x80000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 218,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "0d12f3a09f0689417791fc42dacb9bfbe99d016b60e9d442cc57f3cf25a3aedb"
+    },
+    {
+      "routine": "0x3922",
+      "row": 219,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xa8b6c, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 220,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x40000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 221,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x52606, last=0x395e",
+      "framebuffer_sha256": "437e1d47c0ebb242f8b64028eee1c0ffc0aad08e961c843811213c785c29506b"
+    },
+    {
+      "routine": "0x3922",
+      "row": 222,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xc0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 223,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xd0eee, last=0x395e",
+      "framebuffer_sha256": "d77882f85d192e04aca8e92b4b16cdb0a9cae46e0e79ab78d82900769b416fa2"
+    },
+    {
+      "routine": "0x3922",
+      "row": 224,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x40000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 225,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "4f8d2f7981603ad1b8fb7a6f051d1bab1d2fb3ceeef3d878b297a1b28e9551dc"
+    },
+    {
+      "routine": "0x3922",
+      "row": 226,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xc0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 227,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "124cc40d877dba0368253343ae0555f80a81a58bd525f29c5829376571609420"
+    },
+    {
+      "routine": "0x3922",
+      "row": 228,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x40000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 229,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x5c6a6, last=0x395e",
+      "framebuffer_sha256": "03fba98514dd668ad99d3e08a496aaa8715c4104a4bedd8214265deee4115ecf"
+    },
+    {
+      "routine": "0x3922",
+      "row": 230,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xc0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 231,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xafbdc, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 232,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xd9e7e, last=0x1222a",
+      "framebuffer_sha256": "7dfb82a601b29db222fafb3d9b78f6b7c5a344d4356401c1a64b7d60bcd6ef9e"
+    },
+    {
+      "routine": "0x3922",
+      "row": 233,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x80000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 234,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x90aea, last=0x395e",
+      "framebuffer_sha256": "02c98ec32fd1be6f03ab39d50ea46ee9f607d709c80bca624bb5768a5834722f"
+    },
+    {
+      "routine": "0x3922",
+      "row": 235,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xacbac, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 236,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "cc7770d278cbf66865885f67c55ef2d8cfb18000d8b90e22c09647ce0de7c5ad"
+    },
+    {
+      "routine": "0x3922",
+      "row": 237,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x80000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 238,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "efcba9f4c99b921d4d344c6071f7fc4c372aa3e2719db567a750ca3c21dcaf3d"
+    },
+    {
+      "routine": "0x3922",
+      "row": 239,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x70000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 240,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "e1566f56008148d39b7486cc6e005b326f74c2707efc68233a2f2cc6854d1be2"
+    },
+    {
+      "routine": "0x3922",
+      "row": 241,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xf0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 242,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 243,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x42506, last=0x395e",
+      "framebuffer_sha256": "c080354480b24c24f738dd91b837b639418191fddd639c2b186b194b15fecf41"
+    },
+    {
+      "routine": "0x3922",
+      "row": 244,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xb0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 245,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xc0dee, last=0x395e",
+      "framebuffer_sha256": "cc9282c5e5d58e6124cd33f8d9d8a84af0cfe4b044e18ca68027b3d86c308dc6"
+    },
+    {
+      "routine": "0x3922",
+      "row": 246,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 247,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "d556c9ce93e08c8f9681896d2bc2109b7b38847a504fff6646cd9af15949151c"
+    },
+    {
+      "routine": "0x3922",
+      "row": 248,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xb0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 249,
+      "native_fault": "Firmware routine 0x3922: status=103, pc=0xb552, last=0xb550",
+      "framebuffer_sha256": "3b3fb3296729b456c193402c3f395251a0e0718553085c9f5dbf58c849d72d00"
+    },
+    {
+      "routine": "0x3922",
+      "row": 250,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x30000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 251,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x4c5a6, last=0x395e",
+      "framebuffer_sha256": "e0d44eafd0e2d7c348e1dce2111742f1c05e4eabf8a7a1d9c0ff7f4f6b9658b7"
+    },
+    {
+      "routine": "0x3922",
+      "row": 252,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xb0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 253,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0xf0000, last=0x5190",
+      "framebuffer_sha256": "a1a4f5721c1c4610af7f71078f3a68c330536d679803b0e0507ee8dc10c5dfca"
+    },
+    {
+      "routine": "0x3922",
+      "row": 254,
+      "native_fault": "Firmware routine 0x3922: status=3, pc=0x211c, last=0x211a",
+      "framebuffer_sha256": "2297ba26ed35952e9b5b72ac123eb40e9cbb86523c16240b7b54c2ce4f764e08"
+    },
+    {
+      "routine": "0x3922",
+      "row": 255,
+      "native_fault": "Firmware routine 0x3922: status=101, pc=0x70000, last=0x5190",
+      "framebuffer_sha256": "74cf0c4778dbd8a976ad5b892bd7beae0c1801a446f42e889d832cf0808f4b1f"
+    }
+  ],
+  "full_firmware_complete": false,
+  "tested_inputs_sha256": {
+    "csrc/render/fx_render.c": "f5ae7d12fe61e9a4bd13603f4e216a1b6e50fdb9657b779aaad2fde0f4e1d95c",
+    "csrc/render/fx_render.h": "30ea185d7aa84877cac5687f95d4e5fdca1a64df63670d6909d63d0f01835205",
+    "csrc/render/fx_render_memory.c": "6d7105e327cd45f6ee7b0847d6a929c8f2df64a2dec08018c101ca861ea66d20",
+    "csrc/render/fx_render_memory.h": "c518953b9df13c73c80b8ba13e3683ea240b0009af408cc60c3fde0c3aad02bb",
+    "csrc/render/fx_render_context.c": "501cfb31187f09b55a7ba0527795fc615b61995072546b0ca4277cc08296d8f7",
+    "csrc/render/fx_render_context.h": "929a14c898ed97479775bd15b21a864b5b7a88b3be07ef40e5e1ba31665df2d9",
+    "csrc/render/fx_layout.c": "6b3f020af110d92d5fc6fc71cb1524e473627e4a8956e477cbad8752cd2465b7",
+    "csrc/render/fx_layout_validate.c": "cca543a897416a9bf616efd5b8ba22d94e2c74053954494660c91544fa4d0d4a",
+    "csrc/render/fx_layout_validate.h": "11e296c5342374420cc36c413433fd933e37672dbf0cb0b5c18c9e1d5e2fa601",
+    "csrc/render/fx_viewport.c": "011dc92ec46c304c5b1396d02ce362f34211d8c45273066db0cbe041e7a5cbe7",
+    "csrc/render/fx_result.c": "b7e00d9273be473855f1b9163ae97eaf10d4c0094c9065369ec28e408c568625",
+    "csrc/render/fx_result_linear.c": "343ab7bbc8dbfcff365a671712b56b7e5e1ff48e5398e2b5a2b14996f3020b95",
+    "csrc/render/fx_result_linear.h": "1c5a16014cf4ed5c631d43960adbff0cb674677724996bea4985a749fb80880c",
+    "csrc/format/fx_format.c": "e66d49808664166e524543af75235edb1a27c70ed5788512adf7064bb1ea18f8",
+    "csrc/format/fx_format.h": "bb065f08a1a8e1b291fe21b5886f00a3e6a74189b6aaf839c88acd14d27aa5f7",
+    "csrc/numeric/fx_numeric.c": "6b8eb61292ed0b6163d0adcb406fba7345197c5f8e3f810fa3918c2b3dc95f06",
+    "csrc/numeric/fx_numeric.h": "8681b879347711995701d6d392c59ca464850c99779db3aa964b3172738c3a40",
+    "analysis/verification/numeric-samples.json": "4f5d8406e984849a3509cff0a51052686d967d2b0984e1b85a47efc0a031db66",
+    "tools/c_verification.py": "99d9035e36142bd00e16c38e1488d26c7eed6834c5a7c8f411f68587d4d28a65",
+    "tools/test_render_c.py": "94dc91903b4b872a1643873d4114a880e784924dd849edbd054ab0189cee4602",
+    "tools/nxu8/machine.py": "440fcfe22942a6cd9f9ab2782be322032f3a649b88d22e9d50089f288b4d9adf",
+    "tools/nxu8/harness.c": "2691cd3bab734dd8bb6cf12700b6a3847b8d6ef28f4b614b2a1bbf7fdfb2f613",
+    "tools/nxu8/vendor/SimU8/core.c": "cf5ae9144f8baace8c9e3b942b4b8bc296604ae72f1f251d02b265d0c7d14eef",
+    "firmware/fx-991es-plus-c-ver4.bin": "28b5c3907a67426a1601dbf82ebf62b850333e889fcc958d698786d3e5f5fb7d",
+    "tools/nxu8/vendor/SimU8/mmu.h": "0c7e7a6fdf229ab38cd2f056f3f33eabdd422119c5f9ffb3ab8484b38da31596",
+    "tools/nxu8/vendor/SimU8/regtypes.h": "1182df783fd58d3f6e93be753fd7bda40fe053939c44e0c51e51c0552d8b19f7",
+    "tools/nxu8/vendor/SimU8/mmustub.h": "b4adb490464045a833bcf213a76d5681011b1ef90a7db3e85e3674743f8058ce",
+    "tools/nxu8/vendor/SimU8/core.h": "a3fce3d1aa9ce6a83a612df69ce6825743cf38bbcc55ed8000e8ebfb589eb50b",
+    "tools/nxu8/vendor/SimU8/memtypes.h": "b0f607690fe43135dcbe83a329babd699b71ca78400e1880d85f13d6ca32c194",
+    "tools/nxu8/vendor/SimU8/coretypes.h": "bf9e46adb23ccc669899e2bf438fa9d03c8d06edff234f1192da0b0071f689af"
+  }
+}

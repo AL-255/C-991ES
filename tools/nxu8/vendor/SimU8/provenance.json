@@ -1,0 +1,15 @@
+{
+  "source": "https://github.com/LifeEmu/SimU8",
+  "commit": "52aca218116ad23d5ee97b1b57861c702e625cc3",
+  "license": "GPL-3.0",
+  "files": {
+    "mmu.h": "0c7e7a6fdf229ab38cd2f056f3f33eabdd422119c5f9ffb3ab8484b38da31596",
+    "regtypes.h": "1182df783fd58d3f6e93be753fd7bda40fe053939c44e0c51e51c0552d8b19f7",
+    "mmustub.h": "b4adb490464045a833bcf213a76d5681011b1ef90a7db3e85e3674743f8058ce",
+    "core.h": "a3fce3d1aa9ce6a83a612df69ce6825743cf38bbcc55ed8000e8ebfb589eb50b",
+    "core.c": "cf5ae9144f8baace8c9e3b942b4b8bc296604ae72f1f251d02b265d0c7d14eef",
+    "memtypes.h": "b0f607690fe43135dcbe83a329babd699b71ca78400e1880d85f13d6ca32c194",
+    "coretypes.h": "bf9e46adb23ccc669899e2bf438fa9d03c8d06edff234f1192da0b0071f689af",
+    "COPYING": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+  }
+}

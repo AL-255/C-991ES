@@ -1,0 +1,366 @@
+{
+  "subsystem": "display and recursive mathematical layout",
+  "source_firmware_sha256": "28b5c3907a67426a1601dbf82ebf62b850333e889fcc958d698786d3e5f5fb7d",
+  "implementation_kind": "readable portable high-level C",
+  "executes_original_rom": false,
+  "rom_dependencies": "font bitmaps, token spelling tables, packed token classes and two glyph masks; all read as constant data",
+  "implemented_routines": [
+    {
+      "address": "0x3908",
+      "name": "fx_clear_framebuffer",
+      "scope": "all 384 RAM framebuffer bytes"
+    },
+    {
+      "address": "0x3960",
+      "name": "fx_draw_vertical",
+      "scope": "byte-valued vertical endpoints and decoration bits, original unclipped addressing"
+    },
+    {
+      "address": "0x39a8",
+      "name": "fx_draw_line",
+      "scope": "signed-byte Bresenham endpoints with exact tie behavior"
+    },
+    {
+      "address": "0x3a4a",
+      "name": "fx_draw_text",
+      "scope": "three supported fonts, original bounds and consumed-pointer return"
+    },
+    {
+      "address": "0x3a8a",
+      "name": "fx_draw_glyph",
+      "scope": "fonts 6, 7 and 10 including control glyphs, both target maps and all compositor modes"
+    },
+    {
+      "address": "0x3b88",
+      "name": "fx_set_pixel",
+      "scope": "all signed-byte coordinates"
+    },
+    {
+      "address": "0x3b98",
+      "name": "set_pixel_unclipped",
+      "scope": "original RAM addressing used by vertical line routine"
+    },
+    {
+      "address": "0x3bbc",
+      "name": "fx_decode_glyph / fx_decode_glyph_to_memory",
+      "scope": "all 256 character bytes in fonts 6, 7 and 10, including tiny destination low-byte wrap"
+    },
+    {
+      "address": "0x3c8e",
+      "name": "fx_composite_byte / fx_composite_at",
+      "scope": "all source/destination bytes, zero/nonzero masks, all mode bytes and lower address guard"
+    },
+    {
+      "address": "0x3cfc",
+      "name": "fx_flush_framebuffer",
+      "scope": "all 32 rows, LCD padding preserved"
+    },
+    {
+      "address": "0x3d28",
+      "name": "fx_pixel_address",
+      "scope": "all unsigned x bytes and signed y bytes in both maps"
+    },
+    {
+      "address": "0x31e2",
+      "name": "fx_construct_class",
+      "scope": "all 256 tokens"
+    },
+    {
+      "address": "0x327a",
+      "name": "fx_construct_index",
+      "scope": "all 256 tokens"
+    },
+    {
+      "address": "0xc514",
+      "name": "fx_font_height",
+      "scope": "all font-state bytes"
+    },
+    {
+      "address": "0xc524",
+      "name": "fx_font_depth",
+      "scope": "all font-state bytes"
+    },
+    {
+      "address": "0xc534",
+      "name": "fx_font_ascent",
+      "scope": "all font-state bytes"
+    },
+    {
+      "address": "0xc544",
+      "name": "fx_merge_vertical",
+      "scope": "byte-valued height/depth, zero ascent for malformed boxes"
+    },
+    {
+      "address": "0xc634",
+      "name": "fx_begin_layout_pass",
+      "scope": "draw-state setup and original font/counter resets"
+    },
+    {
+      "address": "0xc664",
+      "name": "fx_select_small_font",
+      "scope": "font setting and previous-font return"
+    },
+    {
+      "address": "0x9cd6",
+      "name": "fx_layout_sequence",
+      "scope": "all 14 recursive construct handlers, ordinary glyphs, parentheses/function calls, weighted recursion and metric-pool resource limits; successful editor cursor geometry"
+    },
+    {
+      "address": "0x8ea6",
+      "name": "root_or_absolute",
+      "scope": "recursive square-root and absolute-value metrics and pixels"
+    },
+    {
+      "address": "0x8f00",
+      "name": "power",
+      "scope": "superscript, e-power and ten-power with child cache"
+    },
+    {
+      "address": "0x937c",
+      "name": "fraction",
+      "scope": "stacked/mixed fractions, recursive caches and native whole-field atom validation"
+    },
+    {
+      "address": "0x9648",
+      "name": "nth_root",
+      "scope": "indexed roots and cached index/radicand placement"
+    },
+    {
+      "address": "0x867a",
+      "name": "enclose",
+      "scope": "root/absolute enclosure geometry"
+    },
+    {
+      "address": "0x36f0",
+      "name": "expand_token",
+      "scope": "ROM spelling expansion for layout glyphs"
+    },
+    {
+      "address": "0x375c",
+      "name": "expand_token",
+      "scope": "mode 193 alternate glyph spelling table"
+    },
+    {
+      "address": "0x8574",
+      "name": "world_text",
+      "scope": "world coordinates, scroll, margin and screen clipping"
+    },
+    {
+      "address": "0x85e4",
+      "name": "token_glyphs",
+      "scope": "raw glyph mode, spelling width and function-prefix omission with original byte wrap"
+    },
+    {
+      "address": "0x8536",
+      "name": "world_pixel",
+      "scope": "world-coordinate clipping"
+    },
+    {
+      "address": "0x8476",
+      "name": "world_horizontal",
+      "scope": "world-coordinate clipping"
+    },
+    {
+      "address": "0x84e2",
+      "name": "world_vertical",
+      "scope": "world-coordinate clipping"
+    },
+    {
+      "address": "0x838a",
+      "name": "world_root_stem",
+      "scope": "root stem with native endpoint rejection, interpolation and reversed rasterization"
+    },
+    {
+      "address": "0x9086",
+      "name": "log_base",
+      "scope": "recursive log base and argument layout, cache, tall parentheses"
+    },
+    {
+      "address": "0x9236",
+      "name": "derivative",
+      "scope": "recursive body/evaluation point and derivative/evaluation ornaments"
+    },
+    {
+      "address": "0x97d0",
+      "name": "integral",
+      "scope": "lower/upper caches, recursive body, integral sign and dx"
+    },
+    {
+      "address": "0x99e6",
+      "name": "sum_or_product",
+      "scope": "bound/body caches, sigma/product geometry and parentheses"
+    },
+    {
+      "address": "0x7bc0",
+      "name": "repetend",
+      "scope": "all four style bytes atROM 1FFE2"
+    },
+    {
+      "address": "0x8890",
+      "name": "parenthesis",
+      "scope": "ordinary and tall bracket geometry"
+    },
+    {
+      "address": "0x8a6c",
+      "name": "closes_parenthesis_frame / fx_parenthesis_start",
+      "scope": "balanced backscan through nested structured children, owning address and matched flag"
+    },
+    {
+      "address": "0x8b14",
+      "name": "parameter_after / fx_parameter_length",
+      "scope": "nested parameter traversal and native byte-count offsets, including parameter indices0..255"
+    },
+    {
+      "address": "0x8936",
+      "name": "cursor_at",
+      "scope": "measure/draw cursor extents, baseline, child-transform adjustments"
+    },
+    {
+      "address": "0x8182",
+      "name": "cursor_at",
+      "scope": "screen cursor position and font metadata"
+    },
+    {
+      "address": "0x11014",
+      "name": "cursor_at",
+      "scope": "blink glyph and overwrite flag settings in ordinary contexts"
+    },
+    {
+      "address": "0x8c56",
+      "name": "fx_render_viewport",
+      "scope": "two-pass editor/result placement, horizontal/vertical scrolling, indicators, model136prefix and successful fallback replacement"
+    },
+    {
+      "address": "0x38b0",
+      "name": "fx_clear_from_row",
+      "scope": "byte-valued row/count/address wrap; native-returning rows 0..32 and 131..255 compared throughout RAM outside CPU stack"
+    },
+    {
+      "address": "0x3922",
+      "name": "fx_scroll_previous_rows",
+      "scope": "all byte-valued memory arithmetic including signed-overlap copy; native-returning rows 0..31 compared, other rows recorded as original stack faults"
+    },
+    {
+      "address": "0x10e5c",
+      "name": "fx_make_result_space",
+      "scope": "result-height state, byte height wrap and row scrolling"
+    },
+    {
+      "address": "0x540e",
+      "name": "fx_render_viewport",
+      "scope": "keyboard repeat reset after long-result scroll decrement"
+    },
+    {
+      "address": "0x32d4",
+      "name": "copy_fallback",
+      "scope": "null source/destination handling and forward terminated copy"
+    },
+    {
+      "address": "0x8164",
+      "name": "copy_fallback",
+      "scope": "forward byte copy with 16-bitaddresswrap and ignored ROM writes"
+    },
+    {
+      "address": "0xb070",
+      "name": "fx_display_real_math_result / fx_display_real_linear_result",
+      "scope": "ordinary real natural/legacy display, selected formatter branches, raw scientific suffixes in natural output, history, pointer restoration and viewport or fixed-row placement"
+    },
+    {
+      "address": "0xaf5a",
+      "name": "result_history",
+      "scope": "history headers/text length including saved cursor state"
+    },
+    {
+      "address": "0x796e",
+      "name": "result_history",
+      "scope": "history header attributes, angle state and cursor visibility fields"
+    },
+    {
+      "address": "0xafe2",
+      "name": "flatten_history",
+      "scope": "formatter-created construct tokens into history-text encoding"
+    },
+    {
+      "address": "0x3664",
+      "name": "right_aligned_text",
+      "scope": "ordinary real legacy result text at row22, byte width arithmetic and all3 supported fonts"
+    },
+    {
+      "address": "0x8b9e",
+      "name": "fx_construct_length",
+      "scope": "byte count through nested structured construct delimiters"
+    },
+    {
+      "address": "0x8bf8",
+      "name": "fx_parenthesis_length",
+      "scope": "byte count through parentheses/function calls and structured children"
+    },
+    {
+      "address": "0x8ae0",
+      "name": "fx_field_length",
+      "scope": "whole-field byte count and top-level delimiter detection"
+    },
+    {
+      "address": "0xa1fe",
+      "name": "fx_atom_length",
+      "scope": "single/general atom spans, signed numbers, scientific notation and allbyte counters"
+    },
+    {
+      "address": "0xa14e",
+      "name": "fx_owning_construct",
+      "scope": "owning construct address and parameter index for positions in structured fields"
+    },
+    {
+      "address": "0xa2da",
+      "name": "fx_previous_atom_start",
+      "scope": "previous numeric/parenthesized/structured atom start relative to812c"
+    },
+    {
+      "address": "0x38ce",
+      "name": "fx_fill_display",
+      "scope": "all pattern bytes and selection bits; RAM framebuffer and complete LCD including row padding"
+    },
+    {
+      "address": "0x5264",
+      "name": "fx_display_setup_item",
+      "scope": "all setup-mode, submode and page byte combinations"
+    },
+    {
+      "address": "0x3876",
+      "name": "fx_display_is_special_view",
+      "scope": "all context/submode bytes, including ROM-selected setup context 9"
+    },
+    {
+      "address": "0xc328",
+      "name": "fx_display_has_formula_view",
+      "scope": "formula-view permission across all context bytes"
+    },
+    {
+      "address": "0xc340",
+      "name": "fx_display_has_natural_input",
+      "scope": "formula permission, Math setting and mode bit 7"
+    },
+    {
+      "address": "0xc35e",
+      "name": "fx_display_has_natural_result",
+      "scope": "formula permission, selections 14/15 and Math result mode bit 6"
+    }
+  ],
+  "gaps": [
+    "B070 complex/polar, BaseN, mode137 and mode-specific hooks, special status/error contexts remain partial; unsupported contexts return-1. Ordinary real legacy text and natural-input selection10 are translated.",
+    "B070 numeric scratch RAM remains untranslated because numeric/formatter APIs expose records and tokens rather than native operand workspaces:0x8006 and inactive0x8640 metric slots for natural output,0x8000..0x8009 for legacy text.",
+    "Selection 15 tagged rational/surd formatting remains a formatter gap; the controller propagates explicit formatting failure.",
+    "Viewport fallback with a failed second measurement or a nonterminating overlapping copy is an explicit pending native-state audit; tested fallback replacements succeed.",
+    "Cursor painting/blink scheduling is a separate UI routine; this subsystem translates cursor geometry and blink metadata.",
+    "Physical CPU-stack-space check 0x52D6: portable semantic API has no native CPU stack;  recursion/count limits are modeled.",
+    "Unsupported arbitrary font-state glyph rasterization reads original stack scratch beyond nine decoded rows; supported raster fonts 6, 7 and 10 are translated.",
+    "Original caller-stack corruption for certain small control glyph coordinates is preserved as explicit writes and recorded in parity-ledger.json; no CPU stack is emulated.",
+    "Malformed cyclic/nonterminating token scans are bounded in C. Successful finite-span cases are compared with the original; potential infinite native loops are not emulated.",
+    "Out-of-range display rows can alias the native call stack and loop counters: clear rows 33..130 and scroll rows 32..255 fail to return in the seeded oracle. Portable C applies bounded explicit memory arithmetic without reproducing native CPU-stack aliases; complete invalid-call memory parity is outside this semantic API."
+  ],
+  "verification": "analysis/c-verification/render.json",
+  "verification_command": "python3 tools/test_render_c.py",
+  "parity_ledger": "csrc/render/parity-ledger.json",
+  "complete": false,
+  "secondary_verification": "csrc/render/differential-results.json"
+}

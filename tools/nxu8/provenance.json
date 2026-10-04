@@ -1,0 +1,6 @@
+{
+  "isa_source": "https://github.com/qiufuyu123/CasioEmuNeo/blob/23de3431a5b17f2e0570385455e2698c7463a47c/disas/nX-U8_is.txt",
+  "upstream": "https://github.com/user202729/CasioEmu",
+  "license": "GPL-3.0",
+  "notes": "isa.txt is copied unchanged. The Python decoder applies segmented PC wrapping and rejects mismatched EXTBW register fields."
+}

@@ -1,0 +1,17 @@
+{
+  "subsystem": "numeric-transcend",
+  "implementation": "Readable C99 decimal factor algorithms with bounded integer coordinates; no original firmware execution or host floating-point arithmetic",
+  "implemented_routines": [
+    {"address": "0x1c242", "name": "natural logarithm", "scope": "Real decimal, rational and bounded compact surd records; domain errors and two-guard-digit logarithm division"},
+    {"address": "0x1c256", "name": "base-ten logarithm", "scope": "Real decimal, rational and bounded compact surd records; exponent combination and domain errors"},
+    {"address": "0x1acb6", "name": "logarithm decimal factor kernel", "scope": "Eighteen-digit residual/product decomposition and seventeen coefficient reconstruction passes"},
+    {"address": "0x1b11a", "name": "logarithm coefficient table", "scope": "Explicit numeric values from original ROM constant table"}
+  ],
+  "gaps": [
+    "Exponential and general power/root paths are being researched; no implementation is claimed",
+    "Complex logarithms and routine-level global workspace side effects"
+  ],
+  "verification": "analysis/c-verification/numeric_transcend.json",
+  "test": "python3 tools/test_numeric_transcend_c.py --random-cases 5000",
+  "completion": "Partial subsystem implementation; full transcendental firmware equivalence is not established"
+}

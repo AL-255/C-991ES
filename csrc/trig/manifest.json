@@ -1,0 +1,68 @@
+{
+  "subsystem": "high_level_forward_trigonometry_and_special_result_recognition",
+  "semantic_complete": false,
+  "implementation_language": "C99",
+  "implementation_executes_firmware": false,
+  "implementation_uses_host_floating_point": false,
+  "implemented_routines": [
+    {"address": "0x1627a", "name": "replace_special_sine_cosine_result", "scope": "numeric-result magnitude matching, native decimal subtraction threshold, exact/decimal table selection and sign restoration"},
+    {"address": "0x16318", "name": "replace_special_tangent_result", "scope": "four-value numeric-result table and relaxed thresholds for its two larger magnitudes"},
+    {"address": "0x16298", "name": "match_special_trigonometric_magnitude", "scope": "descending table search with original15-digit subtraction; thresholds5e-13 or5e-12"},
+    {"address": "0x1c340", "name": "convert_explicit_angle_unit", "scope": "all9 degree/radian/grad conversions, original operation order, same-unit record preservation and surd preconversion"},
+    {"address": "0x1c59e", "name": "numeric_sine", "scope": "decimal/rational/surd input conversion, marker removal, degree/radian/grad normalization, quadrant folding, decimal rotations and native15-digit reconstruction"},
+    {"address": "0x1c58c", "name": "numeric_cosine", "scope": "same shared forward core with cosine coordinate and sign selection"},
+    {"address": "0x1c57a", "name": "numeric_tangent", "scope": "same shared forward core with signed coordinate quotient, poles and range errors"},
+    {"address": "0x1a2d4", "name": "reduce_and_evaluate_angle", "scope": "forward mode8 only; quarter-turn count, cancellation filter, nearest-quarter residual, unsigned core and result sign restoration"},
+    {"address": "0x1a642", "name": "quarter_turn_angle_constant", "scope": "90degrees, storedpi/2 radians and100grads as numeric data"},
+    {"address": "0x1a694", "name": "quarter_turn_reciprocal", "scope": "stored10/9,200/pi and1 constants with separate two-position exponent adjustment"},
+    {"address": "0x1a5be", "name": "fold_forward_quadrant", "scope": "forward sine/cosine/tangent parity and sign logic; inverse/hyperbolic modes excluded"},
+    {"address": "0x1acec", "name": "decimal_angular_rotations", "scope": "forward angular mode10 and its internal reconstruction mode2; eighteen-digit fixed decimal coordinates and seventeen saved count positions"},
+    {"address": "0x1b0ba", "name": "select_angular_rotation_position", "scope": "forward angular and reconstruction selector branches only"},
+    {"address": "0x1b150", "name": "angular_step_table", "scope": "ten fixed decimal atan coefficients; the final coefficient is reused below table precision"},
+    {"address": "0x16268", "name": "sine_wrapper", "scope": "numeric core followed by exact/decimal table replacement with resolved output permission"},
+    {"address": "0x16272", "name": "cosine_wrapper", "scope": "numeric core followed by exact/decimal table replacement with resolved output permission"},
+    {"address": "0x16308", "name": "tangent_wrapper", "scope": "numeric core followed by exact/decimal table replacement with resolved output permission"},
+    {"address": "0x1c568", "name": "inverse_sine", "scope": "canonical decimal/rational/surd inputs, native(1+x)*(1-x) domain reconstruction, unsigned atan reduction, signed complements and all3 output units"},
+    {"address": "0x1c556", "name": "inverse_cosine", "scope": "same inverse angular core with native sign/complement order and positive reciprocal fast return"},
+    {"address": "0x1c544", "name": "inverse_tangent", "scope": "same inverse angular core with reciprocal reduction for arguments of magnitude1 onward"},
+    {"address": "0x1a3ac", "name": "evaluate_inverse_angle", "scope": "inverse mode9 only; original domain construction, min/max quotient, quarter-angle multiplication, cleanup, complements and sign restoration"},
+    {"address": "0x1a5a2", "name": "prepare_inverse_sine_cosine_coordinates", "scope": "inverse angular branch using sqrt((1+x)*(1-x)); shared hyperbolic branches excluded"},
+    {"address": "0x1aca2", "name": "inverse_decimal_angular_rotations", "scope": "inverse angular mode2 followed by angle reconstruction mode10, eighteen-digit coordinates and original guard/index handling"}
+  ],
+  "data": [
+    {"address": "0x29f6..0x2aa9", "scope": "five sine/cosine and four tangent decimal/exact numeric record pairs"},
+    {"address": "0x1a2e..0x1a91", "scope": "ten angular rotation coefficients, copied as bounded decimal integer data"},
+    {"address": "0x18c52/0x18c6c/0x18ec0", "scope": "stored10/9,.9 andpi=3.14159265358980 numeric constants"}
+  ],
+  "gaps": [
+    "Hyperbolic and inverse-hyperbolic functions and shared kernel modes outside forward/inverse angular modes10/2",
+    "Global exact-output eligibility18212; API accepts its resolved permission",
+    "Noncanonical/malformed numeric BCD records beyond tested canonical decimal/rational/surd and error inputs",
+    "Native scratchRAM/register side effects and peripheral/UI control; APIs expose numeric values and resolved configuration",
+    "Full parser dispatch and original reset-to-keypress I/O equivalence"
+  ],
+  "verification": {
+    "tool": "tools/test_trig_c.py",
+    "report": "analysis/c-verification/trig.json",
+    "oracle": "original extracted ROM1627a/16318, entering immediately after numeric trig returns",
+    "input": "identical computed result records, function family and Math permission",
+    "output": "complete replacement numeric record and match/no-match branch; aliases and input immutability",
+    "limitation": "Prepared wrapper-stage contexts; numeric trig computation is tested separately"
+  },
+  "numeric_verification": {
+    "tool": "tools/test_trig_math_c.py",
+    "report": "analysis/c-verification/trig_math.json",
+    "oracle": "original extracted ROM1ACEC,1C340,1C59E/1C58C/1C57A and complete16268/16272/16308 wrappers",
+    "input": "identical full numeric records, function, resolved unit and exact-output permission",
+    "output": "both kernel coordinates, all10 numeric result bytes, replacement branch, immutable input and aliases",
+    "limitation": "Prepared routine/evaluator contexts; no inverse/hyperbolic or reset-to-keypress I/O coverage"
+  },
+  "inverse_verification": {
+    "tool": "tools/test_trig_inverse_c.py",
+    "report": "analysis/c-verification/trig_inverse.json",
+    "oracle": "original extracted ROM1ACA2 and complete1C568/1C556/1C544 entries",
+    "input": "identical decimal/rational/two-term-surd/error numeric records, function and resolved output unit",
+    "output": "all10 kernel/core result bytes, source immutability, aliases and explicit-vs-global angle unit resolution",
+    "limitation": "Prepared numeric routine contexts; malformedBCD, hyperbolic and reset-to-keypress I/O coverage excluded"
+  }
+}

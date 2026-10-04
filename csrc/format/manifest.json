@@ -1,0 +1,43 @@
+{
+  "subsystem": "high_level_numeric_result_formatting",
+  "semantic_complete": false,
+  "implementation_language": "C99 with GCC/Clang unsigned 128-bit integer extension for exact recognition intervals",
+  "implementation_executes_firmware": false,
+  "implementation_uses_host_floating_point": false,
+  "implemented_routines": [
+    {"address": "0xc060", "name": "format_numeric_result", "scope": "ordinary real decimal, tagged rational and integral-component surd output, numeric conversions, recurring decimals, DMS, engineering and finite-decimal prime factors in supplied COMP contexts0..6; exact coefficient grouping and numeric context reset for complex/polar components; current/previous selections represented; modal paths excluded"},
+    {"address": "0xab8e", "name": "format_exact_numeric_result", "scope": "rational/mixed/linear serialization, integral-component surds, ordinary fraction and pi selection"},
+    {"address": "0xc4be", "name": "append_integer_component", "scope": "integer components in exact output"},
+    {"address": "0xc4f2", "name": "append_radical_component", "scope": "integral radicands and coefficients"},
+    {"address": "0xb99c", "name": "format_normal_decimal", "scope": "Norm1/Norm2, fixed-point width, scientific fallback, compact contexts"},
+    {"address": "0xba9a", "name": "format_fixed_decimal", "scope": "Fix 0..9 with decimal rounding and magnitude fallback"},
+    {"address": "0xbc4a", "name": "format_scientific_decimal", "scope": "Sci 1..10 with packed superscript exponent tokens"},
+    {"address": "0xbd78", "name": "format_sexagesimal", "scope": "selection1 and marked decimals at selection0/13; decimal minute/second arithmetic, cleanup, centisecond rounding, width limits and numeric fallback"},
+    {"address": "0x7c46", "name": "format_recurring_decimal", "scope": "bounded integer long division and remainder-cycle detection, exact and recognized rationals, terminating/oversized-period numeric fallback"},
+    {"address": "0x7ee0", "name": "format_prime_factors", "scope": "canonical unmarked decimal records with exponent-99..99, prime powers, fractional quotient termination and signed parenthesized remaining factor"},
+    {"address": "0x13c66", "name": "bounded_prime_factorization", "scope": "trial division by the 168 primes through997 using the original finite-decimal quotient/remainder behavior"},
+    {"address": "0x10b7e", "name": "recognize_ordinary_fraction", "scope": "bounded continued-fraction interval recognition, decimal exponent -8..6 and original display digit budget; finite differential verification"},
+    {"address": "0x10b60", "name": "cleanup_and_test_integer", "scope": "last-BCD-pair probe for rational and pi recognition; exponent-dependent mantissa boundaries"},
+    {"address": "0x10c2c", "name": "recognize_pi_coefficient", "scope": "firmware pi division, scale25200, integer cleanup and gcd reduction for unmarked decimal records"},
+    {"address": "0x10cc2", "name": "adjust_engineering_exponent", "scope": "selections2..9, current/previous selection cycling, zero handling and single-step exponent bounds"},
+    {"address": "0x10da6", "name": "engineering_normal_width", "scope": "Norm1/Norm2 significant-position budget after engineering exponent placement"},
+    {"address": "0x10dca", "name": "engineering_fix_scientific_width", "scope": "Fix/Sci rounding, digit budgets and zero trimming including compact contexts1..3 and restored full width for contexts4..6"},
+    {"address": "0x3374", "name": "append_exponent_tokens", "scope": "engineering quotient/remainder superscript tokens, including boundary exponents above99"}
+  ],
+  "gaps": [
+    "Malformed or noncanonical surd BCD records outside the verified codec domain",
+    "Prime-factorization of tagged rational/surd and marked decimal records; native raw interpretation differs from canonical numeric conversion",
+    "Error screens and modal BASE-N/vector/matrix formatting",
+    "Complex-result composition and UI controller state side effects",
+    "Alternate global modal settings outside the options API and their UI state side effects",
+    "Complete-domain equivalence of continued-fraction boundary selection remains unproved"
+  ],
+  "verification": {
+    "tool": "tools/test_format_c.py",
+    "report": "analysis/c-verification/format.json",
+    "oracle": "original extracted ROM C060 in independent SimU8 core",
+    "input": "identical numeric records and formatting options",
+    "output": "exact tokens, result kind and unchanged input record",
+    "limitation": "Prepared routine contexts with passive peripherals; not reset-to-keypress execution or whole-device I/O equivalence"
+  }
+}

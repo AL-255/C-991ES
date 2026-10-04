@@ -1,0 +1,64 @@
+{
+  "subsystem": "input token classification and expression evaluation",
+  "implementation": "handwritten high-level C parser and integer-decimal arithmetic; original packed constant tables read as data",
+  "complete": false,
+  "implemented_routines": [
+    {
+      "address": "0x159d0",
+      "name": "decode evaluator token",
+      "scope": "returned value and category for every input byte and calculation context"
+    },
+    {
+      "address": "0x31e2",
+      "name": "classify display token",
+      "scope": "returned category for every input byte"
+    },
+    {
+      "address": "0x327a",
+      "name": "classify display construct",
+      "scope": "returned category for every input byte"
+    },
+    {
+      "address": "0x171f4",
+      "name": "evaluate expression",
+      "scope": "COMP tokens: literals, scientific input, e/pi, parentheses, unary signs, arithmetic, stronger implicit multiplication, compact/mixed fractions with native operand eligibility, square root and forward and inverse sin/cos/tan, ln/log10 Math on/off; verified fast powers\u22121/0/2/3, square/cube/reciprocal and angle-unit postfix; status, numeric records and consumed pointer; nested expression-to-LCD checks"
+    },
+    {
+      "address": "0x16562",
+      "name": "post-operation numeric cleanup",
+      "scope": "decimal path after successful COMP arithmetic dispatch"
+    },
+    {
+      "address": "0x16268 / 0x16272 / 0x16308",
+      "name": "forward trigonometric dispatch",
+      "scope": "degree/radian/grad settings, numeric cores, special-result replacement and operation cleanup"
+    },
+    {
+      "address": "0x15f00",
+      "name": "verified power dispatch",
+      "scope": "integer exponents\u22121/0/2/3 only; right association, power above fraction and implicit multiplication, unary sign below power"
+    },
+    {
+      "address": "0x16194 / 0x16198 / 0x1619c",
+      "name": "explicit angle-unit postfix",
+      "scope": "degree/radian/grad source unit to current configured unit, error cursor position"
+    },
+    {
+      "address": "0x2976 / 0x2978 / 0x297a / 0x297c / 0x296c",
+      "name": "inverse trigonometric and logarithmic function dispatch",
+      "scope": "rawB0/B1/B2 asin/acos/atan in all angle units; raw68 single-argument log10 and A3 ln; domain errors and nested expression-to-LCD checks"
+    }
+  ],
+  "gaps": [
+    "general powers, other root types, remaining postfix operators, hyperbolic/exponential functions, arbitrary-base logarithms and full function dispatch",
+    "number literal parsing in all bases",
+    "function dispatch and mode constraints",
+    "variable and complex expression evaluation",
+    "full error/recovery behavior in other contexts, expression editing and keyboard integration"
+  ],
+  "verification": [
+    "tools/test_tokens_c.py",
+    "tools/test_eval_c.py"
+  ],
+  "unsupported_behavior": "explicit FX_EVAL_UNIMPLEMENTED and offending token; no host libm or CPU/ROM fallback"
+}

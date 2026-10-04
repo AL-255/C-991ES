@@ -1,0 +1,31 @@
+{
+  "subsystem": "startup data and passive peripheral control",
+  "implementation": "handwritten high-level C, no instruction execution",
+  "implemented_routines": [
+    {"address": "0x6f86", "name": "startup data copy", "scope": "only through 0x6fd8; full boot remains incomplete"},
+    {"address": "0x538a", "name": "timer configuration", "scope": "register writes, without physical timing"},
+    {"address": "0x53d0", "name": "timer restart", "scope": "register writes"},
+    {"address": "0x53f0", "name": "timer flags", "scope": "returned byte"},
+    {"address": "0x53f8", "name": "busy acquire", "scope": "returned byte and state"},
+    {"address": "0x540a", "name": "busy mark", "scope": "state"},
+    {"address": "0x540e", "name": "busy clear", "scope": "state"},
+    {"address": "0x5416", "name": "busy query", "scope": "returned byte"},
+    {"address": "0x541e", "name": "secondary busy query", "scope": "returned byte"},
+    {"address": "0x5472", "name": "key port configuration", "scope": "register writes"},
+    {"address": "0x5482", "name": "interrupt port configuration", "scope": "register writes"},
+    {"address": "0x54aa", "name": "display port configuration", "scope": "register writes"},
+    {"address": "0x54c6", "name": "display port restart", "scope": "register writes"},
+    {"address": "0x54d8", "name": "display port active", "scope": "register writes"},
+    {"address": "0x542a", "name": "configure peripheral ports", "scope": "all peripheral register writes; CPU busy-loop timing excluded"},
+    {"address": "0x54e0", "name": "display port sleep", "scope": "mode-dependent port and LCD flag writes"},
+    {"address": "0x550a", "name": "set LCD flag", "scope": "zero/nonzero argument, unrelated bits preserved"},
+    {"address": "0x5514", "name": "disable display", "scope": "register write"},
+    {"address": "0x551c", "name": "enable key drive", "scope": "register write"},
+    {"address": "0x5524", "name": "disable key drive", "scope": "register write"},
+    {"address": "0x552c", "name": "select all key rows", "scope": "register write"},
+    {"address": "0x5534", "name": "deselect all key rows", "scope": "register write"},
+    {"address": "0x553c", "name": "any key query", "scope": "row selection and all 256 passive input bytes"}
+  ],
+  "gaps": ["full boot", "keyboard scanning and interrupts", "physical timer behavior", "Windows emulator callback handling", "power management and persistent state"],
+  "verification": "tools/test_platform_c.py"
+}

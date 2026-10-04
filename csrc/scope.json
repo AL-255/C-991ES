@@ -1,0 +1,74 @@
+{
+  "objective": "Complete readable high-level C reimplementation of the firmware, thoroughly compared against original input and output",
+  "implementation_constraint": "All subsystems must be high-level C; generated instruction translation or runtime ROM execution is not an acceptable final implementation",
+  "complete": false,
+  "implementation_uses_original_cpu": false,
+  "original_cpu_usage": "Test oracle only, under tools/nxu8",
+  "requirements": [
+    {
+      "id": "platform",
+      "scope": "Full startup, persistent state, power management, peripheral interactions and emulator callbacks",
+      "status": "partial",
+      "manifest": "platform/manifest.json"
+    },
+    {
+      "id": "keyboard_ui",
+      "scope": "Keyboard scanning, editing, cursor, menus, history and mode setup",
+      "status": "partial",
+      "manifest": "ui/manifest.json"
+    },
+    {
+      "id": "parser",
+      "scope": "All input token categories, literal bases, precedence, function dispatch, variables, errors and mode constraints",
+      "status": "partial",
+      "manifest": "parse/manifest.json"
+    },
+    {
+      "id": "numeric",
+      "scope": "Exact numeric storage, decimal arithmetic, rational and surd arithmetic, rounding, range and error semantics",
+      "status": "partial",
+      "manifest": "numeric/manifest.json"
+    },
+    {
+      "id": "transcendental",
+      "scope": "Trigonometry, inverse functions, exponentials, logarithms, roots, powers and angle-unit conversions",
+      "status": "partial",
+      "manifest": "trig/manifest.json",
+      "implemented_subset": "Numeric/exact square root; forward and inverse sin/cos/tan kernels, angle conversion and forward special-result tables; ln/log10 and verified power fast paths\u22121/0/2/3. Hyperbolic/general exp/power cores pending"
+    },
+    {
+      "id": "advanced_math",
+      "scope": "Numerical integration/differentiation/sums, solving, combinatorics, random functions and complex arithmetic",
+      "status": "pending"
+    },
+    {
+      "id": "calculation_modes",
+      "scope": "Statistics, distributions, equation, matrix, vector, table and base-N modes, constants and unit conversions",
+      "status": "pending"
+    },
+    {
+      "id": "format",
+      "scope": "All decimal, rational, surd, pi, recurring, sexagesimal, complex and mode-specific output policies",
+      "status": "partial",
+      "manifest": "format/manifest.json"
+    },
+    {
+      "id": "render",
+      "scope": "Fonts, pixels, recursive expression layout, editing decorations, clipping and display transfers",
+      "status": "partial",
+      "manifest": "render/manifest.json"
+    },
+    {
+      "id": "end_to_end",
+      "scope": "Runnable calculator with original expression and key-sequence input/output behavior",
+      "status": "partial",
+      "implemented_subset": "Supported COMP decimal/exact, forward/inverse trig and logarithmic expression tokens through records, formatter tokens, mathematical layout and LCD; structured editor insertion/deletion/navigation prepared-context parity; complete key UI pending"
+    },
+    {
+      "id": "verification",
+      "scope": "Differential tests for full public behavior, boundary/error cases and interactions, beyond isolated routine fixtures",
+      "status": "partial"
+    }
+  ],
+  "completion_gate": "All requirements completed and directly verified against original behavior. Passing tests for implemented subsets never implies full completion."
+}

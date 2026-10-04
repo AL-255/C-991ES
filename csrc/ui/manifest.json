@@ -1,0 +1,125 @@
+{
+  "subsystem": "keyboard matrix primitives, key dispatch and editor state",
+  "implementation": "handwritten high-level C with an optional host row-sampling callback",
+  "complete": false,
+  "implemented_routines": [
+    {
+      "address": "0x1d9a6",
+      "name": "matrix scan",
+      "scope": "first nonempty of seven ascending row selections; unchanged state on no key"
+    },
+    {
+      "address": "0x1d9e4",
+      "name": "debounce",
+      "scope": "five samples and column intersection, timer/port writes; physical timing excluded"
+    },
+    {
+      "address": "0x1d958",
+      "name": "held-key query",
+      "scope": "ten bounded samples, busy-state release and timer/port writes"
+    },
+    {
+      "address": "0x1dae6",
+      "name": "key table lookup",
+      "scope": "all column/row masks, highest-set-bit selection and ROM table data"
+    },
+    {
+      "address": "0x1dbc2",
+      "name": "modifier/context table selection",
+      "scope": "only through 1dc3e, before subsequent token remapping/editor actions"
+    },
+    {
+      "address": "0x1dd4e",
+      "name": "modifier token predicate",
+      "scope": "all token bytes"
+    },
+    {
+      "address": "0x1dcf4",
+      "name": "modifier state updates",
+      "scope": "all tokens except EC cursor refresh, all flag bytes"
+    },
+    {
+      "address": "0x4106",
+      "name": "data token predicate",
+      "scope": "all tokens and action-context bytes"
+    },
+    {
+      "address": "0x4120",
+      "name": "menu token predicate",
+      "scope": "all tokens and action-context bytes"
+    },
+    {
+      "address": "0x41d0",
+      "name": "direction token predicate",
+      "scope": "all tokens and action-context bytes"
+    },
+    {
+      "address": "0x1dcb6",
+      "name": "natural-input permission",
+      "scope": "Math-output setting, suppression/context/mode and state branches"
+    },
+    {
+      "address": "0x1ddac",
+      "name": "normalize special action",
+      "scope": "original result-state action remapping"
+    },
+    {
+      "address": "0x3876 / 0xc328 / 0xc340 / 0xc35e",
+      "name": "editor/display context policies",
+      "scope": "special-view setup table, formula view, natural input and natural result permissions"
+    },
+    {
+      "address": "0x89d2 / 0x8a08",
+      "name": "cursor token categories",
+      "scope": "all256 token/following-byte pairs"
+    },
+    {
+      "address": "0x11014 / 0x8182",
+      "name": "cursor glyph and position",
+      "scope": "native flag normalization, byte-valued length boundary, coordinates and font capture"
+    },
+    {
+      "address": "0x1dcf4",
+      "name": "complete modifier transition API",
+      "scope": "fx_editor_update_modifiers includes EC cursor refresh and saved temporary-state restoration"
+    },
+    {
+      "address": "0xa79a / 0xa800",
+      "name": "construct-control navigation",
+      "scope": "native skipping and placeholder rules; infinite control-only search bounded"
+    },
+    {
+      "address": "0xa3e0 / 0xa82e",
+      "name": "ordinary-byte insertion",
+      "scope": "ordinary input flag, linear overwrite and natural caret/placeholder/backup rules; capacity99"
+    },
+    {
+      "address": "0xa846",
+      "name": "legacy-text editor actions",
+      "scope": "beginning/end and forward/back cursor moves, delete in insert/overwrite modes, busy-state writes"
+    },
+    {
+      "address": "0xa3e0 / 0xa38c / 0xa82e",
+      "name": "structured natural insertion",
+      "scope": "all construct templates, current/previous atom wrapping, signed/scientific operands, placeholders and caret attachment, cursor field selection, backups and capacity99"
+    },
+    {
+      "address": "0xa846..0xab82",
+      "name": "natural editor actions",
+      "scope": "left/right wrapping and busy state, vertical field navigation, deletion with construct shell removal, selected argument preservation and placeholder restoration"
+    }
+  ],
+  "gaps": [
+    "physical timing and interrupt scheduling",
+    "blocking key event loop and cursor blink",
+    "modifier integration with complete key-event dispatch",
+    "complete key-to-editor integration and malformed-state recovery",
+    "menus, mode setup and expression history"
+  ],
+  "verification": [
+    "tools/test_keys_c.py",
+    "tools/test_editor_c.py",
+    "tools/test_editor_construct_c.py"
+  ],
+  "oracle_scope": "passive F040 register, prepared native routine or bounded-block contexts; dynamic host row-sampling contract checked separately"
+}

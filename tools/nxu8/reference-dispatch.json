@@ -1,0 +1,997 @@
+{
+  "source": "https://github.com/qiufuyu123/CasioEmuNeo/blob/23de3431a5b17f2e0570385455e2698c7463a47c/emulator/Chipset/CPU.cpp",
+  "source_sha256": "7ce7ada04365bf72398fca5ae95427276748910e364593e4129d8ae025f72fb0",
+  "license": "GPL-3.0",
+  "patterns": [
+    {
+      "handler": "OP_ADD",
+      "base": 32769,
+      "varying_bits": 4080,
+      "length": 2
+    },
+    {
+      "handler": "OP_ADD",
+      "base": 4096,
+      "varying_bits": 4095,
+      "length": 2
+    },
+    {
+      "handler": "OP_ADD16",
+      "base": 61446,
+      "varying_bits": 3808,
+      "length": 2
+    },
+    {
+      "handler": "OP_ADD16",
+      "base": 57472,
+      "varying_bits": 3711,
+      "length": 2
+    },
+    {
+      "handler": "OP_ADDC",
+      "base": 32774,
+      "varying_bits": 4080,
+      "length": 2
+    },
+    {
+      "handler": "OP_ADDC",
+      "base": 24576,
+      "varying_bits": 4095,
+      "length": 2
+    },
+    {
+      "handler": "OP_AND",
+      "base": 32770,
+      "varying_bits": 4080,
+      "length": 2
+    },
+    {
+      "handler": "OP_AND",
+      "base": 8192,
+      "varying_bits": 4095,
+      "length": 2
+    },
+    {
+      "handler": "OP_SUB",
+      "base": 32775,
+      "varying_bits": 4080,
+      "length": 2
+    },
+    {
+      "handler": "OP_SUB",
+      "base": 28672,
+      "varying_bits": 4095,
+      "length": 2
+    },
+    {
+      "handler": "OP_SUBC",
+      "base": 32773,
+      "varying_bits": 4080,
+      "length": 2
+    },
+    {
+      "handler": "OP_SUBC",
+      "base": 20480,
+      "varying_bits": 4095,
+      "length": 2
+    },
+    {
+      "handler": "OP_MOV16",
+      "base": 61445,
+      "varying_bits": 3808,
+      "length": 2
+    },
+    {
+      "handler": "OP_MOV16",
+      "base": 57344,
+      "varying_bits": 3711,
+      "length": 2
+    },
+    {
+      "handler": "OP_MOV",
+      "base": 32768,
+      "varying_bits": 4080,
+      "length": 2
+    },
+    {
+      "handler": "OP_MOV",
+      "base": 0,
+      "varying_bits": 4095,
+      "length": 2
+    },
+    {
+      "handler": "OP_OR",
+      "base": 32771,
+      "varying_bits": 4080,
+      "length": 2
+    },
+    {
+      "handler": "OP_OR",
+      "base": 12288,
+      "varying_bits": 4095,
+      "length": 2
+    },
+    {
+      "handler": "OP_XOR",
+      "base": 32772,
+      "varying_bits": 4080,
+      "length": 2
+    },
+    {
+      "handler": "OP_XOR",
+      "base": 16384,
+      "varying_bits": 4095,
+      "length": 2
+    },
+    {
+      "handler": "OP_CMP16",
+      "base": 61447,
+      "varying_bits": 3808,
+      "length": 2
+    },
+    {
+      "handler": "OP_SUB",
+      "base": 32776,
+      "varying_bits": 4080,
+      "length": 2
+    },
+    {
+      "handler": "OP_SUBC",
+      "base": 32777,
+      "varying_bits": 4080,
+      "length": 2
+    },
+    {
+      "handler": "OP_SLL",
+      "base": 32778,
+      "varying_bits": 4080,
+      "length": 2
+    },
+    {
+      "handler": "OP_SLL",
+      "base": 36874,
+      "varying_bits": 3952,
+      "length": 2
+    },
+    {
+      "handler": "OP_SLLC",
+      "base": 32779,
+      "varying_bits": 4080,
+      "length": 2
+    },
+    {
+      "handler": "OP_SLLC",
+      "base": 36875,
+      "varying_bits": 3952,
+      "length": 2
+    },
+    {
+      "handler": "OP_SRA",
+      "base": 32782,
+      "varying_bits": 4080,
+      "length": 2
+    },
+    {
+      "handler": "OP_SRA",
+      "base": 36878,
+      "varying_bits": 3952,
+      "length": 2
+    },
+    {
+      "handler": "OP_SRL",
+      "base": 32780,
+      "varying_bits": 4080,
+      "length": 2
+    },
+    {
+      "handler": "OP_SRL",
+      "base": 36876,
+      "varying_bits": 3952,
+      "length": 2
+    },
+    {
+      "handler": "OP_SRLC",
+      "base": 32781,
+      "varying_bits": 4080,
+      "length": 2
+    },
+    {
+      "handler": "OP_SRLC",
+      "base": 36877,
+      "varying_bits": 3952,
+      "length": 2
+    },
+    {
+      "handler": "OP_LS_EA",
+      "base": 36914,
+      "varying_bits": 3584,
+      "length": 2
+    },
+    {
+      "handler": "OP_LS_EA",
+      "base": 36946,
+      "varying_bits": 3584,
+      "length": 2
+    },
+    {
+      "handler": "OP_LS_R",
+      "base": 36866,
+      "varying_bits": 3808,
+      "length": 2
+    },
+    {
+      "handler": "OP_LS_I_R",
+      "base": 40968,
+      "varying_bits": 3808,
+      "length": 4
+    },
+    {
+      "handler": "OP_LS_BP",
+      "base": 45056,
+      "varying_bits": 3647,
+      "length": 2
+    },
+    {
+      "handler": "OP_LS_FP",
+      "base": 45120,
+      "varying_bits": 3647,
+      "length": 2
+    },
+    {
+      "handler": "OP_LS_I",
+      "base": 36882,
+      "varying_bits": 3584,
+      "length": 4
+    },
+    {
+      "handler": "OP_LS_EA",
+      "base": 36912,
+      "varying_bits": 3840,
+      "length": 2
+    },
+    {
+      "handler": "OP_LS_EA",
+      "base": 36944,
+      "varying_bits": 3840,
+      "length": 2
+    },
+    {
+      "handler": "OP_LS_R",
+      "base": 36864,
+      "varying_bits": 4064,
+      "length": 2
+    },
+    {
+      "handler": "OP_LS_I_R",
+      "base": 36872,
+      "varying_bits": 4064,
+      "length": 4
+    },
+    {
+      "handler": "OP_LS_BP",
+      "base": 53248,
+      "varying_bits": 3903,
+      "length": 2
+    },
+    {
+      "handler": "OP_LS_FP",
+      "base": 53312,
+      "varying_bits": 3903,
+      "length": 2
+    },
+    {
+      "handler": "OP_LS_I",
+      "base": 36880,
+      "varying_bits": 3840,
+      "length": 4
+    },
+    {
+      "handler": "OP_LS_EA",
+      "base": 36916,
+      "varying_bits": 3072,
+      "length": 2
+    },
+    {
+      "handler": "OP_LS_EA",
+      "base": 36948,
+      "varying_bits": 3072,
+      "length": 2
+    },
+    {
+      "handler": "OP_LS_EA",
+      "base": 36918,
+      "varying_bits": 2048,
+      "length": 2
+    },
+    {
+      "handler": "OP_LS_EA",
+      "base": 36950,
+      "varying_bits": 2048,
+      "length": 2
+    },
+    {
+      "handler": "OP_LS_EA",
+      "base": 36915,
+      "varying_bits": 3584,
+      "length": 2
+    },
+    {
+      "handler": "OP_LS_EA",
+      "base": 36947,
+      "varying_bits": 3584,
+      "length": 2
+    },
+    {
+      "handler": "OP_LS_R",
+      "base": 36867,
+      "varying_bits": 3808,
+      "length": 2
+    },
+    {
+      "handler": "OP_LS_I_R",
+      "base": 40969,
+      "varying_bits": 3808,
+      "length": 4
+    },
+    {
+      "handler": "OP_LS_BP",
+      "base": 45184,
+      "varying_bits": 3647,
+      "length": 2
+    },
+    {
+      "handler": "OP_LS_FP",
+      "base": 45248,
+      "varying_bits": 3647,
+      "length": 2
+    },
+    {
+      "handler": "OP_LS_I",
+      "base": 36883,
+      "varying_bits": 3584,
+      "length": 4
+    },
+    {
+      "handler": "OP_LS_EA",
+      "base": 36913,
+      "varying_bits": 3840,
+      "length": 2
+    },
+    {
+      "handler": "OP_LS_EA",
+      "base": 36945,
+      "varying_bits": 3840,
+      "length": 2
+    },
+    {
+      "handler": "OP_LS_R",
+      "base": 36865,
+      "varying_bits": 4064,
+      "length": 2
+    },
+    {
+      "handler": "OP_LS_I_R",
+      "base": 36873,
+      "varying_bits": 4064,
+      "length": 4
+    },
+    {
+      "handler": "OP_LS_BP",
+      "base": 53376,
+      "varying_bits": 3903,
+      "length": 2
+    },
+    {
+      "handler": "OP_LS_FP",
+      "base": 53440,
+      "varying_bits": 3903,
+      "length": 2
+    },
+    {
+      "handler": "OP_LS_I",
+      "base": 36881,
+      "varying_bits": 3840,
+      "length": 4
+    },
+    {
+      "handler": "OP_LS_EA",
+      "base": 36917,
+      "varying_bits": 3072,
+      "length": 2
+    },
+    {
+      "handler": "OP_LS_EA",
+      "base": 36949,
+      "varying_bits": 3072,
+      "length": 2
+    },
+    {
+      "handler": "OP_LS_EA",
+      "base": 36919,
+      "varying_bits": 2048,
+      "length": 2
+    },
+    {
+      "handler": "OP_LS_EA",
+      "base": 36951,
+      "varying_bits": 2048,
+      "length": 2
+    },
+    {
+      "handler": "OP_ADDSP",
+      "base": 57600,
+      "varying_bits": 255,
+      "length": 2
+    },
+    {
+      "handler": "OP_CTRL",
+      "base": 40975,
+      "varying_bits": 240,
+      "length": 2
+    },
+    {
+      "handler": "OP_CTRL",
+      "base": 40973,
+      "varying_bits": 3584,
+      "length": 2
+    },
+    {
+      "handler": "OP_CTRL",
+      "base": 40972,
+      "varying_bits": 240,
+      "length": 2
+    },
+    {
+      "handler": "OP_CTRL",
+      "base": 40965,
+      "varying_bits": 3584,
+      "length": 2
+    },
+    {
+      "handler": "OP_CTRL",
+      "base": 40986,
+      "varying_bits": 3584,
+      "length": 2
+    },
+    {
+      "handler": "OP_CTRL",
+      "base": 40971,
+      "varying_bits": 240,
+      "length": 2
+    },
+    {
+      "handler": "OP_CTRL",
+      "base": 59648,
+      "varying_bits": 255,
+      "length": 2
+    },
+    {
+      "handler": "OP_CTRL",
+      "base": 40967,
+      "varying_bits": 3840,
+      "length": 2
+    },
+    {
+      "handler": "OP_CTRL",
+      "base": 40964,
+      "varying_bits": 3840,
+      "length": 2
+    },
+    {
+      "handler": "OP_CTRL",
+      "base": 40963,
+      "varying_bits": 3840,
+      "length": 2
+    },
+    {
+      "handler": "OP_CTRL",
+      "base": 41226,
+      "varying_bits": 224,
+      "length": 2
+    },
+    {
+      "handler": "OP_PUSH",
+      "base": 61534,
+      "varying_bits": 3584,
+      "length": 2
+    },
+    {
+      "handler": "OP_PUSH",
+      "base": 61566,
+      "varying_bits": 2048,
+      "length": 2
+    },
+    {
+      "handler": "OP_PUSH",
+      "base": 61518,
+      "varying_bits": 3840,
+      "length": 2
+    },
+    {
+      "handler": "OP_PUSH",
+      "base": 61550,
+      "varying_bits": 3072,
+      "length": 2
+    },
+    {
+      "handler": "OP_PUSHL",
+      "base": 61646,
+      "varying_bits": 3840,
+      "length": 2
+    },
+    {
+      "handler": "OP_POP",
+      "base": 61470,
+      "varying_bits": 3584,
+      "length": 2
+    },
+    {
+      "handler": "OP_POP",
+      "base": 61502,
+      "varying_bits": 2048,
+      "length": 2
+    },
+    {
+      "handler": "OP_POP",
+      "base": 61454,
+      "varying_bits": 3840,
+      "length": 2
+    },
+    {
+      "handler": "OP_POP",
+      "base": 61486,
+      "varying_bits": 3072,
+      "length": 2
+    },
+    {
+      "handler": "OP_POPL",
+      "base": 61582,
+      "varying_bits": 3840,
+      "length": 2
+    },
+    {
+      "handler": "OP_CR_R",
+      "base": 40974,
+      "varying_bits": 4080,
+      "length": 2
+    },
+    {
+      "handler": "OP_CR_EA",
+      "base": 61485,
+      "varying_bits": 3584,
+      "length": 2
+    },
+    {
+      "handler": "OP_CR_EA",
+      "base": 61501,
+      "varying_bits": 3584,
+      "length": 2
+    },
+    {
+      "handler": "OP_CR_EA",
+      "base": 61453,
+      "varying_bits": 3840,
+      "length": 2
+    },
+    {
+      "handler": "OP_CR_EA",
+      "base": 61469,
+      "varying_bits": 3840,
+      "length": 2
+    },
+    {
+      "handler": "OP_CR_EA",
+      "base": 61517,
+      "varying_bits": 3072,
+      "length": 2
+    },
+    {
+      "handler": "OP_CR_EA",
+      "base": 61533,
+      "varying_bits": 3072,
+      "length": 2
+    },
+    {
+      "handler": "OP_CR_EA",
+      "base": 61549,
+      "varying_bits": 2048,
+      "length": 2
+    },
+    {
+      "handler": "OP_CR_EA",
+      "base": 61565,
+      "varying_bits": 2048,
+      "length": 2
+    },
+    {
+      "handler": "OP_CR_R",
+      "base": 40966,
+      "varying_bits": 4080,
+      "length": 2
+    },
+    {
+      "handler": "OP_CR_EA",
+      "base": 61613,
+      "varying_bits": 3584,
+      "length": 2
+    },
+    {
+      "handler": "OP_CR_EA",
+      "base": 61629,
+      "varying_bits": 3584,
+      "length": 2
+    },
+    {
+      "handler": "OP_CR_EA",
+      "base": 61581,
+      "varying_bits": 3840,
+      "length": 2
+    },
+    {
+      "handler": "OP_CR_EA",
+      "base": 61597,
+      "varying_bits": 3840,
+      "length": 2
+    },
+    {
+      "handler": "OP_CR_EA",
+      "base": 61645,
+      "varying_bits": 3072,
+      "length": 2
+    },
+    {
+      "handler": "OP_CR_EA",
+      "base": 61661,
+      "varying_bits": 3072,
+      "length": 2
+    },
+    {
+      "handler": "OP_CR_EA",
+      "base": 61677,
+      "varying_bits": 2048,
+      "length": 2
+    },
+    {
+      "handler": "OP_CR_EA",
+      "base": 61693,
+      "varying_bits": 2048,
+      "length": 2
+    },
+    {
+      "handler": "OP_LEA",
+      "base": 61450,
+      "varying_bits": 224,
+      "length": 2
+    },
+    {
+      "handler": "OP_LEA",
+      "base": 61451,
+      "varying_bits": 224,
+      "length": 4
+    },
+    {
+      "handler": "OP_LEA",
+      "base": 61452,
+      "varying_bits": 0,
+      "length": 4
+    },
+    {
+      "handler": "OP_DAA",
+      "base": 32799,
+      "varying_bits": 3840,
+      "length": 2
+    },
+    {
+      "handler": "OP_DAS",
+      "base": 32831,
+      "varying_bits": 3840,
+      "length": 2
+    },
+    {
+      "handler": "OP_NEG",
+      "base": 32863,
+      "varying_bits": 3840,
+      "length": 2
+    },
+    {
+      "handler": "OP_BITMOD",
+      "base": 40960,
+      "varying_bits": 3952,
+      "length": 2
+    },
+    {
+      "handler": "OP_BITMOD",
+      "base": 41088,
+      "varying_bits": 112,
+      "length": 4
+    },
+    {
+      "handler": "OP_BITMOD",
+      "base": 40962,
+      "varying_bits": 3952,
+      "length": 2
+    },
+    {
+      "handler": "OP_BITMOD",
+      "base": 41090,
+      "varying_bits": 112,
+      "length": 4
+    },
+    {
+      "handler": "OP_BITMOD",
+      "base": 40961,
+      "varying_bits": 3952,
+      "length": 2
+    },
+    {
+      "handler": "OP_BITMOD",
+      "base": 41089,
+      "varying_bits": 112,
+      "length": 4
+    },
+    {
+      "handler": "OP_PSW_OR",
+      "base": 60680,
+      "varying_bits": 0,
+      "length": 2
+    },
+    {
+      "handler": "OP_PSW_AND",
+      "base": 60407,
+      "varying_bits": 0,
+      "length": 2
+    },
+    {
+      "handler": "OP_PSW_OR",
+      "base": 60800,
+      "varying_bits": 0,
+      "length": 2
+    },
+    {
+      "handler": "OP_PSW_AND",
+      "base": 60287,
+      "varying_bits": 0,
+      "length": 2
+    },
+    {
+      "handler": "OP_CPLC",
+      "base": 65231,
+      "varying_bits": 0,
+      "length": 2
+    },
+    {
+      "handler": "OP_BC",
+      "base": 49152,
+      "varying_bits": 255,
+      "length": 2
+    },
+    {
+      "handler": "OP_BC",
+      "base": 49408,
+      "varying_bits": 255,
+      "length": 2
+    },
+    {
+      "handler": "OP_BC",
+      "base": 49664,
+      "varying_bits": 255,
+      "length": 2
+    },
+    {
+      "handler": "OP_BC",
+      "base": 49920,
+      "varying_bits": 255,
+      "length": 2
+    },
+    {
+      "handler": "OP_BC",
+      "base": 50176,
+      "varying_bits": 255,
+      "length": 2
+    },
+    {
+      "handler": "OP_BC",
+      "base": 50432,
+      "varying_bits": 255,
+      "length": 2
+    },
+    {
+      "handler": "OP_BC",
+      "base": 50688,
+      "varying_bits": 255,
+      "length": 2
+    },
+    {
+      "handler": "OP_BC",
+      "base": 50944,
+      "varying_bits": 255,
+      "length": 2
+    },
+    {
+      "handler": "OP_BC",
+      "base": 51200,
+      "varying_bits": 255,
+      "length": 2
+    },
+    {
+      "handler": "OP_BC",
+      "base": 51456,
+      "varying_bits": 255,
+      "length": 2
+    },
+    {
+      "handler": "OP_BC",
+      "base": 51712,
+      "varying_bits": 255,
+      "length": 2
+    },
+    {
+      "handler": "OP_BC",
+      "base": 51968,
+      "varying_bits": 255,
+      "length": 2
+    },
+    {
+      "handler": "OP_BC",
+      "base": 52224,
+      "varying_bits": 255,
+      "length": 2
+    },
+    {
+      "handler": "OP_BC",
+      "base": 52480,
+      "varying_bits": 255,
+      "length": 2
+    },
+    {
+      "handler": "OP_BC",
+      "base": 52736,
+      "varying_bits": 255,
+      "length": 2
+    },
+    {
+      "handler": "OP_EXTBW",
+      "base": 33039,
+      "varying_bits": 0,
+      "length": 2
+    },
+    {
+      "handler": "OP_EXTBW",
+      "base": 33583,
+      "varying_bits": 0,
+      "length": 2
+    },
+    {
+      "handler": "OP_EXTBW",
+      "base": 34127,
+      "varying_bits": 0,
+      "length": 2
+    },
+    {
+      "handler": "OP_EXTBW",
+      "base": 34671,
+      "varying_bits": 0,
+      "length": 2
+    },
+    {
+      "handler": "OP_EXTBW",
+      "base": 35215,
+      "varying_bits": 0,
+      "length": 2
+    },
+    {
+      "handler": "OP_EXTBW",
+      "base": 35759,
+      "varying_bits": 0,
+      "length": 2
+    },
+    {
+      "handler": "OP_EXTBW",
+      "base": 36303,
+      "varying_bits": 0,
+      "length": 2
+    },
+    {
+      "handler": "OP_EXTBW",
+      "base": 36847,
+      "varying_bits": 0,
+      "length": 2
+    },
+    {
+      "handler": "OP_SWI",
+      "base": 58624,
+      "varying_bits": 63,
+      "length": 2
+    },
+    {
+      "handler": "OP_BRK",
+      "base": 65535,
+      "varying_bits": 0,
+      "length": 2
+    },
+    {
+      "handler": "OP_B",
+      "base": 61440,
+      "varying_bits": 3840,
+      "length": 4
+    },
+    {
+      "handler": "OP_B",
+      "base": 61442,
+      "varying_bits": 224,
+      "length": 2
+    },
+    {
+      "handler": "OP_BL",
+      "base": 61441,
+      "varying_bits": 3840,
+      "length": 4
+    },
+    {
+      "handler": "OP_BL",
+      "base": 61443,
+      "varying_bits": 224,
+      "length": 2
+    },
+    {
+      "handler": "OP_MUL",
+      "base": 61444,
+      "varying_bits": 3824,
+      "length": 2
+    },
+    {
+      "handler": "OP_DIV",
+      "base": 61449,
+      "varying_bits": 3824,
+      "length": 2
+    },
+    {
+      "handler": "OP_INC_EA",
+      "base": 65071,
+      "varying_bits": 0,
+      "length": 2
+    },
+    {
+      "handler": "OP_DEC_EA",
+      "base": 65087,
+      "varying_bits": 0,
+      "length": 2
+    },
+    {
+      "handler": "OP_RT",
+      "base": 65055,
+      "varying_bits": 0,
+      "length": 2
+    },
+    {
+      "handler": "OP_RTI",
+      "base": 65039,
+      "varying_bits": 0,
+      "length": 2
+    },
+    {
+      "handler": "OP_NOP",
+      "base": 65167,
+      "varying_bits": 0,
+      "length": 2
+    },
+    {
+      "handler": "OP_DSR",
+      "base": 65183,
+      "varying_bits": 0,
+      "length": 2
+    },
+    {
+      "handler": "OP_DSR",
+      "base": 58112,
+      "varying_bits": 255,
+      "length": 2
+    },
+    {
+      "handler": "OP_DSR",
+      "base": 36879,
+      "varying_bits": 240,
+      "length": 2
+    }
+  ]
+}
