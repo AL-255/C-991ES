@@ -1,0 +1,49 @@
+{
+  "timestamp_utc": "2026-10-04T19:37:04.635530+00:00",
+  "removed_original_paths": [
+    "README.md",
+    "doc/instructions.txt",
+    "fx-991ES PLUS C Emulator Ver.4.00.bmp",
+    "fx-991ES PLUS C Emulator Ver.4.00.exe",
+    "fx-991ES PLUS C Emulator Ver.4.00.ini",
+    "{7BAFBA03-C60A-4BD0-9951-E28918AA0BF8}.png"
+  ],
+  "removed_original_commit_count": 3,
+  "preserved_commit_count": 26,
+  "rewritten_commit_map": {
+    "8fa0e72ccc0cf750a15d1d10a1e92b662d7d9a04": "d3e4ff0032dbd16b14c12951b3678eb69e1af73d",
+    "f7fb86251a099de3191a04874bddc993cdccfd87": "ea668267a42512e42accef183e9d7aac4fe58acc",
+    "5be6d3b4fa1ba5ea18b5fe9cdd52eb4064672199": "2e49bfb497efce84733ecc8dba10252cc580d8ff",
+    "4d7a9123f5d75c762bfc1ab978809bc6aba5cba8": "be3f662fe89eae9ba07932425fac03d3e3391569",
+    "e4405fc173e5c6eb6abc0757af1772b40dd4cc73": "e0edab50f33d4c2bbc40aeff9b64835acce32d65",
+    "765d30b70a0ea61e20f4500160cc9abddf0a1eba": "eb4ea5d40b7a202c0ce3bdfdc8a30c61b17256e7",
+    "d705e76f320eefc4de3a0a5f076161e8ef8fc165": "19ce75d453cecab882b73200693ff066d677fa49",
+    "11af131371e2b4b9705bc56ca33eeaf31ac25688": "079a14d321e0b8e2e8117895e167c3ace7f1f108",
+    "74737e167b96b3649c370e82a699ada162a8c042": "3057f9b2f79084d6bdfc46eeb6afaf05c22d89be",
+    "d2b2477584dada036d0139c9bd4c4dca34c57d83": "ab4e94a79b7bfa0a6709814e1ef246c350637977",
+    "cf795d47a934e6b361b8aac0e0d3d91cdea9c42f": "6784c37ee63614beaf4a4bb0d538024847cf23f6",
+    "9af3b51f856a843a5425a5d2f8bc938fd0813f7f": "51864f769b6bc89ca377bce3a03c3b69e2192faf",
+    "90f20af63c497d3f4fbdb2d2fd8bd300144f31f2": "5914e2529cce92f401ef5ff41d70a453d1ab7246",
+    "f5c2a164829e7e1a8995ba5b6870259ad0d9451e": "a2c8ead01afdb7ef45095f21d3eeb1b5601f71e1",
+    "6841d5c67f646a78e40d36b786da6f1d73c73dfc": "f3c2ab3f7079c749fafe977a0768a5288d216018",
+    "315cc2480d3821b322ba8722743ba1e0251ff611": "60f1dda9df7b76b441065b9e0a88b125d56a2f3c",
+    "970b4969e3c5742dbc061877cf63c53898353a50": "65ee4e7729d333383bd70533a9eaffb32ba3239c",
+    "0687a56b321318103edd54c225c2ac1eaa68e1fb": "5ff43dbc17764337d30ad32b667f004ff27871e9",
+    "5049242f3a238c07011c7cc946e1a28d6d60fa56": "f21d12d9f7fbf8b7c6b0d0e7c5b89be8224fbd14",
+    "3522d7b2d5f5f0f20139dd8725c369463fa08fc3": "dbd1ec18e2a3d4edbcef6ccfb9c3dc14dbb0f00c",
+    "b893530dfb60e628eafcdf2b29150b5cc1cc427f": "67e79136326a12e4d5cf057dd0e252393fd8c6dc",
+    "46e81fa5d4817fe4d48b890142c07caac22987bc": "0875d6272aef997420df691d2d5d24bde40058e1",
+    "65fa8b3edd6c9d27e465e8dc9c4ddef27a3ad2c2": "56d30d6cdb679f2f39f422c014e92373fd426c8b",
+    "866138b8487633e8824d600c199abe546955ddb4": "6b07990d45f987b0019ef368832f94c8f9558fe3",
+    "67c4b53696aafffe1afee776fec9925abb13a765": "a9077d419cadd2462be267d6a058fc5726d1a1e0",
+    "2348fe9972a5f2bfe459a7dff8c905752bcce318": "309e7750fd74d453cd118e863251e4f803640b37"
+  },
+  "metadata_preserved": [
+    "author",
+    "committer",
+    "timestamps",
+    "timezones",
+    "message"
+  ],
+  "tree_policy": "Every newer commit preserves every non-original path byte-for-byte; original six paths removed throughout rewritten history."
+}
