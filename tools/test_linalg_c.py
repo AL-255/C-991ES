@@ -184,6 +184,6 @@ def main():
   for op in range(3):run('scalar',op,v,scalar=bytes(v.cells[position]),scalar_index=position,label='scalar-alias',output_alias=True)
  report={'checks':sum(counts.values()),'native_calls':native_calls,'groups':counts,'failures':failures,'oracle_context':'Unchanged ROM and CPU; explicit RAM8E00 cancellation response at5564. Settings C1, exact selector fixtures, fixed payload stride3; full payload/dimensions/reference/status/poll count compared.','limits':['Prepared numerical entries only; evaluator reference rewriting and input/UI excluded.','Physical timer/key scheduling excluded; cancellation responses supplied explicitly.','REF/RREF elimination not implemented in this initial kernel suite.']}
  if failures:print(json.dumps(report,indent=2));return 1
- if not a.no_report:report=write_report('analysis/c-verification/linalg.json',report,sources+headers,'tools/test_linalg_c.py')
+ if not a.no_report:report=write_report('analysis/c-verification/linalg.json',report,sources+headers+['tools/trace_natural_result.py','tools/c_verification.py'],'tools/test_linalg_c.py')
  print(json.dumps({k:v for k,v in report.items() if k not in ['tested_inputs_sha256']},indent=2));return 0
 if __name__=='__main__':raise SystemExit(main())

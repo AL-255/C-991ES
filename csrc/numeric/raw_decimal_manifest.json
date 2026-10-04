@@ -1,0 +1,31 @@
+{
+  "subsystem": "unchecked finite packed decimal boundaries for typed rich dispatch",
+  "implementation_style": "Readable high-level finite packed decimal arrays and coefficient arithmetic; no instruction lift, CPU model, ROM execution or host libm",
+  "sources": [
+    "csrc/numeric/fx_raw_decimal_parts.c",
+    "csrc/numeric/fx_raw_decimal_divide.c",
+    "csrc/numeric/fx_raw_decimal_multiply_add.c",
+    "csrc/numeric/fx_raw_fraction_convert.c",
+    "csrc/numeric/fx_raw_decimal_exp.c"
+  ],
+  "verified": {
+    "report": "analysis/c-verification/raw_decimal.json",
+    "test": "tools/test_raw_decimal_c.py",
+    "checks": 1207550,
+    "native_calls": 88831
+  },
+  "prepared_context": [
+    "External records carry complete10bytes; arithmetic coordinates contain packed exponent/sign then eight mantissa pairs in ascending significance.",
+    "Unchecked2x or marked6x rational conversion uses original805A<11 decimal-output path; no second parser or global scratch model.",
+    "Raw byte fields and original finite operation order are retained in the documented prepared contracts; complete errors/native status remain separate, and non-return/unresolved quotient states remain explicit limits.",
+    "Prepared exponential uses existing fx_transcend_exp10_guarded after proven first committed packed correction, coordinate<10^18, exponent\u221299..1 and sign\u00b11, without normalization; facade fractional positions are\u221299..\u22121 after upstream whole guards.",
+    "Exact/partial value aliases supported; numerical raw-add cycles returnUNIMPLEMENTED and leave output untouched with original complete-register/entire-RAM repetition evidence."
+  ],
+  "remaining": [
+    "Other19F1A contexts retaining a numerator/denominator pair.",
+    "Extended decimal precision callers and malformed raw quotient states beyond the documented bounded prepared field contract.",
+    "Isolated prefix00 exponential factor state has native internal exponent wrap; prepared natural-exp caller closes it at upstream overflow rather than manufacturing an ordinary\u2212100 factor value.",
+    "Parser/global scratch/hardware side effects belong to separate modules."
+  ],
+  "full_firmware_complete": false
+}

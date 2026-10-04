@@ -220,7 +220,7 @@ def main():
     if not args.no_report:
         report=write_report('analysis/c-verification/eval_continuous.json',report,
                             implementation_inputs(ROOT,['csrc/'+p for p in SOURCES])+
-                            [adapter,str(fixture_path.relative_to(ROOT)),'tools/c_build_inputs.py','tools/c_verification.py','tools/test_eval_variables_c.py',
+                            [adapter,str(fixture_path.relative_to(ROOT)),'tools/c_build_inputs.py', 'tools/trace_natural_result.py', 'tools/verify_firmware.py', 'tools/nxu8/decoder.py','tools/c_verification.py','tools/test_eval_variables_c.py',
                              'tools/test_eval_complex_c.py','tools/test_numeric_calculus_c.py'],
                             'tools/test_eval_continuous_c.py')
     print(json.dumps({'status':'pass','cases':report['cases'],'domains':counts},indent=2))

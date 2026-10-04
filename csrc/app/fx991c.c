@@ -7,8 +7,10 @@
 #include "parse/fx_eval.h"
 #include "numeric/fx_numeric.h"
 #include "format/fx_format.h"
+#include "format/fx_format_base.h"
 #include "render/fx_render.h"
 #include "render/fx_result_complex.h"
+#include "render/fx_result_special.h"
 #include "data/fx_rom_data.h"
 #include "ui/fx_input_codec.h"
 
@@ -55,19 +57,28 @@ static int byte_from_hex(unsigned *result, const char *text)
     return 0;
 }
 
+static uint8_t base_from_name(const char *name)
+{
+    if (!strcmp(name, "bin")) return FX_BASE_BIN;
+    if (!strcmp(name, "oct")) return FX_BASE_OCT;
+    if (!strcmp(name, "dec")) return FX_BASE_DEC;
+    if (!strcmp(name, "hex")) return FX_BASE_HEX;
+    return 0;
+}
+
 static void usage(void)
 {
     fputs("Subsystem probe for the high-level C firmware port (incomplete).\n"
           "  fx991c --token HEX_BYTE [HEX_CONTEXT]\n"
           "  fx991c --format HEX_10_BYTE_RECORD [--linear] [--mixed] [--decimal]\n"
-          "  fx991c --eval HEX_INPUT_TOKENS [--complex] [--pbm OUTPUT_FILE]\n"
+          "  fx991c --eval HEX_INPUT_TOKENS [--complex | --base bin|oct|dec|hex] [--pbm OUTPUT_FILE]\n"
           "  fx991c --display HEX_DISPLAY_TOKENS [--complex] [--pbm OUTPUT_FILE]\n"
           "Display input uses the natural editor's99-byte expression limit.\n"
           "Supported COMP arithmetic and functions are listed in csrc/parse/manifest.json.\n", stderr);
 }
 
 static int render_result(const char *path, const uint8_t *input, size_t length,
-                         const fx_eval_result *evaluated, int complex_mode,
+                         const fx_eval_result *evaluated, int complex_mode, uint8_t base_radix,
                          uint8_t *tokens, size_t capacity, fx_format_result *result)
 {
     static uint8_t memory[FX_RENDER_MEMORY_BYTES];
@@ -75,7 +86,7 @@ static int render_result(const char *path, const uint8_t *input, size_t length,
     fx_box box;
     if (length > 256) return -1;
     memset(memory, 0, sizeof(memory));
-    memory[0x80f9] = complex_mode ? 0xc4 : 0xc1;
+    memory[0x80f9] = base_radix ? 2 : complex_mode ? 0xc4 : 0xc1;
     memory[0x80f5] = 0xf0;
     memory[0x8106] = 1;
     if (complex_mode) {
@@ -85,12 +96,17 @@ static int render_result(const char *path, const uint8_t *input, size_t length,
         memory[0x8108] = 1;
         memory[0x811f] = 10;
     }
+    if (base_radix) {
+        memory[0x80fa] = base_radix;
+        memory[0x811f] = 10;
+    }
     memory[0x8100] = 13;
     memory[0x8121] = 1;
     memory[0x812c] = 0; memory[0x812d] = 0x82;
     memcpy(memory+0x8200, input, length);
     memcpy(memory+0x8300, evaluated->value, sizeof(evaluated->value));
-    int displayed = complex_mode ? fx_display_complex_result(&render, 0x8300, &box) :
+    int displayed = base_radix ? fx_display_special_real_result(&render, 0x8300, &box) :
+                    complex_mode ? fx_display_complex_result(&render, 0x8300, &box) :
                                    fx_display_real_math_result(&render, 0x8300, &box);
     if (displayed != 1) return -1;
     if (complex_mode) {
@@ -122,9 +138,15 @@ int main(int argc, char **argv)
         fx_platform editor = {fx_rom_data, 0x30000, editor_memory, 0, FX_MEMORY_OK};
         int display_input = !strcmp(argv[1], "--display");
         int complex_mode = 0;
+        uint8_t base_radix = 0;
         const char *bitmap_path = NULL;
         for (int argument = 3; argument < argc; ++argument) {
-            if (!strcmp(argv[argument], "--complex") && !complex_mode) complex_mode = 1;
+            if (!strcmp(argv[argument], "--complex") && !complex_mode && !base_radix) complex_mode = 1;
+            else if (!strcmp(argv[argument], "--base") && !complex_mode && !base_radix &&
+                     !display_input && argument+1 < argc) {
+                base_radix = base_from_name(argv[++argument]);
+                if (!base_radix) { usage(); return 2; }
+            }
             else if (!strcmp(argv[argument], "--pbm") && !bitmap_path && argument+1 < argc)
                 bitmap_path = argv[++argument];
             else { usage(); return 2; }
@@ -158,13 +180,16 @@ int main(int argc, char **argv)
             }
             ++length;
         }
-        status = fx_evaluate(input, length, &eval_options, &evaluated);
+        status = base_radix ? fx_evaluate_base_n(input, length, base_radix, &eval_options, NULL, NULL, &evaluated) :
+                              fx_evaluate(input, length, &eval_options, &evaluated);
         if (display_input && (status == FX_EVAL_SYNTAX || status == FX_EVAL_MATH))
             (void)fx_editor_export_input(&editor, 0x8154, 0x8400, (uint8_t)evaluated.consumed, 0);
-        if (status == FX_EVAL_OK && !complex_mode)
+        if (status == FX_EVAL_OK && base_radix)
+            formatted = fx_format_base(&evaluated.value[0], base_radix, output, sizeof(output), &result);
+        else if (status == FX_EVAL_OK && !complex_mode)
             formatted = fx_format_number(&evaluated.value[0], &options, output, sizeof(output), &result);
         if (status == FX_EVAL_OK && (complex_mode || bitmap_path)) {
-            bitmap_status = render_result(bitmap_path, input, length, &evaluated, complex_mode,
+            bitmap_status = render_result(bitmap_path, input, length, &evaluated, complex_mode, base_radix,
                                           output, sizeof(output), &result);
             if (complex_mode && !bitmap_status) formatted = FX_FORMAT_OK;
         }

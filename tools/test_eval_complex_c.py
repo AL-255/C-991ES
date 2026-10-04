@@ -45,6 +45,8 @@ def main():
     source_names = [
         'parse/fx_tokens.c', 'data/fx_rom_data.c',
         'numeric/fx_numeric.c', 'numeric/fx_transcend.c', 'numeric/fx_power.c',
+        'numeric/fx_base.c', 'numeric/fx_base_literal.c',
+        'numeric/fx_sexagesimal.c',
         'numeric/fx_root.c', 'numeric/fx_logbase.c', 'numeric/fx_calculus.c', 'numeric/fx_integral.c', 'numeric/fx_derivative.c', 'numeric/fx_combinatorics.c',
         'complex/fx_complex.c', 'complex/fx_complex_angle.c',
         'complex/fx_complex_round.c', 'complex/fx_complex_dispatch.c',
@@ -171,7 +173,7 @@ def main():
     if not args.no_report:
         report = write_report('analysis/c-verification/eval_complex.json', report,
                               implementation_inputs(ROOT, ['csrc/parse/fx_eval.c'] + ['csrc/' + name for name in source_names]) +
-                              ['tools/c_verification.py', 'tools/trace_natural_result.py', 'tools/c_build_inputs.py'],
+                              ['tools/c_verification.py', 'tools/trace_natural_result.py', 'tools/c_build_inputs.py', 'tools/trace_natural_result.py', 'tools/verify_firmware.py', 'tools/nxu8/decoder.py'],
                               'tools/test_eval_complex_c.py')
     print(json.dumps({'status': 'pass', 'cases': report['cases'], 'domains': counts}, indent=2))
 

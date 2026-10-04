@@ -20,6 +20,8 @@ class Variables(C.Structure):
 SOURCES = [
     'parse/fx_eval.c', 'parse/fx_tokens.c', 'data/fx_rom_data.c',
     'numeric/fx_numeric.c', 'numeric/fx_transcend.c', 'numeric/fx_power.c',
+    'numeric/fx_base.c', 'numeric/fx_base_literal.c',
+    'numeric/fx_sexagesimal.c',
     'numeric/fx_root.c', 'numeric/fx_logbase.c', 'numeric/fx_combinatorics.c',
     'numeric/fx_calculus.c', 'numeric/fx_integral.c', 'numeric/fx_derivative.c', 'complex/fx_complex.c', 'complex/fx_complex_angle.c',
     'complex/fx_complex_round.c', 'complex/fx_complex_dispatch.c',
@@ -156,7 +158,7 @@ def main():
         data = write_report('analysis/c-verification/eval_variables.json', data,
                             implementation_inputs(ROOT, ['csrc/'+p for p in SOURCES])+
                             ['tools/test_eval_complex_c.py', 'tools/trace_natural_result.py', 'tools/c_verification.py',
-                             'tools/c_build_inputs.py'],
+                             'tools/c_build_inputs.py', 'tools/trace_natural_result.py', 'tools/verify_firmware.py', 'tools/nxu8/decoder.py'],
                             'tools/test_eval_variables_c.py')
     print(json.dumps({'status': 'pass', 'cases': data['cases'], 'domains': counts}, indent=2))
 

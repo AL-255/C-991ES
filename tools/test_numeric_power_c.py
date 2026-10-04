@@ -136,7 +136,7 @@ def main():
     else:
         write_report('analysis/c-verification/numeric_power.json', report,
                      sources + ['csrc/numeric/fx_numeric.h', 'csrc/numeric/fx_transcend.h',
-                                'csrc/numeric/fx_transcend_internal.h', 'csrc/numeric/power_manifest.json',
+                                'csrc/numeric/fx_transcend_internal.h', 'csrc/numeric/fx_transcend_guarded.h', 'csrc/numeric/power_manifest.json',
                                 'tools/test_numeric_transcend_c.py', 'tools/trace_natural_result.py',
                                 'tools/c_verification.py'], 'tools/test_numeric_power_c.py')
         print(json.dumps(report, indent=2))

@@ -14,6 +14,7 @@ sys.path.insert(0, str(ROOT / 'tools'))
 from nxu8.machine import Machine
 from trace_natural_result import settings
 from c_verification import write_report
+from c_build_inputs import implementation_inputs
 
 
 class Number(C.Structure):
@@ -289,9 +290,9 @@ def main():
               'oracle_host_events': 'No-cancel response clears8e00 before native5564 without patching/skipping firmware instructions.',
               'excluded': 'CPU scratch/workspace RAM, table UI/mode lifecycle, interrupt polling and connecting cached moments to mode queries'}
     write_report('analysis/c-verification/stats.json', report,
-                 sources + ['csrc/numeric/fx_numeric.h', 'csrc/numeric/fx_transcend.h',
-                            'csrc/numeric/fx_transcend_internal.h', 'csrc/stats/fx_stats.h',
+                 implementation_inputs(ROOT, sources) + [
                             'csrc/stats/stats_manifest.json', 'tools/trace_natural_result.py',
+                            'tools/c_build_inputs.py',
                             'tools/c_verification.py', 'tools/nxu8/stats_host_events.c'], 'tools/test_stats_c.py')
     print(json.dumps(report, indent=2))
 

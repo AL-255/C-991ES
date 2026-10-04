@@ -1,6 +1,9 @@
 #include "fx_linalg_dispatch.h"
+#include "../numeric/fx_base.h"
 #include "fx_linalg_reduce.h"
 #include <string.h>
+#include "../numeric/fx_raw_fraction_convert.h"
+#include "../numeric/fx_raw_decimal_exp.h"
 
 static int reference(const fx_number *number)
 {
@@ -129,7 +132,7 @@ fx_numeric_status fx_linalg_dispatch_unary(fx_linalg_dispatch_result *out,
     fx_numeric_status status;
     fx_linalg_unary_op operation;
     unsigned kind, identity;
-    int scalar_output = 0, new_slot = 0, reduced = -1;
+    int scalar_output = 0, new_slot = 0, reduced = -1, scalar_leaf = 0;
     if (!out || !input || !valid(bank,context)) return FX_NUMERIC_INVALID;
     if (!reference(&input->real)) return FX_NUMERIC_UNIMPLEMENTED;
     if ((input->real.bytes[0] & 15) >= 9) return FX_NUMERIC_INVALID;
@@ -140,16 +143,22 @@ fx_numeric_status fx_linalg_dispatch_unary(fx_linalg_dispatch_result *out,
     switch (token) {
     case 0xc0: operation = FX_LINALG_DETERMINANT; scalar_output = kind == 0x60; break;
     case 0xc1: operation = FX_LINALG_TRANSPOSE; break;
+    case 0xc3: operation = FX_LINALG_VECTOR_MAGNITUDE; break;
+    case 0x88:
+        scalar_leaf = kind == 0x60 ? 3 : 1;
+        new_slot = kind == 0x60;
+        operation = FX_LINALG_TRANSPOSE; break;
     case 0x63: operation = kind == 0x90 ? FX_LINALG_VECTOR_MAGNITUDE : FX_LINALG_ABSOLUTE; scalar_output = kind == 0x90; break;
     case 0xb3: operation = FX_LINALG_DISPLAY_ROUND; break;
     case 0x60: operation = FX_LINALG_NEGATE; break;
     case 0x77: operation = FX_LINALG_INVERSE; break;
     case 0x75: case 0x76: operation = token == 0x75 ? FX_LINALG_SQUARE : FX_LINALG_CUBE; new_slot = 1; break;
     case 0x5a: case 0x5b:
-        /* Vector tags select unrelated entries after the native index
-         * adjustment. That non-UI prepared branch is not yet translated. */
-        if (kind == 0x90) return FX_NUMERIC_UNIMPLEMENTED;
-        reduced = token == 0x5b; operation = FX_LINALG_TRANSPOSE; break;
+        /* Vector index adjustment selects scalar normal-R and bitwise NOT.
+         * They still pass through ordinary temporary-reference allocation. */
+        if (kind == 0x90) scalar_leaf = token == 0x5a ? 1 : 2;
+        else reduced = token == 0x5b;
+        operation = FX_LINALG_TRANSPOSE; break;
     default: return FX_NUMERIC_UNIMPLEMENTED;
     }
     if (scalar_output) release(bank,&input->real);
@@ -158,6 +167,45 @@ fx_numeric_status fx_linalg_dispatch_unary(fx_linalg_dispatch_result *out,
         if (status != FX_NUMERIC_OK) return status;
         if (result.firmware_status) { *out = result; return FX_NUMERIC_OK; }
         if (new_slot) release(bank,&input->real);
+    }
+    if (scalar_leaf) {
+        /* Both normal-R and exponential conversion reject kind9 before
+         * reading payload. NOT first adds10^10: scalar conversion likewise
+         * emits a canonical F3, then its unchecked ten-digit extraction sees
+         * zero. Complement and signed serialization still execute. */
+        fx_number failed_conversion;
+        if (scalar_leaf == 3) {
+            fx_number converted;
+            unsigned native_status;
+            status = fx_raw_fraction_convert(&converted,&result.value.real);
+            if (status == FX_NUMERIC_OK)
+                status = fx_raw_decimal_exp(&result.value.real,&converted,&native_status);
+            if (status != FX_NUMERIC_OK) return status;
+            result.firmware_status = (uint8_t)native_status;
+            status = cleanup(&result);
+            if (status == FX_NUMERIC_OK) *out = result;
+            return status;
+        }
+        fx_number_error(&failed_conversion,3);
+        if (scalar_leaf == 1) {
+            result.value.real = failed_conversion; result.firmware_status = 3;
+            *out = result; return FX_NUMERIC_OK;
+        } else {
+            uint32_t word = 0;
+            unsigned digit, native_status;
+            for (digit = 1; digit <= 5; ++digit) {
+                word = word * 10 + (failed_conversion.bytes[digit] >> 4);
+                word = word * 10 + (failed_conversion.bytes[digit] & 15);
+            }
+            /* This resulting signed word fits every native radix. */
+            status = fx_base_encode_word(&result.value.real,~word,
+                                          FX_BASE_DEC,&native_status);
+            if (status != FX_NUMERIC_OK) return status;
+            result.firmware_status = (uint8_t)native_status;
+            status = cleanup(&result);
+            if (status == FX_NUMERIC_OK) *out = result;
+            return status;
+        }
     }
     identity = result.value.real.bytes[0] & 15;
     status = load(&value,bank,&result.value.real);

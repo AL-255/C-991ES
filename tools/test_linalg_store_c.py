@@ -221,7 +221,7 @@ def main():
         (build / 'failures.json').write_text(json.dumps(report, indent=2) + '\n')
         raise AssertionError(f'{len(failures)} matrix/vector storage mismatches')
     if not args.no_report:
-        report = write_report('analysis/c-verification/linalg_store.json', report, sources + headers,
+        report = write_report('analysis/c-verification/linalg_store.json', report, sources + headers + ['tools/c_verification.py'],
                               'tools/test_linalg_store_c.py')
     print(json.dumps({'status': 'pass', 'cases': report['cases'], 'native_calls': native_calls, 'domains': counts}, indent=2))
 

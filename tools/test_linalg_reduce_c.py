@@ -100,7 +100,7 @@ def main():
     report={'checks':checks,'native_calls':calls,'failures':failures,'scope':'Prepared matrix REF14776/RREF14786 with exact finite product/subtraction/normalization order, recursive shifts and cancellation partial-state parity.','output':'Complete90-byte backing, dimension word, ten-byte reference/result, native R0 and reached timer check count.','oracle_context':'Unchanged original ROM and CPU; prepared RAM8E00 timer response supplied atPC5564. Canonical rich matrix references and ten-byte scalar cells; scalar exact permission explicit.','limits':['Physical timer/key interrupt scheduling and persistent matrix UI are outside this numerical entry API.','Caller slot/reference rewriting and malformed BCD are excluded.']}
     if not failures and not args.no_report:
         headers=['csrc/linalg/fx_linalg_reduce.h','csrc/linalg/fx_linalg.h','csrc/complex/fx_complex.h','csrc/complex/fx_complex_round.h','csrc/numeric/fx_numeric.h']
-        report=write_report('analysis/c-verification/linalg_reduce.json',report,sources+headers+['tools/test_linalg_c.py'],'tools/test_linalg_reduce_c.py')
+        report=write_report('analysis/c-verification/linalg_reduce.json',report,sources+headers+['tools/test_linalg_c.py','tools/trace_natural_result.py','tools/c_verification.py'],'tools/test_linalg_reduce_c.py')
     print(json.dumps({k:v for k,v in report.items() if k!='tested_inputs_sha256'},indent=2))
     return int(bool(failures))
 

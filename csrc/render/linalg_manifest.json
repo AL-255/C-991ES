@@ -13,8 +13,8 @@
     "1D7C6-nonnull": "selected real/zero-imaginary cache"
   },
   "verified": {
-    "checks": 78276,
-    "native_calls": 13123,
+    "checks": 79552,
+    "native_calls": 13125,
     "report": "analysis/c-verification/render_linalg.json",
     "test": "tools/test_render_linalg_c.py"
   },

@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include "../numeric/fx_numeric.h"
 #include "../numeric/fx_calculus.h"
+#include "../numeric/fx_base.h"
 #include "../linalg/fx_linalg_store.h"
 
 typedef enum {
@@ -51,7 +52,8 @@ typedef struct {
 
 fx_eval_options fx_eval_default_options(void);
 /* Calculator INPUT tokens, not ASCII math or recursive DISPLAY tokens.
- * COMP(C1) and CMPLX(C4) share this grammar; CMPLX preserves both records.
+ * COMP(C1), CMPLX(C4) and BASE-N(2) share this grammar. CMPLX preserves both
+ * records; the ordinary entry points select DEC and zero secondary for BASE-N.
  * Unsupported functions return an explicit status rather than approximate
  * using host libm or falling back to original-ROM execution. */
 fx_eval_status fx_evaluate(const uint8_t *input, size_t length,
@@ -79,4 +81,15 @@ fx_eval_status fx_evaluate_controlled(const uint8_t *input, size_t length,
 fx_eval_status fx_evaluate_with_state(const uint8_t *input, size_t length,
                            const fx_eval_options *options, const fx_eval_state *state,
                            const fx_calculus_control *control, fx_eval_result *result);
+/* Prepared BASE-N screen (80F9=2,80FC=1). selected_base is the native 80FA
+ * mask, not a radix number. Shared grammar admits exact fractions and real
+ * functions; stored variables are converted/truncated on load. The native
+ * evaluator writes only the real output in this mode, so initial_secondary
+ * explicitly supplies the caller's retained second record; NULL selects zero.
+ * The ordinary entry points select DEC for context2 and a zero secondary.
+ * Initial secondary, input, variable bank and result must not overlap. */
+fx_eval_status fx_evaluate_base_n(const uint8_t *input, size_t length,
+                           uint8_t selected_base, const fx_eval_options *options,
+                           fx_eval_variables *variables,
+                           const fx_number *initial_secondary, fx_eval_result *result);
 #endif

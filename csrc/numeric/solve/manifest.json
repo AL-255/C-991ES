@@ -1,0 +1,27 @@
+{
+  "subsystem": "Prepared generic numerical SOLVE",
+  "implementation": "Readable C99 finite-decimal Newton iteration, midpoint recovery, damping and rounded-root policies; no firmware execution or host floating point",
+  "api": "csrc/numeric/fx_solve.h",
+  "implemented_routines": [
+    {"address":"0x10000","name":"generic numerical SOLVE","scope":"Selected-variable decimal read, ordered Newton/recovery/alternate-start iteration, cancellation, convergence/limited-estimate statuses, final residual and persistent-variable commit/restoration"},
+    {"address":"0x105fe","name":"rounded root acceptance","scope":"Five then ten significant digits with original workspace guard offset, finite overflow policy and raw-header comparison admission"},
+    {"address":"0x10668","name":"very small root zero acceptance","scope":"Strict1e-50 bound followed by successful exact equality of the two equation sides"},
+    {"address":"0x1067a","name":"converged root zero acceptance","scope":"Strict1e-12 bound followed by successful exact equality of the two equation sides"},
+    {"address":"0x106ec","name":"ordinary equation residual","scope":"Left-minus-right subtraction retaining low cancellation digits"},
+    {"address":"0x1071a","name":"numerical error finish","scope":"Native status/record construction and selected-variable restoration; expression cursor effects are documented for the frontend"},
+    {"address":"0x1074c","name":"prepared equation callback","scope":"Integer-cleaned variable publication, separate evaluator status and value pair, invalid positive error-code construction"},
+    {"address":"0x107aa","name":"finite derivative estimate","scope":"Relative1e-7 step with ordered1e-93 minimum comparison, central difference and both asymmetric one-sided error recoveries"},
+    {"address":"0x1c312","name":"absolute-value policy","scope":"Classification, bit40 clearing, signed negation and F3 admission error, used locally without changing the foundation"}
+  ],
+  "gaps": [
+    "Full SOLVE user flow, equation editing, expression frontend, result history and display remain separate work",
+    "Expression cursor low-byte decrement on status1/10 is a documented frontend action, outside the callback-value API",
+    "Physical timer/keyboard cancellation is supplied through the prepared control callback",
+    "Noncanonical decimal zeros with a nonzero sign/exponent field can reproduce final records but have known native callback-order differences; normalized decimal inputs are the verified public scope",
+    "Malformed BCD/rational fields and rich-reference payload conversion remain outside the normalized scalar callback contract",
+    "CPU registers and unused global arithmetic scratch are outside this named numeric/state API"
+  ],
+  "verification": "tools/test_numeric_solve_c.py",
+  "test_report": "analysis/c-verification/numeric_solve.json",
+  "independent_review": "csrc/numeric/solve/EXECUTION.md"
+}

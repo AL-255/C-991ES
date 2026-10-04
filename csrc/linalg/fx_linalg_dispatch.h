@@ -25,7 +25,12 @@ void fx_linalg_dispatch_context_default(fx_linalg_dispatch_context *context,
  * preserves the right operand's imaginary record, as the non-CMPLX native
  * work record does. Numerical errors return hostOK and a separate native
  * status; status must not be inferred from the output header.
- * Unsupported raw tokens return UNIMPLEMENTED before any mutation. */
+ * Native wrapped scalar selections for vector5A/5B, rich88/C3 are retained.
+ * Matrix88 can reinterpret reference metadata as marked fraction digits;
+ * its original allocation/copy/release occurs before scalar conversion.
+ * Unknown raw tokens return UNIMPLEMENTED before any mutation. A proven
+ * native non-return after allocation also returns UNIMPLEMENTED, retaining
+ * those prior bank mutations while leaving the output uncommitted. */
 fx_numeric_status fx_linalg_dispatch_unary(fx_linalg_dispatch_result *out,
     fx_linalg_bank *bank, const fx_complex *input, uint8_t token,
     const fx_linalg_dispatch_context *context);

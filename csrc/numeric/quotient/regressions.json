@@ -1,0 +1,29 @@
+{
+  "fixtures": [
+    {
+      "name": "finite_remainder_passes_after_product_truncation",
+      "a": "01679188312547290901",
+      "b": "01136393328424150101"
+    },
+    {
+      "name": "thirteen_digit_cancellation_becomes_zero",
+      "a": "07377025582781930401",
+      "b": "02976529554657149500"
+    },
+    {
+      "name": "finite_product_nonzero_remainder_precision",
+      "a": "03300446451180940901",
+      "b": "08194442218849800401"
+    },
+    {
+      "name": "exact_thousandth_remainder",
+      "a": "05561965849199830901",
+      "b": "02285848400000000101"
+    },
+    {
+      "name": "subtraction_cancellation_below_product_guard",
+      "a": "06531339720773080901",
+      "b": "05615280300000000201"
+    }
+  ]
+}

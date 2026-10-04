@@ -1,0 +1,61 @@
+{
+  "basis": "Individually inspected native token-control spans, checked by original rank probes, returned records and instruction/RAM checkpoints. The linked handwritten parser implements the ordinary supported grammar; instruction understanding is separate from full expression or firmware completion. Unlisted callees, rich-mode grammar and CPU-frame/bus equivalence are not inferred.",
+  "ranges": [
+    {
+      "start": "0x16714",
+      "end": "0x16772",
+      "scope": "Complete decoded-token priority normalization and rank calculation, all256 decoded bytes checked at original16714; no expression-completeness claim",
+      "source": "csrc/parse/fx_eval.c",
+      "evidence": "analysis/native-fixtures/parser-postfix-binding/priorities.json"
+    },
+    {
+      "start": "0x16c9c",
+      "end": "0x16d3c",
+      "scope": "Shared completed-operand gate and dedicated DMS115 branch: mask7 admission, decoded literal lookahead, negative-token error, finalization/implicit-multiply state, additional component push and exactfourth-component cursor; numeric scanner/kernel are separate callees",
+      "source": "csrc/parse/fx_eval.c",
+      "evidence": "analysis/native-fixtures/parser-postfix-binding/dms-checkpoints.json"
+    },
+    {
+      "start": "0x16058",
+      "end": "0x1606a",
+      "scope": "Fraction leaf prologue clears40 on actualleft/right headers before numeric/complex eligibility; saved denominator pointer only, remainingfraction leaf excluded",
+      "source": "csrc/parse/fx_eval.c",
+      "evidence": "analysis/native-fixtures/parser-postfix-binding/fraction-markers.json"
+    },
+    {
+      "start": "0x16118",
+      "end": "0x1611e",
+      "scope": "Mixed whole restored-operand40header stripping before classification; surroundingmixed sign/assembly policy excluded",
+      "source": "csrc/parse/fx_eval.c",
+      "evidence": "analysis/native-fixtures/parser-postfix-binding/fraction-markers.json"
+    },
+    {
+      "start": "0x16d72",
+      "end": "0x16d7a",
+      "scope": "Ordinarypostfix calls pending-operator reduction and returns early on error; later105/106 special branches excluded",
+      "source": "csrc/parse/fx_eval.c",
+      "evidence": "analysis/native-fixtures/parser-postfix-binding/affine-results.json"
+    },
+    {
+      "start": "0x16da6",
+      "end": "0x16dba",
+      "scope": "Normalpostfix bottom-metadata initialization when operator depth0, immediate16336 dispatch and completed-expression state; called numeric routine semantics separate",
+      "source": "csrc/parse/fx_eval.c",
+      "evidence": "analysis/native-fixtures/parser-postfix-binding/affine-results.json"
+    },
+    {
+      "start": "0x167b2",
+      "end": "0x167be",
+      "scope": "PendingDMS115 blocks any incomingnormaloperator except115 withSyntax2, enforcing missingdelimiter behavior; comparer and other operator semantics excluded",
+      "source": "csrc/parse/fx_eval.c",
+      "evidence": "analysis/native-fixtures/parser-postfix-binding/dms-checkpoints.json"
+    },
+    {
+      "start": "0x167c4",
+      "end": "0x167ce",
+      "scope": "Pendingcomparisonclass0stops; class2reduces; equalclass1stopsincomingfraction100 toretainmixedconstruction; classificationhelper excluded",
+      "source": "csrc/parse/fx_eval.c",
+      "evidence": "analysis/native-fixtures/parser-postfix-binding/fraction-markers.json"
+    }
+  ]
+}

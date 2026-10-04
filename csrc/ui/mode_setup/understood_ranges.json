@@ -1,0 +1,12 @@
+{
+  "basis":"Native full-RAM/MMIO storage differentials and true/prepared controller boundaries. Zero-result formatting explicitly inventories its inherited numeric operand/saved-argument workspace gap; MATRIX/VECTOR callees remain pending typed requests.",
+  "ranges":[
+    {"start":"0xc77c","end":"0xccf4","scope":"Complete mode setter and MODE/SETUP caller policies,28 settings, layout/table resets and precision prompt/wait; D0CC body is a separate typed dependency","source":"csrc/ui/fx_mode_setup.c"},
+    {"start":"0xceb0","end":"0xcee2","scope":"STAT selector frame,1..8 admission and direct selection return for MODE argument1; remaining STAT actions are not claimed","source":"csrc/ui/fx_mode_setup.c"},
+    {"start":"0xcf6e","end":"0xcfa8","scope":"STAT generic menu result dispatch, token action, FF back/retry and no-selection return; admitted MODE46 table has eight direct leaf choices","source":"csrc/ui/fx_mode_setup.c"},
+    {"start":"0xd580","end":"0xd6a6","scope":"Complete INEQ and DIST nested menu policies, expression type/list flags, cancellation/back and persistent mode commits","source":"csrc/ui/fx_mode_setup.c"},
+    {"start":"0x1d31a","end":"0x1d362","scope":"EQN3x3 bank initialization and screen21/23/24 wrappers; reused bank reset/define semantics","source":"csrc/ui/fx_mode_setup.c"},
+    {"start":"0x1d60a","end":"0x1d636","scope":"STAT-gated cursor dimensions, data payload and editing-state reset","source":"csrc/ui/fx_mode_setup.c"},
+    {"start":"0x1f8a0","end":"0x1f8be","scope":"TABLE-gated parameter state and100-byte function workspace clear","source":"csrc/ui/fx_mode_setup.c"}
+  ]
+}

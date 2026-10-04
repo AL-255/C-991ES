@@ -1,13 +1,48 @@
 {
   "basis": "Literal rich-dispatch branches reviewed against complete assembly and unchanged16336 value-stack native traces; full171F4 raw mappings independently audited. Conservative static-understanding lower bound for the documented fixed-bank prepared contract; numerical, storage and scalar-cleanup callees are not credited again.",
   "ranges": [
-    {"start":"0x15bda","end":"0x15bf8","scope":"Scalar-left multiplication exchanges the two real operand records via native value-stack transfer; non-CMPLX imaginary work bytes remain from the current right record. Parser stack mechanics and copy callees are external to the typed value ABI.","source":"csrc/linalg/fx_linalg_dispatch.c"},
-    {"start":"0x1633e","end":"0x1635c","scope":"Prepared arity initial selector and flags0 admission for determinant, transpose, REF/RREF and dot; rich canonical6x/9x operands advance to the reference rewrite, with immediate error headers rejected by shared admission callee.","source":"csrc/linalg/fx_linalg_dispatch.c"},
-    {"start":"0x16394","end":"0x163b0","scope":"General-power right flags3, matrix-left Syntax2 guard and remaining flags1 admission; recognized real-only flags7 selectors reject rich operands before mutation. Other raw selector families and scalar numerical leaves excluded.","source":"csrc/linalg/fx_linalg_dispatch.c"},
-    {"start":"0x163d0","end":"0x163e8","scope":"Two-argument stage decrements arity selector, copies right real record towork+20, fetches previous left real value and restarts admission; binary work retains the original right imaginary bytes, with no new allocation during admission failure.","source":"csrc/linalg/fx_linalg_dispatch.c"},
-    {"start":"0x163f8","end":"0x164c0","scope":"Rich matrix/vector kind routing; determinant and magnitude scalar-return release; persistent-to-temporary copies; matrix square/cube forced new allocation and retained original source reference; exhaustion status7; unary operation index selection for documented tokens. Untranslated vector REF/RREF and rich conjugate/argument leaf behavior explicitly excluded.","source":"csrc/linalg/fx_linalg_dispatch.c"},
-    {"start":"0x164c0","end":"0x1653c","scope":"Scalar-left multiply swap or status3 rejection; right-kind selection of scale/cross/matrixmultiply; left persistent allocation/copy versus temporary reuse; dot releases without allocation; rich right release before leaf and final bitmap publication. Fixed bank IDs0..8 plus high-F safe kind-rejection aliases are explicit; genuine out-of-bank refs excluded.","source":"csrc/linalg/fx_linalg_dispatch.c"},
-    {"start":"0x1658e","end":"0x16598","scope":"Allocation exhaustion yields evaluator status7 without rollback; scalar-left nonmultiply rich rejection yields status3 before leaf and preserves work real record. Final parser error-record construction is external.","source":"csrc/linalg/fx_linalg_dispatch.c"}
+    {
+      "start": "0x15bda",
+      "end": "0x15bf8",
+      "scope": "Scalar-left multiplication exchanges the two real operand records via native value-stack transfer; non-CMPLX imaginary work bytes remain from the current right record. Parser stack mechanics and copy callees are external to the typed value ABI.",
+      "source": "csrc/linalg/fx_linalg_dispatch.c"
+    },
+    {
+      "start": "0x1633e",
+      "end": "0x1635c",
+      "scope": "Prepared arity initial selector and flags0 admission for determinant, transpose, REF/RREF and dot; rich canonical6x/9x operands advance to the reference rewrite, with immediate error headers rejected by shared admission callee.",
+      "source": "csrc/linalg/fx_linalg_dispatch.c"
+    },
+    {
+      "start": "0x16394",
+      "end": "0x163b0",
+      "scope": "General-power right flags3, matrix-left Syntax2 guard and remaining flags1 admission; recognized real-only flags7 selectors reject rich operands before mutation. Other raw selector families and scalar numerical leaves excluded.",
+      "source": "csrc/linalg/fx_linalg_dispatch.c"
+    },
+    {
+      "start": "0x163d0",
+      "end": "0x163e8",
+      "scope": "Two-argument stage decrements arity selector, copies right real record towork+20, fetches previous left real value and restarts admission; binary work retains the original right imaginary bytes, with no new allocation during admission failure.",
+      "source": "csrc/linalg/fx_linalg_dispatch.c"
+    },
+    {
+      "start": "0x163f8",
+      "end": "0x164c0",
+      "scope": "Rich matrix/vector kind routing; determinant and magnitude scalar-return release; persistent-to-temporary copies; matrix square/cube forced new allocation and retained original source reference; exhaustion status7; unary operation index selection for documented tokens. Native wrapped indices for vector REF/RREF, rich argument and conjugate are retained: normal-R rejection, unchecked NOT, vector magnitude and marked-fraction natural exp; their separately verified numerical leaves are not credited again.",
+      "source": "csrc/linalg/fx_linalg_dispatch.c"
+    },
+    {
+      "start": "0x164c0",
+      "end": "0x1653c",
+      "scope": "Scalar-left multiply swap or status3 rejection; right-kind selection of scale/cross/matrixmultiply; left persistent allocation/copy versus temporary reuse; dot releases without allocation; rich right release before leaf and final bitmap publication. Fixed bank IDs0..8 plus high-F safe kind-rejection aliases are explicit; genuine out-of-bank refs excluded.",
+      "source": "csrc/linalg/fx_linalg_dispatch.c"
+    },
+    {
+      "start": "0x1658e",
+      "end": "0x16598",
+      "scope": "Allocation exhaustion yields evaluator status7 without rollback; scalar-left nonmultiply rich rejection yields status3 before leaf and preserves work real record. Final parser error-record construction is external.",
+      "source": "csrc/linalg/fx_linalg_dispatch.c"
+    }
   ],
   "partial_blocks": []
 }

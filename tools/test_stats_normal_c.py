@@ -12,6 +12,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools'))
 from c_verification import write_report
+from c_build_inputs import implementation_inputs
 from nxu8.machine import Machine
 from trace_natural_result import settings
 
@@ -162,9 +163,8 @@ def main():
               'checks':checks, 'checks_total':sum(checks.values()),
               'scope':'Complete P/Q/R record/status results, early error preservation, five-significant-digit rounding and prepared t conversion; finite differential fixtures.',
               'excluded':'Statistics mode lifecycle, live interrupts, CPU scratch RAM, malformed numeric records'}
-    pinned = sources + ['csrc/numeric/fx_numeric.h', 'csrc/numeric/fx_transcend.h',
-                        'csrc/numeric/fx_transcend_internal.h', 'csrc/stats/fx_stats.h',
-                        'csrc/stats/normal/fx_stats_normal.h', 'tools/trace_natural_result.py']
+    pinned = implementation_inputs(ROOT, sources) + [
+        'tools/trace_natural_result.py', 'tools/c_build_inputs.py', 'tools/c_verification.py']
     write_report('analysis/c-verification/stats_normal.json', report, pinned, 'tools/test_stats_normal_c.py')
     print(json.dumps(report,indent=2))
 

@@ -37,8 +37,8 @@
     "native_slot_bytes": 90
   },
   "verified": {
-    "checks": 78642,
-    "native_calls": 13107,
+    "checks": 80022,
+    "native_calls": 13497,
     "report": "analysis/c-verification/linalg.json",
     "test": "tools/test_linalg_c.py"
   },
@@ -57,8 +57,8 @@
   "reduction_source": "csrc/linalg/fx_linalg_reduce.c",
   "reduction_api": "csrc/linalg/fx_linalg_reduce.h",
   "reduction_verified": {
-    "checks": 80052,
-    "native_calls": 13342,
+    "checks": 80412,
+    "native_calls": 13402,
     "report": "analysis/c-verification/linalg_reduce.json",
     "test": "tools/test_linalg_reduce_c.py"
   }

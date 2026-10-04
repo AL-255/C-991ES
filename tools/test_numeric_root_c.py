@@ -161,7 +161,7 @@ def main():
     else:
         write_report('analysis/c-verification/numeric_root.json', report,
                      sources + ['csrc/numeric/fx_numeric.h', 'csrc/numeric/fx_transcend.h',
-                                'csrc/numeric/fx_transcend_internal.h', 'csrc/numeric/fx_root.h',
+                                'csrc/numeric/fx_transcend_internal.h', 'csrc/numeric/fx_transcend_guarded.h', 'csrc/numeric/fx_root.h',
                                 'csrc/numeric/root_manifest.json',
                                 'tools/test_numeric_transcend_c.py', 'tools/trace_natural_result.py',
                                 'tools/c_verification.py'], 'tools/test_numeric_root_c.py')

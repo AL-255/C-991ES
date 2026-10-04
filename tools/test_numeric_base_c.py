@@ -408,23 +408,126 @@ def main():
                     test_operation('raw_scalar_arithmetic', a, b, base, operation,
                                    aliases=True, raw_domain=True)
                     raw_arithmetic_native_calls += 1
+    # Append metadata word operations after the unchanged canonical and
+    # raw-arithmetic workloads. This observer executes the unmodified ROM;
+    # it only stops at serialization or detects exact CPU/RAM recurrence.
+    observer_dir = build / 'metadata_oracle'
+    observer_dir.mkdir(exist_ok=True)
+    subprocess.run(['gcc', '-std=c99', '-O2', '-Wall', '-Wextra', '-fPIC', '-shared',
+                    str(ROOT / 'tools/nxu8/base_metadata_observer.c'),
+                    str(ROOT / 'tools/nxu8/vendor/SimU8/core.c'),
+                    '-o', str(observer_dir / 'nxu8-harness.so')], check=True)
+    observer = Machine(rom, observer_dir)
+    observer.lib.base_metadata_stage_run.argtypes = [C.c_uint64]
+    observer.lib.base_metadata_cycle_run.argtypes = [C.c_uint64]
+    metadata_calls, metadata_nonreturn = 0, []
+
+    def test_metadata_operation(a, b, base, operation, unary=False):
+        nonlocal metadata_calls
+        observer.reset(); settings(observer)
+        observer.ram[0x80f9] = 2; observer.ram[0x80fa] = base
+        for address, raw in [(0x8300, a + b'\xee' * 10), (0x8350, b + b'\x55' * 10)]:
+            for offset, value in enumerate(raw): observer.ram[address + offset] = value
+        observer.er(0, 0x8300); observer.er(12, 0x8300)
+        observer.er(2, 0x8350); observer.reg(6, 2)
+        observer.lib.harness_set_sp(0x8dee)
+        observer.lib.harness_set_lr(0x2fffe)
+        observer.lib.harness_set_pc((unary_entries if unary else binary_entries)[operation])
+        stage = observer.lib.base_metadata_stage_run(3000000); metadata_calls += 1
+        detail = f'{a.hex()} {b.hex()} base={base} operation={operation} unary={unary}'
+        nonreturn = stage == 100 and observer.reg(9) == 255 and observer.reg(8) == 0
+        if nonreturn:
+            recurrence = observer.lib.base_metadata_cycle_run(3000000)
+            first = C.c_uint.in_dll(observer.lib, 'base_metadata_cycle_first').value
+            repeat = C.c_uint.in_dll(observer.lib, 'base_metadata_cycle_repeat').value
+            check('metadata_native_recurrence', (recurrence, repeat - first,
+                  observer.lib.harness_get_pc()), (104, 256, 0x15a70), detail)
+            metadata_nonreturn.append({'left': a.hex(), 'right': b.hex(), 'base': base,
+                'operation': operation, 'unary': unary, 'pc': '0x15a70',
+                'first': first, 'repeat': repeat, 'full_cpu_and_ram_recurrence': True})
+            expected = None
+        else:
+            if stage == 100:
+                stage = observer.lib.harness_run(3000000, 0x2fffe, False)
+                check('metadata_native_return', stage, 100, detail)
+            else: check('metadata_native_return', stage, 101, detail)
+            expected = observer.reg(0), bytes(observer.ram[0x8300:0x830a])
+        check('metadata_native_storage', (bytes(observer.ram[0x830a:0x8314]),
+              bytes(observer.ram[0x8350:0x8364])), (b'\xee' * 10, b + b'\x55' * 10), detail)
+        for target in range(2 if unary else 3):
+            left, right = Number.from_buffer_copy(a), Number.from_buffer_copy(b)
+            out = Number.from_buffer_copy(b'\xa5' * 10) if target == 0 else left if target == 1 else right
+            before = out.raw(); native_status = C.c_uint(0xab)
+            if unary:
+                status = lib.fx_base_unary(C.byref(out), C.byref(left), base, operation,
+                                           C.byref(native_status))
+            else:
+                status = lib.fx_base_binary(C.byref(out), C.byref(left), C.byref(right), base,
+                                            operation, C.byref(native_status))
+            wanted = (-3, 0xab, before) if nonreturn else (0, *expected)
+            check('metadata_operation' + ('_alias' if target else ''),
+                  (status, native_status.value, out.raw()), wanted, detail)
+            if target != 1: check('metadata_left_immutable', left.raw(), a, detail)
+            if target != 2: check('metadata_right_immutable', right.raw(), b, detail)
+
+    metadata_rng = random.Random(0x15c1c)
+    metadata_records = [bytes.fromhex(row['record']) for row in raw_fixture['records']]
+    for a in metadata_records:
+        for base in bases:
+            test_decode('metadata_word_conversion', a, base)
+            for operation in range(2): test_metadata_operation(a, bytes(10), base, operation, True)
+            for b in metadata_records:
+                for operation in range(4, 8): test_metadata_operation(a, b, base, operation)
+    for index in range(2048):
+        if index % 3 == 0:
+            a = rational(metadata_rng.randrange(-10000000, 10000000),
+                         metadata_rng.randrange(1, 1000), metadata_rng.choice([0, 64]))
+        elif index % 3 == 1:
+            a = decimal(str(metadata_rng.randrange(-32768, 32768)) + '.' +
+                        str(metadata_rng.randrange(1000000)))
+            a = bytes([a[0] | 64]) + a[1:]
+        else: a = bytes([240 | (index & 15)]) + bytes(9)
+        b = metadata_records[metadata_rng.randrange(len(metadata_records))]
+        for base in bases:
+            test_decode('metadata_random_word_conversion', a, base)
+            for operation in range(2): test_metadata_operation(a, b, base, operation, True)
+            for operation in range(4, 8): test_metadata_operation(a, b, base, operation)
+    # Every possible surviving rejected 16-bit pair, including malformed
+    # packed digits and both zero-pair cycles, must retain native behavior.
+    for pair in range(256):
+        a = decimal(32768 + pair)
+        for operation in range(2): test_metadata_operation(a, bytes(10), 1, operation, True)
+        for operation in range(4, 8): test_metadata_operation(a, bytes(10), 1, operation)
+    for text in ['65535', '65536', '65537', '-65535', '-65536', '-65537',
+                 '4294967295', '4294967296', '9999999999', '10000000000']:
+        a = decimal(text)
+        for base in bases:
+            for operation in range(2): test_metadata_operation(a, bytes(10), base, operation, True)
+            for operation in range(4, 8): test_metadata_operation(a, bytes(10), base, operation)
+    for header in list(range(0x60, 0x70)) + list(range(0x90, 0xa0)):
+        a = bytes([header]) + bytes(9)
+        for base in bases:
+            test_scalar_prepare('stored_reference_rejection', a, base)
+            check('stored_reference_no_cell_fetch', int(machine.counts[0x1d362 >> 1]), 0,
+                  f'header={header:02x} base={base}')
     assert raw_arithmetic_native_calls == raw_fixture['full_pairwise_native_calls']
     assert raw_stage_native_calls == raw_fixture['stage_native_calls']
     report = {'cases': sum(checks.values()) + unsupported, 'groups': checks,
               'canonical_cases': canonical_cases,
               'raw_arithmetic_native_calls': raw_arithmetic_native_calls,
               'raw_stage_native_calls': raw_stage_native_calls,
+              'metadata_word_operation_native_calls': metadata_calls,
+              'metadata_native_nonreturn': metadata_nonreturn,
               'immutable_raw_fixture': {'path': str(RAW_FIXTURE.relative_to(ROOT)),
                                         'sha256': RAW_FIXTURE_SHA256},
               'failures': len(failures), 'mismatches': failures,
               'scope': '15A1E/15A94 decimal-to-word conversion;15B00/15A64 signed-word serialization;15E82 range admission;1D040 ordinary preparation;15ED6 post-fetch scalar preparation;15C1C/15C46 unary;15D62/15D9E/15DDA/15E1E bitwise;15F34/15F40/15F4C/15F58 prepared arithmetic;16828 radix literal scanner',
-              'input': 'canonical ordinary decimal records, every exponent/sign, fractional/truncation and signed16/32 boundaries; deterministic random decimal and signed integer operands; full pairwise canonical raw headers0/2/4/6/8/F arithmetic and direct native classification/comparison/range stages',
+              'input': 'canonical ordinary decimal records, every exponent/sign, fractional/truncation and signed16/32 boundaries; deterministic random decimal and signed integer operands; full pairwise canonical raw headers0/2/4/6/8/F arithmetic and word/logical conversion, direct native classification/comparison/range stages, 2048 random metadata records across four bases, all256 partial BIN pairs and empty-payload6x/9x stored references',
               'output': 'exact ten-byte records, native R0/carry/range status, signed widths, immutable inputs and both output aliases',
               'explicit_unsupported_controls': unsupported,
               'gaps': ['Shared BASE-N expression precedence/dispatch, variable bank copy and controller integration belong to the parser/controller owners',
-                       'raw marked/exact/error operands remain unsupported in direct word/unary/logical conversion; prepared arithmetic admits canonical raw scalars, and scalar preparation converts valid stored records',
                        'malformed BCD/compact records and token/output storage overlap are outside documented value APIs',
-                       'invalid BIN logical operands that ignore native serializer errors may hang; those raw paths are explicitly unsupported',
+                       'zero-residual-pair BIN logical serialization has proven full CPU/RAM recurrence; its finite C boundary returns UNIMPLEMENTED without changing output or native_status',
                        'native RAM scratch/register writes are not exported by value APIs']}
     path = ROOT / 'analysis/c-verification/numeric_base.json'
     if args.explore or failures:
@@ -434,6 +537,7 @@ def main():
                     'csrc/parse/fx_tokens.h', 'csrc/data/fx_rom_data.h', 'csrc/numeric/base/manifest.json',
                     'csrc/numeric/base/understood_ranges.json',
                     'tools/trace_natural_result.py', 'tools/c_verification.py',
+                    'tools/nxu8/base_metadata_observer.c',
                     str(RAW_FIXTURE.relative_to(ROOT))], 'tools/test_numeric_base_c.py')
     print(f'{sum(checks.values()) + unsupported} BASE-N comparisons, {len(failures)} mismatches', flush=True)
     for failure in failures[:10]: print(failure)

@@ -18,7 +18,9 @@ typedef struct {
 
 /* 15A1E/15A94: read ten digits after adding 10^10, then convert modulo
  * 2^32. A failed BIN magnitude check sets carry and leaves word positive.
- * Canonical ordinary decimal records are accepted, including fractions. */
+ * Canonical decimal, marked decimal, rational, marked rational, surd and F*
+ * records are accepted. The bias addition rejects surds and F* as F3,
+ * whose zero digit payload is still extracted, matching the original leaf. */
 fx_numeric_status fx_base_decode_word(uint32_t *word, unsigned *carry,
                                      const fx_number *number, uint8_t base_mask);
 /* 15B00/15A64: serialize the signed 32-bit word. In BIN, a word outside
@@ -43,7 +45,8 @@ fx_numeric_status fx_base_prepare(fx_number *out, const fx_number *number,
                                  uint8_t base_mask, unsigned *native_status);
 /* 15ED6 after a scalar bank fetch: normalize a stored decimal/rational/surd,
  * remove decimal/rational metadata, truncate and range-check. Stored error
- * records become Math ERROR F3. The variable-bank copy and imaginary-field
+ * records and canonical empty-payload 6x/9x references become Math ERROR F3
+ * without fetching reference cells. The variable-bank copy and imaginary-field
  * clearing are the caller's responsibility. */
 fx_numeric_status fx_base_prepare_scalar(fx_number *out, const fx_number *number,
                                         uint8_t base_mask, unsigned *native_status);
@@ -54,8 +57,12 @@ fx_numeric_status fx_base_prepare_scalar(fx_number *out, const fx_number *number
  * Arithmetic +,-,*,/ admits canonical decimal, marked decimal, rational,
  * marked rational, surd and error records. It uses exact scalar arithmetic
  * before the native raw range check; any incoming F* becomes F3/status3.
- * Division converts/truncates without a range check. Word conversion,
- * NOT/Neg and logical operations retain their ordinary-decimal contract.
+ * Division converts/truncates without a range check. NOT/Neg and logical
+ * operations admit the same canonical scalar metadata as word conversion.
+ * NOT/logical ignore incoming BIN carry and preserve returning partial
+ * serialization after BIN rejection, including noncanonical result bytes.
+ * Only the proven zero-residual-pair native non-return boundary returns
+ * UNIMPLEMENTED, preserving both output and native_status.
  * Input and output aliases are supported. */
 fx_numeric_status fx_base_unary(fx_number *out, const fx_number *number,
                                uint8_t base_mask, fx_base_unary_op operation,

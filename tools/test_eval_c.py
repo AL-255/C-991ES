@@ -58,6 +58,8 @@ def main():
     build.mkdir(parents=True, exist_ok=True)
     output = build / 'eval.so'
     sources = ['parse/fx_eval.c', 'parse/fx_tokens.c', 'data/fx_rom_data.c',
+               'numeric/fx_base.c', 'numeric/fx_base_literal.c',
+               'numeric/fx_sexagesimal.c',
                'numeric/fx_numeric.c', 'numeric/fx_transcend.c', 'numeric/fx_power.c', 'numeric/fx_root.c', 'numeric/fx_calculus.c', 'numeric/fx_integral.c', 'numeric/fx_derivative.c', 'numeric/fx_combinatorics.c', 'numeric/fx_logbase.c',
                'complex/fx_complex.c', 'complex/fx_complex_angle.c', 'complex/fx_complex_round.c', 'complex/fx_complex_dispatch.c',
         'linalg/fx_linalg.c', 'linalg/fx_linalg_store.c',
@@ -345,7 +347,7 @@ def main():
         report['comparison'] = 'Native evaluator status, both 10-byte numeric records and consumed input pointer only.'
     report = write_report(out / ('eval-records.json' if args.records_only else 'eval.json'), report,
             implementation_inputs(ROOT, [str(Path('csrc') / f) for f in sources]) +
-            ['tools/c_build_inputs.py', 'tools/c_verification.py', 'tools/trace_natural_result.py',
+            ['tools/c_build_inputs.py', 'tools/trace_natural_result.py', 'tools/verify_firmware.py', 'tools/nxu8/decoder.py', 'tools/c_verification.py', 'tools/trace_natural_result.py',
              str(regression_file.relative_to(ROOT))], 'tools/test_eval_c.py')
     print(json.dumps(report, indent=2))
 

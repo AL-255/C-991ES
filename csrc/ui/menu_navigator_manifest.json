@@ -1,0 +1,12 @@
+{
+  "subsystem":"generic nonblocking menu navigator",
+  "implementation":"Handwritten readable C; original ROM execution occurs only in independent tests",
+  "sources":["csrc/ui/fx_menu_navigator.c","csrc/ui/fx_menu_navigator.h"],
+  "implemented_routines":[
+    {"address":"0xdfde..0xe17e","name":"fx_menu_navigator_begin/tick/accept_token/resume_timer/finish","scope":"Menu table traversal, heading/MODE close policy, real key wait, retained timer and actual selection/result bytes"},
+    {"address":"0x3fba..0x4056","name":"fx_menu_paint_lines/fx_menu_paint_body","scope":"Exact LCD/MMIO preparation and four-line or heading/body painters"}
+  ],
+  "verification":["tools/test_menu_navigator_c.py","analysis/c-verification/menu_navigator.json"],
+  "understanding_ranges":"csrc/ui/menu_navigator/understood_ranges.json",
+  "gaps":["Physical STOP/IRQ scheduling is host-owned;0770 delay requires an explicit host acknowledgement.","Arbitrary non-menu ROM page data that aliases generated CPU-frame text is outside the fixture domain."]
+}

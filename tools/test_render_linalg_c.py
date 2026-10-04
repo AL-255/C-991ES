@@ -231,5 +231,5 @@ result={'checks':checks,'native_calls':native_calls,'groups':counts,'failures':f
  'The selected full-value line inherits untranslated small/extended exponent contexts from the shared special-result controller; cell grid supports both.',
  'Native selected-value text uses a26-byte CPU-stack buffer; portable serialization length>=26 returns-1 without changingRAM, classified before the oracle runs. Oversized native calls may fault or reach the sentinel with saved-register corruption; both outcomes are recorded separately.',
  'Canonical scalar records and dimensions1..3 only. Stack/numeric scratch contents outside the exposed settings and framebuffers are excluded.']}
-if not fail and not args.no_report:result=write_report('analysis/c-verification/render_linalg.json',result,SOURCES+HEADERS,'tools/test_render_linalg_c.py')
+if not fail and not args.no_report:result=write_report('analysis/c-verification/render_linalg.json',result,SOURCES+HEADERS+['tools/c_verification.py'],'tools/test_render_linalg_c.py')
 print(json.dumps({k:v for k,v in result.items() if k!='tested_inputs_sha256'},indent=2));sys.exit(bool(fail))

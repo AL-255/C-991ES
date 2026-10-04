@@ -21,7 +21,7 @@
     {
       "address": "0x171f4",
       "name": "evaluate expression",
-      "scope": "COMP literals, scientific input, e/pi, parentheses, unary signs, arithmetic and stronger implicit multiplication, compact/mixed fractions, square/cube/nth roots, general real powers, factorial/percent/nPr/nCr, forward/inverse trigonometric and hyperbolic functions, ln/log10/arbitrary-base logarithm and exp/exp10; native status, both numeric records, consumed pointer, operation cleanup and nested expression-to-LCD checks; shared COMP/CMPLX grammar with imaginary-unit token, rectangular arithmetic, complex fractions, restricted complex powers, conjugation/magnitude/argument, function admission and native error cursor; ordinary scalar variables M/Ans/A..F/X/Y, terminal stores and M+/M- transactions; COMP scalar absolute/conjugate/argument and finite sum/product bodies with native X restoration, preflight/bounds/error cursors and host cancellation; adaptive integral and Richardson derivative expression bodies, default/explicit tolerances, native sampled-X and cancellation order, error cursor restoration and error-valued loads"
+      "scope": "COMP literals, scientific input, e/pi, parentheses, unary signs, arithmetic and stronger implicit multiplication, compact/mixed fractions, square/cube/nth roots, general real powers, factorial/percent/nPr/nCr, forward/inverse trigonometric and hyperbolic functions, ln/log10/arbitrary-base logarithm and exp/exp10; native status, both numeric records, consumed pointer, operation cleanup and nested expression-to-LCD checks; shared COMP/CMPLX grammar with imaginary-unit token, rectangular arithmetic, complex fractions, restricted complex powers, conjugation/magnitude/argument, function admission and native error cursor; ordinary scalar variables M/Ans/A..F/X/Y, terminal stores and M+/M- transactions; COMP scalar absolute/conjugate/argument and finite sum/product bodies with native X restoration, preflight/bounds/error cursors and host cancellation; adaptive integral and Richardson derivative expression bodies, default/explicit tolerances, native sampled-X and cancellation order, error cursor restoration and error-valued loads; BASE-N all-four-radix literals/prefixes, stored-value preparation, NOT/Neg/logical precedence and native arithmetic range/truncation; scalar scientific constants, DMS literal-component grammar and direct/dynamic conversion postfix admission"
     },
     {
       "address": "0x16562",
@@ -77,16 +77,27 @@
       "address": "0x171ea / 0x04516 / 0x04a62 / 0x17274 / 0x1415a",
       "name": "continuous-calculus expression orchestration",
       "scope": "Prepared ordinary COMP syntax preflight, separate bound/point/tolerance expressions and shared body callbacks; local-X restoration, callback-success channel independent of error records, and matrix/vector reference cleanup against explicit typed bank dimensions and cells"
+    },
+    {
+      "address": "0x16058 / 0x16118",
+      "name": "fraction constructor marker policy",
+      "scope": "Clear bit40 from numerator, denominator and restored mixed whole before complex/integer admission or ordinary fractional division; fraction constructors bypass BASE-N pending arithmetic range/truncation"
+    },
+    {
+      "address": "0x16c9c / 0x16a7e / 0x16f94",
+      "name": "DMS, conversion and constant token handlers",
+      "scope": "Prepared C1/C4 and DEC BASE-N expression dispatch; completed operand admission, literal-only minutes/seconds, bounded third component, all40 direct conversions, disabled three-digit selector and exact scientific-constant record copies"
     }
   ],
   "gaps": [
     "remaining postfix operators and full function dispatch",
-    "number literal parsing in all bases",
     "function dispatch and mode constraints",
     "rich variable/object references and remaining mode-dependent grammar",
     "full error/recovery behavior in other contexts, expression editing and keyboard integration",
     "solver expression orchestration and other calculation modes",
-    "screen-dependent admission for rich/error records outside the typed ordinary variable API"
+    "screen-dependent admission for rich/error records outside the typed ordinary variable API",
+    "Pol/Rec and polar/quotient-remainder expression orchestration remain pending; their prepared numeric APIs are separate",
+    "Rnd uses the prepared ordinary Norm1 display policy; full FIX/SCI and screen controls remain pending"
   ],
   "verification": [
     "tools/test_tokens_c.py",
@@ -94,7 +105,9 @@
     "tools/test_eval_complex_c.py",
     "tools/test_eval_variables_c.py",
     "tools/test_eval_calculus_c.py",
-    "tools/test_eval_continuous_c.py"
+    "tools/test_eval_continuous_c.py",
+    "tools/test_eval_base_c.py",
+    "tools/test_eval_sexagesimal_c.py"
   ],
   "unsupported_behavior": "explicit FX_EVAL_UNIMPLEMENTED and offending token; no host libm or CPU/ROM fallback"
 }

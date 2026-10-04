@@ -35,27 +35,43 @@ static fx_numeric_status truncate_decimal(fx_number *out,
     return fx_decimal_encode(out, &value);
 }
 
-fx_numeric_status fx_base_decode_word(uint32_t *word, unsigned *carry,
-                                     const fx_number *number, uint8_t base_mask)
+static fx_numeric_status raw_scalar_classify(uint8_t *classification,
+                                              const fx_number *number);
+
+static fx_numeric_status decode_word(uint32_t *word, unsigned *carry,
+                                      const fx_number *number, uint8_t base_mask)
 {
-    fx_decimal value;
-    fx_number absolute, bias, biased;
+    fx_number absolute, bias, biased, converted;
     fx_numeric_status status;
+    fx_number_type kind;
+    uint8_t classification;
     uint32_t magnitude = 0;
     unsigned index;
     int negative;
     if (!word || !carry || !number) return FX_NUMERIC_INVALID;
     if (!valid_base(base_mask)) return FX_NUMERIC_UNIMPLEMENTED;
-    status = ordinary_decimal(&value, number);
+    kind = fx_number_kind(number);
+    if (kind == FX_NUMBER_UNSUPPORTED) return FX_NUMERIC_UNIMPLEMENTED;
+    status = raw_scalar_classify(&classification, number);
     if (status != FX_NUMERIC_OK) return status;
-    negative = value.sign < 0;
-    value.sign = value.mantissa ? 1 : 0;
-    status = fx_decimal_encode(&absolute, &value);
-    if (status != FX_NUMERIC_OK) return status;
+    negative = (classification & 2u) != 0;
+    absolute = *number;
+    if (negative) {
+        status = fx_number_negate(&absolute, &absolute);
+        if (status != FX_NUMERIC_OK) return status;
+    }
     (void)fx_decimal_from_integer(&bias, INT64_C(10000000000));
-    status = fx_decimal_binary(&biased, &absolute, &bias, FX_ADD);
-    if (status != FX_NUMERIC_OK || fx_number_kind(&biased) != FX_NUMBER_DECIMAL)
-        return FX_NUMERIC_UNIMPLEMENTED;
+    if (kind == FX_NUMBER_SURD || kind == FX_NUMBER_ERROR) {
+        /* Scalar bias addition converts only decimal/rational operands.
+         * Its F3 result is still read by the unchecked digit extractor. */
+        fx_number_error(&biased, 3);
+    } else {
+        absolute.bytes[0] &= 0xbfu;
+        status = fx_number_to_decimal(&converted, &absolute);
+        if (status != FX_NUMERIC_OK) return status;
+        status = fx_decimal_binary(&biased, &converted, &bias, FX_ADD);
+        if (status != FX_NUMERIC_OK) return status;
+    }
     /* 15A56 takes ten mantissa digits, without consulting the exponent.
      * Thus raw huge/fractional inputs retain the original extraction rule. */
     for (index = 1; index <= 5; ++index) {
@@ -65,6 +81,46 @@ fx_numeric_status fx_base_decode_word(uint32_t *word, unsigned *carry,
     *carry = base_mask == FX_BASE_BIN &&
              (magnitude > 32768 || (magnitude == 32768 && !negative));
     *word = negative && !*carry ? UINT32_C(0) - magnitude : magnitude;
+    return FX_NUMERIC_OK;
+}
+
+fx_numeric_status fx_base_decode_word(uint32_t *word, unsigned *carry,
+                                     const fx_number *number, uint8_t base_mask)
+{
+    return decode_word(word, carry, number, base_mask);
+}
+
+/* NOT and logical leaves serialize even after BIN rejection. The decimal
+ * serializer then sees one residual pair: the low byte of a 16-bit rejected
+ * magnitude, or the selected BIN mask (1) for larger magnitudes.
+ * A zero pair has no leading digit and the original search never returns. */
+static fx_numeric_status serialize_logical(fx_number *out, uint32_t word,
+                                           uint8_t base_mask,
+                                           unsigned *native_status)
+{
+    fx_number result;
+    unsigned range;
+    fx_numeric_status status = fx_base_encode_word(&result, word, base_mask, &range);
+    if (status != FX_NUMERIC_OK) return status;
+    if (range) {
+        unsigned negative = word >= UINT32_C(0x80000000);
+        uint32_t magnitude = negative ? UINT32_C(0) - word : word;
+        unsigned pair = magnitude > 65535u ? 1u :
+                        (magnitude - negative) & 255u;
+        if (!pair) return FX_NUMERIC_UNIMPLEMENTED;
+        fx_number_zero(&result);
+        if (pair >= 16u) {
+            result.bytes[0] = (uint8_t)(pair >> 4);
+            result.bytes[1] = (uint8_t)(pair << 4);
+            result.bytes[8] = 9;
+        } else {
+            result.bytes[0] = (uint8_t)pair;
+            result.bytes[8] = 8;
+        }
+        result.bytes[9] = 255;
+    }
+    *out = result;
+    *native_status = 0;
     return FX_NUMERIC_OK;
 }
 
@@ -191,8 +247,19 @@ fx_numeric_status fx_base_prepare_scalar(fx_number *out, const fx_number *number
 {
     fx_number source, converted;
     fx_numeric_status status;
+    unsigned header, empty_reference, i;
     if (!out || !number || !native_status) return FX_NUMERIC_INVALID;
     if (!valid_base(base_mask)) return FX_NUMERIC_UNIMPLEMENTED;
+    header = number->bytes[0] & 0xf0u;
+    empty_reference = header == 0x60u || header == 0x90u;
+    for (i = 1; i < 10; ++i)
+        if (number->bytes[i]) empty_reference = 0;
+    if (empty_reference) {
+        /* Empty-payload 6x/9x is a canonical rich reference, not a scalar.
+         * Stored BASE-N preparation produces F3 without fetching any cell. */
+        fx_number_error(out, 3); *native_status = 3;
+        return FX_NUMERIC_OK;
+    }
     source = *number;
     if (fx_number_kind(&source) == FX_NUMBER_ERROR) {
         fx_number_error(out, 3); *native_status = 3;
@@ -220,14 +287,13 @@ fx_numeric_status fx_base_unary(fx_number *out, const fx_number *number,
     if (operation != FX_BASE_NOT && operation != FX_BASE_NEGATE)
         return FX_NUMERIC_INVALID;
     original = *number;
-    status = fx_base_decode_word(&word, &carry, &original, base_mask);
+    status = decode_word(&word, &carry, &original, base_mask);
     if (status != FX_NUMERIC_OK) return status;
     if (operation == FX_BASE_NOT) {
-        /* The original NOT ignores conversion/serialization errors, which
-         * can loop forever on invalid BIN records. Those raw paths are not
-         * a prepared operation and remain explicitly unsupported. */
-        if (carry) return FX_NUMERIC_UNIMPLEMENTED;
-        word = ~word;
+        /* Incoming BIN carry is ignored. Only a zero residual pair in the
+         * rejected serialization causes the original non-return boundary. */
+        return serialize_logical(out, ~word, base_mask,
+                                  native_status);
     } else {
         word = UINT32_C(0) - word;
         if (word == UINT32_C(0x80000000)) {
@@ -235,10 +301,9 @@ fx_numeric_status fx_base_unary(fx_number *out, const fx_number *number,
             return FX_NUMERIC_OK;
         }
     }
-    *out = original;
-    status = fx_base_encode_word(out, word, base_mask, native_status);
-    if (operation == FX_BASE_NOT && status == FX_NUMERIC_OK && *native_status)
-        return FX_NUMERIC_UNIMPLEMENTED;
+    fx_number result = original;
+    status = fx_base_encode_word(&result, word, base_mask, native_status);
+    if (status == FX_NUMERIC_OK) *out = result;
     return status;
 }
 
@@ -248,7 +313,6 @@ fx_numeric_status fx_base_binary(fx_number *out, const fx_number *left,
                                 unsigned *native_status)
 {
     fx_number a, b, result;
-    fx_decimal check;
     fx_numeric_status status;
     uint32_t first, second, word;
     unsigned carry_first, carry_second;
@@ -278,24 +342,15 @@ fx_numeric_status fx_base_binary(fx_number *out, const fx_number *left,
         *out = result;
         return FX_NUMERIC_OK;
     }
-    status = ordinary_decimal(&check, &a);
+    status = decode_word(&first, &carry_first, &a, base_mask);
     if (status != FX_NUMERIC_OK) return status;
-    status = ordinary_decimal(&check, &b);
+    status = decode_word(&second, &carry_second, &b, base_mask);
     if (status != FX_NUMERIC_OK) return status;
-    status = fx_base_decode_word(&first, &carry_first, &a, base_mask);
-    if (status != FX_NUMERIC_OK) return status;
-    status = fx_base_decode_word(&second, &carry_second, &b, base_mask);
-    if (status != FX_NUMERIC_OK) return status;
-    if (carry_first || carry_second) return FX_NUMERIC_UNIMPLEMENTED;
     switch (operation) {
     case FX_BASE_OR: word = first | second; break;
     case FX_BASE_XOR: word = first ^ second; break;
     case FX_BASE_XNOR: word = ~(first ^ second); break;
     default: word = first & second; break;
     }
-    status = fx_base_encode_word(&result, word, base_mask, native_status);
-    if (status != FX_NUMERIC_OK) return status;
-    if (*native_status) return FX_NUMERIC_UNIMPLEMENTED;
-    *out = result;
-    return FX_NUMERIC_OK;
+    return serialize_logical(out, word, base_mask, native_status);
 }

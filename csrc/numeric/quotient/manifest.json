@@ -1,0 +1,21 @@
+{
+  "subsystem": "Prepared scalar quotient/remainder wrapper",
+  "implementation": "Readable C99 packed decimal quotient, integral truncation, finite product, cancellation-aware remainder and raw fallback policy; no CPU model or host floating point",
+  "api": "csrc/numeric/fx_quotient_remainder.h",
+  "implemented_routines": [
+    {"address":"0x1c138","name":"prepared quotient/remainder wrapper","scope":"Surd source preprocessing, ordinary marker/error admission, scalar conversion, eligible quotient/remainder export or ordinary-division plus raw70 fallback"},
+    {"address":"0x190f6","name":"finite quotient/remainder eligibility","scope":"Original packed-prefix sign/exponent/distance gates, divide then integral truncation then product/subtraction order, cancellation suppression and remainder trailing-zero precision gate"},
+    {"address":"0x191cc","name":"two ordinary scalar conversions","scope":"Unchanged decimal payloads, unchecked rational payload conversion after bit40 clearing, unsupported ordinary kinds normalized to F3"},
+    {"address":"0x17442","name":"two surd source conversions","scope":"Second operand then first operand surd-to-decimal replacement before ordinary admission; uses the separately verified finite component foundation"}
+  ],
+  "gaps": [
+    "Parser token5F dispatch/precedence, terminalstatus37, expression cursor, result history and display are separate frontend/controller work",
+    "The API receives prepared value records; fetching rich matrix/vector references from a bank is separate work",
+    "Raw numerical helpers identify bounded native non-return domains with UNIMPLEMENTED and leave output untouched; this wrapper corpus contains only original returned calls",
+    "Malformed surd component payloads rejected by the finite component foundation remain explicitly UNIMPLEMENTED; valid prepared surds, including active-zero components, are verified",
+    "CPU registers, temporary pointers and unused native scratch bytes are not high-level result fields"
+  ],
+  "verification": "tools/test_numeric_quotient_c.py",
+  "test_report": "analysis/c-verification/numeric_quotient.json",
+  "execution_notes": "csrc/numeric/quotient/EXECUTION.md"
+}

@@ -144,7 +144,7 @@ def main():
                             implementation_inputs(ROOT, ['csrc/'+p for p in SOURCES])+
                             [adapter, str(fixture_path.relative_to(ROOT)), 'tools/test_eval_variables_c.py',
                              'tools/test_eval_complex_c.py', 'tools/test_numeric_calculus_c.py', 'tools/c_verification.py',
-                             'tools/c_build_inputs.py'],
+                             'tools/c_build_inputs.py', 'tools/trace_natural_result.py', 'tools/verify_firmware.py', 'tools/nxu8/decoder.py'],
                             'tools/test_eval_calculus_c.py')
     print(json.dumps({'status': 'pass', 'cases': data['cases'], 'domains': counts}, indent=2))
 

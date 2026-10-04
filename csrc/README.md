@@ -12,9 +12,9 @@ routine addresses, the semantic API being compared, and remaining gaps.
 | Subsystem | Current implementation |
 | --- | --- |
 | Platform | Startup/reset, retained and persistent state, replay history, power/host packets, nonblocking welcome/diagnostic events and contrast UI; main scheduler with key-wait and typed UI/menu/screen completion |
-| Keyboard/editor | Matrix scan, bounded debounce/held sampling, key tables, modifier dispatch, nonblocking host key wait/controller, annunciator row, cursor, structured editing and display-to-input conversion, input preparation, error dialogs/key acceptance and cursor recovery and input error/reset recovery; ordinary typing/command and input/evaluate/commit/presentation controllers |
-| Parser | Shared COMP/CMPLX literals, e/π, parentheses/signs, arithmetic/fractions, square/cube/nth roots, powers, factorial/percent/nPr/nCr, trig/hyperbolic functions, single/two-argument logarithms and exponentials; complex fractions, restricted powers, conjugation/magnitude/argument, scalar variables/terminal stores/M+/M-, COMP absolute/conjugate/argument, finite sums/products, adaptive integrals and Richardson derivatives |
-| Numeric | Packed records, decimal and finite rational/surd arithmetic, roots/combinatorics and native zero-radicand/reciprocal behavior; finite sum/product, adaptive Gauss–Kronrod integration and Richardson derivative kernels; BASE-N conversions, arithmetic/logic, literals and scalar preparation; DMS composition, unit conversions and stored scientific constants; two/three-equation linear and quadratic/cubic solvers, native failure diagnostics |
+| Keyboard/editor | Matrix scan, bounded debounce/held sampling, key tables, modifier dispatch, nonblocking host key wait/controller, annunciator row, cursor, structured editing and display-to-input conversion, input preparation, error dialogs/key acceptance and cursor recovery and input error/reset recovery; ordinary typing/command and input/evaluate/commit/presentation controllers; generic menu navigation, MODE/SETUP and MATRIX/VECTOR mode menu controllers |
+| Parser | Shared COMP/CMPLX literals, e/π, parentheses/signs, arithmetic/fractions, square/cube/nth roots, powers, factorial/percent/nPr/nCr, trig/hyperbolic functions, single/two-argument logarithms and exponentials; complex fractions, restricted powers, conjugation/magnitude/argument, scalar variables/terminal stores/M+/M-, COMP absolute/conjugate/argument, finite sums/products, adaptive integrals and Richardson derivatives; BASE-N radix/prefix literals, logic and native arithmetic policies; scientific constants, DMS and unit-conversion postfixes |
+| Numeric | Packed records, decimal and finite rational/surd arithmetic, roots/combinatorics and native zero-radicand/reciprocal behavior; finite sum/product, adaptive Gauss–Kronrod integration and Richardson derivative kernels; BASE-N conversions, arithmetic/logic, literals and scalar preparation; DMS composition, unit conversions and stored scientific constants; two/three-equation linear and quadratic/cubic solvers, native failure diagnostics; generic SOLVE callback iteration, finite raw decimal adapters and the distinct prepared quotient/remainder wrapper |
 | Complex | Prepared arithmetic, classification, native return statuses, conjugation, magnitude, restricted roots/powers, polar coordinates and rounding |
 | Matrix/vector | Prepared arithmetic, transpose, determinant/inverse, dot/cross/magnitude, powers, numeric preparation, REF/RREF, typed slot storage, prepared rich operand dispatch/allocation and grid/caption/cursor display |
 | Statistics | Prepared moments, seven regression models/predictions, cache semantics, normal P/Q/R and standardization; table editing, cursor and STAT input commits |
@@ -23,8 +23,8 @@ routine addresses, the semantic API being compared, and remaining gaps.
 | Rendering | Fonts/pixels, recursive construct layout, viewport/result controllers, equation/inequality captions and special error displays |
 | Integration | Expression-token probe and differential expression-to-LCD pipeline for supported grammar |
 
-Complete keyboard and mode UIs, event scheduling, menus/history and reset-to-key-sequence behavior still require
-implementation and verification. Generic SOLVE and equation UI orchestration, complete matrix/vector mode grammar and
+Complete keyboard/mode controller composition, event scheduling, history and reset-to-key-sequence behavior still require
+implementation and verification. SOLVE expression/history/display and equation UI orchestration, complete matrix/vector mode grammar and
 object editing, table mode and other advanced functions remain pending. Passing a subset suite does not complete those requirements.
 
 Build from the repository root with CMake and GCC or Clang. Formatting currently
@@ -61,6 +61,21 @@ coefficient-one elision. For example, `1+2i` uses raw token `80` for `i`:
 analysis/build/c-port/fx991c --eval 312b3280 --complex --pbm /tmp/complex.pbm
 ```
 
+Add `--base bin`, `--base oct`, `--base dec` or `--base hex` for prepared
+BASE-N evaluation. For example, hexadecimal `10+3` displays `13`:
+
+```sh
+analysis/build/c-port/fx991c --eval 31302b33 --base hex --pbm /tmp/base.pbm
+```
+
+The parser keeps the original real-function and fraction admissions in BASE-N;
+ordinary arithmetic applies the native range/truncation rules. The explicit
+`fx_evaluate_base_n` API also retains the caller-supplied second output record.
+Scientific constants, direct unit conversions and DMS degree/minute/second
+postfixes use the shared parser. DMS components after the first operand are
+literal fields. Unit conversions bind below unary negation; DMS binds above
+fractions, whose constructor clears the sexagesimal marker from its operands.
+
 For CMPLX, the JSON `tokens` field contains the composed natural result, as
 produced by the display controller. The ordinary COMP probe reports standalone
 scalar formatter tokens. Both pipelines compare their resulting PBM pixels
@@ -74,7 +89,7 @@ cancellation polls and X restoration. Integral and derivative tests compare ever
 sampled X and every cancellation-poll X against the original evaluator.
 `fx_evaluate_with_state` adds a separate optional matrix/vector bank for native
 callback reference cleanup while preserving the ordinary variable-bank ABI.
-Rich expression arithmetic and complete matrix/vector mode grammar remain pending.
+Rich expression arithmetic, Pol/Rec/polar and quotient/remainder expression orchestration, and complete matrix/vector mode grammar remain pending.
 
 Raw powers include an implicit opening parenthesis after the caret. Thus
 `2^3+1)` means `2^(3+1)` and `2^3)+1` means `(2^3)+1`. The natural editor

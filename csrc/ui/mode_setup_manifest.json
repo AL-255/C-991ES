@@ -1,0 +1,15 @@
+{
+  "subsystem":"MODE/SETUP storage and nonblocking controllers",
+  "implementation":"Handwritten readable C; native execution only in independent tests",
+  "sources":["csrc/ui/fx_mode_setup.c","csrc/ui/fx_mode_setup.h"],
+  "implemented_routines":[
+    {"address":"0xc77c..0xc978","name":"fx_mode_set","scope":"All byte-valued mode/submode persistent policies, storage initialization and INEQ saved-record restore"},
+    {"address":"0xc978..0xca7c","name":"MODE caller and nested selectors","scope":"Mode47 sentinel, ordinary mode completion, STAT/EQN/INEQ/DIST nested menus and explicit MATRIX/VECTOR requests"},
+    {"address":"0xca7c..0xccf4","name":"SETUP and precision","scope":"All28 setting entries, setup blocker, layout/table policies and real FIX/SCI/NORM key waits"},
+    {"address":"0xd580..0xd6a6","name":"INEQ/DIST selectors","scope":"Nested type/list selection, cancellation/back, flags and mode commits"},
+    {"address":"0x1d31a..0x1d362,0x1d60a..0x1d636,0x1f8a0..0x1f8be","name":"mode storage dependencies","scope":"EQN bank dimensions/screens, STAT payload and TABLE function-workspace reset"}
+  ],
+  "verification":["tools/test_mode_setup_c.py","analysis/c-verification/mode_setup.json"],
+  "understanding_ranges":"csrc/ui/mode_setup/understood_ranges.json",
+  "gaps":["MATRIX/VECTOR D0CC bodies are retained typed requests, with real caller/return boundaries.","207 zero-display checkpoints inherit the existing8000..80DB numeric operand/saved-argument workspace gap; exact residual addresses are inventoried.","Physical STOP/IRQ scheduling is not emulated.","Malformed TABLE expressions and unsupported formatter inputs return explicit statuses."]
+}

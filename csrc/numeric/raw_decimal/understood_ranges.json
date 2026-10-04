@@ -1,0 +1,198 @@
+{
+  "basis": "Exact semantic spans reviewed against unchanged complete.asm and direct original native checkpoints plus the canonical raw_decimal differential report. Only the prepared value contracts named in each scope are credited; shared ranges are unioned globally.",
+  "ranges": [
+    {
+      "start": "0x19f54",
+      "end": "0x19fb6",
+      "scope": "Unchecked aligned rational field: one wrapped length adjustment, finite nine-pair right shift, least-significant delimiter search, denominator left shift, packed exponent construction and sign1; original raw sign padding participates. Prepared nineteen-F-one-A conversion context805A<11, no canonical validation imposed.",
+      "source": "csrc/numeric/fx_raw_decimal_parts.c"
+    },
+    {
+      "start": "0x19fb6",
+      "end": "0x1a03a",
+      "scope": "Remove denominator field; optional second delimiter creates the unnormalized middle; whole component retains original raw sign and initial exponent byte0x14 (BCD14). All field arrays and optional-middle selector compared at original checkpoints.",
+      "source": "csrc/numeric/fx_raw_decimal_parts.c"
+    },
+    {
+      "start": "0x1a03a",
+      "end": "0x1a082",
+      "scope": "Prepared805A<11 conversion: normalize whole, optionally multiply whole by constructed denominator and add the unnormalized middle in finite native order, then divide and low-digit cleanup. The alternate805A>=11 pair-output branch is excluded.",
+      "source": "csrc/numeric/fx_raw_fraction_convert.c"
+    },
+    {
+      "start": "0x1a084",
+      "end": "0x1a0a0",
+      "scope": "No-middle whole extraction and normalization rejoins the same prepared decimal division path; missing delimiters are native unchecked behavior, not validation failures.",
+      "source": "csrc/numeric/fx_raw_fraction_convert.c"
+    },
+    {
+      "start": "0x1a0a0",
+      "end": "0x1a0d4",
+      "scope": "Finite eight-pair delimiter scan: low nibbleA or high byteA0..FF, count wraps through decimal positions and separators at position15 or later map tozero. LowB..F are data unless high delimiter also qualifies.",
+      "source": "csrc/numeric/fx_raw_decimal_parts.c"
+    },
+    {
+      "start": "0x1b17c",
+      "end": "0x1b206",
+      "scope": "Nine-pair fraction-field right shift by unsigned positions clamped to18, including raw sign padding; copies retain complete finite field bits. Pointer/register effects are outside this value ABI.",
+      "source": "csrc/numeric/fx_raw_decimal_parts.c"
+    },
+    {
+      "start": "0x1b206",
+      "end": "0x1b29e",
+      "scope": "Nine-pair fraction-field left shift by unsigned positions clamped to18; unchecked denominator/numerator component padding is preserved. Pointer/register effects are outside this value ABI.",
+      "source": "csrc/numeric/fx_raw_decimal_parts.c"
+    },
+    {
+      "start": "0x1a6da",
+      "end": "0x1a724",
+      "scope": "Native low-four-packed-digit cleanup: raw tails>=0x9991 add one unit at10^4 before clearing lowtwo pairs; raw tails<0x0010 clear them; otherwise retain them; all paths normalize preserving complete incoming error payload.",
+      "source": "csrc/numeric/fx_raw_decimal_parts.c"
+    },
+    {
+      "start": "0x1bdd0",
+      "end": "0x1bef6",
+      "scope": "Raw scalar normalization: one leading-overflow shift or finite byte>=15 leading scan, packed exponent adjustment, raw sign range classification and zero/error boundaries. The stored sign is not conventionally canonicalized; completeF* payload survives.",
+      "source": "csrc/numeric/fx_raw_decimal_parts.c"
+    },
+    {
+      "start": "0x1b7a2",
+      "end": "0x1b8b2",
+      "scope": "Prepared ordinary finite quotient: left-first full-error propagation, right error copy, zero leading divisor guard, packed exponent/sign arithmetic, cached triple-divisor quotient estimation and eighteen digit iterations retaining seventeen-digit workspace. Alternate extended quotient context entry1B788 is not claimed.",
+      "source": "csrc/numeric/fx_raw_decimal_divide.c"
+    },
+    {
+      "start": "0x1b8ec",
+      "end": "0x1ba64",
+      "scope": "Fifteen-low-first-digit ordinary product entry and shared fifteen/seventeen-digit product body: decimal-corrected pair sums, cached triple multiplicand, finite grouped additions/right shifts, packed exponent/sign and final normalization. The seventeen-digit start/retained guard is independently verified by the prepared exponential argument checkpoint.",
+      "source": "csrc/numeric/fx_raw_decimal_multiply_add.c"
+    },
+    {
+      "start": "0x1bc4e",
+      "end": "0x1bda0",
+      "scope": "Plain finite scalar add: full-error propagation, magnitude ordering with original sign adjustment, packed exponent alignment, finite addition/subtraction and normalization. Context803B=0; extended tiny-difference branch at1BDA0 excluded. Raw nondecimal ordering cycles are recognized by exact state repetition and returnUNIMPLEMENTED without portable output writes.",
+      "source": "csrc/numeric/fx_raw_decimal_multiply_add.c"
+    },
+    {
+      "start": "0x1a968",
+      "end": "0x1a994",
+      "scope": "Prepared natural exponential: completeF* propagation, load exact stored log10(e) coefficient and retained guard pair83. Other shared exponential/power caller selectors are external.",
+      "source": "csrc/numeric/fx_raw_decimal_exp.c"
+    },
+    {
+      "start": "0x1a99e",
+      "end": "0x1a9ac",
+      "scope": "Prepared natural-exp selector6 takes seventeen-digit multiplication, preserves its raw error payload and only then enters whole/fraction decomposition. Selector14 division is excluded.",
+      "source": "csrc/numeric/fx_raw_decimal_exp.c"
+    },
+    {
+      "start": "0x1a9b0",
+      "end": "0x1a9ba",
+      "scope": "Prepared natural-exp selector6 takes seventeen-digit multiplication, preserves its raw error payload and only then enters whole/fraction decomposition. Selector14 division is excluded.",
+      "source": "csrc/numeric/fx_raw_decimal_exp.c"
+    },
+    {
+      "start": "0x1b8d0",
+      "end": "0x1b8ec",
+      "scope": "Natural-exp seventeen-digit product entry with full-error propagation and count17; shared multiplication body is verified separately and exact ninth guard pair is retained.",
+      "source": "csrc/numeric/fx_raw_decimal_exp.c"
+    },
+    {
+      "start": "0x1a9ba",
+      "end": "0x1aa3c",
+      "scope": "Prepared natural-exp reciprocal sign classification, up-to-two packed whole digits, nine-pair fractional shifts and reserved lowest nibble, then raw factor admission. Larger original products close at native whole-exponent overflow before portable guarded-factor call; isolated prefix00/-100 factor wrap is not claimed.",
+      "source": "csrc/numeric/fx_raw_decimal_exp.c"
+    },
+    {
+      "start": "0x1acd8",
+      "end": "0x1ad64",
+      "scope": "Prepared raw fractional factor admission: subtract-one probe controls zero branch but is discarded; first actual coefficient subtraction supplies the equivalent canonical coordinate. Prepared native exp positions\u221299..\u22121 only, after upstream whole-exponent guards; full factor arithmetic belongs to unchanged guarded transcend kernel.",
+      "source": "csrc/numeric/fx_raw_decimal_exp.c"
+    },
+    {
+      "start": "0x1b03c",
+      "end": "0x1b066",
+      "scope": "First committed packed coefficient subtraction corrects every finite pair; effective canonical coordinate recovers corrected difference plus exact coefficient modulo10^18. Proven by original A/B factor-state comparisons, retaining comparison borrow.",
+      "source": "csrc/numeric/fx_raw_decimal_exp.c"
+    },
+    {
+      "start": "0x1b090",
+      "end": "0x1b0ba",
+      "scope": "Failed factor subtraction restores the selected coefficient in original packed-pair order; equivalent prepared canonical coordinate preserves the native forward/reverse factor result. Remaining general caller state is external.",
+      "source": "csrc/numeric/fx_raw_decimal_exp.c"
+    },
+    {
+      "start": "0x1b0ba",
+      "end": "0x1b0f2",
+      "scope": "Exact limiting/logarithm coefficient selection by prepared exponent position; coefficients used by the raw first-subtraction adapter and unchanged shared factor kernel. No host floating point or approximate reconstruction.",
+      "source": "csrc/numeric/fx_raw_decimal_exp.c"
+    },
+    {
+      "start": "0x1b0f6",
+      "end": "0x1b0fe",
+      "scope": "Exact limiting/logarithm coefficient selection by prepared exponent position; coefficients used by the raw first-subtraction adapter and unchanged shared factor kernel. No host floating point or approximate reconstruction.",
+      "source": "csrc/numeric/fx_raw_decimal_exp.c"
+    },
+    {
+      "start": "0x1b104",
+      "end": "0x1b150",
+      "scope": "Exact limiting/logarithm coefficient selection by prepared exponent position; coefficients used by the raw first-subtraction adapter and unchanged shared factor kernel. No host floating point or approximate reconstruction.",
+      "source": "csrc/numeric/fx_raw_decimal_exp.c"
+    },
+    {
+      "start": "0x1aa3c",
+      "end": "0x1aa52",
+      "scope": "Reconstruct factor result and add packed whole exponent with original decimal carry; natural-exp overflow yields positiveF3 or negativezero before reciprocal.",
+      "source": "csrc/numeric/fx_raw_decimal_exp.c"
+    },
+    {
+      "start": "0x1aa62",
+      "end": "0x1aa7e",
+      "scope": "Natural-exp whole-exponent overflow initializes fullzero and folds reciprocal sign category exactly; excludes non-exp special caller guard branches.",
+      "source": "csrc/numeric/fx_raw_decimal_exp.c"
+    },
+    {
+      "start": "0x1aa8a",
+      "end": "0x1aac2",
+      "scope": "Prepared natural-exp reciprocal selection, finite ordinary quotient, sign/exponent publication and terminal packed overflow/F3. General inverse-function rounding selector is external.",
+      "source": "csrc/numeric/fx_raw_decimal_exp.c"
+    },
+    {
+      "start": "0x1b748",
+      "end": "0x1b76a",
+      "scope": "Prepared scalar reciprocal creates exactone denominator work record and enters the same ordinary finite quotient contract. FullF* input returns unchanged.",
+      "source": "csrc/numeric/fx_raw_decimal_exp.c"
+    },
+    {
+      "start": "0x1bb28",
+      "end": "0x1bb3a",
+      "scope": "Native scalar status helper returns lowF* header nibble orzero independently of host adapter status, preserving complete error payload.",
+      "source": "csrc/numeric/fx_raw_decimal_exp.c"
+    },
+    {
+      "start": "0x1c22e",
+      "end": "0x1c242",
+      "scope": "Scalar natural-exp caller prepares selector2 and saved work record; register/stack preservation and other shared callers excluded from portable value ABI.",
+      "source": "csrc/numeric/fx_raw_decimal_exp.c"
+    },
+    {
+      "start": "0x1c26c",
+      "end": "0x1c282",
+      "scope": "Natural-exp already-admitted2x/6x rational load and marker-bit clear, then prepared decimal conversion. AB50 does not validate raw sign. Original preconversionF-input normalization and other scalar kinds are external; conversion checkpoint1C27C is compared independently of final result.",
+      "source": "csrc/numeric/fx_raw_fraction_convert.c"
+    },
+    {
+      "start": "0x1c2b8",
+      "end": "0x1c2ca",
+      "scope": "Scalar natural-exp selector installs argument6/base10 and invokes prepared natural-exp kernel; other shared scalar functions are not claimed.",
+      "source": "csrc/numeric/fx_raw_decimal_exp.c"
+    },
+    {
+      "start": "0x1c2fa",
+      "end": "0x1c30c",
+      "scope": "Scalar natural-exp final normalization, external ten-byte serialization and independent native status; caller imaginary ten bytes are retained.",
+      "source": "csrc/numeric/fx_raw_decimal_exp.c"
+    }
+  ],
+  "partial_blocks": []
+}

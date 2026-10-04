@@ -2,6 +2,7 @@
  * GPL-3.0-or-later. No firmware execution or host floating-point arithmetic. */
 #include "fx_transcend.h"
 #include "fx_transcend_internal.h"
+#include "fx_transcend_guarded.h"
 
 #define COORDINATE_MODULUS UINT64_C(1000000000000000000)
 #define COORDINATE_ONE UINT64_C(10000000000000000)
@@ -289,6 +290,18 @@ static fx_numeric_status exponentiate_guarded(fx_number *out, guarded_decimal ar
     }
     *out = value;
     return FX_NUMERIC_OK;
+}
+
+fx_numeric_status fx_transcend_exp10_guarded(fx_number *out,
+                                             uint64_t coordinate,
+                                             int exponent, int sign) {
+    guarded_decimal argument;
+    if (!out || coordinate >= COORDINATE_MODULUS || exponent < -99 || exponent > 1 ||
+        (sign != 1 && sign != -1)) return FX_NUMERIC_INVALID;
+    argument.mantissa = coordinate;
+    argument.exponent = exponent;
+    argument.sign = sign;
+    return exponentiate_guarded(out, argument, 0);
 }
 
 static fx_numeric_status exponential(fx_number *out, const fx_number *in, int natural) {

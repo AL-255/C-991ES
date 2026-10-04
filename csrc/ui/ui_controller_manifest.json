@@ -33,7 +33,7 @@
     "BASE result-domain admission and full BASE UI transactions remain delegated. The ordinary command's base-selector writes are translated, but mode 2 is outside this entry's admitted contexts.",
     "Forced prime output for tagged rational/surd records returns RESULT_FORMAT. Two original calls successfully return; their full native RAM/LCD hashes and explicit C requests are retained in the report. Ordinary F1 admission rejects tagged operands before this path.",
     "Unsupported complex magnitude inputs return COMPLEX_ADMISSION. Rich numeric result tags and unsupported renderer/parser contexts retain the called APIs' explicit capability failures.",
-    "Shared F12A still reports native-success gaps for Pol 6C, Rec 6D and polar operator 5F; this controller does not claim those evaluator paths complete.",
+    "Shared F12A still reports native-success gaps for Pol 6C, Rec 6D and quotient/remainder operator 5F; the separate polar operator AF also lacks shared-parser integration; this controller does not claim those evaluator paths complete.",
     "After an action, called numeric/layout workspaces 8000..80DB and 8640..87CF are excluded from full RAM comparison. Integral/derivative additionally exclude 850A..863F. Persistent result, editor, replay, factor table, LCD and MMIO state remain compared.",
     "The test measures and excludes the actual native CPU stack extent through 8DED; its deepest fixture reaches 8AF2. Production state is host-local. Physical instruction timing is not reproduced.",
     "Token FF indexes beyond the 31-entry command table into ROM data. The C interface bounds that malformed dispatch with an explicit RESULT_FORMAT request. Unbounded native strings are bounded by the host interface."

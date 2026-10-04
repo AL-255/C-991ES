@@ -83,6 +83,38 @@ static void formatter_bounds(void)
     }
 }
 
+static void base_parser_bounds(void)
+{
+    static const uint8_t masks[] = {FX_BASE_BIN, FX_BASE_OCT, FX_BASE_DEC, FX_BASE_HEX};
+    static const uint8_t alphabet[] = "0123456789+-(),\x2f\x4e\x4f\x50\x51\x52\x53\x5c\x60\x61\x62\x63\x6e\x6f\x7e\x7f\xae\xb8\xb9\xba\xbb\xbc\xbd\xfb\xfc";
+    uint8_t input[128], original[128];
+    fx_number retained;
+    struct {
+        uint8_t before;
+        fx_eval_result result;
+        uint8_t after;
+    } guarded;
+    for (unsigned n = 0; n < 20000; ++n) {
+        size_t length = random_word() % sizeof input;
+        for (size_t i = 0; i < sizeof input; ++i)
+            original[i] = input[i] = alphabet[random_word() % (sizeof alphabet - 1)];
+        for (size_t i = 0; i < sizeof retained.bytes; ++i)
+            retained.bytes[i] = (uint8_t)random_word();
+        guarded.before = guarded.after = 0xa5;
+        fx_eval_status status = fx_evaluate_base_n(input, length, masks[n % 4],
+            NULL, NULL, &retained, &guarded.result);
+        assert(status == FX_EVAL_OK || status == FX_EVAL_SYNTAX || status == FX_EVAL_MATH ||
+               status == FX_EVAL_UNIMPLEMENTED || status == FX_EVAL_RESOURCE_LIMIT);
+        assert(guarded.result.consumed <= length);
+        assert(memcmp(&guarded.result.value[1], &retained, sizeof retained) == 0);
+        assert(memcmp(input, original, sizeof input) == 0);
+        assert(guarded.before == 0xa5 && guarded.after == 0xa5);
+    }
+    assert(fx_evaluate_base_n(NULL, 0, FX_BASE_DEC, NULL, NULL, &retained,
+                             &guarded.result) == FX_EVAL_SYNTAX);
+    assert(memcmp(&guarded.result.value[1], &retained, sizeof retained) == 0);
+}
+
 static void input_codec_bounds(void)
 {
     static uint8_t storage[65538];
@@ -234,7 +266,7 @@ static void editor_bounds(void)
 
 int main(void)
 {
-    parser_bounds(); formatter_bounds(); render_bounds(); editor_bounds(); input_codec_bounds(); cursor_key_bounds();
-    puts("Public API bounds checks passed (140000 deterministic fuzz cases plus boundaries).");
+    parser_bounds(); base_parser_bounds(); formatter_bounds(); render_bounds(); editor_bounds(); input_codec_bounds(); cursor_key_bounds();
+    puts("Public API bounds checks passed (160000 deterministic fuzz cases plus boundaries).");
     return 0;
 }

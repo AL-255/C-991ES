@@ -1,0 +1,8 @@
+{
+  "ranges": [
+    {"start":"0x10000","end":"0x105fe","scope":"Complete prepared SOLVE numerical controller: variable read/restoration, Newton progress, shared midpoint/damping retry budget, persistent damping count, alternate starts, finite acceptance, cancellation and native status export; expression frontend/cursor bus effects remain documented external actions","source":"csrc/numeric/fx_solve.c"},
+    {"start":"0x105fe","end":"0x107aa","scope":"Complete SOLVE rounded/zero acceptance, ordinary residual, error finish and callback adapters with independent value/status admission; arithmetic workspace/register preservation is not an API output","source":"csrc/numeric/fx_solve.c"},
+    {"start":"0x107aa","end":"0x10962","scope":"Complete finite derivative helper, original relative/floor step selection, central and asymmetric one-sided divided differences, callback failure order and numerical error return","source":"csrc/numeric/fx_solve.c"},
+    {"start":"0x1c312","end":"0x1c340","scope":"Complete scalar absolute-value wrapper: CCF6 admission, bit40 clear, negative sign inversion and F3 construction; numeric dependency semantics are separately tracked","source":"csrc/numeric/fx_solve.c"}
+  ]
+}

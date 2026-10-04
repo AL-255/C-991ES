@@ -1,0 +1,14 @@
+{
+  "subsystem":"nonblocking MATRIX/VECTOR menu controller",
+  "implementation":"Handwritten readable C; original ROM execution occurs only in independent tests",
+  "sources":["csrc/ui/fx_mode_bank_menu.c","csrc/ui/fx_mode_bank_menu.h"],
+  "implemented_routines":[
+    {"address":"0xd074..0xd0cc","name":"fx_matrix_menu_begin/fx_vector_menu_begin","scope":"Ordinary mode/screen/Ans-slot gates and menu-page choice"},
+    {"address":"0xd0cc..0xd2d8","name":"fx_mode_bank_menu_begin/tick/accept_menu/resume_timer/finish","scope":"Complete MODE/parameter caller lifecycle, retained family state, structural/token choices, back/cancel/data/editor completion"},
+    {"address":"0xd2d8..0xd312","name":"fx_mode_bank_ensure_dimensions","scope":"Persistent selected-slot adapter reusing the frozen high-level ensure_dimensions storage policy"}
+  ],
+  "integration":"Complete the frozen MODE caller's MATRIX/VECTOR request with this actual controller result, after its own persistent mode/storage policy has completed.",
+  "verification":["tools/test_mode_bank_menu_c.py","analysis/c-verification/mode_bank_menu.json"],
+  "understanding_ranges":"csrc/ui/mode_bank_menu/understood_ranges.json",
+  "gaps":["Physical STOP/IRQ scheduling and the0770 timer acknowledgement remain host-owned.","Prepared menu-pair fixtures prove caller policy separately from generic selector bodies; true raw-key and parent MODE paths are also covered."]
+}

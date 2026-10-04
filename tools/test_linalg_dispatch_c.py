@@ -21,7 +21,7 @@ class NumericContext(C.Structure):_fields_=[('exact_math',C.c_uint8),('display_m
 class Context(C.Structure):_fields_=[('calculation_context',C.c_uint8),('numeric',NumericContext)]
 class Result(C.Structure):_fields_=[('value',Complex),('firmware_status',C.c_uint8),('cancellation_checks',C.c_uint32)]
 class Rational(C.Structure):_fields_=[('numerator',C.c_int64),('denominator',C.c_uint64),('flags',C.c_uint8)]
-TOKENS={0xc0:13,0xc1:14,0x5a:122,0x5b:123,0x63:11,0xb3:12,0x60:95,0x75:108,0x76:109,0x77:107,
+TOKENS={0x88:9,0xc3:10,0xc0:13,0xc1:14,0x5a:122,0x5b:123,0x63:11,0xb3:12,0x60:95,0x75:108,0x76:109,0x77:107,
  0x2b:43,0x2d:44,0x4e:45,0x4f:46,0x9e:47,0x5e:101,0x9f:102,0xbe:49,0xbf:50,0x68:32,
  0x98:23,0xa8:25,0xa3:24,0x73:21,0x93:22,0x25:110,0x57:111,0x70:15,0x71:16,0x72:17,
  0x90:18,0x91:19,0x92:20,0xa0:26,0xa1:27,0xa2:28,0xb0:29,0xb1:30,0xb2:31,0x85:112,0x86:113,0x87:114}
@@ -30,9 +30,9 @@ UNARY=[x for x in TOKENS if x not in BINARY]+[0x68]
 def main():
  p=argparse.ArgumentParser(description=__doc__);p.add_argument('--random-cases',type=int,default=6000);p.add_argument('--no-report',action='store_true');a=p.parse_args()
  build=ROOT/'analysis/build/linalg_dispatch';build.mkdir(parents=True,exist_ok=True)
- sources=['csrc/linalg/fx_linalg_dispatch.c','csrc/linalg/fx_linalg_store.c','csrc/linalg/fx_linalg.c','csrc/linalg/fx_linalg_reduce.c','csrc/complex/fx_complex.c','csrc/complex/fx_complex_round.c','csrc/numeric/fx_numeric.c']
- headers=[x[:-2]+'.h' for x in sources]
- library=build/'dispatch.so';subprocess.run(['gcc','-std=c99','-O2','-Wall','-Wextra','-Werror','-pedantic','-shared','-fPIC',*(str(ROOT/x) for x in sources),'-o',str(library)],check=True)
+ sources=['csrc/linalg/fx_linalg_dispatch.c','csrc/numeric/fx_raw_fraction_convert.c','csrc/numeric/fx_raw_decimal_divide.c','csrc/numeric/fx_raw_decimal_parts.c','csrc/numeric/fx_raw_decimal_multiply_add.c','csrc/numeric/fx_raw_decimal_exp.c','csrc/numeric/fx_transcend.c','csrc/numeric/fx_base.c','csrc/linalg/fx_linalg_store.c','csrc/linalg/fx_linalg.c','csrc/linalg/fx_linalg_reduce.c','csrc/complex/fx_complex.c','csrc/complex/fx_complex_round.c','csrc/numeric/fx_numeric.c']
+ headers=[x[:-2]+'.h' for x in sources]+['csrc/numeric/fx_transcend_internal.h','csrc/numeric/fx_transcend_guarded.h']
+ library=build/'dispatch.so';subprocess.run(['gcc','-std=c99','-O2','-Wall','-Wextra','-Werror','-pedantic','-shared','-fPIC','-I'+str(ROOT/'csrc/numeric'),*(str(ROOT/x) for x in sources),'-o',str(library)],check=True)
  lib=C.CDLL(str(library));lib.fx_decimal_parse.argtypes=[C.POINTER(Number),C.c_char_p];lib.fx_rational_encode.argtypes=[C.POINTER(Number),C.POINTER(Rational)];lib.fx_surd_pack.argtypes=[C.POINTER(Number),C.POINTER(Number)]
  lib.fx_linalg_dispatch_unary.argtypes=[C.POINTER(Result),C.POINTER(Bank),C.POINTER(Complex),C.c_uint8,C.POINTER(Context)]
  lib.fx_linalg_dispatch_binary.argtypes=[C.POINTER(Result),C.POINTER(Bank),C.POINTER(Complex),C.POINTER(Complex),C.c_uint8,C.POINTER(Context)]
@@ -104,8 +104,23 @@ def main():
   for kind in [0x60,0x90]:
    for identity in range(9):
     for token in UNARY:
-     if kind==0x90 and token in [0x5a,0x5b]:continue
      run('unary-slots',bank(mask=0x18 if identity<4 else 0x18|(0x80>>(identity-4))),operand(record(kind,identity,True),dec(71)),None,token,Context(mode,NumericContext(1,0,0,0)),identity%2)
+ for mode in [6,7]:
+  for identity in range(9):
+   for mask in [0,0x18,0x80,0xc0,0xe0,0xf0,0xf8,0xff]:
+    for token in [0x88,0xc3,0x5a,0x5b]:
+     run('rich-vector-gap',bank(mask=mask),operand(record(0x90,identity,True),dec(71)),None,token,Context(mode,NumericContext(1,0,0,0)),identity%2)
+ for byte in range(256):
+  for token in [0x88,0x5a,0x5b]:
+   run('rich-vector-metadata',bank(mask=byte),operand(bytes([0x90])+bytes([byte])*9,dec(71)),None,token)
+ for mode in [6,7]:
+  for identity in range(9):
+   for mask in [0,0x18,0x80,0xc0,0xe0,0xf0,0xf8,0xff]:
+    for token in [0x88,0xc3]:
+     run('rich-matrix-gap',bank(mask=mask),operand(record(0x60,identity,True),dec(71)),None,token,Context(mode,NumericContext(1,0,0,0)),identity%2)
+ for n in ['64a20000000000000301','641a2000000000000401','64a1a200000000000501','64a2a300000000000501','64533563da9e9f2b07de','64082a55de3d0167061b','64ffffffffffffff0f01','64000000000000000000','64aaabacadaeafba0806','640123456789abcd1401','65fdd922136163e51251','6835c3cf7c9cf9110fb9','65a32e1337ec518a11b6','66545dd3aded35740db6','662f950dfb9b879c0f41']:
+  n=bytes.fromhex(n)
+  run('rich-matrix-exp-metadata',bank(mask=0),operand(n,dec(71)),None,0x88)
  for mask in range(256):
   for token in [0xc0,0xc1,0x63,0x75,0x76]:
    run('bitmap',bank(mask=mask),operand(record(0x60,0)),None,token)
@@ -138,10 +153,9 @@ def main():
    right=operand(record(rk,ri,index%3==1) if rk else rng.choice(pool),rng.choice(ints+marked+errors))
    if index%3==0:left,right=right,left
    if not (left.real.bytes[0]&0xf0 in [0x60,0x90] or right.real.bytes[0]&0xf0 in [0x60,0x90]):continue
-  if right is None and kind==0x90 and token in [0x5a,0x5b]:continue
   run('random-'+str(index),initial,left,right,token,ctx,(index%3 if right else index%2))
  # Unsupported tokens and safe host boundaries leave bank and output intact.
- for token in [0x00,0x80,0x88,0xc3]:
+ for token in [0x00,0x80]:
   b=bank();prior=bytes(b);out=Result();C.memset(C.byref(out),0xa5,C.sizeof(out));before=bytes(out);x=operand(record(0x60));ctx=Context(6,NumericContext(1,0,0,0))
   h=lib.fx_linalg_dispatch_unary(C.byref(out),C.byref(b),C.byref(x),token,C.byref(ctx))
   check('unsupported',[h,bytes(b).hex(),bytes(out).hex()],[-3,prior.hex(),before.hex()],{'token':token})
@@ -152,9 +166,8 @@ def main():
   'oracle_context':'Unchanged ROM/CPU; two scalar work records and native10-byte previous-value stack prepared. Explicit RAM8E00 timer cancellation at5564; compare full20-byte output, all18 dimensions, all810 payload bytes, bitmap, nativeR2 and timer polls.',
   'limits':['No second parser or physical key/timer controller; ordinary scalar-only operands returnUNIMPLEMENTED.',
    'Canonical fixed identities0..8, dimension bytes0..3, and no input pointers into mutable bank storage.',
-   'Vector-tag REF/RREF select unrelated scalar/base routines after native index adjustment and remainUNIMPLEMENTED; conjugate/argument rich dispatch is outside this module.',
    'Raw mapping regressions at original171F4 use independently hand-built expression trees, not a second parser; final caller error-record construction and preserved imaginary bytes are compared explicitly.'],
   'raw_expression_examples':raw['examples'][:20]}
- if not fail and not a.no_report:report=write_report('analysis/c-verification/linalg_dispatch.json',report,sources+headers+['tools/linalg_raw_cases.py'],'tools/test_linalg_dispatch_c.py')
+ if not fail and not a.no_report:report=write_report('analysis/c-verification/linalg_dispatch.json',report,sources+headers+['tools/linalg_raw_cases.py','tools/trace_natural_result.py','tools/c_verification.py'],'tools/test_linalg_dispatch_c.py')
  print(json.dumps({k:v for k,v in report.items() if k!='tested_inputs_sha256'},indent=2));return bool(fail)
 if __name__=='__main__':raise SystemExit(main())

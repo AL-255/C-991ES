@@ -65,7 +65,7 @@ def main():
     headers = ['csrc/numeric/fx_solver.h', 'csrc/numeric/fx_numeric.h',
                'csrc/linalg/fx_linalg.h', 'csrc/complex/fx_complex.h',
                'csrc/complex/fx_complex_round.h', 'csrc/numeric/fx_root.h',
-               'csrc/numeric/fx_transcend.h', 'csrc/numeric/fx_transcend_internal.h',
+               'csrc/numeric/fx_transcend.h', 'csrc/numeric/fx_transcend_internal.h', 'csrc/numeric/fx_transcend_guarded.h',
                'csrc/trig/fx_trig_inverse.h', 'csrc/trig/fx_trig_math.h', 'csrc/trig/fx_trig.h']
     library = build / 'solver.so'
     subprocess.run(['gcc', '-std=c99', '-O3', '-Wall', '-Wextra', '-Werror', '-pedantic',

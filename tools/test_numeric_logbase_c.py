@@ -179,7 +179,7 @@ def main():
         report['status'] = 'fail'; path.write_text(json.dumps(report, indent=2) + '\n')
     else:
         write_report(path, report, sources + ['csrc/numeric/fx_numeric.h', 'csrc/numeric/fx_logbase.h',
-                                             'csrc/numeric/fx_transcend.h', 'csrc/numeric/fx_transcend_internal.h',
+                                             'csrc/numeric/fx_transcend.h', 'csrc/numeric/fx_transcend_internal.h', 'csrc/numeric/fx_transcend_guarded.h',
                                              'csrc/numeric/logbase_manifest.json',
                                              'tools/trace_natural_result.py', 'tools/c_verification.py'],
                      'tools/test_numeric_logbase_c.py')

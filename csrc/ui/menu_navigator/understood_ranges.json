@@ -1,0 +1,7 @@
+{
+  "basis": "Static instruction analysis plus original-ROM differential checks at true menu entry, returned-token, timer, key-wait and completion boundaries. CPU locals are named host fields; no instruction interpreter exists in production.",
+  "ranges": [
+    {"start":"0xdfde","end":"0xe17e","scope":"Generic menu data lookup, optional heading/MODE sentinel, leaf/action masks, arrow/back/close routing, native completion bytes and retained0770 blink delay","source":"csrc/ui/fx_menu_navigator.c"},
+    {"start":"0x3fba","end":"0x4056","scope":"Four supplied text lines or heading plus consecutive body lines, exact display preparation and page-arrow flags","source":"csrc/ui/fx_menu_navigator.c"}
+  ]
+}

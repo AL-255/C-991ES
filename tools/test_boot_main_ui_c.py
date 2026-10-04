@@ -161,6 +161,8 @@ def main():
             'tools/test_key_controller_c.py', 'tools/test_key_wait_c.py',
             'tools/test_boot_events_c.py', 'tools/test_boot_c.py',
             'tools/test_diagnostic_contrast_c.py', 'tools/test_platform_c.py',
+            'tools/trace_natural_result.py', 'tools/verify_firmware.py',
+            'tools/nxu8/decoder.py',
             'tools/c_build_inputs.py', 'tools/c_verification.py']
         report = write_report('analysis/c-verification/boot_main_ui.json', report,
                               dependencies, 'tools/test_boot_main_ui_c.py')

@@ -231,8 +231,9 @@ if failures:
 if not args.no_report:
     headers=['complex/fx_complex_dispatch.h','complex/fx_complex.h','complex/fx_complex_angle.h',
              'complex/fx_complex_round.h','numeric/fx_numeric.h','numeric/fx_transcend.h',
-             'numeric/fx_transcend_internal.h','numeric/fx_root.h','numeric/fx_combinatorics.h','numeric/fx_logbase.h',
+             'numeric/fx_transcend_internal.h','numeric/fx_transcend_guarded.h',
+             'numeric/fx_root.h','numeric/fx_combinatorics.h','numeric/fx_logbase.h',
              'trig/fx_trig.h','trig/fx_trig_math.h','trig/fx_trig_inverse.h','trig/fx_trig_hyperbolic.h']
     write_report('analysis/c-verification/complex_dispatch.json',report,
-                 ['csrc/'+p for p in SOURCES+headers],'tools/test_complex_dispatch_c.py')
+                 ['csrc/'+p for p in SOURCES+headers]+['tools/trace_natural_result.py','tools/c_verification.py'],'tools/test_complex_dispatch_c.py')
 print(json.dumps({'status':'pass','total_cases':total,'cases':counts,'full_firmware_complete':False}))

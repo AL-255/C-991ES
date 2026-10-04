@@ -136,8 +136,45 @@ def main():
                 expected_record, expected_consumed, expected_tokens), (tokens.hex(), actual)
         if complex_mode: assert actual['kind'] == expected_kind
         assert pbm.read_bytes() == b'P4\n96 32\n' + frame, (tokens.hex(), 'standalone C PBM differs')
-    for args in [[], ['--eval', 'z'], ['--eval', '0'], ['--format', 'ff'], ['--token', '100'],
-                 ['--token', 'xyz'], ['--eval', '31', '--unknown'], ['--format', '0'*20, '--unknown']]:
+    base_inputs = [b'0', b'1', b'1+1', b'(\x513+\x514)\x4e\x512',
+                   b'(\x519-\x511)\x4f\x513', b'\x61\x515)', b'\x62\x515)',
+                   b'\x515\x6f\x512', b'\x515\x6e\x513', b'\x515\x7e\x512',
+                   b'\x515\x7f\x512', b'\x50'+b'\xbd'*8, b'\x53'+b'1'+b'0'*15,
+                   b'\x5237777777777', b'\x5112', b'\x511\xae\x512',
+                   b'\x511\xae\x511\xae\x512', b'\x98\x512)', b'A', b'\x513\x47']
+    base_cases = 0
+    for base, name in ((1, 'bin'), (7, 'oct'), (9, 'dec'), (15, 'hex')):
+        for tokens in base_inputs:
+            def prepare_base():
+                prepare(False)
+                m.ram[0x80f9] = 2; m.ram[0x80fa] = base
+                for i, byte in enumerate(tokens+b'\0'): m.ram[0x8200+i] = byte
+                m.word(0x8190, 0x8200); m.er(0, 0x8190); m.er(2, 0x8300)
+                m.call(0x171f4)
+            prepare_base()
+            assert m.reg(0) == 0, (name, tokens.hex(), m.reg(0))
+            expected_record = bytes(m.ram[0x8300:0x8314]).hex()
+            expected_consumed = m.word(0x8190)-0x8200
+            m.er(0, 0x8300); m.er(2, 0x8500); m.call(0x158b8)
+            expected_tokens = bytes(m.ram[0x8500:0x8600]).split(b'\0', 1)[0].hex()
+            prepare_base()
+            for address, value in ((0x80f5, 0xf0), (0x8100, 13), (0x811f, 10), (0x8121, 1)):
+                m.ram[address] = value
+            m.er(0, 0x8300); m.call(0x37bc); m.call(0x3cfc)
+            frame = b''.join(bytes(m.ram[0xf800+16*y:0xf80c+16*y]) for y in range(32))
+            actual = json.loads(subprocess.run([str(executable), '--eval', tokens.hex(), '--base', name,
+                '--pbm', str(pbm)], check=True, capture_output=True, text=True).stdout)
+            assert (actual['eval_status'], actual['format_status'], actual['bitmap_status'], actual['kind']) == (0, 0, 0, 0)
+            assert (actual['record'], actual['consumed'], actual['tokens']) == (
+                expected_record, expected_consumed, expected_tokens), (name, tokens.hex(), actual)
+            assert pbm.read_bytes() == b'P4\n96 32\n' + frame, (name, tokens.hex(), 'BASE-N result pixels')
+            base_cases += 1
+    invalid_arguments = [[], ['--eval', 'z'], ['--eval', '0'], ['--format', 'ff'], ['--token', '100'],
+                 ['--token', 'xyz'], ['--eval', '31', '--unknown'], ['--format', '0'*20, '--unknown'],
+                 ['--eval', '31', '--base'], ['--eval', '31', '--base', '3'],
+                 ['--eval', '31', '--base', 'hex', '--complex'],
+                 ['--eval', '31', '--complex', '--base', 'hex'], ['--display', '31', '--base', 'dec']]
+    for args in invalid_arguments:
         assert subprocess.run([str(executable), *args], capture_output=True).returncode == 2, args
     evaluator_errors = [(b'1+', 2, False), (b'1\x4f0', 3, False), (b'1\x97', -1, False),
                         (b'\x80+', 2, True), (b'\x80\x57', 3, True),
@@ -180,13 +217,15 @@ def main():
             expected_status, consumed, m.ram[0x8114]), (display.hex(), result, m.ram[0x8114])
     sources = build_inputs(ROOT)
     data = {
-        'cases': len(cases) + 9 + len(evaluator_errors) + len(boundary_errors) + len(mapped_errors), 'successful_expression_PBM_cases': len(cases),
+        'cases': len(cases) + base_cases + len(invalid_arguments) + 1 + len(evaluator_errors) + len(boundary_errors) + len(mapped_errors),
+        'successful_expression_PBM_cases': len(cases) + base_cases,
+        'base_expression_PBM_cases': base_cases,
         'complex_expression_PBM_cases': len(complex_inputs) + len(complex_displays),
         'natural_input_conversion_cases': len(display_inputs) + len(complex_displays), 'natural_boundary_error_cases': len(boundary_errors),
         'natural_evaluator_error_cursor_cases': len(mapped_errors),
-        'invalid_argument_cases': 9, 'evaluator_error_cases': len(evaluator_errors),
-        'comparison': 'Standalone executable JSON status,20-byte record,consumed pointer,formatter tokens and all96x32 PBM pixels versus original171F4/C034/C060/B070/3CFC.',
-        'scope': 'Prepared ordinary Math COMP and rectangular CMPLX contexts, including structured input; no reset/key UI or other modes'}
+        'invalid_argument_cases': len(invalid_arguments) + 1, 'evaluator_error_cases': len(evaluator_errors),
+        'comparison': 'Standalone executable JSON status,20-byte record,consumed pointer,formatter tokens and all96x32 PBM pixels versus original171F4/C034/C060/B070/158B8/37BC/3CFC.',
+        'scope': 'Prepared ordinary Math COMP and rectangular CMPLX contexts including structured input; BASE-N raw grammar plus radix token formatting and fixed-row result display. No reset/key UI.'}
     report = data if options.no_report else write_report('analysis/c-verification/cli.json', data,
         sources + ['tools/c_build_inputs.py', 'tools/c_verification.py', 'tools/trace_natural_result.py',
                    'tools/nxu8/calculus_expression_events.c'], 'tools/test_cli_c.py')

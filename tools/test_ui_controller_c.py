@@ -264,7 +264,9 @@ def main():
             'comparison':'Original full-entry return and named context plus remaining64KiB RAM/records/tokens/LCD/MMIO/callbacks. The actual nativeCPU stack extent is measured per fresh fixture and excluded through8DED (retained across sequential keys). Called numeric/layout workspaces8000..80DB/8640..87CF are excluded after action; integral/derivative additionally exclude850A..863F. Fresh entry preparation includes all nonstack RAM. Cancellation counts and sampled persistentX records are compared independently.'}
     if not args.no_report:
         deps=implementation_inputs(ROOT,sources)+['tools/test_input_controller_c.py','tools/test_platform_c.py',
-            'tools/test_error_event_c.py','tools/test_key_controller_c.py','tools/trace_natural_result.py',
+            'tools/test_error_event_c.py','tools/test_key_controller_c.py','tools/test_key_wait_c.py',
+            'tools/test_boot_c.py','tools/trace_natural_result.py','tools/verify_firmware.py',
+            'tools/nxu8/decoder.py',
             'tools/c_build_inputs.py','tools/c_verification.py',adapter,
             'tools/nxu8/input_controller_events.c']
         report=write_report('analysis/c-verification/ui_controller.json',report,deps,'tools/test_ui_controller_c.py')

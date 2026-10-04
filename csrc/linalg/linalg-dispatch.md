@@ -60,7 +60,40 @@ Fixtures include every temporary bitmap, slots0..8, dimensions0..3, full error
 headers, decimal/rational/surd/marked cells, cancellation and record aliases.
 Raw mappings are additionally audited through original171F4 expressions.
 
-Vector-tag REF/RREF and rich conjugate/argument have unusual native index
-adjustments into unrelated scalar/base entries. This module reports those
-untranslated prepared paths as `UNIMPLEMENTED`. Physical timing, editor input,
-and parent-owned parser/workspace mutations are outside this value API.
+The native operation index also exposes scalar operations for some rich tokens.
+The implementation retains these observable selections:
+
+| Raw token | Matrix reference | Vector reference |
+| --- | --- | --- |
+| `5A` | REF | Normal-R scalar leaf rejects kind9 with fullF3/status3 |
+| `5B` | RREF | Scalar bias addition rejects kind9; unchecked ten-digit extraction reads zero, then NOT serializes−1/status0 |
+| `C3` | Vector magnitude rejects kind6 with fullF3/status3 | Vector magnitude returns a scalar but keeps its temporary allocated |
+| `88` | Forced new temporary, copy, release original temporary, then marked-fraction conversion and natural exponential | Ordinary temporary staging, then exponential conversion rejects kind9 with fullF3/status3 |
+
+Vector `5A`, `5B`, `88` and rich `C3` use the ordinary copy/reuse policy before
+their scalar leaf. They retain that temporary allocation after returning.
+Vector `63` remains a different path: it releases a temporary before magnitude.
+The complete20-byte work result and the reference bank state are compared
+independently; a numerical error does not roll back an earlier copy or release.
+
+Matrix `88` clears the marked header as the original scalar load does and then
+interprets the reference's remaining bytes as unchecked fraction fields. Valid
+reference metadata therefore can produce an ordinary exponential result, a full
+error record or a zero result. The separate finite packed-decimal adapters retain
+malformed nibble correction, sign padding, delimiter rules, operation order and
+the seventeen-digit log10(e) coefficient guard. They call the existing readable
+guarded factor kernel after the first actual coefficient subtraction supplies
+an equivalent canonical coordinate; no approximate recognition or host floating
+point enters this path. See [raw decimal execution flow](../numeric/raw-decimal.md).
+
+Some arbitrary raw scalar additions never return in the original machine.
+The numerical adapter detects their repeated ordering state and leaves its
+output untouched. The native differential suite records repetition of every
+architectural register and every RAM byte at1BC6C. If such a boundary is reached
+after rich temporary allocation, those earlier bank mutations are retained and
+the typed result remains uncommitted. This is an explicit execution boundary,
+not a fabricated numerical result. No such non-return was observed in the
+canonical rich-reference conversion corpus.
+
+Physical timing, editor input and parent-owned parser/workspace mutations are
+outside this value API.

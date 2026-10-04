@@ -11,7 +11,7 @@
     {
       "address": "0x15a1e",
       "name": "biased decimal magnitude extraction",
-      "scope": "Canonical ordinary decimal records across all stored signs/exponents; ten-digit extraction after adding10^10"
+      "scope": "Canonical decimal/marked/rational/surd/error scalars; raw sign classification, rational bias conversion, surd/error F3 payload extraction and ten-digit extraction after adding 10^10"
     },
     {
       "address": "0x15a94",
@@ -26,37 +26,37 @@
     {
       "address": "0x15a64",
       "name": "BCD magnitude record serialization",
-      "scope": "Valid serializer inputs, canonical zero and signed32 decimal records"
+      "scope": "Canonical signed32 records and exact returning BIN rejection partial records; zero residual pair native recurrence returns explicit UNIMPLEMENTED"
     },
     {
       "address": "0x15c1c",
       "name": "NOT",
-      "scope": "Prepared valid signed16 BIN and signed32 other-radix inputs, fractional integer extraction"
+      "scope": "Canonical scalar metadata and all returning ordinary inputs; incoming BIN carry ignored, exact native partial serialization preserved, zero residual pair non-return boundary explicit"
     },
     {
       "address": "0x15c46",
       "name": "NEG",
-      "scope": "Decimal word extraction; signed32 minimum and BIN positive overflow reject with nativeR0=3 and original record retained"
+      "scope": "Canonical scalar metadata word extraction; signed32 minimum and BIN positive overflow reject with native R0=3 and original record retained"
     },
     {
       "address": "0x15d62",
       "name": "OR",
-      "scope": "Prepared32-bit operands including sign-extended BIN words"
+      "scope": "Canonical scalar metadata conversion and full 32-bit logical result; incoming BIN carry ignored, returning partial serialization exact, proven zero-pair non-return explicit"
     },
     {
       "address": "0x15d9e",
       "name": "XOR",
-      "scope": "Prepared32-bit operands including sign-extended BIN words"
+      "scope": "Canonical scalar metadata conversion and full 32-bit logical result; incoming BIN carry ignored, returning partial serialization exact, proven zero-pair non-return explicit"
     },
     {
       "address": "0x15dda",
       "name": "XNOR",
-      "scope": "Prepared32-bit operands; complement of all32 XOR result bits"
+      "scope": "Canonical scalar metadata conversion and full 32-bit logical result; incoming BIN carry ignored, returning partial serialization exact, proven zero-pair non-return explicit"
     },
     {
       "address": "0x15e1e",
       "name": "AND",
-      "scope": "Prepared32-bit operands including sign-extended BIN words"
+      "scope": "Canonical scalar metadata conversion and full 32-bit logical result; incoming BIN carry ignored, returning partial serialization exact, proven zero-pair non-return explicit"
     },
     {
       "address": "0x15e82",
@@ -66,7 +66,7 @@
     {
       "address": "0x15ed6",
       "name": "stored scalar BASE-N preparation",
-      "scope": "Post-bank-fetch scalar decimal/rational/surd conversion, metadata removal, F3 stored-error normalization, truncation then range check; bank copying and secondary clearing are caller-owned"
+      "scope": "Post-bank-fetch scalar decimal/rational/surd conversion, metadata removal, F3 stored-error and empty-payload 6x/9x reference rejection, truncation then range check; bank copying and secondary clearing are caller-owned"
     },
     {
       "address": "0x1d040",
@@ -101,9 +101,8 @@
   ],
   "gaps": [
     "Shared expression grammar/precedence, variable bank copy and controller integration are separate parser/controller work",
-    "Raw marked/exact/error operands remain unsupported in direct word/unary/logical conversion; prepared arithmetic admits canonical raw scalars without prior bank preparation",
     "Malformed BCD/compact records and input/output-token storage overlap are outside the documented APIs",
-    "Logical operators ignoring invalid BIN carry/serialization errors can hang in the original; those raw-invalid paths return explicit UNIMPLEMENTED",
+    "BIN logical serialization with a zero residual pair has an exact CPU/RAM recurrence in the original; value API returns explicit UNIMPLEMENTED without changing output/status",
     "Full RAM scratch/register writes and mode/keyboard controllers are separate subsystems"
   ],
   "verification": "tools/test_numeric_base_c.py",

@@ -127,8 +127,7 @@ def run_raw_regressions(library_path,build_dir,root=ROOT):
   for shape,base in [('matrix',0xc8),('vector',0xcc)]:
    names=[reference(base+i) for i in range(4)]
    for name in names:
-    for token in [0xc0,0xc1,0x5a,0x5b,0x63,0xb3,0x60,0x75,0x76,0x77]:
-     if base==0xcc and token in [0x5a,0x5b]:continue
+    for token in [0xc0,0xc1,0xc3,0x88,0x5a,0x5b,0x63,0xb3,0x60,0x75,0x76,0x77]:
      one(unary(token,name),context,shape,'raw-named-unary')
    for token in [0x2b,0x2d,0x4e,0x4f,0x9e,0x5e,0x9f,0xbe,0xbf,0x68]:
     for left,right in [(names[0],names[1]),(names[3],names[2]),(names[0],scalar(2)),(scalar(2),names[0])]:one(binary(token,left,right),context,shape,'raw-named-binary')
@@ -137,7 +136,7 @@ def run_raw_regressions(library_path,build_dir,root=ROOT):
    temporary=binary(0x2b,names[0],names[1])
    for token in [0x2b,0x2d,0x4e,0x4f,0x9e,0x5e,0x9f,0xbe,0xbf,0x68]:
     for left,right in [(temporary,names[2]),(names[2],temporary),(temporary,temporary)]:one(binary(token,left,right),context,shape,'raw-nested-binary')
-   for token in [0xc0,0xc1,0x63,0xb3,0x60,0x75,0x76,0x77]:one(unary(token,temporary),context,shape,'raw-nested-unary')
+   for token in [0xc0,0xc1,0xc3,0x88,0x5a,0x5b,0x63,0xb3,0x60,0x75,0x76,0x77]:one(unary(token,temporary),context,shape,'raw-nested-unary')
    for header in range(0xf0,0x100):
     for token in [0x2b,0x2d,0x4e,0x4f,0x9e,0x5e,0x9f,0xbe,0xbf,0x68]:
      for left,right in [(names[0],error(header)),(error(header),names[0])]:one(binary(token,left,right),context,shape,'raw-all-error-headers')
@@ -149,7 +148,6 @@ def run_raw_regressions(library_path,build_dir,root=ROOT):
  return {'checks':sum(counts.values()),'native_calls':calls,'groups':counts,'failures':failures,'examples':examples,
  'scope':'Original171F4 rawtoken mapping and hand-built typed expression sequences; compare result20, status, allbanks, mask, cumulative timerpolls.',
  'limits':['No general parser is implemented by this test helper; each corpus tree defines its raw bytes and prepared calls.',
- 'Vector-tagREF/RREF andrichconjugate/argument remain explicit bridge gaps.',
  'Invalid genuine6x/9x richID>=9 excluded; all16 canonicalF0..FF error headers included.']}
 if __name__=='__main__':
  import argparse

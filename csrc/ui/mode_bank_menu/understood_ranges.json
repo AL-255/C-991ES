@@ -1,0 +1,7 @@
+{
+  "basis":"Readable host controller independently matched to original-ROM true and prepared caller boundaries, with complete observable RAM/MMIO parity; numeric dimension policy reuses the frozen high-level linalg storage API.",
+  "ranges":[
+    {"start":"0xd074","end":"0xd2d8","scope":"Ordinary MATRIX/VECTOR admission, MODE family initialization, retained page/action/slot/screen/caption, structural/token results, back/cancel, data admission and editor commit","source":"csrc/ui/fx_mode_bank_menu.c"},
+    {"start":"0xd2d8","end":"0xd312","scope":"Address-space adapter of frozen ensure_dimensions policy: equal shape preserves90 cell bytes, changed shape stores both dimensions and clears all nine cells","source":"csrc/ui/fx_mode_bank_menu.c"}
+  ]
+}

@@ -18,6 +18,7 @@ sys.path.insert(0, str(ROOT / 'tools'))
 from nxu8.machine import Machine
 from trace_natural_result import settings
 from c_verification import write_report
+from c_build_inputs import implementation_inputs
 
 
 class Number(C.Structure):
@@ -44,10 +45,11 @@ def main():
     build = ROOT / 'analysis/build/trig/hyperbolic'
     build.mkdir(parents=True, exist_ok=True)
     library = build / 'hyperbolic.so'
+    sources = ['csrc/trig/fx_trig_hyperbolic.c', 'csrc/numeric/fx_numeric.c',
+               'csrc/numeric/fx_transcend.c']
     subprocess.run(['gcc', '-std=c99', '-O2', '-Wall', '-Wextra', '-Werror', '-pedantic',
-                    '-shared', '-fPIC', str(ROOT / 'csrc/trig/fx_trig_hyperbolic.c'),
-                    str(ROOT / 'csrc/numeric/fx_numeric.c'),
-                    str(ROOT / 'csrc/numeric/fx_transcend.c'), '-o', str(library)], check=True)
+                    '-shared', '-fPIC', *(str(ROOT / p) for p in sources),
+                    '-o', str(library)], check=True)
     lib = C.CDLL(str(library))
     pointer = C.POINTER(Number)
     lib.fx_hyperbolic_decimal.argtypes = [pointer, pointer, C.c_int, C.c_int]
@@ -147,11 +149,9 @@ def main():
     elif failures:
         report['status'] = 'fail'; path.write_text(json.dumps(report, indent=2) + '\n')
     else:
-        write_report(path, report, ['csrc/trig/fx_trig_hyperbolic.c', 'csrc/trig/fx_trig_hyperbolic.h',
-                                   'csrc/trig/fx_trig.h', 'csrc/numeric/fx_numeric.c',
-                                   'csrc/numeric/fx_numeric.h', 'csrc/numeric/fx_transcend.c',
-                                   'csrc/numeric/fx_transcend.h', 'csrc/numeric/fx_transcend_internal.h',
+        write_report(path, report, implementation_inputs(ROOT, sources) + [
                                    'tools/trace_natural_result.py',
+                                   'tools/c_build_inputs.py',
                                    'tools/c_verification.py'], 'tools/test_trig_hyperbolic_c.py')
     print(f'{sum(counts.values())} hyperbolic checks, {len(failures)} mismatches')
     for failure in failures[:20]: print(failure)

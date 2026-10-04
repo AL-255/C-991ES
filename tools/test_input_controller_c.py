@@ -25,7 +25,8 @@ MODULES=[
     'platform/fx_persistent','platform/fx_diagnostic_contrast','platform/fx_result_classify',
     'parse/fx_tokens','parse/fx_eval','numeric/fx_numeric','numeric/fx_transcend','numeric/fx_power',
     'numeric/fx_root','numeric/fx_combinatorics','numeric/fx_logbase','numeric/fx_calculus',
-    'numeric/fx_integral','numeric/fx_derivative',
+    'numeric/fx_integral','numeric/fx_derivative','numeric/fx_base','numeric/fx_base_literal',
+    'numeric/fx_sexagesimal',
     'complex/fx_complex','complex/fx_complex_angle','complex/fx_complex_round','complex/fx_complex_dispatch',
     'linalg/fx_linalg','linalg/fx_linalg_store',
     'trig/fx_trig','trig/fx_trig_math','trig/fx_trig_inverse','trig/fx_trig_hyperbolic','trig/fx_math_context',
@@ -377,7 +378,9 @@ def main():
         'scope':'Ordinary COMP/CMPLX preparation, evaluation, variable/Ans/replay commit, colon continuation, cancellation, nonblocking error wait/recovery/reset/host exports, ordinary natural/linear expression and result presentation; mode45/12/4B initial history/result gates. Native Pol/Rec/polar results are recorded as explicit parser capability gaps.'}
     if not args.no_report:
         deps=implementation_inputs(ROOT,sources)+['tools/test_platform_c.py','tools/test_error_event_c.py',
-             'tools/test_key_controller_c.py','tools/trace_natural_result.py','tools/c_build_inputs.py','tools/c_verification.py',adapter]
+             'tools/test_key_controller_c.py','tools/test_key_wait_c.py','tools/test_boot_c.py',
+             'tools/trace_natural_result.py','tools/verify_firmware.py','tools/nxu8/decoder.py',
+             'tools/c_build_inputs.py','tools/c_verification.py',adapter]
         report=write_report('analysis/c-verification/input_controller.json',report,deps,'tools/test_input_controller_c.py')
     print(json.dumps(report,indent=2))
 

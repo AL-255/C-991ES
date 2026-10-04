@@ -34,6 +34,9 @@ add_library(fx991_firmware STATIC
     ui/fx_ui_controller.c
     ui/fx_error_display.c
     ui/fx_error_event.c
+    ui/fx_menu_navigator.c
+    ui/fx_mode_setup.c
+    ui/fx_mode_bank_menu.c
     numeric/fx_transcend.c
     numeric/fx_power.c
     numeric/fx_root.c
@@ -44,9 +47,16 @@ add_library(fx991_firmware STATIC
     numeric/fx_derivative.c
     numeric/fx_base.c
     numeric/fx_base_literal.c
+    numeric/fx_raw_decimal_parts.c
+    numeric/fx_raw_decimal_divide.c
+    numeric/fx_raw_decimal_multiply_add.c
+    numeric/fx_raw_fraction_convert.c
+    numeric/fx_raw_decimal_exp.c
     numeric/fx_sexagesimal.c
     numeric/fx_solver.c
     numeric/fx_solver_classifier.c
+    numeric/fx_solve.c
+    numeric/fx_quotient_remainder.c
     numeric/fx_numeric.c
     complex/fx_complex.c
     complex/fx_complex_angle.c
@@ -108,7 +118,7 @@ if(BUILD_TESTING)
     set_tests_properties(public_api_bounds PROPERTIES
         ENVIRONMENT "ASAN_OPTIONS=detect_leaks=0:halt_on_error=1;UBSAN_OPTIONS=halt_on_error=1")
     find_package(Python3 REQUIRED COMPONENTS Interpreter)
-    foreach(subsystem tokens platform boot boot_events persistent diagnostic_contrast result_classify main_loop boot_main_ui keys key_dispatch key_wait key_controller annunciator cursor editor editor_construct input_codec input_prepare input_recover input_controller ui_controller error_display error_event numeric numeric_transcend numeric_power numeric_root numeric_logbase numeric_calculus numeric_integral numeric_derivative numeric_base numeric_sexagesimal numeric_solver combinatorics complex complex_angles complex_round complex_dispatch linalg linalg_reduce linalg_store linalg_dispatch stats stats_cache stats_editor stats_normal trig trig_math trig_inverse trig_hyperbolic math_context render render_complex render_linalg format format_base format_budget eval eval_complex eval_variables eval_calculus eval_continuous cli)
+    foreach(subsystem tokens platform boot boot_events persistent diagnostic_contrast result_classify main_loop boot_main_ui keys key_dispatch key_wait key_controller annunciator cursor editor editor_construct input_codec input_prepare input_recover input_controller ui_controller error_display error_event menu_navigator mode_setup mode_bank_menu numeric numeric_transcend numeric_power numeric_root numeric_logbase numeric_calculus numeric_integral numeric_derivative numeric_base numeric_sexagesimal numeric_solver numeric_solve numeric_quotient raw_decimal combinatorics complex complex_angles complex_round complex_dispatch linalg linalg_reduce linalg_store linalg_dispatch stats stats_cache stats_editor stats_normal trig trig_math trig_inverse trig_hyperbolic math_context render render_complex render_linalg format format_base format_budget eval eval_complex eval_variables eval_calculus eval_continuous eval_base eval_sexagesimal cli)
         add_test(NAME differential_${subsystem}
                  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../tools/test_${subsystem}_c.py)
         set_tests_properties(differential_${subsystem} PROPERTIES

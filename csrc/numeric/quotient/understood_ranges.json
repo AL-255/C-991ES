@@ -1,0 +1,7 @@
+{
+  "ranges": [
+    {"start":"0x1c138","end":"0x1c1a2","scope":"Complete prepared quotient/remainder wrapper: source surd preprocessing, bit40/error admission, two scalar conversions, finite eligibility, raw70 fallback and two-result native status export; parser terminalstatus37 and bank lookup remain separate","source":"csrc/numeric/fx_quotient_remainder.c"},
+    {"start":"0x190f6","end":"0x191e8","scope":"Complete finite quotient/remainder numerical policy and two-scalar conversion: packed-prefix gates, integral quotient, finite product, cancellation-aware remainder, trailing-zero precision, accepted internal error quotient and ordered scalar normalization","source":"csrc/numeric/fx_quotient_remainder.c"},
+    {"start":"0x17442","end":"0x174a0","scope":"Complete two-source surd preprocessor: second operand before first, source replacement while retaining caller pointers; finite component conversion is a separately tracked dependency","source":"csrc/numeric/fx_quotient_remainder.c"}
+  ]
+}
