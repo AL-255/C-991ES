@@ -42,7 +42,7 @@
       "scope": "Python transports requests to the compiled native C session; JavaScript draws returned pixels"
     },
     "static_webassembly": {
-      "status": "successor_local_build_and_browser_wasm_pass_deployment_pending",
+      "status": "actual_ci_and_public_http_browser_proofs_pass",
       "builder": "simulator/build_web.py",
       "output_directory": "simulator/dist",
       "deployment_workflow": ".github/workflows/pages.yml",
@@ -59,7 +59,7 @@
       "session_lifetime": "Opaque C session in the page module; reload creates fresh memory",
       "filesystem_runtime": false,
       "native_proof_is_wasm_proof": false,
-      "deployment_verified": false,
+      "deployment_verified": true,
       "previous_deployment_verification": {
         "status": "pass",
         "release_commit": "bd216d3280f3ce5bdf44a0835bdb74ae67f4abda",
@@ -75,6 +75,21 @@
         "public_browser_completed_utc": "2026-10-04T21:06:00.474605+00:00",
         "verified_at_utc": "2026-10-04T21:09:35.110276+00:00",
         "scope": "Actual public HTTP delivery and desktop/mobile C-WASM UI proof; full firmware completeness remains false"
+      },
+      "deployment_verification": {
+        "status": "pass",
+        "release_commit": "480027e0208b6c565926fd80edcb2b6f2702b9a1",
+        "ci_run_id": 37239995288,
+        "ci_run_url": "https://github.com/AL-255/casio-explore/actions/runs/37239995288",
+        "ci_summary": "simulator/verification/deployment_ci_current.json",
+        "ci_summary_sha256": "3793474d342c8c89b9948b7ac4419f04929fea1866260fbe79a7d7e5129ed83f",
+        "ci_build_report_sha256": "0d0d9d2ed80c62bf72085253dc55f6fe6c19a4ee7f390e9fe3bd3a04f7b05b77",
+        "public_summary": "simulator/verification/deployment_public_current.json",
+        "public_summary_sha256": "48c0c8472a397a724ee6521d64ec27dd2aade645e381bb5316eef9c805db9495",
+        "public_http_full_proof_sha256": "62a391111b31be02944999a2d732ad30c2a6da859153dc2324937cedc1ff79e6",
+        "public_browser_full_proof_sha256": "0aa153197239c682b30bac39d10c0e48b8e4ce7af41a859d9a5c31e614fc40d7",
+        "public_browser_completed_utc": "2026-10-04T22:29:38.699034+00:00",
+        "scope": "Actual public HTTP and desktop/mobile browser checks. Full firmware completeness remains false."
       }
     }
   },

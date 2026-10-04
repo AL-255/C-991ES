@@ -1,0 +1,68 @@
+{
+  "schema": "simulator-deployment-verification-v1",
+  "status": "pass",
+  "full_firmware_complete": false,
+  "release_commit": "480027e0208b6c565926fd80edcb2b6f2702b9a1",
+  "run_id": 37239995288,
+  "site_url": "https://al-255.github.io/casio-explore/",
+  "http_full_proof_sha256": "62a391111b31be02944999a2d732ad30c2a6da859153dc2324937cedc1ff79e6",
+  "http_resources": {
+    "index.html": {
+      "url": "https://al-255.github.io/casio-explore/",
+      "final_url": "https://al-255.github.io/casio-explore/",
+      "status": 200,
+      "content_type": "text/html",
+      "bytes": 8103,
+      "sha256": "ed4fe670187000004cbb37dae5cfea665793efc728fec48d41bd91d6c0d6e18c"
+    },
+    "app.js": {
+      "url": "https://al-255.github.io/casio-explore/app.js",
+      "final_url": "https://al-255.github.io/casio-explore/app.js",
+      "status": 200,
+      "content_type": "application/javascript",
+      "bytes": 10751,
+      "sha256": "b0330d143e3510053a513c2fac0b658674950fb5368fee8302f9875a5df6d486"
+    },
+    "engine.js": {
+      "url": "https://al-255.github.io/casio-explore/engine.js",
+      "final_url": "https://al-255.github.io/casio-explore/engine.js",
+      "status": 200,
+      "content_type": "application/javascript",
+      "bytes": 4647,
+      "sha256": "bebe985819c42dfc8d0dbae45bc88361bb45130121e1176c6fc86cafcaba0aa8"
+    },
+    "styles.css": {
+      "url": "https://al-255.github.io/casio-explore/styles.css",
+      "final_url": "https://al-255.github.io/casio-explore/styles.css",
+      "status": 200,
+      "content_type": "text/css",
+      "bytes": 11480,
+      "sha256": "c5e1ff281873a2f30e8340e8c14cd3284d9912e84b85de3e52d023abda14c851"
+    },
+    "fx991sim.js": {
+      "url": "https://al-255.github.io/casio-explore/fx991sim.js",
+      "final_url": "https://al-255.github.io/casio-explore/fx991sim.js",
+      "status": 200,
+      "content_type": "application/javascript",
+      "bytes": 8200,
+      "sha256": "a2ef17728fad53fe2ae330849bade7eadd44dd1e4f33846e138cbcfae929bd77"
+    },
+    "fx991sim.wasm": {
+      "url": "https://al-255.github.io/casio-explore/fx991sim.wasm",
+      "final_url": "https://al-255.github.io/casio-explore/fx991sim.wasm",
+      "status": 200,
+      "content_type": "application/wasm",
+      "bytes": 478150,
+      "sha256": "eb1833e9d339a114f79bae22b9eaa2fe4326227b325931095b6fe5b9141609ca"
+    }
+  },
+  "browser_full_proof_sha256": "0aa153197239c682b30bac39d10c0e48b8e4ce7af41a859d9a5c31e614fc40d7",
+  "browser_checks": 198,
+  "actual_C_WASM_exchanges": 21,
+  "screenshots": 5,
+  "browser_completed_utc": "2026-10-04T22:29:38.699034+00:00",
+  "browser_source_drift": false,
+  "browser_build_report_drift": false,
+  "browser_scope": "Fresh disposable browser contexts against actual native C or compiled C-WASM. No existing user profile, mocked arithmetic, manufactured engine result or firmware corpus rerun.",
+  "scope": "Actual public HTTP and desktop/mobile browser checks. Full firmware completeness remains false."
+}
