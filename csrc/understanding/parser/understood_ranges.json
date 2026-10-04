@@ -164,6 +164,42 @@
       ],
       "complete": true,
       "audit": "Root reviewed complete original assembly, notes and readable model; recorded model/ROM/listing pins matched. Bounded dynamic witnesses; original reports do not claim full oracle artifact guard closure."
+    },
+    {
+      "start": "0x16b34",
+      "end": "0x16ba8",
+      "scope": "Complete implicit-multiplication preservation and decoded-kind0/1 prefix admission, callback/screen restrictions, BASE delegation and operator staging",
+      "source": "analysis/understanding/parser/sources/evaluator_flow.c",
+      "evidence": [
+        "analysis/understanding/parser/PREFIX-FLOW.md",
+        "analysis/understanding/parser/prefix-flow-proof.json.gz"
+      ],
+      "complete": true,
+      "audit": "Root reviewed every newly claimed ASM instruction, complete notes/model and matching recorded pins. Prefix report full native/tool/artifact closure; pending-search report model/ROM/listing pins only."
+    },
+    {
+      "start": "0x16bb0",
+      "end": "0x16bfe",
+      "scope": "Complete calculus staging: saveX, SUM/integral/derivative/product dispatch, live-modeX restoration, status preservation and parser count/state completion",
+      "source": "analysis/understanding/parser/sources/evaluator_flow.c",
+      "evidence": [
+        "analysis/understanding/parser/PREFIX-FLOW.md",
+        "analysis/understanding/parser/prefix-flow-proof.json.gz"
+      ],
+      "complete": true,
+      "audit": "Root reviewed every newly claimed ASM instruction, complete notes/model and matching recorded pins. Prefix report full native/tool/artifact closure; pending-search report model/ROM/listing pins only."
+    },
+    {
+      "start": "0x167e2",
+      "end": "0x16808",
+      "scope": "Complete nonmutating physical operator search using exact three-valued reduction, backward wrapped-depth traversal and matching/exhaustion returns",
+      "source": "analysis/understanding/parser/sources/evaluator_flow.c",
+      "evidence": [
+        "analysis/understanding/parser/PENDING-SEARCH.md",
+        "analysis/understanding/parser/pending-search-proof.json.gz"
+      ],
+      "complete": true,
+      "audit": "Root reviewed every newly claimed ASM instruction, complete notes/model and matching recorded pins. Prefix report full native/tool/artifact closure; pending-search report model/ROM/listing pins only."
     }
   ]
 }

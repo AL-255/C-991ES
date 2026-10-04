@@ -11,6 +11,244 @@
         "analysis/understanding/protocol-low/error-publication-proof.json.gz"
       ],
       "audit": "Independent root static assembly/model review and matching recorded source/artifact pins; callable semantic scope only."
+    },
+    {
+      "start": "0x55aa",
+      "end": "0x5692",
+      "scope": "Scalar distribution dispatch/Ans-display publication and vector paired row loop, literal invalidselector fallthrough, bytecounterwrap, error/cancel/sentinel branches",
+      "source": "analysis/understanding/protocol-low/probability_policy.c",
+      "uncredited_instruction_count": 96,
+      "evidence": [
+        "analysis/understanding/protocol-low/assembly.txt.gz",
+        "analysis/understanding/protocol-low/corrected-v3/FLOW.md",
+        "analysis/understanding/protocol-low/distribution-witnesses.json",
+        "analysis/understanding/protocol-low/dispatch-proof.json.gz",
+        "analysis/understanding/protocol-low/independent-review/REVIEW.md",
+        "analysis/understanding/protocol-low/independent-review/eligibility-final.json",
+        "analysis/understanding/protocol-low/independent-review/trace-audit.json"
+      ],
+      "audit": "Root read full algorithm notes/policy/math models and verified correctedv3 freezes/source pins. Independent complex_c reviewer read ALL1278 original ASM starts, checked28 native trace hashes/counts and corrected three finite-operation explanations. Original witnesses and prefix-only C parity do not imply full numerical production parity."
+    },
+    {
+      "start": "0x5692",
+      "end": "0x5770",
+      "scope": "Five scalar domain gates, sharedreturns and8 rejection, localfraction extraction and reachedclassification ordering",
+      "source": "analysis/understanding/protocol-low/probability_policy.c",
+      "uncredited_instruction_count": 95,
+      "evidence": [
+        "analysis/understanding/protocol-low/assembly.txt.gz",
+        "analysis/understanding/protocol-low/corrected-v3/FLOW.md",
+        "analysis/understanding/protocol-low/distribution-witnesses.json",
+        "analysis/understanding/protocol-low/dispatch-proof.json.gz",
+        "analysis/understanding/protocol-low/independent-review/REVIEW.md",
+        "analysis/understanding/protocol-low/independent-review/eligibility-final.json",
+        "analysis/understanding/protocol-low/independent-review/trace-audit.json"
+      ],
+      "audit": "Root read full algorithm notes/policy/math models and verified correctedv3 freezes/source pins. Independent complex_c reviewer read ALL1278 original ASM starts, checked28 native trace hashes/counts and corrected three finite-operation explanations. Original witnesses and prefix-only C parity do not imply full numerical production parity."
+    },
+    {
+      "start": "0x5770",
+      "end": "0x57ba",
+      "scope": "Resultcopy/cleanup andzero,one,signedmaximum constantwrappers",
+      "source": "analysis/understanding/protocol-low/corrected-v3/FLOW.md",
+      "uncredited_instruction_count": 31,
+      "evidence": [
+        "analysis/understanding/protocol-low/assembly.txt.gz",
+        "analysis/understanding/protocol-low/corrected-v3/FLOW.md",
+        "analysis/understanding/protocol-low/distribution-witnesses.json",
+        "analysis/understanding/protocol-low/dispatch-proof.json.gz",
+        "analysis/understanding/protocol-low/independent-review/REVIEW.md",
+        "analysis/understanding/protocol-low/independent-review/eligibility-final.json",
+        "analysis/understanding/protocol-low/independent-review/trace-audit.json"
+      ],
+      "audit": "Root read full algorithm notes/policy/math models and verified correctedv3 freezes/source pins. Independent complex_c reviewer read ALL1278 original ASM starts, checked28 native trace hashes/counts and corrected three finite-operation explanations. Original witnesses and prefix-only C parity do not imply full numerical production parity."
+    },
+    {
+      "start": "0x57ba",
+      "end": "0x57d2",
+      "scope": "Complete exhaustive errorpublication andoriginalstatusreturn",
+      "source": "analysis/understanding/protocol-low/probability_status.c",
+      "uncredited_instruction_count": 11,
+      "evidence": [
+        "analysis/understanding/protocol-low/assembly.txt.gz",
+        "analysis/understanding/protocol-low/corrected-v3/FLOW.md",
+        "analysis/understanding/protocol-low/distribution-witnesses.json",
+        "analysis/understanding/protocol-low/dispatch-proof.json.gz",
+        "analysis/understanding/protocol-low/independent-review/REVIEW.md",
+        "analysis/understanding/protocol-low/independent-review/eligibility-final.json",
+        "analysis/understanding/protocol-low/independent-review/trace-audit.json"
+      ],
+      "audit": "Root read full algorithm notes/policy/math models and verified correctedv3 freezes/source pins. Independent complex_c reviewer read ALL1278 original ASM starts, checked28 native trace hashes/counts and corrected three finite-operation explanations. Original witnesses and prefix-only C parity do not imply full numerical production parity."
+    },
+    {
+      "start": "0x57d2",
+      "end": "0x5884",
+      "scope": "Normaldensity finiteformula, exponent/division saturation andsharedoutput/error/ABI tails",
+      "source": "analysis/understanding/protocol-low/corrected-v3/FLOW.md",
+      "uncredited_instruction_count": 71,
+      "evidence": [
+        "analysis/understanding/protocol-low/assembly.txt.gz",
+        "analysis/understanding/protocol-low/corrected-v3/FLOW.md",
+        "analysis/understanding/protocol-low/distribution-witnesses.json",
+        "analysis/understanding/protocol-low/dispatch-proof.json.gz",
+        "analysis/understanding/protocol-low/independent-review/REVIEW.md",
+        "analysis/understanding/protocol-low/independent-review/eligibility-final.json",
+        "analysis/understanding/protocol-low/independent-review/trace-audit.json"
+      ],
+      "audit": "Root read full algorithm notes/policy/math models and verified correctedv3 freezes/source pins. Independent complex_c reviewer read ALL1278 original ASM starts, checked28 native trace hashes/counts and corrected three finite-operation explanations. Original witnesses and prefix-only C parity do not imply full numerical production parity."
+    },
+    {
+      "start": "0x5884",
+      "end": "0x5a36",
+      "scope": "Normalinterval standardization, exactexceptional overflowcomparison alias,erf/erfc tailtags andsixbranch stable recombination",
+      "source": "analysis/understanding/protocol-low/corrected-v3/FLOW.md",
+      "uncredited_instruction_count": 175,
+      "evidence": [
+        "analysis/understanding/protocol-low/assembly.txt.gz",
+        "analysis/understanding/protocol-low/corrected-v3/FLOW.md",
+        "analysis/understanding/protocol-low/distribution-witnesses.json",
+        "analysis/understanding/protocol-low/dispatch-proof.json.gz",
+        "analysis/understanding/protocol-low/independent-review/REVIEW.md",
+        "analysis/understanding/protocol-low/independent-review/eligibility-final.json",
+        "analysis/understanding/protocol-low/independent-review/trace-audit.json"
+      ],
+      "audit": "Root read full algorithm notes/policy/math models and verified correctedv3 freezes/source pins. Independent complex_c reviewer read ALL1278 original ASM starts, checked28 native trace hashes/counts and corrected three finite-operation explanations. Original witnesses and prefix-only C parity do not imply full numerical production parity."
+    },
+    {
+      "start": "0x5a36",
+      "end": "0x5c14",
+      "scope": "Inverse normal/error-function caller,central/tail parametertransformation andoverflowclamp,checkedhelperstatus",
+      "source": "analysis/understanding/protocol-low/corrected-v3/FLOW.md",
+      "uncredited_instruction_count": 190,
+      "evidence": [
+        "analysis/understanding/protocol-low/assembly.txt.gz",
+        "analysis/understanding/protocol-low/corrected-v3/FLOW.md",
+        "analysis/understanding/protocol-low/distribution-witnesses.json",
+        "analysis/understanding/protocol-low/dispatch-proof.json.gz",
+        "analysis/understanding/protocol-low/independent-review/REVIEW.md",
+        "analysis/understanding/protocol-low/independent-review/eligibility-final.json",
+        "analysis/understanding/protocol-low/independent-review/trace-audit.json"
+      ],
+      "audit": "Root read full algorithm notes/policy/math models and verified correctedv3 freezes/source pins. Independent complex_c reviewer read ALL1278 original ASM starts, checked28 native trace hashes/counts and corrected three finite-operation explanations. Original witnesses and prefix-only C parity do not imply full numerical production parity."
+    },
+    {
+      "start": "0x5c14",
+      "end": "0x5d8e",
+      "scope": "Binomialmass gates,endpoint/rangeshortcuts,ordered logBeta/log1p/log terms andpoll",
+      "source": "analysis/understanding/protocol-low/corrected-v3/FLOW.md",
+      "uncredited_instruction_count": 143,
+      "evidence": [
+        "analysis/understanding/protocol-low/assembly.txt.gz",
+        "analysis/understanding/protocol-low/corrected-v3/FLOW.md",
+        "analysis/understanding/protocol-low/distribution-witnesses.json",
+        "analysis/understanding/protocol-low/dispatch-proof.json.gz",
+        "analysis/understanding/protocol-low/independent-review/REVIEW.md",
+        "analysis/understanding/protocol-low/independent-review/eligibility-final.json",
+        "analysis/understanding/protocol-low/independent-review/trace-audit.json"
+      ],
+      "audit": "Root read full algorithm notes/policy/math models and verified correctedv3 freezes/source pins. Independent complex_c reviewer read ALL1278 original ASM starts, checked28 native trace hashes/counts and corrected three finite-operation explanations. Original witnesses and prefix-only C parity do not imply full numerical production parity."
+    },
+    {
+      "start": "0x5d8e",
+      "end": "0x5ed4",
+      "scope": "BinomialCDF gates,(x+2)/(n+3) switch,ordered incompletebeta parameters/complement andreturn",
+      "source": "analysis/understanding/protocol-low/corrected-v3/FLOW.md",
+      "uncredited_instruction_count": 130,
+      "evidence": [
+        "analysis/understanding/protocol-low/assembly.txt.gz",
+        "analysis/understanding/protocol-low/corrected-v3/FLOW.md",
+        "analysis/understanding/protocol-low/distribution-witnesses.json",
+        "analysis/understanding/protocol-low/dispatch-proof.json.gz",
+        "analysis/understanding/protocol-low/independent-review/REVIEW.md",
+        "analysis/understanding/protocol-low/independent-review/eligibility-final.json",
+        "analysis/understanding/protocol-low/independent-review/trace-audit.json"
+      ],
+      "audit": "Root read full algorithm notes/policy/math models and verified correctedv3 freezes/source pins. Independent complex_c reviewer read ALL1278 original ASM starts, checked28 native trace hashes/counts and corrected three finite-operation explanations. Original witnesses and prefix-only C parity do not imply full numerical production parity."
+    },
+    {
+      "start": "0x5ed4",
+      "end": "0x6000",
+      "scope": "Poissonmass/cumulative gates,logGamma andQ arguments,tolerance,polls,negativezero/status3zero anderrors",
+      "source": "analysis/understanding/protocol-low/corrected-v3/FLOW.md",
+      "uncredited_instruction_count": 116,
+      "evidence": [
+        "analysis/understanding/protocol-low/assembly.txt.gz",
+        "analysis/understanding/protocol-low/corrected-v3/FLOW.md",
+        "analysis/understanding/protocol-low/distribution-witnesses.json",
+        "analysis/understanding/protocol-low/dispatch-proof.json.gz",
+        "analysis/understanding/protocol-low/independent-review/REVIEW.md",
+        "analysis/understanding/protocol-low/independent-review/eligibility-final.json",
+        "analysis/understanding/protocol-low/independent-review/trace-audit.json"
+      ],
+      "audit": "Root read full algorithm notes/policy/math models and verified correctedv3 freezes/source pins. Independent complex_c reviewer read ALL1278 original ASM starts, checked28 native trace hashes/counts and corrected three finite-operation explanations. Original witnesses and prefix-only C parity do not imply full numerical production parity."
+    },
+    {
+      "start": "0x6000",
+      "end": "0x6134",
+      "scope": "Finite specialisedlog1p,logGamma constants/byte-table/Stirling,sharedABI andconstantreturntails",
+      "source": "analysis/understanding/protocol-low/corrected-v3/probability_math.c",
+      "uncredited_instruction_count": 129,
+      "evidence": [
+        "analysis/understanding/protocol-low/assembly.txt.gz",
+        "analysis/understanding/protocol-low/corrected-v3/FLOW.md",
+        "analysis/understanding/protocol-low/distribution-witnesses.json",
+        "analysis/understanding/protocol-low/dispatch-proof.json.gz",
+        "analysis/understanding/protocol-low/independent-review/REVIEW.md",
+        "analysis/understanding/protocol-low/independent-review/eligibility-final.json",
+        "analysis/understanding/protocol-low/independent-review/trace-audit.json"
+      ],
+      "audit": "Root read full algorithm notes/policy/math models and verified correctedv3 freezes/source pins. Independent complex_c reviewer read ALL1278 original ASM starts, checked28 native trace hashes/counts and corrected three finite-operation explanations. Original witnesses and prefix-only C parity do not imply full numerical production parity."
+    },
+    {
+      "start": "0x6134",
+      "end": "0x618e",
+      "scope": "Ordered lnBeta gammaa\u2192a+b\u2192b withcheckedstatusandmutation",
+      "source": "analysis/understanding/protocol-low/corrected-v3/probability_math.c",
+      "uncredited_instruction_count": 37,
+      "evidence": [
+        "analysis/understanding/protocol-low/assembly.txt.gz",
+        "analysis/understanding/protocol-low/corrected-v3/FLOW.md",
+        "analysis/understanding/protocol-low/distribution-witnesses.json",
+        "analysis/understanding/protocol-low/dispatch-proof.json.gz",
+        "analysis/understanding/protocol-low/independent-review/REVIEW.md",
+        "analysis/understanding/protocol-low/independent-review/eligibility-final.json",
+        "analysis/understanding/protocol-low/independent-review/trace-audit.json"
+      ],
+      "audit": "Root read full algorithm notes/policy/math models and verified correctedv3 freezes/source pins. Independent complex_c reviewer read ALL1278 original ASM starts, checked28 native trace hashes/counts and corrected three finite-operation explanations. Original witnesses and prefix-only C parity do not imply full numerical production parity."
+    },
+    {
+      "start": "0x618e",
+      "end": "0x61d0",
+      "scope": "Absolutehalf threshold returns0,+1,-1 withoriginalsourceclass/sign",
+      "source": "analysis/understanding/protocol-low/corrected-v3/FLOW.md",
+      "uncredited_instruction_count": 29,
+      "evidence": [
+        "analysis/understanding/protocol-low/assembly.txt.gz",
+        "analysis/understanding/protocol-low/corrected-v3/FLOW.md",
+        "analysis/understanding/protocol-low/distribution-witnesses.json",
+        "analysis/understanding/protocol-low/dispatch-proof.json.gz",
+        "analysis/understanding/protocol-low/independent-review/REVIEW.md",
+        "analysis/understanding/protocol-low/independent-review/eligibility-final.json",
+        "analysis/understanding/protocol-low/independent-review/trace-audit.json"
+      ],
+      "audit": "Root read full algorithm notes/policy/math models and verified correctedv3 freezes/source pins. Independent complex_c reviewer read ALL1278 original ASM starts, checked28 native trace hashes/counts and corrected three finite-operation explanations. Original witnesses and prefix-only C parity do not imply full numerical production parity."
+    },
+    {
+      "start": "0x61d0",
+      "end": "0x620e",
+      "scope": "Small erf x*R(x\u00b2) checkedrationalhelper andsuccess tail throughartificialboundary",
+      "source": "analysis/understanding/protocol-low/corrected-v3/FLOW.md",
+      "uncredited_instruction_count": 25,
+      "evidence": [
+        "analysis/understanding/protocol-low/assembly.txt.gz",
+        "analysis/understanding/protocol-low/corrected-v3/FLOW.md",
+        "analysis/understanding/protocol-low/distribution-witnesses.json",
+        "analysis/understanding/protocol-low/dispatch-proof.json.gz",
+        "analysis/understanding/protocol-low/independent-review/REVIEW.md",
+        "analysis/understanding/protocol-low/independent-review/eligibility-final.json",
+        "analysis/understanding/protocol-low/independent-review/trace-audit.json"
+      ],
+      "audit": "Root read full algorithm notes/policy/math models and verified correctedv3 freezes/source pins. Independent complex_c reviewer read ALL1278 original ASM starts, checked28 native trace hashes/counts and corrected three finite-operation explanations. Original witnesses and prefix-only C parity do not imply full numerical production parity."
     }
   ]
 }

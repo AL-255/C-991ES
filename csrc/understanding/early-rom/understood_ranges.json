@@ -176,6 +176,121 @@
         "analysis/understanding/early-rom/display-proof.json.gz"
       ],
       "audit": "Root reviewed all claimed assembly/model instructions; recorded source/artifact and observation pins matched. Eight unsupported font255 callee controls explicitly retained."
+    },
+    {
+      "start": "0x6",
+      "end": "0x8",
+      "source": "analysis/understanding/early-rom/fx_early_records.c",
+      "scope": "Named initializer, variable-load records, zero-label/sign/layout gates; typed compact conversion reused; numerical8000..80DB/native expansion pools/CPUframes excluded from51CA value API. No complete arbitrary bus/stack alias claim.",
+      "evidence": [
+        "analysis/understanding/early-rom/RECORDS-HANDOFF.md",
+        "analysis/understanding/early-rom/record-proof.json.gz",
+        "analysis/understanding/early-rom/revision/HANDOFF.md",
+        "analysis/understanding/early-rom/revision/FREEZE.json"
+      ],
+      "audit": "Root complete original assembly/source review and matching historical record/observation/artifact pins plus final revision freeze. Typed numerical unsupported cases retained; no full scratch/bus/malformed parity claim."
+    },
+    {
+      "start": "0x5144",
+      "end": "0x5166",
+      "source": "analysis/understanding/early-rom/fx_early_records.c",
+      "scope": "Named initializer, variable-load records, zero-label/sign/layout gates; typed compact conversion reused; numerical8000..80DB/native expansion pools/CPUframes excluded from51CA value API. No complete arbitrary bus/stack alias claim.",
+      "evidence": [
+        "analysis/understanding/early-rom/RECORDS-HANDOFF.md",
+        "analysis/understanding/early-rom/record-proof.json.gz",
+        "analysis/understanding/early-rom/revision/HANDOFF.md",
+        "analysis/understanding/early-rom/revision/FREEZE.json"
+      ],
+      "audit": "Root complete original assembly/source review and matching historical record/observation/artifact pins plus final revision freeze. Typed numerical unsupported cases retained; no full scratch/bus/malformed parity claim."
+    },
+    {
+      "start": "0x51ca",
+      "end": "0x522a",
+      "source": "analysis/understanding/early-rom/revision/fx_early_records.c",
+      "scope": "Named initializer, variable-load records, zero-label/sign/layout gates; typed compact conversion reused; numerical8000..80DB/native expansion pools/CPUframes excluded from51CA value API. No complete arbitrary bus/stack alias claim.; unchecked native converter calls continue second copy/fill regardless of status; host unsupported-domain diagnostics distinct.",
+      "evidence": [
+        "analysis/understanding/early-rom/RECORDS-HANDOFF.md",
+        "analysis/understanding/early-rom/record-proof.json.gz",
+        "analysis/understanding/early-rom/revision/HANDOFF.md",
+        "analysis/understanding/early-rom/revision/FREEZE.json"
+      ],
+      "audit": "Root complete original assembly/source review and matching historical record/observation/artifact pins plus final revision freeze. Typed numerical unsupported cases retained; no full scratch/bus/malformed parity claim."
+    },
+    {
+      "start": "0x528e",
+      "end": "0x52ac",
+      "source": "analysis/understanding/early-rom/fx_early_records.c",
+      "scope": "Named initializer, variable-load records, zero-label/sign/layout gates; typed compact conversion reused; numerical8000..80DB/native expansion pools/CPUframes excluded from51CA value API. No complete arbitrary bus/stack alias claim.",
+      "evidence": [
+        "analysis/understanding/early-rom/RECORDS-HANDOFF.md",
+        "analysis/understanding/early-rom/record-proof.json.gz",
+        "analysis/understanding/early-rom/revision/HANDOFF.md",
+        "analysis/understanding/early-rom/revision/FREEZE.json"
+      ],
+      "audit": "Root complete original assembly/source review and matching historical record/observation/artifact pins plus final revision freeze. Typed numerical unsupported cases retained; no full scratch/bus/malformed parity claim."
+    },
+    {
+      "start": "0x8000",
+      "end": "0x802a",
+      "source": "analysis/understanding/early-rom/fx_early_records.c",
+      "scope": "Named initializer, variable-load records, zero-label/sign/layout gates; typed compact conversion reused; numerical8000..80DB/native expansion pools/CPUframes excluded from51CA value API. No complete arbitrary bus/stack alias claim.",
+      "evidence": [
+        "analysis/understanding/early-rom/RECORDS-HANDOFF.md",
+        "analysis/understanding/early-rom/record-proof.json.gz",
+        "analysis/understanding/early-rom/revision/HANDOFF.md",
+        "analysis/understanding/early-rom/revision/FREEZE.json"
+      ],
+      "audit": "Root complete original assembly/source review and matching historical record/observation/artifact pins plus final revision freeze. Typed numerical unsupported cases retained; no full scratch/bus/malformed parity claim."
+    },
+    {
+      "start": "0xab86",
+      "end": "0xab8e",
+      "source": "analysis/understanding/early-rom/fx_early_records.c",
+      "scope": "Named initializer, variable-load records, zero-label/sign/layout gates; typed compact conversion reused; numerical8000..80DB/native expansion pools/CPUframes excluded from51CA value API. No complete arbitrary bus/stack alias claim.",
+      "evidence": [
+        "analysis/understanding/early-rom/RECORDS-HANDOFF.md",
+        "analysis/understanding/early-rom/record-proof.json.gz",
+        "analysis/understanding/early-rom/revision/HANDOFF.md",
+        "analysis/understanding/early-rom/revision/FREEZE.json"
+      ],
+      "audit": "Root complete original assembly/source review and matching historical record/observation/artifact pins plus final revision freeze. Typed numerical unsupported cases retained; no full scratch/bus/malformed parity claim."
+    },
+    {
+      "start": "0xada8",
+      "end": "0xade4",
+      "source": "analysis/understanding/early-rom/fx_early_records.c",
+      "scope": "Named initializer, variable-load records, zero-label/sign/layout gates; typed compact conversion reused; numerical8000..80DB/native expansion pools/CPUframes excluded from51CA value API. No complete arbitrary bus/stack alias claim.",
+      "evidence": [
+        "analysis/understanding/early-rom/RECORDS-HANDOFF.md",
+        "analysis/understanding/early-rom/record-proof.json.gz",
+        "analysis/understanding/early-rom/revision/HANDOFF.md",
+        "analysis/understanding/early-rom/revision/FREEZE.json"
+      ],
+      "audit": "Root complete original assembly/source review and matching historical record/observation/artifact pins plus final revision freeze. Typed numerical unsupported cases retained; no full scratch/bus/malformed parity claim."
+    },
+    {
+      "start": "0xbd32",
+      "end": "0xbd78",
+      "source": "analysis/understanding/early-rom/fx_early_records.c",
+      "scope": "Named initializer, variable-load records, zero-label/sign/layout gates; typed compact conversion reused; numerical8000..80DB/native expansion pools/CPUframes excluded from51CA value API. No complete arbitrary bus/stack alias claim.",
+      "evidence": [
+        "analysis/understanding/early-rom/RECORDS-HANDOFF.md",
+        "analysis/understanding/early-rom/record-proof.json.gz",
+        "analysis/understanding/early-rom/revision/HANDOFF.md",
+        "analysis/understanding/early-rom/revision/FREEZE.json"
+      ],
+      "audit": "Root complete original assembly/source review and matching historical record/observation/artifact pins plus final revision freeze. Typed numerical unsupported cases retained; no full scratch/bus/malformed parity claim."
+    },
+    {
+      "start": "0xabc8",
+      "end": "0xabcc",
+      "source": "csrc/format/fx_format.c",
+      "scope": "Complete selection15 prime-factor routing predicate, existing formatter emit_prime_factors branch.",
+      "evidence": [
+        "analysis/understanding/early-rom/PRIME-HANDOFF.md",
+        "analysis/understanding/early-rom/prime-proof.json"
+      ],
+      "audit": "Root reviewed both original instructions, named existing C selection branch and all recorded proof/source/artifact/observation pins; numerical dependencies separate."
     }
   ]
 }

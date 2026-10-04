@@ -466,6 +466,176 @@
         "analysis/understanding/numeric-high/window-report.json.gz"
       ],
       "audit": "Root reviewed all claimed original assembly, semantic notes and independent byte/window model; matching complete recorded source and original compiled artifact pins. CPU frame bands excluded by bounded proof; production C integration separate."
+    },
+    {
+      "start": "0x18a02",
+      "end": "0x18ae6",
+      "scope": "complete six-entry prepared scalar relation family; Bounded natural scalar model; preparation and guarded comparison semantics named, no UI or chain grammar claim.; relation RHS local snapshot retained before any LHS/aliased-address mutation; bounded provider/callee scope.",
+      "source": "analysis/understanding/numeric-high/probe_relations.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/relations.md",
+        "analysis/understanding/numeric-high/probe_relations.py",
+        "analysis/understanding/numeric-high/relation-report.json.gz",
+        "analysis/understanding/numeric-high/relation-model-initial-failure.json",
+        "analysis/understanding/numeric-high/independent-review/REVIEW.md",
+        "analysis/understanding/numeric-high/independent-review/eligible-spans.json"
+      ],
+      "audit": "Independent equation_canonical_driver reviewer inspected complete original ASM/models and verified268 source/artifact pins; root reviewed full notes and audit, reconfirmed current recorded report pins. Only12 small-transform rows pertain to40 credited starts; neighboring research excluded. Production C integration separate."
+    },
+    {
+      "start": "0x1ab18",
+      "end": "0x1ab36",
+      "scope": "complete raw decimal/rational family header gate; Shared tails fully described; canonical BCD sum meaning; no scalar normalization or CPU frame claim.; relation RHS local snapshot retained before any LHS/aliased-address mutation; bounded provider/callee scope.",
+      "source": "analysis/understanding/numeric-high/probe_gates.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/gates.md",
+        "analysis/understanding/numeric-high/probe_gates.py",
+        "analysis/understanding/numeric-high/gate-report.json.gz",
+        "analysis/understanding/numeric-high/independent-review/REVIEW.md",
+        "analysis/understanding/numeric-high/independent-review/eligible-spans.json"
+      ],
+      "audit": "Independent equation_canonical_driver reviewer inspected complete original ASM/models and verified268 source/artifact pins; root reviewed full notes and audit, reconfirmed current recorded report pins. Only12 small-transform rows pertain to40 credited starts; neighboring research excluded. Production C integration separate."
+    },
+    {
+      "start": "0x1ba64",
+      "end": "0x1ba90",
+      "scope": "two-entry packed mantissa add with incoming carry; Shared tails fully described; canonical BCD sum meaning; no scalar normalization or CPU frame claim.; relation RHS local snapshot retained before any LHS/aliased-address mutation; bounded provider/callee scope.",
+      "source": "analysis/understanding/numeric-high/probe_gates.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/gates.md",
+        "analysis/understanding/numeric-high/probe_gates.py",
+        "analysis/understanding/numeric-high/gate-report.json.gz",
+        "analysis/understanding/numeric-high/independent-review/REVIEW.md",
+        "analysis/understanding/numeric-high/independent-review/eligible-spans.json"
+      ],
+      "audit": "Independent equation_canonical_driver reviewer inspected complete original ASM/models and verified268 source/artifact pins; root reviewed full notes and audit, reconfirmed current recorded report pins. Only12 small-transform rows pertain to40 credited starts; neighboring research excluded. Production C integration separate."
+    },
+    {
+      "start": "0x18c3c",
+      "end": "0x18c52",
+      "scope": "raw constant1; Exact finite records/order; no numerical approximation accuracy or caller grammar claim.; relation RHS local snapshot retained before any LHS/aliased-address mutation; bounded provider/callee scope.",
+      "source": "analysis/understanding/numeric-high/probe_constants.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/small-and-constants.md",
+        "analysis/understanding/numeric-high/probe_constants.py",
+        "analysis/understanding/numeric-high/constant-report.json",
+        "analysis/understanding/numeric-high/independent-review/REVIEW.md",
+        "analysis/understanding/numeric-high/independent-review/eligible-spans.json"
+      ],
+      "audit": "Independent equation_canonical_driver reviewer inspected complete original ASM/models and verified268 source/artifact pins; root reviewed full notes and audit, reconfirmed current recorded report pins. Only12 small-transform rows pertain to40 credited starts; neighboring research excluded. Production C integration separate."
+    },
+    {
+      "start": "0x18c52",
+      "end": "0x18c6c",
+      "scope": "raw repeating-one finite constant; Exact finite records/order; no numerical approximation accuracy or caller grammar claim.; relation RHS local snapshot retained before any LHS/aliased-address mutation; bounded provider/callee scope.",
+      "source": "analysis/understanding/numeric-high/probe_constants.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/small-and-constants.md",
+        "analysis/understanding/numeric-high/probe_constants.py",
+        "analysis/understanding/numeric-high/constant-report.json",
+        "analysis/understanding/numeric-high/independent-review/REVIEW.md",
+        "analysis/understanding/numeric-high/independent-review/eligible-spans.json"
+      ],
+      "audit": "Independent equation_canonical_driver reviewer inspected complete original ASM/models and verified268 source/artifact pins; root reviewed full notes and audit, reconfirmed current recorded report pins. Only12 small-transform rows pertain to40 credited starts; neighboring research excluded. Production C integration separate."
+    },
+    {
+      "start": "0x18c6c",
+      "end": "0x18c86",
+      "scope": "raw constant0.9; Exact finite records/order; no numerical approximation accuracy or caller grammar claim.; relation RHS local snapshot retained before any LHS/aliased-address mutation; bounded provider/callee scope.",
+      "source": "analysis/understanding/numeric-high/probe_constants.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/small-and-constants.md",
+        "analysis/understanding/numeric-high/probe_constants.py",
+        "analysis/understanding/numeric-high/constant-report.json",
+        "analysis/understanding/numeric-high/independent-review/REVIEW.md",
+        "analysis/understanding/numeric-high/independent-review/eligible-spans.json"
+      ],
+      "audit": "Independent equation_canonical_driver reviewer inspected complete original ASM/models and verified268 source/artifact pins; root reviewed full notes and audit, reconfirmed current recorded report pins. Only12 small-transform rows pertain to40 credited starts; neighboring research excluded. Production C integration separate."
+    },
+    {
+      "start": "0x18c86",
+      "end": "0x18ca0",
+      "scope": "raw constant200; Exact finite records/order; no numerical approximation accuracy or caller grammar claim.; relation RHS local snapshot retained before any LHS/aliased-address mutation; bounded provider/callee scope.",
+      "source": "analysis/understanding/numeric-high/probe_constants.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/small-and-constants.md",
+        "analysis/understanding/numeric-high/probe_constants.py",
+        "analysis/understanding/numeric-high/constant-report.json",
+        "analysis/understanding/numeric-high/independent-review/REVIEW.md",
+        "analysis/understanding/numeric-high/independent-review/eligible-spans.json"
+      ],
+      "audit": "Independent equation_canonical_driver reviewer inspected complete original ASM/models and verified268 source/artifact pins; root reviewed full notes and audit, reconfirmed current recorded report pins. Only12 small-transform rows pertain to40 credited starts; neighboring research excluded. Production C integration separate."
+    },
+    {
+      "start": "0x18ca0",
+      "end": "0x18cb8",
+      "scope": "raw constant180; Exact finite records/order; no numerical approximation accuracy or caller grammar claim.; relation RHS local snapshot retained before any LHS/aliased-address mutation; bounded provider/callee scope.",
+      "source": "analysis/understanding/numeric-high/probe_constants.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/small-and-constants.md",
+        "analysis/understanding/numeric-high/probe_constants.py",
+        "analysis/understanding/numeric-high/constant-report.json",
+        "analysis/understanding/numeric-high/independent-review/REVIEW.md",
+        "analysis/understanding/numeric-high/independent-review/eligible-spans.json"
+      ],
+      "audit": "Independent equation_canonical_driver reviewer inspected complete original ASM/models and verified268 source/artifact pins; root reviewed full notes and audit, reconfirmed current recorded report pins. Only12 small-transform rows pertain to40 credited starts; neighboring research excluded. Production C integration separate."
+    },
+    {
+      "start": "0x18ea2",
+      "end": "0x18ec0",
+      "scope": "stored e constructor; Exact finite records/order; no numerical approximation accuracy or caller grammar claim.; relation RHS local snapshot retained before any LHS/aliased-address mutation; bounded provider/callee scope.",
+      "source": "analysis/understanding/numeric-high/probe_constants.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/small-and-constants.md",
+        "analysis/understanding/numeric-high/probe_constants.py",
+        "analysis/understanding/numeric-high/constant-report.json",
+        "analysis/understanding/numeric-high/independent-review/REVIEW.md",
+        "analysis/understanding/numeric-high/independent-review/eligible-spans.json"
+      ],
+      "audit": "Independent equation_canonical_driver reviewer inspected complete original ASM/models and verified268 source/artifact pins; root reviewed full notes and audit, reconfirmed current recorded report pins. Only12 small-transform rows pertain to40 credited starts; neighboring research excluded. Production C integration separate."
+    },
+    {
+      "start": "0x18ec0",
+      "end": "0x18ede",
+      "scope": "stored pi constructor; Exact finite records/order; no numerical approximation accuracy or caller grammar claim.; relation RHS local snapshot retained before any LHS/aliased-address mutation; bounded provider/callee scope.",
+      "source": "analysis/understanding/numeric-high/probe_constants.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/small-and-constants.md",
+        "analysis/understanding/numeric-high/probe_constants.py",
+        "analysis/understanding/numeric-high/constant-report.json",
+        "analysis/understanding/numeric-high/independent-review/REVIEW.md",
+        "analysis/understanding/numeric-high/independent-review/eligible-spans.json"
+      ],
+      "audit": "Independent equation_canonical_driver reviewer inspected complete original ASM/models and verified268 source/artifact pins; root reviewed full notes and audit, reconfirmed current recorded report pins. Only12 small-transform rows pertain to40 credited starts; neighboring research excluded. Production C integration separate."
+    },
+    {
+      "start": "0x18ede",
+      "end": "0x18f56",
+      "scope": "finite second-order10^x-minus-one sequence; Exact finite records/order; no numerical approximation accuracy or caller grammar claim.; relation RHS local snapshot retained before any LHS/aliased-address mutation; bounded provider/callee scope.",
+      "source": "analysis/understanding/numeric-high/small-and-constants.md",
+      "evidence": [
+        "analysis/understanding/numeric-high/small-and-constants.md",
+        "analysis/understanding/numeric-high/probe_small.py",
+        "analysis/understanding/numeric-high/models/small_transforms.c",
+        "analysis/understanding/numeric-high/small-report.json.gz",
+        "analysis/understanding/numeric-high/independent-review/REVIEW.md",
+        "analysis/understanding/numeric-high/independent-review/eligible-spans.json"
+      ],
+      "audit": "Independent equation_canonical_driver reviewer inspected complete original ASM/models and verified268 source/artifact pins; root reviewed full notes and audit, reconfirmed current recorded report pins. Only12 small-transform rows pertain to40 credited starts; neighboring research excluded. Production C integration separate."
+    },
+    {
+      "start": "0x18252",
+      "end": "0x182ec",
+      "scope": "complete cube/square/reciprocal compact-kind facade family; Complete kind dispatch and finite operation/copy order; result/status proof bounded to natural scalar records; callee pool state delegated to named finite-component operators.; relation RHS local snapshot retained before any LHS/aliased-address mutation; bounded provider/callee scope.",
+      "source": "analysis/understanding/numeric-high/probe_facades.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/facades.md",
+        "analysis/understanding/numeric-high/probe_facades.py",
+        "analysis/understanding/numeric-high/facade-report.json",
+        "analysis/understanding/numeric-high/independent-review/REVIEW.md",
+        "analysis/understanding/numeric-high/independent-review/eligible-spans.json"
+      ],
+      "audit": "Independent equation_canonical_driver reviewer inspected complete original ASM/models and verified268 source/artifact pins; root reviewed full notes and audit, reconfirmed current recorded report pins. Only12 small-transform rows pertain to40 credited starts; neighboring research excluded. Production C integration separate."
     }
   ]
 }

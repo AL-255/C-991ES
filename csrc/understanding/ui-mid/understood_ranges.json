@@ -138,6 +138,17 @@
         "analysis/understanding/ui-mid/format-policy-proof.json.gz"
       ],
       "audit": "Root complete static assembly/model review and matching recorded source/oracle artifact pins; formatter delegates not recredited."
+    },
+    {
+      "start": "0xe82e",
+      "end": "0xe862",
+      "source": "analysis/understanding/ui-mid/fx_grid_phase.c",
+      "scope": "Complete two pure grid-phase predicates, no writes or delegated callees.",
+      "evidence": [
+        "analysis/understanding/ui-mid/GRID-PHASE-HANDOFF.md",
+        "analysis/understanding/ui-mid/grid-phase-proof.json.gz"
+      ],
+      "audit": "Root reviewed all22 instructions and complete model/notes; all20 recorded source/artifact pins match."
     }
   ]
 }
