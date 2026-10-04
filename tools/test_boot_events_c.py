@@ -43,7 +43,7 @@ MODULES = ['platform/fx_boot_events', 'platform/fx_diagnostic_contrast',
            'parse/fx_tokens', 'numeric/fx_numeric','numeric/fx_surd_components','numeric/fx_raw_decimal_parts','numeric/fx_raw_decimal_divide','numeric/fx_raw_decimal_multiply_add', 'complex/fx_complex',
            'format/fx_format', 'format/fx_format_base', 'data/fx_rom_data',
            'render/fx_render', 'render/fx_render_context', 'render/fx_render_memory',
-           'render/fx_layout_validate', 'render/fx_result_special',
+           'render/fx_layout_validate', 'render/fx_result_special', 'render/fx_result_verify',
            'render/fx_result_format_state']
 SOURCES = ['csrc/' + module + '.c' for module in MODULES]
 

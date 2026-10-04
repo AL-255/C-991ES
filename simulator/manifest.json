@@ -42,7 +42,7 @@
       "scope": "Python transports requests to the compiled native C session; JavaScript draws returned pixels"
     },
     "static_webassembly": {
-      "status": "actual_ci_and_public_http_browser_proofs_pass",
+      "status": "successor_local_build_and_browser_wasm_pass_deployment_pending",
       "builder": "simulator/build_web.py",
       "output_directory": "simulator/dist",
       "deployment_workflow": ".github/workflows/pages.yml",
@@ -53,14 +53,14 @@
       "emscripten_build_commit": "f6264d4a4dd9ba24a9f0a5702835a44d1463de13",
       "compiler_temporary_directory": "analysis/build/simulator-wasm/compiler-tmp",
       "builder_python_requirement": "Python3.9 or newer",
-      "build_report_sha256": "0bed07636505ef3d0956f4a7457ccafeb7e8abe701fef0dfd5026d8982ed0b86",
+      "build_report_sha256": "702c2f37f0559b614d19ac430e5f4e208e57230f2c2f7932b452a9ee1bd7d5a5",
       "javascript_artifact_sha256": "a2ef17728fad53fe2ae330849bade7eadd44dd1e4f33846e138cbcfae929bd77",
-      "wasm_artifact_sha256": "d3f3336cdd123b5ce5ac260b19abd10a12039cf92a7b9904e538981c3482a117",
+      "wasm_artifact_sha256": "eb1833e9d339a114f79bae22b9eaa2fe4326227b325931095b6fe5b9141609ca",
       "session_lifetime": "Opaque C session in the page module; reload creates fresh memory",
       "filesystem_runtime": false,
       "native_proof_is_wasm_proof": false,
-      "deployment_verified": true,
-      "deployment_verification": {
+      "deployment_verified": false,
+      "previous_deployment_verification": {
         "status": "pass",
         "release_commit": "bd216d3280f3ce5bdf44a0835bdb74ae67f4abda",
         "ci_run_id": 37234480485,
@@ -268,5 +268,7 @@
       "native_calls": 0,
       "scope": "Actual public HTTP delivery and desktop/mobile browser UI; all six resources bind exact CI assets"
     }
-  ]
+  ],
+  "latest_release_verification": "simulator/verification/current-release.json",
+  "historical_verification_note": "Earlier verification summaries retain their actual frozen source/artifact versions. Current-release.json describes the latest local build; current public deployment is recorded separately after verification."
 }

@@ -77,7 +77,8 @@ uint8_t fx_device_session_take_callback(fx_device_session *session);
 int fx_device_session_snapshot(const fx_device_session *session,
     fx_device_snapshot *snapshot);
 /* Bounded, nonwrapping read-only RAM/MMIO inspection. A zero-byte read accepts
- * NULL output; other reads require storage. The source remains session-owned. */
+ * NULL output; other reads require storage. Snapshot/read output storage must
+ * not overlap the opaque session allocation. The source remains session-owned. */
 int fx_device_session_read_ram(const fx_device_session *session,
     uint16_t address, uint8_t *output, size_t bytes);
 

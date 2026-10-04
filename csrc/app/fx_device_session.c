@@ -11,6 +11,15 @@ struct fx_device_session {
     fx_runtime_status last_status;
 };
 
+static int output_overlaps_session(const fx_device_session *session,
+    const void *output, size_t bytes)
+{
+    uintptr_t start = (uintptr_t)session, destination = (uintptr_t)output;
+    if (!bytes) return 0;
+    return destination <= start ? bytes > start - destination :
+                                 destination - start < sizeof *session;
+}
+
 fx_device_session *fx_device_session_create(
     const fx_device_configuration *configuration)
 {
@@ -88,7 +97,8 @@ uint8_t fx_device_session_take_callback(fx_device_session *session)
 int fx_device_session_snapshot(const fx_device_session *session,
     fx_device_snapshot *snapshot)
 {
-    if (!session || !snapshot) return -1;
+    if (!session || !snapshot ||
+        output_overlaps_session(session, snapshot, sizeof *snapshot)) return -1;
     memset(snapshot, 0, sizeof *snapshot);
     for (unsigned row = 0; row < 32; ++row)
         memcpy(snapshot->framebuffer + row * 12,
@@ -126,7 +136,8 @@ int fx_device_session_read_ram(const fx_device_session *session,
     uint16_t address, uint8_t *output, size_t bytes)
 {
     if (!session || bytes > FX_DEVICE_RAM_BYTES - (size_t)address ||
-        (!output && bytes)) return -1;
+        (!output && bytes) || output_overlaps_session(session, output, bytes))
+        return -1;
     if (bytes) memcpy(output, session->ram + address, bytes);
     return 0;
 }

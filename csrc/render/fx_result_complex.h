@@ -5,8 +5,12 @@
 
 /* B070's ordinary complex result flow. The address names two consecutive
  * ten-byte scalar records, real then imaginary. Prepared modes1/65/129/193/
- * 196/136, ordinary status, both display styles, and cached natural output
+ * 196/136/137, ordinary status, both display styles, and cached natural output
  * are supported. Cached output never reads the numeric record.
+ * VERIFY137 uses live FALSE/TRUE pointers and preserves the native raw
+ * classification, component, cache and history ordering. Its addressed
+ * pair reads the imaginary record before the real record, with each
+ * eight-byte tail starting at an even address after the first word.
  * Return1 success,0 formatter/layout failure,-1 untranslated context.
  * Callers must keep the source separate from framebuffer/history/output
  * buffers. Numeric scratch, inactive layout slots, and CPU-stack aliases

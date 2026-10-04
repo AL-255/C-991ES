@@ -7,7 +7,11 @@
  * ten-byte real record; address zero clears the numeric line. The current
  * font and selected framebuffer remain in effect. BASE-N uses the full
  * 80FA byte (1/7/9/15); address zero permits the original title lookup for
- * all byte values. Returns 1 on success,
+ * all byte values. VERIFY137 nonerror records select live FALSE/TRUE
+ * labels, bypass numeric selection/cache events and preserve8127. Its
+ * addressed record reads the first word then an even-aligned eight-byte
+ * tail. Special labels of26 or more bytes exceed the original local
+ * field and return-1 before changing renderer state. Returns 1 on success,
  * 0 for a formatter failure, or -1 for an untranslated input context.
  * Unused native numeric workspace bytes within 0x8000..0x80DB are not
  * exposed by the record formatter. CPU-stack overflow on oversized text is a

@@ -5,6 +5,7 @@
 #include "fx_render_memory.h"
 #include "fx_result_format_state.h"
 #include "fx_result_inequality.h"
+#include "fx_result_verify.h"
 #include "../complex/fx_complex_angle.h"
 #include "../format/fx_format.h"
 #include "../trig/fx_math_context.h"
@@ -42,6 +43,8 @@ static void raw_exponents(uint8_t *text, size_t length)
 static int format_component(fx_render *r, const fx_number *number, uint8_t context,
                              uint8_t text[512], fx_format_result *result)
 {
+    if (r->memory[0x80f9] == 137 && (number->bytes[0] & 0xf0) != 0xf0)
+        return fx_format_verify_result(r, number, text, 512, result) == FX_FORMAT_OK;
     fx_format_options options=fx_format_default_options();
     options.selection=r->memory[0x8100];
     options.math_output=(uint8_t)fx_display_has_natural_result(r);
@@ -154,12 +157,36 @@ static void save_history(fx_render *r, const uint8_t *text, size_t length,
     unsigned full=record_length+48; static const uint8_t hex[]="0123456789ABCDEF";
     for (unsigned n=0;n<4;++n) r->memory[0x9800+n]=hex[(full>>(12-4*n))&15];
 }
+/* B468..B48E replaces the natural history with raw result tokens in VERIFY.
+ * Its emptiness query is byte-valued, while the subsequent copy is a full
+ * terminated string. This second history publication follows the first. */
+static void save_verify_history(fx_render *r, uint16_t expression,
+                                unsigned selection)
+{
+    size_t length = 0;
+    while (length < 65535 && r->memory[(uint16_t)(expression + length)]) ++length;
+    if (!(uint8_t)length) {
+        static const uint8_t empty[] = {0};
+        save_history(r, empty, 0, 0, selection, 0);
+    } else {
+        /* Preserve the firmware's ascending terminated copy rather than
+         * constructing a host pointer spanning a wrapped RAM address. */
+        for (size_t n = 0; n < 65536; ++n) {
+            uint8_t byte = r->memory[(uint16_t)(expression + n)];
+            r->memory[(uint16_t)(0x9838 + n)] = byte;
+            if (!byte) break;
+        }
+        /* A zero-length same-address copy retains the already-written
+         * first byte; save_history derives its length from that live RAM. */
+        save_history(r, r->memory + 0x9838, 0, 0, selection, 0);
+    }
+}
 int fx_display_complex_result(fx_render *r, uint16_t address, fx_box *box)
 {
     uint8_t mode=r->memory[0x80f9], selection=r->memory[0x8100]&15;
     uint8_t font=r->memory[0x811f];
     if ((mode!=1 && mode!=65 && mode!=129 && mode!=193 && mode!=196 && mode!=136
-        && mode!=6 && mode!=7)
+        && mode!=6 && mode!=7 && mode!=137)
         || (font!=6 && font!=7 && font!=10) || (r->memory[0x80ff]&0x10)
         || r->memory[0x8127] || (!fx_display_has_formula_view(r)
             && !(r->memory[0x80fc]==0xa0 && r->memory[0x80fd]==2)
@@ -176,11 +203,27 @@ int fx_display_complex_result(fx_render *r, uint16_t address, fx_box *box)
         if (!fx_display_has_natural_input(r)) fx_clear_from_row(r,22);
         r->memory[0x8126]=1;
         uint16_t previous=word_at(r,0x812c); put_word(r,0x812c,persistent);
+        if (mode == 137) save_verify_history(r, persistent, selection);
         int result=fx_render_viewport(r,box);
         put_word(r,0x812c,previous); r->memory[0x8127]=0; return result;
     }
     if (address<0x8000 || address>0xffec) { r->memory[0x8127]=0; return -1; }
-    fx_complex value; memcpy(&value,r->memory+address,sizeof value);
+    fx_complex value;
+    if (mode == 137) {
+        /* 1D12C prepares the companion first, then the real record. Its
+         * eight-byte tail starts at an even address after the initial word,
+         * including an odd caller source. Sources are separate from result
+         * buffers in this value API, so neither copy can overwrite the other. */
+        for (unsigned component = 2; component-- > 0;) {
+            fx_number *number = component ? &value.imaginary : &value.real;
+            uint16_t source = (uint16_t)(address + component * 10);
+            number->bytes[0] = r->memory[source];
+            number->bytes[1] = r->memory[(uint16_t)(source + 1)];
+            uint16_t tail = (uint16_t)((source + 2) & 0xfffeu);
+            for (unsigned n = 2; n < 10; ++n)
+                number->bytes[n] = r->memory[(uint16_t)(tail + n - 2)];
+        }
+    } else memcpy(&value,r->memory+address,sizeof value);
     uint8_t real_class,imaginary_class;
     if (fx_scalar_numeric_classify(&real_class,&value.real)!=FX_NUMERIC_OK
         || fx_scalar_numeric_classify(&imaginary_class,&value.imaginary)!=FX_NUMERIC_OK) {
@@ -211,6 +254,10 @@ int fx_display_complex_result(fx_render *r, uint16_t address, fx_box *box)
     if (real_included) {
         if (!format_component(r,&value.real,real_context,formatted,&result)) goto formatting_failure;
         if (!append(first,&first_length,sizeof first,formatted,result.length)) goto formatting_failure;
+        /* Native C060 writes its first component directly into ER4. A
+         * selection10 single-real result later clears only its first byte,
+         * retaining the label tail in the persistent result buffer. */
+        if (mode == 137 && permitted) put_text(r,persistent,first,first_length);
         real_kind=result.kind;
     }
     if (imaginary_class==1) {
@@ -252,6 +299,7 @@ int fx_display_complex_result(fx_render *r, uint16_t address, fx_box *box)
         save_history(r,NULL,0,persistent,selection,1);
         if (!fx_display_has_natural_input(r)) fx_clear_from_row(r,22);
         r->memory[0x8126]=1; uint16_t previous=word_at(r,0x812c); put_word(r,0x812c,persistent);
+        if (mode == 137) save_verify_history(r, persistent, selection);
         int success=fx_render_viewport(r,box);
         put_word(r,0x812c,previous); r->memory[0x8127]=0; return success;
     }

@@ -6,6 +6,7 @@
 #include "ui/fx_ui_controller.h"
 #include "ui/fx_mode_setup.h"
 #include "ui/fx_mode_bank_menu.h"
+#include "ui/fx_parameter_menu_controller.h"
 #include "ui/fx_equation_controller.h"
 #include "table/fx_table_body.h"
 
@@ -22,7 +23,8 @@ typedef enum {
     FX_RUNTIME_START_BANK, FX_RUNTIME_BANK, FX_RUNTIME_RETURN_BANK,
     FX_RUNTIME_BODY,
     FX_RUNTIME_START_EQUATION, FX_RUNTIME_EQUATION, FX_RUNTIME_RETURN_EQUATION,
-    FX_RUNTIME_START_TABLE, FX_RUNTIME_TABLE, FX_RUNTIME_RETURN_TABLE
+    FX_RUNTIME_START_TABLE, FX_RUNTIME_TABLE, FX_RUNTIME_RETURN_TABLE,
+    FX_RUNTIME_START_PARAMETER, FX_RUNTIME_PARAMETER, FX_RUNTIME_RETURN_PARAMETER
 } fx_runtime_phase;
 typedef enum {
     FX_RUNTIME_EVENT_NONE = 0, FX_RUNTIME_EVENT_BOOT_READY,
@@ -36,7 +38,7 @@ typedef enum {
     FX_RUNTIME_BODY_NONE = 0, FX_RUNTIME_MAIN_BODY,
     FX_RUNTIME_INPUT_BODY, FX_RUNTIME_INPUT_GAP,
     FX_RUNTIME_MENU_GAP, FX_RUNTIME_BOOT_GAP, FX_RUNTIME_MAIN_GAP,
-    FX_RUNTIME_EQUATION_GAP, FX_RUNTIME_TABLE_GAP
+    FX_RUNTIME_EQUATION_GAP, FX_RUNTIME_TABLE_GAP, FX_RUNTIME_PARAMETER_GAP
 } fx_runtime_body_kind;
 typedef struct {
     fx_runtime_body_kind kind;
@@ -45,6 +47,7 @@ typedef struct {
     int status;               /* Explicit dependency/admission failure. */
     uint16_t expression_address, result_address;
     uint16_t prepared_source, current_source;
+    uint8_t page;             /* Actual page of a pending parameter child. */
 } fx_runtime_request;
 /* INPUT_BODY/SPECIAL_CONTEXT delegates the remaining wholeD9EE action.
  * It is not an F12A entry: token dispatch/admission still belongs to that
@@ -57,6 +60,7 @@ typedef struct {
     fx_ui_controller input;
     fx_mode_setup mode;
     fx_mode_bank_menu bank;
+    fx_parameter_menu_controller parameter;
     fx_equation_controller equation;
     fx_table_body table;
     fx_calculus_control cancellation;

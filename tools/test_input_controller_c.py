@@ -42,7 +42,7 @@ MODULES=[
     'trig/fx_trig','trig/fx_trig_math','trig/fx_trig_inverse','trig/fx_trig_hyperbolic','trig/fx_math_context',
     'format/fx_format','format/fx_format_base','format/fx_format_budget',
     'render/fx_render','render/fx_render_context','render/fx_render_memory','render/fx_layout','render/fx_layout_validate','render/fx_viewport',
-    'render/fx_result','render/fx_result_special','render/fx_result_linear','render/fx_result_complex','render/fx_result_pair',
+    'render/fx_result','render/fx_result_special', 'render/fx_result_verify','render/fx_result_linear','render/fx_result_complex','render/fx_result_pair',
     'render/fx_result_inequality','render/fx_result_format_state','data/fx_rom_data']
 
 

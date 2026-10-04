@@ -10,7 +10,7 @@
       "scope": "Full startup, persistent state, power management, peripheral interactions and emulator callbacks",
       "status": "partial",
       "manifest": "platform/manifest.json",
-      "implemented_subset": "Prepared boot and emulator host bridge, typed persistent variable/result/display state, replay append/eviction/recall and diagnostic contrast UI; main routing/key-wait scheduler and typed UI/menu/screen completion are available; full subordinate lifecycle integration and remaining boot diagnostics are pending; a portable runtime scheduler now composes boot, main, INPUT and supported menu controllers while exposing pending typed body requests"
+      "implemented_subset": "Prepared boot and emulator host bridge, typed persistent variable/result/display state, replay append/eviction/recall and diagnostic contrast UI; main routing/key-wait scheduler and typed UI/menu/screen completion are available; full subordinate lifecycle integration and remaining boot diagnostics are pending; a portable runtime scheduler now composes boot, main, INPUT and supported menu controllers while exposing pending typed body requests; an opaque persistent device API now retains a full data/MMIO image through raw-key steps, exposes read-only snapshots and explicit timer/callback controls, and composes admitted parameter-menu children. Original raw-key and prepared parameter-menu tests have separate frozen evidence; missing child services and diagnostic behavior remain incomplete."
     },
     {
       "id": "keyboard_ui",

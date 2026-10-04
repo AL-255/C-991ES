@@ -20,7 +20,7 @@ args=parser.parse_args()
 BUILD=ROOT/'analysis/build/render_linalg';BUILD.mkdir(parents=True,exist_ok=True)
 SOURCES=['csrc/render/fx_result_linalg.c','csrc/render/fx_render.c',
  'csrc/render/fx_render_context.c','csrc/render/fx_render_memory.c',
- 'csrc/render/fx_result_special.c','csrc/render/fx_result_format_state.c',
+ 'csrc/render/fx_result_special.c','csrc/render/fx_result_verify.c','csrc/render/fx_result_format_state.c',
  'csrc/format/fx_format_budget.c','csrc/format/fx_format_base.c',
  'csrc/format/fx_format.c','csrc/numeric/fx_numeric.c','csrc/numeric/fx_surd_components.c','csrc/numeric/fx_raw_decimal_parts.c','csrc/numeric/fx_raw_decimal_divide.c','csrc/numeric/fx_raw_decimal_multiply_add.c']
 HEADERS=[x[:-2]+'.h' for x in SOURCES]+['csrc/linalg/fx_linalg.h']

@@ -21,6 +21,7 @@ class Box(C.Structure):
     _fields_=[('width',C.c_uint16),('height',C.c_uint8),('depth',C.c_uint8)]
 
 SOURCES=['csrc/render/fx_result_complex.c','csrc/render/fx_result_complex.h',
+ 'csrc/render/fx_result_verify.c','csrc/render/fx_result_verify.h',
  'csrc/render/fx_render.c','csrc/render/fx_render.h','csrc/render/fx_render_context.c','csrc/render/fx_render_context.h',
  'csrc/render/fx_render_memory.c','csrc/render/fx_render_memory.h','csrc/render/fx_layout.c',
  'csrc/render/fx_layout_validate.c','csrc/render/fx_layout_validate.h','csrc/render/fx_viewport.c',
@@ -172,13 +173,18 @@ def main():
                 compare('cached_numeric_bypass',literal(3)+literal(4),selection,height=height,cached=expression)
     for address in (0,0x7fff,0xfff0):
         compare('cached_invalid_address_unread',bytes([0xff])*20,15,cached=b'12\0',address=address)
-    for mode,selection,status in ((1,14,0),(1,15,0),(137,0,0),(196,0,0x10),(69,0,0)):
+    for mode,selection,status in ((1,14,0),(1,15,0),(196,0,0x10),(69,0,0)):
         oracle.reset();C.memset(memory,0,65536)
         for place,value in [(0x80f9,mode),(0x80fc,1),(0x80ff,status),(0x811f,10),(0x8100,selection),(0x8106,1)]:setting(place,value)
         before=bytes(memory)
         assert lib.fx_display_complex_result(r,0x8300,C.byref(Box()))==-1
         assert bytes(memory)==before
-    counts['explicit_unsupported_context_guards']=5
+    counts['explicit_unsupported_context_guards']=4
+    # Preserve the old137 admission control as a genuine original-ROM
+    # comparison now that the branch is implemented. NULL live label
+    # pointers are valid empty spellings; the separate mode137 corpus also
+    # tests initialized and rewritten label pointers.
+    compare('newly_supported_verify_context',literal(3)+literal(4),0,mode=137)
     for index in range(0 if args.quick else args.random_cases):
         parts=[]
         for component in range(2):
@@ -193,7 +199,7 @@ def main():
             'comparison_scope':'tokens,8100..813F,source20bytes,active viewport/cache,history9800..98FF,framebuffer,all512LCDbytes before/afterflush,F031',
             'oracle_instruction_limit_per_call':20000000,
             'explicit_gaps':['numeric scratch within8000..80DB and inactive metric slots','CPU scratch flags/registers/temporary stack aliases',
-                             'status80FFbit4 and equation-mode polar policies','mode137 and other nonordinary result modes'],
+                             'status80FFbit4 and equation-mode polar policies','other nonordinary result modes; mode137 has its own full raw-record/display corpus'],
             'original_native_faults':faults}
     if not args.no_report:
         assert not args.quick,'A reduced suite cannot publish the canonical report'

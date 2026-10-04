@@ -4,6 +4,7 @@
 #include "../format/fx_format.h"
 #include "../format/fx_format_base.h"
 #include "fx_result_format_state.h"
+#include "fx_result_verify.h"
 #include "../numeric/fx_surd_components.h"
 
 static uint8_t read_byte(const fx_render *render, uint16_t address)
@@ -24,7 +25,7 @@ int fx_display_special_real_number(fx_render *render, const fx_number *value,
     uint8_t font = render->memory[0x811f], mode = render->memory[0x80f9];
     if (font != 6 && font != 7 && font != 10) return -1;
     int error = value && (value->bytes[0] & 0xf0) == 0xf0;
-    if (value && !error && (mode == 137 || render->memory[0x8127]
+    if (value && !error && mode != 137 && (render->memory[0x8127]
                           || (mode != 2 && (render->memory[0x80ff] & 0x10)))) return -1;
     if (mode == 2) base_indicator(render);
     /*37BC formats a caller-owned copy. Compact real values leave the
@@ -48,13 +49,17 @@ int fx_display_special_real_number(fx_render *render, const fx_number *value,
         options.digits = render->memory[0x8103];
         options.decimal_dot = render->memory[0x8104];
         fx_format_result result;
-        fx_format_status status = mode == 2 && !error
-            ? fx_format_base(value, render->memory[0x80fa], text, sizeof text, &result)
-            : fx_format_number(value, &options, text, sizeof text, &result);
+        fx_format_status status;
+        if (mode == 137 && !error)
+            status = fx_format_verify_result(render, value, text, sizeof text, &result);
+        else if (mode == 2 && !error)
+            status = fx_format_base(value, render->memory[0x80fa], text, sizeof text, &result);
+        else status = fx_format_number(value, &options, text, sizeof text, &result);
         if (status != FX_FORMAT_OK)
             return 0;
         length = result.length;
-        if (mode == 2) render->memory[0x8100] &= 15;
+        if (mode == 137 && !error && length >= 26) return -1;
+        if (mode == 2 || mode == 137) render->memory[0x8100] &= 15;
         else fx_apply_result_format_state(render, value, options.selection, result.kind);
     } else render->memory[0x8100] &= 15;
     uint8_t y = font == 10 ? 22 : 25;
@@ -77,7 +82,11 @@ int fx_display_special_real_result(fx_render *render, uint16_t value_address,
 {
     if (!value_address) return fx_display_special_real_number(render, NULL, final_box);
     fx_number value;
-    for (unsigned n = 0; n < sizeof value.bytes; ++n)
-        value.bytes[n] = read_byte(render, (uint16_t)(value_address + n));
+    for (unsigned n = 0; n < sizeof value.bytes; ++n) {
+        uint16_t source = (uint16_t)(value_address + n);
+        if (render->memory[0x80f9] == 137 && n >= 2)
+            source = (uint16_t)(((value_address + 2) & 0xfffeu) + n - 2);
+        value.bytes[n] = read_byte(render, source);
+    }
     return fx_display_special_real_number(render, &value, final_box);
 }

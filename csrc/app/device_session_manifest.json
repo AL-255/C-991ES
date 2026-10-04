@@ -1,0 +1,34 @@
+{
+  "subsystem": "Opaque persistent raw-key calculator device",
+  "complete": false,
+  "shared_library_target": "fx991_device",
+  "production_sources": [
+    "csrc/app/fx_device_session.c",
+    "csrc/app/fx_device_session.h",
+    "csrc/app/fx_device_protocol.c",
+    "csrc/app/fx_device_protocol.h"
+  ],
+  "state": "64KiB data/MMIO and named C controllers; no CPU, instruction executor or writable public RAM seam",
+  "stepping": "Explicit reset, raw matrix packet submission/release, bounded runtime steps, pending timer acknowledgement and callback consumption",
+  "observations": "Read-only snapshot/RAM and allocated read-only JSON transport",
+  "current_release_summary": "simulator/verification/current-release.json",
+  "verification": {
+    "device_sequences_per_optimization": 24,
+    "native_checkpoints_per_optimization": 678,
+    "checks_per_optimization": 2070,
+    "optimizations": [
+      "O2",
+      "O3"
+    ],
+    "native_protocol_reference_checkpoints_per_optimization": 206,
+    "protocol_reference_scope": "Archived original LCD/MMIO/settings/packet/callback bytes; named controller fields are current public-snapshot binding checks",
+    "runtime_parameter_native_sessions": 142,
+    "runtime_parameter_native_checkpoints": 992
+  },
+  "limits": [
+    "Typed gaps do not complete missing handlers.",
+    "Original numerical scratch residuals remain explicitly disclosed in the device proof.",
+    "The browser calculator uses the separate prepared-expression API.",
+    "Full firmware, advanced modes and diagnostic lifecycle remain incomplete."
+  ]
+}

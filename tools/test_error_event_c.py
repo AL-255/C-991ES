@@ -28,7 +28,7 @@ MODULES = ['ui/fx_error_event','ui/fx_error_display','ui/fx_key_controller',
            'numeric/fx_numeric','numeric/fx_surd_components','numeric/fx_raw_decimal_parts','numeric/fx_raw_decimal_divide','numeric/fx_raw_decimal_multiply_add','complex/fx_complex','parse/fx_tokens',
            'format/fx_format','format/fx_format_base','render/fx_render',
            'render/fx_render_context','render/fx_render_memory',
-           'render/fx_layout_validate','render/fx_result_special',
+           'render/fx_layout_validate','render/fx_result_special', 'render/fx_result_verify',
            'render/fx_result_format_state','data/fx_rom_data']
 SOURCES = ['csrc/'+module+'.c' for module in MODULES]
 

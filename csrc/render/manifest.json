@@ -348,7 +348,7 @@
     {
       "address": "0x37bc",
       "name": "fx_display_special_real_result",
-      "scope": "real special-view result and null-line clear, full selection/cache/LCD state, all three fonts and both maps; BASE-N branches1/7/9/15 via high-level formatter; all sixteen error headers bypass numeric/mode serialization"
+      "scope": "real special-view result and null-line clear, full selection/cache/LCD state, all three fonts and both maps; BASE-N branches1/7/9/15 via high-level formatter; all sixteen error headers bypass numeric/mode serialization; VERIFY137 raw-class Boolean labels through live8DF2/8DF4 pointers, selection-kind0 commit, cached8130 preservation and unchanged8127"
     },
     {
       "address": "0x368a",
@@ -384,12 +384,17 @@
       "address": "0xb754",
       "name": "fx_display_inequality_result",
       "scope": "mode75/context1 standard status, all20 valid solution classes, legacy labels, natural token/layout output, previous DMS/ENG selection histories and cached viewport reuse"
+    },
+    {
+      "address": "0x8000 / 0xc0a4 / 0xb468",
+      "name": "fx_format_verify_result / save_verify_history",
+      "scope": "VERIFY137 Boolean projection of nativeclass1 versus otherclasses; live ROM/RAM label pointers, verbatim and null labels, ordinary real/imaginary composition, byte-valued cached-string history gate and retained selection10 label tail. Numeric classification scratch and CPU-stack aliases remain excluded."
     }
   ],
   "gaps": [
-    "B070 mode137,80FFbit4 status labels and mode-specific equation69 polar/history/status hooks remain partial; unsupported contexts return-1. Ordinary complex/polar flows are translated and verified separately in render_complex.json. Direct equationB4B0/inequalityB754 controllers, special37BC and BASE-N fixed-row branches are translated.",
+    "B07080FFbit4 status labels and mode-specific equation69 polar/history/status hooks remain partial; unsupported contexts return-1. Ordinary complex/polar and mode137 VERIFY flows are translated and verified separately in render_complex.json and render_mode137.json. Direct equationB4B0/inequalityB754 controllers, special37BC and BASE-N fixed-row branches are translated.",
     "B070/37BC/B754 unused numeric scratch RAM within0x8000..0x80DB remains untranslated because numeric/formatter APIs expose records and tokens rather than native operand workspaces. Active viewport state0x8000..0x8005 and0x8007..0x800A is compared;0x8006 and inactive0x8640 metric slots remain gaps. Intermediate inequality C060 selection state is modeled separately from the enclosing3634 result-kind commit; ordinary complex-component state is translated and compared in render_complex.json.",
-    "Special BASE-N rejects invalid nonempty base masks and raw glyph8127 mode; Nonerror mode137 serialization remains untranslated. Null-value title lookup retains all80FA byte values.",
+    "Special BASE-N rejects invalid nonempty base masks and raw glyph8127 mode. Mode137 nonerror labels are translated; special labels>=26 bytes return-1 before renderer-state mutation because the native local field then aliases CPU-stack state. Null-value title lookup retains all80FA byte values.",
     "Inequality B754 rejects special80FF bit4 status contexts for nonerror values; overlong C060 text>=36 bytes cannot be represented by the original local field without native stack aliasing and returns explicit formatting failure. Invalid/cyclic RAM strings are bounded; CPU stack aliases are not emulated. B070 equation caption history wrapper remains separate from directB4B0.",
     "Viewport fallback with a failed second measurement or a nonterminating overlapping copy is an explicit pending native-state audit; tested fallback replacements succeed.",
     "Cursor painting/blink scheduling is a separate UI routine; this subsystem translates cursor geometry and blink metadata.",
@@ -406,5 +411,9 @@
   "secondary_verification": "csrc/render/differential-results.json",
   "understanding_ranges": "csrc/render/understood_ranges.json",
   "complex_verification": "analysis/c-verification/render_complex.json",
-  "complex_manifest": "csrc/render/complex_manifest.json"
+  "complex_manifest": "csrc/render/complex_manifest.json",
+  "mode137_verification": "analysis/c-verification/render_mode137.json",
+  "mode137_verification_command": "python3 tools/test_render_mode137_c.py",
+  "mode137_input_fixture": "analysis/native-fixtures/render-mode137/inputs.json",
+  "mode137_notes": "csrc/render/mode137.md"
 }

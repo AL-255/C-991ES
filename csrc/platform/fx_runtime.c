@@ -31,6 +31,8 @@ static fx_runtime_status main_request(fx_platform *p,fx_runtime *s,
     if(operation==FX_MAIN_INPUT)s->phase=FX_RUNTIME_START_INPUT;
     else if(operation==FX_MAIN_MODE_MENU || operation==FX_MAIN_SETUP_MENU)
         s->phase=FX_RUNTIME_START_MENU;
+    else if(operation==FX_MAIN_PARAMETER_MENU)
+        s->phase=FX_RUNTIME_START_PARAMETER;
     else if(operation==FX_MAIN_SCREEN21 && p->ram[0x80f9]==0x45 &&
             p->ram[0x80fa]>=1 && p->ram[0x80fa]<=2)
         s->phase=FX_RUNTIME_START_EQUATION;
@@ -164,6 +166,30 @@ static fx_runtime_status equation_status(fx_platform *p,fx_runtime *s,
                     (uint8_t)s->equation.input.request,status);
     }
 }
+static fx_runtime_status parameter_status(fx_platform *p,fx_runtime *s,
+    fx_parameter_menu_status status,uint8_t entering)
+{
+    switch(status) {
+    case FX_PARAMETER_MENU_WAIT:
+        s->event=entering ? FX_RUNTIME_EVENT_WAIT_ENTER : FX_RUNTIME_EVENT_WAIT_ITERATION;
+        return FX_RUNTIME_WAIT;
+    case FX_PARAMETER_MENU_DONE:
+        s->phase=FX_RUNTIME_RETURN_PARAMETER;
+        s->event=FX_RUNTIME_EVENT_HANDLER_RETURN;return FX_RUNTIME_ADVANCED;
+    case FX_PARAMETER_MENU_EXPORT:
+        return export_event(s,fx_parameter_menu_controller_export_mask(&s->parameter));
+    case FX_PARAMETER_MENU_RESET:return reset_event(p,s);
+    case FX_PARAMETER_MENU_TIMER:
+        s->timer_pending=1;
+        s->timer_period=fx_parameter_menu_controller_timer_period(&s->parameter);
+        s->event=FX_RUNTIME_EVENT_TIMER;return FX_RUNTIME_TIMER;
+    default:
+        body(s,FX_RUNTIME_PARAMETER_GAP,s->parameter.request.kind,
+             s->parameter.request.argument,status);
+        s->request.page=s->parameter.request.page;
+        return FX_RUNTIME_REQUEST;
+    }
+}
 static fx_runtime_status table_status(fx_platform *p,fx_runtime *s,
     fx_ui_status status)
 {
@@ -198,6 +224,8 @@ fx_runtime_status fx_runtime_step(fx_platform *p,fx_runtime *s,
             return menu_status(p,s,fx_mode_setup_resume_timer(p,&s->mode),1);
         if (s->phase==FX_RUNTIME_BANK)
             return bank_status(p,s,fx_mode_bank_menu_resume_timer(p,&s->bank),1);
+        if (s->phase==FX_RUNTIME_PARAMETER)
+            return parameter_status(p,s,fx_parameter_menu_controller_resume_timer(p,&s->parameter),1);
         return FX_RUNTIME_INVALID;
     }
     switch (s->phase) {
@@ -247,6 +275,18 @@ fx_runtime_status fx_runtime_step(fx_platform *p,fx_runtime *s,
         if (fx_main_loop_accept_handler(p,&s->main,s->returned)!=FX_MAIN_ADVANCED)
             return FX_RUNTIME_INVALID;
         s->phase=FX_RUNTIME_MAIN; s->event=FX_RUNTIME_EVENT_CYCLE_RETURN;
+        return FX_RUNTIME_ADVANCED;
+    case FX_RUNTIME_START_PARAMETER:
+        s->phase=FX_RUNTIME_PARAMETER;
+        return parameter_status(p,s,fx_parameter_menu_controller_begin(p,&s->parameter,NULL),1);
+    case FX_RUNTIME_PARAMETER:
+        return parameter_status(p,s,fx_parameter_menu_controller_tick(p,&s->parameter),0);
+    case FX_RUNTIME_RETURN_PARAMETER:
+        if(fx_parameter_menu_controller_finish(&s->parameter,&s->returned)!=FX_PARAMETER_MENU_DONE)
+            return FX_RUNTIME_INVALID;
+        if(fx_main_loop_accept_handler(p,&s->main,s->returned)!=FX_MAIN_ADVANCED)
+            return FX_RUNTIME_INVALID;
+        s->phase=FX_RUNTIME_MAIN;s->event=FX_RUNTIME_EVENT_CYCLE_RETURN;
         return FX_RUNTIME_ADVANCED;
     case FX_RUNTIME_START_BANK:
         s->phase=FX_RUNTIME_BANK;

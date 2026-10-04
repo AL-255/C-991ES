@@ -1,12 +1,12 @@
 {
-  "subsystem": "ordinary complex and polar result display",
+  "subsystem": "ordinary complex, polar and VERIFY result display",
   "implementation_kind": "readable high-level C",
   "executes_original_rom": false,
   "implemented_routines": [
     {
       "address": "0xb070",
       "name": "fx_display_complex_result",
-      "scope": "ordinary modes1/65/129/193/196/136, rectangular/polar component flow, cache bypass, format contexts, kind commits, history, legacy rows and natural viewport"
+      "scope": "ordinary modes1/65/129/193/196/136/137, rectangular/polar component flow, cache bypass, format contexts, kind commits, history, legacy rows and natural viewport; VERIFY raw-class labels, odd-source preparation, first-component persistent write and special natural-history refresh"
     },
     {
       "address": "0x36b8",
@@ -36,7 +36,7 @@
   ],
   "gaps": [
     "80FFbit4 status-label/padding composition remains unsupported; returns-1.",
-    "Equation69 polar/default policy,137 serialization, and other nonordinary result contexts remain separate.",
+    "Equation69 polar/default policy and other nonordinary result contexts remain separate; mode137 has native raw-record/label/display evidence in render_mode137.json.",
     "Modes without persistent output scratch and natural permission use original CPU-stack text; mode1 selections14/15 return-1.",
     "Unused numeric workspaces within8000..80DB and inactive8640 metric slots are not exposed by value/formatter APIs.",
     "CPU scratch registers, flags and temporary stack aliases are outside this portable semantic API; native fault fixtures are recorded explicitly.",
@@ -53,5 +53,8 @@
     "oracle_instruction_limit_per_call": 20000000,
     "scope": "tokens,8100..813F, immutable20-byte input, active viewport state/cache,9800..98FF history,384 framebuffer bytes,512 LCD bytes before/after flush,F031",
     "not_claimed": "all RAM, CPU ABI, reset-to-keypress timing, full firmware"
-  }
+  },
+  "mode137_verification": "analysis/c-verification/render_mode137.json",
+  "mode137_verification_command": "python3 tools/test_render_mode137_c.py",
+  "mode137_notes": "csrc/render/mode137.md"
 }

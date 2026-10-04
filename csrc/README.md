@@ -7,6 +7,18 @@ and numeric constants remain immutable data from the extracted image.
 
 A [browser calculator](../simulator/README.md) and the `fx991sim` command-line interface now compose the supported expression engine, persistent typed variables, exact formatter and 96×32 LCD output. Run `python3 simulator/serve.py` from the repository root. These interfaces use the prepared expression pipeline; the complete physical-key and advanced-mode lifecycle remains pending.
 
+The `fx991_device` shared library provides a separate persistent raw-key device
+API in [fx_device_session.h](app/fx_device_session.h). Its opaque session owns the
+64 KiB data/MMIO image and the real high-level boot, main, input and menu
+controllers. Create a session, explicitly reset it, submit a matrix packet,
+and advance one semantic controller step at a time. Release a packet explicitly;
+acknowledge a timer only when the controller requests it. Read-only snapshots
+include the 96×32 LCD and typed pending requests. The allocated JSON observation
+in [fx_device_protocol.h](app/fx_device_protocol.h) is a transport adapter; reading
+it does not advance the calculator or consume a callback. This API does not
+accept fabricated completion bytes for missing handlers. The hosted expression
+calculator continues to use its prepared-expression API.
+
 The project is **incomplete**. [scope.json](scope.json) tracks the whole requested
 firmware scope. Each subsystem's `manifest.json` identifies implemented original
 routine addresses, the semantic API being compared, and remaining gaps.
