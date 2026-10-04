@@ -5,7 +5,8 @@
     "csrc/parse/fx_eval_rich.c",
     "csrc/parse/fx_eval_rich_unary.c",
     "csrc/parse/fx_eval_rich_reduce.c",
-    "csrc/parse/fx_eval_surd_workspace.c"
+    "csrc/parse/fx_eval_surd_workspace.c",
+    "csrc/numeric/fx_surd_components.c"
   ],
   "public_api": "csrc/parse/fx_eval_rich.h",
   "native_boundary": {
@@ -66,7 +67,7 @@
       "direct_surd_native_calls": 172,
       "callbacks": 380,
       "callback_RAM_snapshots": 1840,
-      "pins": 68
+      "pins": 71
     },
     "O3": {
       "test_command": "python3 tools/test_eval_rich_c.py --optimization O3",
@@ -75,13 +76,15 @@
     "unary": {
       "test": "tools/test_eval_rich_unary_c.py",
       "report": "analysis/c-verification/eval_rich_unary.json",
-      "checks": 274666,
-      "native_calls": 9206,
-      "handled": 8901,
+      "checks": 280868,
+      "native_calls": 9751,
+      "handled": 9487,
       "native_execution_boundaries": 178,
-      "finite_host_gaps": 127,
+      "finite_host_gaps": 86,
       "wide_norm_controls": 480,
-      "pins": 69
+      "pins": 73,
+      "ordinary_cases": 9206,
+      "ordered_alias_cases": 545
     },
     "reduce": {
       "test": "tools/test_eval_rich_reduce_c.py",
@@ -91,29 +94,33 @@
       ],
       "report": "analysis/c-verification/eval_rich_reduce.json",
       "canonical_report_optimization": "O3",
-      "checks_per_optimization": 118351,
-      "native_calls_per_optimization": 5427,
-      "handled": 5357,
-      "explicit_host_boundaries": 70,
-      "boundary_kernel_entry_RAM_observations": 52,
-      "callback_RAM_snapshots": 49315,
-      "boundary_callback_RAM_snapshots": 584,
-      "pins": 67,
-      "public_dispatcher": "The actual public dispatcher selects the reduction leaf and applies shared cleanup once; no test-only dispatch or cleanup path is substituted."
+      "checks_per_optimization": 152539,
+      "native_calls_per_optimization": 6642,
+      "handled": 6556,
+      "explicit_host_boundaries": 86,
+      "boundary_kernel_entry_RAM_observations": 72,
+      "callback_RAM_snapshots": 65259,
+      "boundary_callback_RAM_snapshots": 706,
+      "pins": 71,
+      "public_dispatcher": "The actual public dispatcher selects the reduction leaf and applies shared cleanup once; no test-only dispatch or cleanup path is substituted.",
+      "distinct_wide_inputs": 1215,
+      "compiled_ABI_checks": 29
     }
   },
   "native_evidence": [
     "analysis/native-fixtures/eval-rich/surd-workspace/inputs.json",
     "analysis/native-fixtures/eval-rich/unary/observations.json",
-    "analysis/native-fixtures/eval-rich/unary/unsupported.json"
+    "analysis/native-fixtures/eval-rich/unary/unsupported.json",
+    "analysis/native-fixtures/eval-rich/unary/ordered-inputs.json",
+    "analysis/native-fixtures/eval-rich/reduce/wide-inputs.json"
   ],
   "comparison_policy": "Full current/other20, independent native status, polling counts and remaining64KiB RAM/MMIO.8000..80DB value-kernel arena and only individually witnessed CPU-frame writes are excluded. All actual pool/bank aliases remain compared. Direct scalar controls separately compare10-byte output and all1440 payload bytes; no full64KiB claim for those direct controls.",
   "remaining": [
     "Whole-expression grammar and physical storage staging/terminal cleanup are caller-owned; these modules do not claim the complete evaluator or UI",
     "Explicit recorded native fault/instruction-limit and finite implementation gaps remain retained and replayed; an instruction limit does not prove eternal nonreturn",
     "Matrix output index10 and above aliases native CPU pointer/loop descriptors; no fabricated descriptor or CPU frame is generated",
-    "Wide square determinant/inverse, C4 round CPU-save overflow, bounded giant-vector traversal and specific opposed-surd/round workspace overlaps remain explicit host gaps",
-    "REF/RREF supports finite dimensions 0..3; live wide dimensions, working-pair/CPU-local overlap and individually retained malformed comparison/division or lexical classifier conversions remain explicit prepared host boundaries. Of 70 boundaries, 52 preserve exact original reached-kernel-entry RAM and preceding callback observations; the other 18 retain output noncommit.",
+    "Wide square determinant/inverse, C4 round CPU-save overflow, bounded giant-vector traversal and unproved malformed component-root domains remain explicit host gaps",
+    "REF/RREF admits zero-dimension native diagnostics and positive shapes with 3*(rows-1)+columns-1 <9, preserving literal stride-three cells; larger dimensions, working-pair/CPU-local overlap and individually retained malformed comparison/division or lexical classifier conversions remain explicit prepared host boundaries. Of 86 boundaries, 72 preserve exact original reached-kernel-entry RAM and preceding callback observations; the other 14 retain output noncommit.",
     "Integer GCD/factor components beyond int64 and unproved malformed finite conversions return UNIMPLEMENTED with preceding physical commits retained",
     "Physical interrupt/key timing is external; callbacks provide the prepared polling responses"
   ],

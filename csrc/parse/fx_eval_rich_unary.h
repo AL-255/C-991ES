@@ -25,8 +25,9 @@ struct fx_eval_rich_context;
  * work-record, CPU-local and instruction-limit outcomes retained separately.
  * Transpose always uses the fixed nine cells. Surd preparation effects occur
  * before the next live cell is read, even when exact output is disabled.
- * Opposite-sign abs and round surd sources overlapping 8640..867B retain an
- * explicit implementation gap; round still preserves the physical cell+20.
+ * Opposite-sign abs and round surds use ordered physical component emission
+ * for prepared aliases in 8640..867B. Round preserves the physical cell+20.
+ * Arbitrary malformed component roots remain explicit numerical host gaps.
  * Non-square determinant/inverse shapes return native 9. Wide square kernels
  * can overwrite the original CPU local buffer and are an explicit
  * architectural boundary. C4 display-round likewise overwrites a 10-byte

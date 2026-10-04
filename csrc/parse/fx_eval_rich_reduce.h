@@ -10,7 +10,8 @@
  * write precedes its cancellation callback. Inactive cells participate in
  * the native90-byte pending copies. A nonzero pair names the live current
  * and other20-byte records; zero selects separate host records.
- * Dimensions above3, work-record overlaps with the bank/dimension tables,
+ * Positive shapes require 3*(rows-1)+columns-1 <9, preserving the native
+ * stride-three coordinates. Larger shapes, work-record overlaps with the bank/dimension tables,
  * CPU-frame overlaps, odd/wrapped addresses, and unsupported compact-surd
  * conversion aliases return UNIMPLEMENTED, retaining preceding RAM effects.
  * Unchecked malformed fractions in CA3E division or pivot comparison are

@@ -7,6 +7,7 @@ Native faults and finite implementation boundaries remain individually visible.
 import argparse
 import base64
 import collections
+import gzip
 import ctypes as C
 import hashlib
 import json
@@ -22,7 +23,7 @@ ENTRY, STOP, SENTINEL = 0x16538, 0x16588, 0x2fffe
 DIM_START, DIM_END = 0x80e0, 0x8100
 PAYLOAD_START, PAYLOAD_END = 0x829e, 0x883e
 
-SOURCES = ['parse/fx_eval_rich.c', 'parse/fx_eval_rich_unary.c', 'parse/fx_eval_rich_reduce.c', 'parse/fx_eval_surd_workspace.c', 'platform/fx_platform.c', 'platform/fx_result_classify.c', 'linalg/fx_linalg.c', 'complex/fx_complex_dispatch.c', 'complex/fx_complex.c', 'complex/fx_complex_angle.c', 'complex/fx_complex_round.c', 'numeric/fx_numeric.c', 'numeric/fx_transcend.c', 'numeric/fx_power.c', 'numeric/fx_root.c', 'numeric/fx_combinatorics.c', 'numeric/fx_logbase.c', 'trig/fx_trig.c', 'trig/fx_trig_math.c', 'trig/fx_trig_inverse.c', 'trig/fx_trig_hyperbolic.c', 'numeric/fx_raw_decimal_parts.c', 'numeric/fx_raw_decimal_divide.c', 'numeric/fx_raw_decimal_multiply_add.c', 'numeric/fx_raw_fraction_convert.c', 'numeric/fx_raw_decimal_exp.c']
+SOURCES = ['parse/fx_eval_rich.c', 'parse/fx_eval_rich_unary.c', 'parse/fx_eval_rich_reduce.c', 'parse/fx_eval_surd_workspace.c', 'platform/fx_platform.c', 'platform/fx_result_classify.c', 'linalg/fx_linalg.c', 'complex/fx_complex_dispatch.c', 'complex/fx_complex.c', 'complex/fx_complex_angle.c', 'complex/fx_complex_round.c', 'numeric/fx_numeric.c', 'numeric/fx_transcend.c', 'numeric/fx_power.c', 'numeric/fx_root.c', 'numeric/fx_combinatorics.c', 'numeric/fx_logbase.c', 'trig/fx_trig.c', 'trig/fx_trig_math.c', 'trig/fx_trig_inverse.c', 'trig/fx_trig_hyperbolic.c', 'numeric/fx_raw_decimal_parts.c', 'numeric/fx_raw_decimal_divide.c', 'numeric/fx_raw_decimal_multiply_add.c', 'numeric/fx_raw_fraction_convert.c', 'numeric/fx_raw_decimal_exp.c', 'numeric/fx_surd_components.c']
 
 ORACLE = r'''
 /* Read-only ROM oracle prototype; test observation only, no arithmetic. */
@@ -209,6 +210,7 @@ class NativeUnaryOracle:
 
 FIXTURE = 'analysis/native-fixtures/eval-rich/unary/observations.json'
 LIMITS = 'analysis/native-fixtures/eval-rich/unary/unsupported.json'
+ALIASES = 'analysis/native-fixtures/eval-rich/unary/ordered-inputs.json'
 
 class Number(C.Structure):
     _fields_ = [('bytes', C.c_uint8 * 10)]
@@ -248,10 +250,13 @@ def main():
     args = parser.parse_args()
     HERE.mkdir(parents=True, exist_ok=True)
     fixture = json.loads((ROOT / FIXTURE).read_text())
+    aliases = json.loads((ROOT / ALIASES).read_text())
+    if aliases['schema_version'] != 1 or aliases['case_count'] != 545 or len(aliases['cases']) != 545:
+        raise ValueError('Invalid unfiltered ordered-alias input corpus')
     declared = {row['case_id']: row for row in json.loads((ROOT / LIMITS).read_text())['cases']}
     source_names = ['csrc/' + source for source in SOURCES]
     inputs = implementation_inputs(ROOT, source_names)
-    inputs += [FIXTURE, LIMITS, 'tools/c_build_inputs.py', 'tools/c_verification.py',
+    inputs += [FIXTURE, LIMITS, ALIASES, 'tools/c_build_inputs.py', 'tools/c_verification.py',
                str(Path(__file__).resolve().relative_to(ROOT))]
     inputs += ['tools/nxu8/harness.c', 'tools/nxu8/vendor/SimU8/core.c',
                'firmware/fx-991es-plus-c-ver4.bin']
@@ -377,6 +382,54 @@ def main():
             print('ORIGINAL', counts['cases'], flush=True)
     check('all_unfiltered_observations', fixture['case_count'], counts['cases'], None)
     check('all_declared_limits_replayed', len(declared), len(boundaries), None)
+    counts['ordinary_cases'] = counts['cases']
+    with gzip.open(HERE/'alias-observations.jsonl.gz','wt') as retained:
+        for row in aliases['cases']:
+            identity = 'supplemental-alias-' + str(row['case_id'])
+            seed = decode_blob(row['initial_ram_zlib_base64'])
+            check('supplemental_seed_digest',row['initial_ram_sha256'],hashlib.sha256(seed).hexdigest(),identity)
+            expected = native.run(seed,row['selector'],pair=row['pair'],sp=row['sp'])
+            ram = (C.c_uint8*65536).from_buffer_copy(seed)
+            storage = Storage(ram,65536,rom,len(rom_bytes))
+            pair = row['pair']
+            current = Complex.from_buffer_copy(seed[pair:pair+20])
+            other = Complex.from_buffer_copy(seed[pair+20:pair+40])
+            output = Result()
+            exact = bool(seed[0x80f9] & 0x40 and seed[0x8106] and seed[0x810c] != 1 and
+                         not(seed[0x80fc] & 0x40) and seed[0x80f5] != 0xed and not(seed[0x8124]&1))
+            context = Context(seed[0x80f9],NumericContext(exact,0,0,0),None,None)
+            host = lib.fx_eval_rich_unary_after_storage(C.byref(output),C.byref(storage),C.byref(current),
+                C.byref(other),row['selector'],C.byref(context),0)
+            counts['supplemental_alias_native_calls'] += 1
+            groups[(ALIASES,host,expected['run_status'])] += 1
+            counts['native_calls'] += 1
+            counts['cases'] += 1
+            if host == 0 and expected['run_status'] == 100: counts['handled'] += 1
+            check('supplemental_handled_host_status',0,host,identity)
+            check('supplemental_native_return',100,expected['run_status'],identity)
+            actual = bytearray(bytes(ram)); actual[pair:pair+40] = bytes(output.value)+bytes(output.other)
+            for name,wanted,found in [
+                ('current20',expected['current20'],bytes(output.value).hex()),
+                ('other20',expected['other20'],bytes(output.other).hex()),
+                ('native_R0',expected['native_status'],output.native_status),
+                ('poll_count',expected['poll_count'],output.cancellation_checks),
+                ('dimensions32',expected['dimensions32'],actual[0x80e0:0x8100].hex()),
+                ('payload1440',expected['payload1440'],actual[0x829e:0x883e].hex()),
+                ('temporary_mask',expected['mask_after'],actual[0x8125])]:
+                check('supplemental_'+name,wanted,found,identity)
+            frame = {int(address,16) for address,count in expected['ram_writes']
+                     if count and int(expected['minimum_sp'],16)<=int(address,16)<row['sp']}
+            differences = [(f'{address:04x}',wanted,found) for address,(wanted,found) in
+                enumerate(zip(native.after,actual)) if wanted!=found and
+                not 0x8000<=address<0x80dc and address not in frame]
+            check('supplemental_persistent_RAM',[],differences,identity)
+            retained.write(json.dumps(dict(case_id=row['case_id'],group=row['group'],host_status=host,
+                native=expected,final_ram_zlib_base64=base64.b64encode(zlib.compress(native.after,9)).decode(),
+                actual_final_ram_zlib_base64=base64.b64encode(zlib.compress(actual,9)).decode()),separators=(',',':'))+'\n')
+    check('all_supplemental_aliases',545,counts['supplemental_alias_native_calls'],None)
+
+
+    check('all_ordinary_and_supplemental_cases',fixture['case_count']+aliases['case_count'],counts['cases'],None)
     after = {name: digest(ROOT / name) for name in before}
     if before != after:
         raise RuntimeError('An implementation/oracle/fixture input changed; rerun this suite')
@@ -389,10 +442,10 @@ def main():
         limits=['8000..80DB numerical working bytes and only individually witnessed CPU frame write addresses are excluded from C RAM parity; every pool byte8640..87CF and timer/MMIO byte remains compared.',
                 'Every native fault/instruction-limit outcome and every finite native unsupported domain is retained, replayed and pinned in unsupported.json; no finite case is silently omitted.',
                 'Standalone pointer API uses private host work records. Actual physical work-record cancellation callback snapshots are exercised by test_eval_rich_c.py; allocation/parser staging remain caller-owned.',
-                'Native wide square/product CPU-buffer execution, bounded giant-vector traversal, observed fault/instruction-limit outcomes, C4 round frame overflow, precision>9, and opposed-surds/round sources overlapping8640..867B retain explicit host boundaries.'],
+                'Native wide square/product CPU-buffer execution, bounded giant-vector traversal, observed fault/instruction-limit outcomes, C4 round frame overflow, precision>9, and malformed/unproved component-root coordinates retain explicit host boundaries; prepared aligned ABS/ROUND component-pool aliases are handled.'],
         compiler_optimization=args.optimization,
         actual_compiled_artifacts_sha256={str(path.relative_to(ROOT)): digest(path)
-            for path in (shared, HERE/'native-unary-oracle.so', oracle_source)})
+            for path in (shared, HERE/'native-unary-oracle.so', oracle_source,HERE/'alias-observations.jsonl.gz')})
     if not args.no_report and not failures:
         write_report('analysis/c-verification/eval_rich_unary.json', report, inputs,
                      'tools/test_eval_rich_unary_c.py')

@@ -6,6 +6,7 @@
 #include "../linalg/fx_linalg.h"
 #include "../numeric/fx_raw_fraction_convert.h"
 #include "../numeric/fx_raw_decimal_exp.h"
+#include "../numeric/fx_surd_components.h"
 #include "../trig/fx_trig_hyperbolic.h"
 #include "../platform/fx_platform.h"
 #include "../platform/fx_result_classify.h"
@@ -199,10 +200,22 @@ static fx_numeric_status live_cells(fx_eval_rich_unary_result *result,
         if (selector == 1) {
             fx_platform platform = {storage->rom,storage->rom_size,storage->ram,0,FX_MEMORY_OK};
             fx_result_classification observed;
-            status = fx_result_classify_address(&platform,(uint16_t)address,
-                (uint16_t)(10u*((3u*row+column)&255u)),&observed);
-            if (status != FX_NUMERIC_OK) return status;
-            classification = observed.classification;
+            if (address >= 0x8640u && address < 0x867cu &&
+                (cell.bytes[0] & 0xf0u) == 0x80u && cell.bytes[9] &&
+                (uint8_t)(cell.bytes[8]+cell.bytes[9]) == 7) {
+                /* CCF6 emits from the live compact fields before converting
+                 * at pool0. Re-read the actual cell after those writes: its
+                 * former compact record may now be an emitted component. */
+                status = fx_surd_components_convert_live(storage->ram,
+                    (uint16_t)address,0x8640u);
+                if (status != FX_NUMERIC_OK) return status;
+                classification = storage->ram[0x8649u] >= 4 ? 2 : 4;
+            } else {
+                status = fx_result_classify_address(&platform,(uint16_t)address,
+                    (uint16_t)(10u*((3u*row+column)&255u)),&observed);
+                if (status != FX_NUMERIC_OK) return status;
+                classification = observed.classification;
+            }
             memcpy(&cell,storage->ram+address,10);
             if (classification == 0xf0) fx_number_error(&value,3);
             else {
@@ -218,18 +231,12 @@ static fx_numeric_status live_cells(fx_eval_rich_unary_result *result,
             if (mode != 0 && mode != 4 && mode != 8 && mode != 9) mode = 0;
             memcpy(&saved_companion,storage->ram+address+20u,10);
             if ((cell.bytes[0] & 0xf0u) == 0x80) {
-                fx_number components[6],converted;
-                /* 173FA expands the live compact surd before committing its
-                 * decimal conversion back to the same physical cell. */
-                if (address >= 0x8640u && address < 0x867cu)
-                    return FX_NUMERIC_UNIMPLEMENTED;
-                status = fx_surd_unpack(components,&cell);
-                if (status == FX_NUMERIC_OK)
-                    memcpy(storage->ram+0x8640u,components,sizeof components);
-                if (status == FX_NUMERIC_OK) status = fx_number_to_decimal(&converted,&cell);
+                /* 173FA reads the live compact fields between component
+                 * writes, including a source overlapping the component pool. */
+                status = fx_surd_components_convert_live(storage->ram,
+                    (uint16_t)address,(uint16_t)address);
                 if (status != FX_NUMERIC_OK) return status;
-                memcpy(storage->ram+address,&converted,10);
-                cell = converted;
+                memcpy(&cell,storage->ram+address,10);
             }
             status = fx_scalar_display_round(&value,&cell,mode,context->digits,&native);
             /* 15C9E restores the physical cell+20 record after the round leaf,

@@ -9,6 +9,11 @@ excluded from persistent RAM comparison; every physical bank and MMIO byte
 remains observable. GPL-3.0-only.
 """
 import argparse
+import base64
+import gzip
+import sys
+from datetime import datetime, timezone
+from pathlib import Path
 import ctypes as C
 import hashlib
 import itertools
@@ -63,6 +68,7 @@ SOURCES = ['parse/fx_eval_rich_reduce.c', 'parse/fx_eval_rich.c',
            'linalg/fx_linalg.c', 'complex/fx_complex_dispatch.c',
            'complex/fx_complex.c', 'complex/fx_complex_angle.c',
            'complex/fx_complex_round.c', 'numeric/fx_numeric.c',
+           'numeric/fx_surd_components.c',
            'numeric/fx_transcend.c', 'numeric/fx_power.c', 'numeric/fx_root.c',
            'numeric/fx_combinatorics.c', 'numeric/fx_logbase.c',
            'trig/fx_trig.c', 'trig/fx_trig_math.c', 'trig/fx_trig_inverse.c',
@@ -101,6 +107,22 @@ int reduce_test_dispatch(fx_eval_rich_result *out, fx_eval_storage *storage,
         memcpy(storage->ram+pair+20u,&out->other,sizeof out->other);
     }
     return status;
+}
+'''
+
+ADAPTER += r'''
+#include <stddef.h>
+size_t reduce_test_abi(unsigned i) {
+    static const size_t a[] = {
+        sizeof(fx_number), offsetof(fx_number,bytes),
+        sizeof(fx_complex), offsetof(fx_complex,real), offsetof(fx_complex,imaginary),
+        sizeof(fx_linalg_context), offsetof(fx_linalg_context,exact_math), offsetof(fx_linalg_context,display_mode), offsetof(fx_linalg_context,digits), offsetof(fx_linalg_context,cancel_at),
+        sizeof(fx_eval_rich_context), offsetof(fx_eval_rich_context,calculation_context), offsetof(fx_eval_rich_context,numeric), offsetof(fx_eval_rich_context,cancelled), offsetof(fx_eval_rich_context,userdata),
+        sizeof(fx_eval_rich_result), offsetof(fx_eval_rich_result,value), offsetof(fx_eval_rich_result,other), offsetof(fx_eval_rich_result,firmware_status), offsetof(fx_eval_rich_result,cancellation_checks),
+        sizeof(fx_eval_storage), offsetof(fx_eval_storage,ram), offsetof(fx_eval_storage,ram_size), offsetof(fx_eval_storage,rom), offsetof(fx_eval_storage,rom_size),
+        sizeof(fx_rational), offsetof(fx_rational,numerator), offsetof(fx_rational,denominator), offsetof(fx_rational,flags)
+    };
+    return i < sizeof(a)/sizeof(a[0]) ? a[i] : (size_t)-1;
 }
 '''
 
@@ -182,6 +204,24 @@ int reduce_run(unsigned selector,unsigned pair,unsigned cancel)
 '''
 
 
+WIDE_INPUT = 'analysis/native-fixtures/eval-rich/reduce/wide-inputs.json'
+
+
+def local_python_inputs():
+    modules = {}
+    own = Path(__file__).resolve().parent
+    for name, module in tuple(sys.modules.items()):
+        filename = getattr(module, '__file__', None)
+        if not filename:
+            continue
+        path = Path(filename).resolve()
+        if path.suffix == '.py' and (path.is_relative_to(ROOT) or path.is_relative_to(own)):
+            modules[name] = str(path.relative_to(ROOT)) if path.is_relative_to(ROOT) else str(path)
+    for name in ('__main__', 'c_build_inputs', 'c_verification', 'nxu8.machine'):
+        assert name in modules, ('Unpinned executed Python module', name)
+    return dict(sorted(modules.items()))
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--random-cases', type=int, default=2000)
@@ -189,9 +229,36 @@ def main():
     parser.add_argument('--no-report', action='store_true')
     parser.add_argument('--only-label', action='append', default=[],
                         help='Diagnostic subset; requires --no-report')
+    parser.add_argument('--wide-input', type=Path,
+                        help='Private input preview; requires --no-report')
+    parser.add_argument('--build-dir', type=Path,
+                        help='Private artifact location; requires --no-report')
     args = parser.parse_args()
+    if (args.wide_input or args.build_dir) and not args.no_report:
+        parser.error('--wide-input/--build-dir require --no-report')
+    wide_path = args.wide_input.resolve() if args.wide_input else ROOT/WIDE_INPUT
+    fixture = json.loads(wide_path.read_text())
+    allowed = {'id','label','selector','identity','requested_context','requested_shape','kind',
+               'cancel','callback','pair','private_pair','initial_payload90','initial_pair40',
+               'initial_ram_sha256','mutations'}
+    wide_cases = fixture['cases']
+    if fixture['schema'] != 'prepared-rich-wide-inputs-v1' or len(wide_cases) != 1215:
+        raise ValueError('Expected1215 retained wide input-only recipes')
+    if any(set(case) != allowed for case in wide_cases):
+        raise ValueError('Wide fixture contains fields outside the input-only recipe')
+    if [case['id'] for case in wide_cases] != list(range(1215)):
+        raise ValueError('Wide fixture IDs must be consecutive')
+    for case in wide_cases:
+        rows,columns = case['requested_shape']
+        if rows not in (1,2) or not 4 <= columns <= (9 if rows == 1 else 6):
+            raise ValueError('Wide fixture outside sufficient literal nine-record domain')
+        if case['selector'] not in (16,17) or len(bytes.fromhex(case['initial_payload90'])) != 90 or len(bytes.fromhex(case['initial_pair40'])) != 40:
+            raise ValueError('Invalid wide numerical input recipe')
+    python_modules_start = local_python_inputs()
     if args.random_cases < 0:
         parser.error('--random-cases must be nonnegative')
+    if args.random_cases < 2000 and not args.no_report:
+        parser.error('Fewer than2000 random cases requires --no-report')
     if args.only_label and not args.no_report:
         parser.error('--only-label requires --no-report; subsets cannot publish proof')
     inputs = implementation_inputs(ROOT, ['csrc/' + path for path in SOURCES])
@@ -201,9 +268,12 @@ def main():
         'firmware/fx-991es-plus-c-ver4.bin']
     dependencies += [str(path.relative_to(ROOT))
                      for path in sorted((ROOT/'tools/nxu8/vendor/SimU8').glob('*.h'))]
+    dependencies += list(python_modules_start.values())
+    dependencies += [str(wide_path.relative_to(ROOT)) if wide_path.is_relative_to(ROOT) else str(wide_path)]
+    dependencies = list(dict.fromkeys(dependencies))
     start_hashes = {name: hashlib.sha256((ROOT/name).read_bytes()).hexdigest()
                     for name in dependencies}
-    build = ROOT / 'analysis/build/eval-rich-reduce'
+    build = args.build_dir.resolve() if args.build_dir else ROOT/'analysis/build/eval-rich-reduce'
     build.mkdir(parents=True, exist_ok=True)
     adapter = build / ('adapter-' + args.optimization + '.c')
     adapter.write_text(ADAPTER)
@@ -214,6 +284,21 @@ def main():
                     str(adapter), *[str(ROOT/'csrc'/p) for p in SOURCES],
                     '-o', str(library)], check=True)
     implementation = C.CDLL(str(library))
+    implementation.reduce_test_abi.argtypes = [C.c_uint]
+    implementation.reduce_test_abi.restype = C.c_size_t
+    expected_abi = [C.sizeof(Number), Number.bytes.offset,
+        C.sizeof(Complex), Complex.real.offset, Complex.imaginary.offset,
+        C.sizeof(NumericContext), NumericContext.exact_math.offset, NumericContext.display_mode.offset,
+        NumericContext.digits.offset, NumericContext.cancel_at.offset,
+        C.sizeof(Context), Context.calculation_context.offset, Context.numeric.offset,
+        Context.cancelled.offset, Context.userdata.offset,
+        C.sizeof(Result), Result.value.offset, Result.other.offset,
+        Result.firmware_status.offset, Result.cancellation_checks.offset,
+        C.sizeof(Storage), Storage.ram.offset, Storage.ram_size.offset, Storage.rom.offset, Storage.rom_size.offset,
+        C.sizeof(Rational), Rational.numerator.offset, Rational.denominator.offset, Rational.flags.offset]
+    actual_abi = [implementation.reduce_test_abi(i) for i in range(len(expected_abi))]
+    if actual_abi != expected_abi:
+        raise AssertionError(('Public ctypes/C ABI mismatch',actual_abi,expected_abi))
     implementation.reduce_test_dispatch.argtypes = [C.POINTER(Result), C.POINTER(Storage),
         C.c_uint, C.c_uint, C.POINTER(Context), C.c_uint]
     implementation.fx_decimal_parse.argtypes = [C.POINTER(Number), C.c_char_p]
@@ -234,6 +319,8 @@ def main():
     rom_buffer = (C.c_uint8 * len(rom)).from_buffer_copy(rom)
     counts, labels, failures, gaps = Counter(), Counter(), [], []
     native_calls = 0
+    observations = []
+    wide_snapshots = []
     rng = random.Random(0x1477614786)
 
     def decimal(value):
@@ -290,7 +377,7 @@ def main():
     def case(selector, context=6, identity=4, shape=(3, 3), data=None,
              kind=6, imaginary=zero, other_real=None, other_imaginary=None,
              cancel=0, callback=False, mutations=(), label='', pair=0x8a00,
-             private_pair=False, host_gap=None, updates=()):
+             private_pair=False, host_gap=None, updates=(), input_hash=None, fixture_id=None):
         nonlocal native_calls
         if args.only_label and label not in args.only_label:
             return
@@ -315,6 +402,8 @@ def main():
             memory[address:address+len(record)] = record
         initial = bytes(memory)
         initial_hash=hashlib.sha256(initial).hexdigest()
+        if input_hash and initial_hash != input_hash:
+            raise AssertionError(('Literal wide input reconstruction mismatch',fixture_id,initial_hash,input_hash))
         prefix_expected_kind=2 if label=='ordered-classifier-pool-alias-boundary' else (
             1 if label in ('unchecked-zero-denominator','callback-malformed-fraction-boundary') else 0)
         if initial_hash in SEEDED_CLASSIFIER_BOUNDARIES:
@@ -374,6 +463,13 @@ def main():
             initial_dimensions32=initial[0x80e0:0x8100].hex(),
             initial_ram_sha256=initial_hash,
             mutations=[dict(poll=p, address=f'{a:04x}', record=r.hex()) for p, a, r in mutations])
+        detail['fixture_id'] = fixture_id
+        observation = dict(id=native_calls-1, **detail,
+            native_stop=stopped, native_status=machine.reg(0),
+            native_current20=bytes(machine.ram[pair:pair+20]).hex(),
+            native_other20=bytes(machine.ram[pair+20:pair+40]).hex(),
+            native_final_ram_sha256=hashlib.sha256(bytes(machine.ram)).hexdigest())
+        observations.append(observation)
         check('original_stop', 100, stopped, detail)
         if stopped != 100:
             return
@@ -390,6 +486,17 @@ def main():
         C.memset(C.byref(output), 0xad, C.sizeof(output))
         host = implementation.reduce_test_dispatch(C.byref(output), C.byref(storage),
             pair, selector, C.byref(numerical), private_pair)
+        native_states=((C.c_uint8*65536)*256).in_dll(machine.lib,'reduce_poll_memory')
+        observation.update(host_status=host, native_polls=native_polls,
+            actual_current20=bytes(output.value).hex(), actual_other20=bytes(output.other).hex(),
+            actual_status=output.firmware_status, actual_polls=output.cancellation_checks,
+            actual_final_ram_sha256=hashlib.sha256(memory).hexdigest(),
+            native_callback_ram_sha256=[hashlib.sha256(bytes(native_states[i])).hexdigest() for i in range(native_polls)] if callback else [],
+            actual_callback_ram_sha256=[hashlib.sha256(x).hexdigest() for x in snapshots])
+        if fixture_id is not None:
+            check('literal_wide_input_reconstruction',input_hash,initial_hash,detail)
+            wide_snapshots.append(dict(id=fixture_id,native_final_ram_b64=base64.b64encode(bytes(machine.ram)).decode(),
+                actual_final_ram_b64=base64.b64encode(memory).decode()))
         if host_gap:
             check('explicit_architectural_host_gap', -3, host, dict(reason=host_gap, **detail))
             check('host_gap_output_noncommit', 'ad'*C.sizeof(output), bytes(output).hex(), detail)
@@ -445,6 +552,7 @@ def main():
                 for index,actual in enumerate(snapshots):
                     memory_check('host_gap_callback_persistent_RAM_before_answer',bytes(native_states[index]),
                         actual,dict(poll=index+1,**detail),frame_writes[index],C.c_uint.in_dll(machine.lib,'reduce_minimum_sp').value)
+            observation['boundary'] = boundary
             gaps.append(boundary)
             return
         check('host_status', 0, host, detail)
@@ -498,7 +606,7 @@ def main():
                          data=[decimal(x) for x in fixtures[6]], label='sixteen-physical-identities')
             case(selector, context, identity=12, shape=(1, 1),
                  updates=((0x80f9, bytes([context])),),
-                 host_gap='Identity12 column is actual context6/7, outside finite0..3 API',
+                 host_gap=None,  # Same retained input is now within the sufficient1x6/7 domain.
                  label='identity12-live-context-wide-boundary')
             for index, fixture in enumerate(fixtures):
                 data = [decimal(x) for x in fixture]
@@ -630,11 +738,34 @@ def main():
         case(16+index%2, context, identity=identity,shape=shape,data=data,
              cancel=cancel,callback=classifier_alias,
              label='seeded-random')
+    # Literal input-only supplemental corpus; every old generator runs unchanged above.
+    for recipe in wide_cases:
+        payload = bytes.fromhex(recipe['initial_payload90'])
+        pair_record = bytes.fromhex(recipe['initial_pair40'])
+        mutations = tuple((m['poll'],int(m['address'],16),bytes.fromhex(m['record']))
+                          for m in recipe['mutations'])
+        case(recipe['selector'],recipe['requested_context'],identity=recipe['identity'],
+            shape=tuple(recipe['requested_shape']),kind=recipe['kind'],
+            data=[payload[i:i+10] for i in range(0,90,10)],
+            imaginary=pair_record[10:20],other_real=pair_record[20:30],other_imaginary=pair_record[30:40],
+            cancel=recipe['cancel'],callback=recipe['callback'],mutations=mutations,
+            pair=int(recipe['pair'],16),private_pair=recipe['private_pair'],
+            updates=((int(recipe['pair'],16),pair_record),),
+            label=recipe['label'],input_hash=recipe['initial_ram_sha256'],fixture_id=recipe['id'],
+            host_gap='Malformed zero-denominator fraction reaches unchecked rational arithmetic or comparison conversion'
+                if recipe['label']=='unchecked-zero-denominator' else None)
+    for _ in actual_abi:
+        counts['compiled_public_ABI'] += 1
+    python_modules_end = local_python_inputs()
     end_hashes = {name: hashlib.sha256((ROOT/name).read_bytes()).hexdigest()
                   for name in dependencies}
-    if start_hashes != end_hashes:
-        changed = [name for name in dependencies if start_hashes[name] != end_hashes[name]]
-        raise RuntimeError('Inputs changed during run; rerun: '+', '.join(changed))
+    changed = [name for name in dependencies if start_hashes[name] != end_hashes[name]]
+    if python_modules_start != python_modules_end:
+        changed.append('executed local Python import set')
+    stamp = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S.%fZ')
+    observation_file = build/('observations-'+args.optimization+'-'+stamp+'.json.gz')
+    with gzip.open(observation_file,'wt',compresslevel=1) as stream:
+        json.dump(dict(rows=observations,wide_final_states=wide_snapshots),stream)
     data = dict(checks=sum(counts.values()), groups=dict(counts), native_calls=native_calls,
         handled_native_calls=native_calls-len(gaps), explicit_boundaries=len(gaps),
         failures=len(failures), examples=failures, labels=dict(labels),
@@ -643,17 +774,22 @@ def main():
         diagnostic_labels=args.only_label,
         scope='Actual public rich address/private dispatch for prepared physical REF/RREF16/17 and wrapped vector21/22; owned public integration applies16562 cleanup once. No allocator, repeated storage stage, parser or UI.',
         comparison='Original16538 through16588; current20/other20, independent status, actual polling, temporary mask, dimensions32, all1440 physical bank bytes, and64KiB persistent RAM/MMIO plus callback snapshots. Excludes only8000..80DB scalar arithmetic arena and actually written native CPU-frame bytes.',
-        planned_limits=['Finite matrix dimensions0..3; identity12 columns alias actual80F9 context and are recorded honestly.',
+        planned_limits=['Zero dimensions retain native9. Positive literal stride3 coordinates require3*(rows-1)+columns<=9, a sufficient nine-record domain; identity12 column is actual80F9. Other native returning/nonreturning dimensions are not inferred from this guard.',
             'Physical work-record/bank or CPU-frame overlaps are separate named architectural boundaries.',
             'Malformed fractional arithmetic/conversion and opposite-sign physical classifier pool aliases are individually observed boundaries; preceding persistent RAM and callback states are compared at the reached original kernel entry.',
             'The callback return value controls the native timer answer; native CPU-frame/arena mutation is outside this comparison.'],
-        input_hashes_start=start_hashes,
+        input_hashes_start=start_hashes,input_hashes_end=end_hashes,source_changes=changed,
+        python_modules_start=python_modules_start,python_modules_end=python_modules_end,
+        wide_input_cases=len(wide_cases),wide_replayed_cases=len(wide_snapshots),compiled_ABI=actual_abi,
+        observations=str(observation_file.relative_to(ROOT)) if observation_file.is_relative_to(ROOT) else str(observation_file),observations_sha256=hashlib.sha256(observation_file.read_bytes()).hexdigest(),
+        compiled_artifact_sha256=hashlib.sha256(library.read_bytes()).hexdigest(),
+        original_compiled_sha256=hashlib.sha256((oracle_dir/'nxu8-harness.so').read_bytes()).hexdigest(),
         generated_adapter_sha256=hashlib.sha256(ADAPTER.encode()).hexdigest(),
         generated_oracle_sha256=hashlib.sha256(ORACLE.encode()).hexdigest())
     (build/('pilot-'+args.optimization+'.json')).write_text(json.dumps(data, indent=2)+'\n')
     print(json.dumps({key: value for key, value in data.items()
-                     if key not in ('examples', 'architectural_gaps', 'input_hashes_start')}, indent=2))
-    if failures:
+                     if key not in ('examples','architectural_gaps','input_hashes_start','input_hashes_end','python_modules_start','python_modules_end')}, indent=2))
+    if failures or changed:
         return 1
     if not args.no_report:
         report = write_report('analysis/c-verification/eval_rich_reduce.json', data,

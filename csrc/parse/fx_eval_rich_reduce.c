@@ -542,7 +542,10 @@ fx_numeric_status fx_eval_rich_reduce_after_storage(fx_eval_rich_result *out,
     if (!rows || !columns) {
         fail(&work,9); *out = work.result; return FX_NUMERIC_OK;
     }
-    if (rows > 3 || columns > 3) return FX_NUMERIC_UNIMPLEMENTED;
+    /* The native scratch matrix has nine records and a literal row stride
+     * of three. Wider shapes are valid while every addressed cell fits. */
+    if (3u * (rows - 1u) + columns - 1u >= 9u)
+        return FX_NUMERIC_UNIMPLEMENTED;
     cells.address = (uint16_t)(0x829eu+90u*identity);
     prepare(&work,&cells,rows,columns);
     if (!stopped(&work)) lexical_order(&work,&cells,rows,columns);
