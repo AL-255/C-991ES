@@ -1,12 +1,31 @@
 {
   "subsystem": "nonblocking platform main scheduler",
   "implementation": "Handwritten readable C; original instructions execute only in independent tests",
-  "sources": ["csrc/platform/fx_main_loop.c", "csrc/platform/fx_main_loop.h"],
+  "sources": [
+    "csrc/platform/fx_main_loop.c",
+    "csrc/platform/fx_main_loop.h"
+  ],
   "implemented_routines": [
-    {"address":"0xd7ae..0xd9ea", "name":"fx_main_loop_begin/tick/accept_token/accept_handler", "scope":"Semantic caller lifecycle, real key wait, menu and screen routing, prepared actual-return policy and framebuffer flush"},
-    {"address":"0xde1c..0xde7e", "name":"screen selection and admission", "scope":"FC/FD blockers, mode admission, bounded exported-expression transfer and persistent screen/flag reset"},
-    {"address":"0x1dde4..0x1de1e", "name":"fx_main_routes_input", "scope":"Pure ordinary input routing predicate"},
-    {"address":"0x51b2..0x51be", "name":"returned token admission", "scope":"Persistent80F5 token and80F7 command marker"}
+    {
+      "address": "0xd7ae..0xd9ea",
+      "name": "fx_main_loop_begin/tick/accept_token/accept_handler",
+      "scope": "Semantic caller lifecycle, real key wait, menu and screen routing, prepared actual-return policy and framebuffer flush"
+    },
+    {
+      "address": "0xde1c..0xde7e",
+      "name": "screen selection and admission",
+      "scope": "FC/FD blockers, mode admission, bounded exported-expression transfer and persistent screen/flag reset"
+    },
+    {
+      "address": "0x1dde4..0x1de1e",
+      "name": "fx_main_routes_input",
+      "scope": "Pure ordinary input routing predicate"
+    },
+    {
+      "address": "0x51b2..0x51be",
+      "name": "returned token admission",
+      "scope": "Persistent80F5 token and80F7 command marker"
+    }
   ],
   "api": "Begin only at a real boot READY boundary; tick retains semantic requests until the actual callee returns. Complete INPUT with the D9EE context-return byte, not its subordinate evaluator action.",
   "prepared_domain": [
@@ -15,11 +34,16 @@
     "High-bit screen exit admits terminated exported expressions shorter than100 bytes.",
     "Final observable parity includes all RAM/MMIO except native CPU stack8D00..8DED, plus callback and appropriate named wait/menu caller state. Intermediate CPU registers and instruction ordering are not host API semantics."
   ],
-  "verification": ["tools/test_main_loop_c.py", "analysis/c-verification/main_loop.json", "tools/test_boot_main_ui_c.py", "analysis/c-verification/boot_main_ui.json"],
+  "verification": [
+    "tools/test_main_loop_c.py",
+    "analysis/c-verification/main_loop.json",
+    "tools/test_boot_main_ui_c.py",
+    "analysis/c-verification/boot_main_ui.json"
+  ],
   "understanding_ranges": "csrc/platform/main_loop/understood_ranges.json",
   "gaps": [
     "D9EE UI, mode/setup/parameter menus and specialized-screen request bodies require their real high-level controllers.",
     "True ordinary reset to first key wait is verified with the actual linked bootE6 UI completion; the evaluation phase explicitly inventories incomplete numeric workspaces.",
-    "Physical CPU interrupt/timer scheduling and7334 architectural PSW selftest remain separate capability contracts."
+    "Physical interrupt/timer scheduling remains a host capability; the default diagnostic lifecycle now executes the high-level ROM/status/retention routine against a software resource backend."
   ]
 }

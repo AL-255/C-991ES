@@ -1,0 +1,27 @@
+{
+  "subsystem": "7334 ROM bus/status/retention diagnostic",
+  "implementation": "Handwritten high-level C resource operations; no CPU or instruction executor",
+  "sources": [
+    "csrc/platform/fx_diagnostic_rom_status.c",
+    "csrc/platform/fx_diagnostic_rom_status.h"
+  ],
+  "caller": "fx_diagnostic_run_screen in fx_boot_events.c computes the result after two prefix flushes and before the Read caption/ports/final flush",
+  "api": {
+    "entry": "fx_diagnostic_rom_status_run",
+    "resources": "Caller-owned write/read status and write/read retention callbacks; all four required before the first operation",
+    "normal_backend": "Actual volatile software resource storage, bound by fx_diagnostic_resource_model_bind",
+    "return": "COMPLETE with A5/00; INVALID and UNAVAILABLE have no firmware failure claim"
+  },
+  "verification": "analysis/verification/diagnostic-rom-status-component.json",
+  "verification_sha256": "dea11add266f6d1baeea8dfc450b23eb0efa4ba089d2868fba9743ccaab8c330",
+  "test": "tools/test_diagnostic_rom_status_c.py",
+  "limits": [
+    "Software-resource behavior does not certify a physical CPU or arbitrary LTO artifacts.",
+    "Only unmodified native success paths executed; failures are separately identified C resource controls.",
+    "The status latch is distinct from the original final PSW; arithmetic outside this diagnostic does not use this resource model."
+  ],
+  "full_firmware_complete": false,
+  "composed_screen_verification": "analysis/verification/diagnostic-screen.json",
+  "composed_screen_verification_sha256": "c36fd86d8ebd812ffff70cc5ad45f62425bb17155e81551b0a508559affbacfb",
+  "composed_screen_test": "tools/test_diagnostic_screen_c.py"
+}

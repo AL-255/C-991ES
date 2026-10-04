@@ -36,7 +36,7 @@ class Events(C.Structure):
                         'full_diagnostic', 'boot_continuation', 'active')]]
 
 
-MODULES = ['platform/fx_boot_events', 'platform/fx_diagnostic_contrast',
+MODULES = ['platform/fx_boot_events', 'platform/fx_diagnostic_rom_status', 'platform/fx_diagnostic_contrast',
            'platform/fx_result_classify', 'platform/fx_platform', 'platform/fx_boot', 'platform/fx_host_bridge',
            'ui/fx_keys', 'ui/fx_cursor', 'ui/fx_key_wait', 'ui/fx_key_controller',
            'ui/fx_key_dispatch', 'ui/fx_annunciator', 'ui/fx_editor', 'ui/fx_natural_editor',
@@ -187,8 +187,8 @@ def main():
         assert lib.fx_diagnostic_draw_key_counter(C.byref(p), index) == 0
         equal(f'key_counter:{index}')
 
-    # Architectural7334 has no persistent effects. The oracle is stopped
-    # before it and supplied its result at7286, matching the explicit C API.
+    # Explicit display-only API: stop before7334 and supply the label input
+    # at7286. The lifecycle tests below execute the real7334 on both paths.
     for port in range(256):
         data = initial(); data[0xf050] = port
         restore(data)
@@ -393,7 +393,7 @@ def main():
               'native_cases': sum(counts.values()), 'native_counts': counts,
               'explicit_c_bounds_cases': sum(bounded.values()), 'explicit_c_bounds_counts': bounded,
               'comparison': 'Full RAM/MMIO and callback, excluding only nativeCPU stack8D00..8DED',
-              'architecture_test': '7334 CPU flag-test result is supplied at native7286; no C CPU or flag model',
+              'diagnostic_read_test': 'Display-only label tests supply the result at7286; actual740C and7044 lifecycle tests execute original7334 and the C ROM/status/retention routine with its volatile software resource backend. Ordered resource transactions have a separate component/composed-screen proof.',
               'sequence_preparation': 'Full7044 uses ordinary80FB=0 with the native annunciator and classifier workspaces included in complete RAM comparison',
               'failures': 0}
     write_report('analysis/c-verification/boot_events.json', report,

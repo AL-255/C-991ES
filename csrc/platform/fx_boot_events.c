@@ -181,7 +181,7 @@ static uint8_t hex_digit(unsigned nibble)
     return (uint8_t)(nibble < 10 ? '0' + nibble : 'A' + nibble - 10);
 }
 
-void fx_diagnostic_draw_screen(fx_platform *p, uint8_t read_test_result)
+static void diagnostic_draw_prefix(fx_platform *p)
 {
     fx_render render = display(p);
     fx_clear_framebuffer(&render);
@@ -204,6 +204,10 @@ void fx_diagnostic_draw_screen(fx_platform *p, uint8_t read_test_result)
     uint8_t caption[3] = {'P', 'd', port ? (uint8_t)(port | 0x30) : '-'};
     draw_bytes(p, 0, 15, caption, sizeof caption);
     flush(p);
+}
+
+static void diagnostic_draw_suffix(fx_platform *p, uint8_t read_test_result)
+{
     const uint8_t *read_caption = (const uint8_t *)(read_test_result == 0xa5 ? "Read OK" : "Read NG");
     draw_bytes(p, 24, 15, read_caption, 7);
     draw_rom(p, 22, 0x2d8c);
@@ -212,6 +216,30 @@ void fx_diagnostic_draw_screen(fx_platform *p, uint8_t read_test_result)
     write_byte(p, 0xf04b, 1);
     write_byte(p, 0xf04c, 0);
     flush(p);
+}
+
+void fx_diagnostic_draw_screen(fx_platform *p, uint8_t read_test_result)
+{
+    diagnostic_draw_prefix(p);
+    diagnostic_draw_suffix(p, read_test_result);
+}
+
+fx_diagnostic_rom_status_result fx_diagnostic_run_screen(fx_platform *p,
+    const fx_diagnostic_resources *resources)
+{
+    fx_diagnostic_rom_status_result result = {
+        FX_DIAGNOSTIC_ROM_STATUS_INVALID, 0
+    };
+    if (!p || !p->ram || (!p->rom && p->rom_size)) return result;
+    result.status = FX_DIAGNOSTIC_ROM_STATUS_UNAVAILABLE;
+    if (!resources || !resources->write_status || !resources->read_status ||
+        !resources->write_retention || !resources->read_retention) return result;
+
+    diagnostic_draw_prefix(p);
+    result = fx_diagnostic_rom_status_run(p, resources);
+    if (result.status == FX_DIAGNOSTIC_ROM_STATUS_COMPLETE)
+        diagnostic_draw_suffix(p, result.value);
+    return result;
 }
 
 int fx_diagnostic_draw_pattern(fx_platform *p, uint8_t pattern)
@@ -296,7 +324,13 @@ static fx_boot_event_status boot_tail(fx_platform *p, fx_boot_events *state)
 
 static fx_boot_event_status begin_diagnostic_screen(fx_platform *p, fx_boot_events *state)
 {
-    fx_diagnostic_draw_screen(p, 0xa5);
+    fx_diagnostic_resource_model model = {0, 0};
+    fx_diagnostic_resources resources = fx_diagnostic_resource_model_bind(&model);
+    fx_diagnostic_rom_status_result result = fx_diagnostic_run_screen(p, &resources);
+    if (result.status == FX_DIAGNOSTIC_ROM_STATUS_INVALID)
+        return FX_BOOT_EVENT_INVALID;
+    if (result.status != FX_DIAGNOSTIC_ROM_STATUS_COMPLETE)
+        return FX_BOOT_EVENT_UNIMPLEMENTED;
     fx_host_control_begin(p, &state->control);
     state->phase = FX_BOOT_EVENTS_DIAGNOSTIC;
     return FX_BOOT_EVENT_WAIT;

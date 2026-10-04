@@ -3,6 +3,7 @@
 #define FX_BOOT_EVENTS_H
 #include "fx_boot.h"
 #include "fx_diagnostic_contrast.h"
+#include "fx_diagnostic_rom_status.h"
 #include "../ui/fx_key_controller.h"
 
 typedef enum {
@@ -53,10 +54,16 @@ void fx_host_control_notify(fx_platform *platform);
 void fx_host_control_clear(fx_platform *platform, uint16_t period);
 
 uint16_t fx_diagnostic_checksum(fx_platform *platform);
-/*71EC..72CC display-only preparation. read_test_result is the externally
- * supplied architecture-test7334 result: A5 selects Read OK. No CPU flags
- * or CPU instruction test are modeled here. Persistent RAM/MMIO is native. */
+/*71EC..72CC display-only preparation. read_test_result is supplied explicitly
+ * at the7286 label-selection boundary: A5 selects Read OK. This helper does
+ * not execute7334 and is separate from the normal boot lifecycle below. */
 void fx_diagnostic_draw_screen(fx_platform *platform, uint8_t read_test_result);
+/* Actual71EC composition: version/checksum/Pd and two display flushes, then
+ * the ordered7334 ROM/status/retention test, then its computed Read caption,
+ * ports and final flush. A missing provider returns UNAVAILABLE before any
+ * display or bus operation; it is not translated to a native Read NG. */
+fx_diagnostic_rom_status_result fx_diagnostic_run_screen(fx_platform *platform,
+    const fx_diagnostic_resources *resources);
 /*7150/715E/717E/71A6 display preparation, before the raw ALPHA wait.
  * pattern0 white,1 black,2 border,3 alternating55/AA,4 alternatingAA/55. */
 int fx_diagnostic_draw_pattern(fx_platform *platform, uint8_t pattern);
@@ -92,7 +99,8 @@ typedef struct {
 } fx_boot_events;
 
 /* Continue a prior fx_boot_reset/resume WELCOME or DIAGNOSTIC boundary.
- * Standard lifecycle supplies A5, the verified architectural success code.
+ * The standard simulator lifecycle executes7334 against its volatile
+ * software resource backend; no success byte is supplied by policy.
  * READY completes the ordinary boot tail atD7AE, including mode12 policy. */
 fx_boot_event_status fx_boot_events_begin(fx_platform *platform,
     fx_boot_events *state, fx_boot_status request);

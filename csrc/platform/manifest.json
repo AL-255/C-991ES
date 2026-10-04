@@ -246,19 +246,27 @@
       "address": "0x1df7e",
       "name": "Mode12 input/table screen initialization",
       "scope": "Complete semantic span 0x1df7e..0x1dfb0, plus integrated boot resume"
+    },
+    {
+      "address": "0x71ec / 0x7334 / 0x72ee",
+      "name": "Computed diagnostic screen and ROM/status/retention routine",
+      "scope": "Version/checksum/Pd prefix, real diagnostic resource sweep and computed Read caption/ports/flush in their original order; see boot_events_manifest.json and diagnostic_rom_status_manifest.json for actual proofs and limits"
     }
   ],
   "gaps": [
     "Full main calculator event loop",
     "Physical keyboard/timer interrupt scheduling",
-    "Diagnostic screens and welcome-key blocking controller",
+    "Software diagnostic resources do not certify physical CPU status/retention behavior or real interrupt timing",
     "Original Windows host execution; firmware packets are verified without invoking the host process",
     "Native numeric operand workspace8000..80db after legacy formatter paths",
     "Malformed host-export rational counts exceeding the native23-byte local are rejected; CPU-frame corruption is not reproduced"
   ],
   "verification": [
     "tools/test_platform_c.py",
-    "tools/test_boot_c.py"
+    "tools/test_boot_c.py",
+    "tools/test_boot_events_c.py",
+    "tools/test_diagnostic_rom_status_c.py",
+    "tools/test_diagnostic_screen_c.py"
   ],
   "understanding_ranges": "csrc/platform/understood_ranges.json"
 }

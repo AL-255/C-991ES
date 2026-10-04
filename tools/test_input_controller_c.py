@@ -29,7 +29,7 @@ MODULES=[
     'ui/fx_input_codec','ui/fx_error_event','ui/fx_error_boundary','ui/fx_error_display','ui/fx_key_controller',
     'ui/fx_key_wait','ui/fx_annunciator','ui/fx_cursor','ui/fx_keys','ui/fx_key_dispatch',
     'ui/fx_editor','ui/fx_natural_editor',
-    'platform/fx_platform','platform/fx_host_bridge','platform/fx_boot','platform/fx_boot_events',
+    'platform/fx_platform','platform/fx_host_bridge','platform/fx_boot','platform/fx_boot_events','platform/fx_diagnostic_rom_status',
     'platform/fx_persistent','platform/fx_diagnostic_contrast','platform/fx_result_classify',
     'parse/fx_tokens','parse/fx_eval','parse/fx_eval_rich','parse/fx_eval_rich_unary','parse/fx_eval_rich_reduce','parse/fx_eval_surd_workspace','numeric/fx_raw_decimal_exp', 'stats/fx_stats', 'stats/fx_stats_value','parse/fx_eval_storage','parse/fx_eval_finish','numeric/fx_numeric','numeric/fx_random','numeric/fx_transcend','numeric/fx_power',
     'numeric/fx_root','numeric/fx_combinatorics','numeric/fx_logbase','numeric/fx_calculus',

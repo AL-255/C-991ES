@@ -21,7 +21,7 @@ from c_build_inputs import implementation_inputs
 from nxu8.machine import Machine
 
 ROOT = Path(__file__).resolve().parents[1]
-MODULES = ['platform/fx_boot_events', 'platform/fx_diagnostic_contrast',
+MODULES = ['platform/fx_boot_events', 'platform/fx_diagnostic_rom_status', 'platform/fx_diagnostic_contrast',
     'platform/fx_result_classify', 'platform/fx_platform', 'platform/fx_boot',
     'platform/fx_host_bridge', 'platform/fx_persistent', 'platform/fx_main_loop',
     'ui/fx_keys', 'ui/fx_cursor', 'ui/fx_key_wait', 'ui/fx_key_controller',
