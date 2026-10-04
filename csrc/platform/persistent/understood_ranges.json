@@ -1,0 +1,16 @@
+{
+  "subsystem": "persistent result, variable, Ans and replay state",
+  "ranges": [
+    {"start": "0x3624", "end": "0x3634", "scope": "Native format-kind and low-selection getters", "source": "csrc/platform/fx_persistent.c"},
+    {"start": "0x3644", "end": "0x3664", "scope": "Native selection-byte OR, exact format-byte write and8130 cache reset", "source": "csrc/platform/fx_persistent.c"},
+    {"start": "0x5176", "end": "0x5192", "scope": "Twenty-byte result clear and the bounded zero-fill operation used by result/replay callers", "source": "csrc/platform/fx_persistent.c"},
+    {"start": "0x5192", "end": "0x51b2", "scope": "Complete standalone result flag, display-state and format-state reset entries", "source": "csrc/platform/fx_persistent.c"},
+    {"start": "0x522a", "end": "0x5264", "scope": "Variable and Ans real/complex forward bus stores for admitted slots0..9, plus immutable supplied-record adapter", "source": "csrc/platform/fx_persistent.c"},
+    {"start": "0x11092", "end": "0x110cc", "scope": "Complete all-byte mode selection of the250-byte replay store or disabled state", "source": "csrc/platform/fx_persistent.c"},
+    {"start": "0x1d636", "end": "0x1d652", "scope": "Standalone layout dimension and combined layout/result flag resets", "source": "csrc/platform/fx_persistent.c"},
+    {"start": "0x1d652", "end": "0x1d66c", "scope": "Four input-state fields initialized by prepared replay recall before editor action1", "source": "csrc/platform/fx_persistent.c"},
+    {"start": "0x1def8", "end": "0x1df10", "scope": "Mode45 input-screen admission used by replay counting", "source": "csrc/platform/fx_persistent.c"},
+    {"start": "0x1df66", "end": "0x1df7e", "scope": "Mode12 input-screen admission used by replay counting", "source": "csrc/platform/fx_persistent.c"},
+    {"start": "0x1e946", "end": "0x1ec72", "scope": "Replay boundary/count/used queries, complete append/eviction and prepared recall. CPU locals stay in the oracle; malformed byte-length/store overflows are bounded; convenience classifier scratch differences are explicit", "source": "csrc/platform/fx_persistent.c"}
+  ]
+}

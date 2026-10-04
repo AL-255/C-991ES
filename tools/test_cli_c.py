@@ -33,6 +33,9 @@ def main():
                b'\x90.5)', b'\x912)', b'\x92.5)', b'\xa3\x731))']
     inputs += [b'\xa88)', b'\xa8\x608)', b'3\x9f8)', b'3\x9f8+19)', b'2\x9f2)',
                b'5\x57', b'10\x25', b'5\xbe2', b'5\xbf2', b'\x682,8)', b'\x68(1+1),4+4)']
+    inputs += [b'A', b'3\x47', b'\x88\x602)', b'\x63\x602)', b'\xc3\x602)',
+               b'\x69X,1,3)', b'\x5dX,1,3)', b'\x69\x98X),1,3)',
+               b'\x69X\x75,1,3)', b'\x5d\x88X),1,4)']
     for _ in range(100):
         a, b, c = (str(rng.randrange(1, 100)).encode() for _ in range(3))
         inputs.append(b'(' + a + b'\xae' + b + b'-\x98' + c + b'))')
@@ -79,10 +82,27 @@ def main():
             for address, value in ((0x80f9, 196), (0x80fc, 1), (0x8104, 1), (0x8105, 4), (0x8108, 1)):
                 m.ram[address] = value
 
+    def evaluate(tokens):
+        if not any(token in (0x5d, 0x69) for token in tokens):
+            m.call(0x171f4)
+            return
+        #5550 asks the emulator host to service a timer;5564 samples8E00.
+        # Supply a no-cancel response while executing every original opcode.
+        sentinel = 0x2fffe
+        m.lib.harness_set_sp(0x8dee)
+        m.lib.harness_set_lr(sentinel)
+        m.lib.harness_set_pc(0x171f4)
+        for _ in range(3000000):
+            if m.lib.harness_get_pc() == 0x5564: m.ram[0x8e00] = 0
+            status = m.lib.harness_run(1, sentinel, False)
+            if status == 100: return
+            assert status == 103, (tokens.hex(), status, hex(m.lib.harness_get_pc()))
+        raise AssertionError((tokens.hex(), 'native calculus call did not return'))
+
     for tokens, display, complex_mode in cases:
         prepare(complex_mode)
         for i, b in enumerate(tokens + b'\0'): m.ram[0x8200+i] = b
-        m.word(0x8190, 0x8200); m.er(0, 0x8190); m.er(2, 0x8300); m.call(0x171f4)
+        m.word(0x8190, 0x8200); m.er(0, 0x8190); m.er(2, 0x8300); evaluate(tokens)
         assert m.reg(0) == 0, tokens.hex()
         expected_record = bytes(m.ram[0x8300:0x8314]).hex()
         expected_consumed = m.word(0x8190) - 0x8200
@@ -95,7 +115,7 @@ def main():
         # numeric scratch that is not part of the ordinary controller entry.
         prepare(complex_mode)
         for i, b in enumerate(tokens + b'\0'): m.ram[0x8200+i] = b
-        m.word(0x8190, 0x8200); m.er(0, 0x8190); m.er(2, 0x8300); m.call(0x171f4)
+        m.word(0x8190, 0x8200); m.er(0, 0x8190); m.er(2, 0x8300); evaluate(tokens)
         m.call(0xc034); m.er(0, 0x8300); m.call(0xb070); m.call(0x3cfc)
         frame = b''.join(bytes(m.ram[0xf800+16*y:0xf80c+16*y]) for y in range(32))
         if complex_mode:

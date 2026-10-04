@@ -12,6 +12,7 @@ import random
 import subprocess
 
 from c_verification import ROOT, write_report
+from c_build_inputs import implementation_inputs
 from nxu8.machine import Machine
 from trace_natural_result import settings
 
@@ -44,7 +45,7 @@ def main():
     source_names = [
         'parse/fx_tokens.c', 'data/fx_rom_data.c',
         'numeric/fx_numeric.c', 'numeric/fx_transcend.c', 'numeric/fx_power.c',
-        'numeric/fx_root.c', 'numeric/fx_logbase.c', 'numeric/fx_combinatorics.c',
+        'numeric/fx_root.c', 'numeric/fx_logbase.c', 'numeric/fx_calculus.c', 'numeric/fx_combinatorics.c',
         'complex/fx_complex.c', 'complex/fx_complex_angle.c',
         'complex/fx_complex_round.c', 'complex/fx_complex_dispatch.c',
         'trig/fx_trig.c', 'trig/fx_trig_math.c', 'trig/fx_trig_inverse.c',
@@ -167,11 +168,10 @@ def main():
         target.write_text(json.dumps(report, indent=2) + '\n')
         raise AssertionError(f'{len(failures)} CMPLX expression mismatches; see {target}')
     if not args.no_report:
-        headers = [str(path.relative_to(ROOT)) for directory in ('parse', 'numeric', 'complex', 'trig')
-                   for path in (ROOT / 'csrc' / directory).glob('*.h')]
         report = write_report('analysis/c-verification/eval_complex.json', report,
-                              ['csrc/parse/fx_eval.c'] + ['csrc/' + name for name in source_names] + headers +
-                              ['tools/c_verification.py', 'tools/trace_natural_result.py'], 'tools/test_eval_complex_c.py')
+                              implementation_inputs(ROOT, ['csrc/parse/fx_eval.c'] + ['csrc/' + name for name in source_names]) +
+                              ['tools/c_verification.py', 'tools/trace_natural_result.py', 'tools/c_build_inputs.py'],
+                              'tools/test_eval_complex_c.py')
     print(json.dumps({'status': 'pass', 'cases': report['cases'], 'domains': counts}, indent=2))
 
 

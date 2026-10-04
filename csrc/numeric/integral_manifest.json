@@ -1,0 +1,20 @@
+{
+  "subsystem": "real-adaptive-integration",
+  "implementation": "Readable handwritten C99 Gauss-Kronrod quadrature and depth-first dyadic refinement; original fifteen-digit BCD arithmetic, no CPU or ROM execution and no host floating-point substitute",
+  "implemented_routines": [
+    {"address": "0x04490..0x044b8", "name": "weighted accumulation", "scope": "Decimal callback value times stored quadrature weight, then ordered scalar addition"},
+    {"address": "0x044b8..0x04544", "name": "symmetric callback pair", "scope": "Original node-times-halfwidth, subtraction/negation, left/right callback order and per-pair cleanup"},
+    {"address": "0x04544..0x04696", "name": "embedded Gauss-Kronrod rule", "scope": "Seven Gauss and fifteen Kronrod points, original ROM node/weight records, seven cancellation polls and finite-decimal error estimate"},
+    {"address": "0x04696..0x046ee", "name": "relative tolerance gate", "scope": "Absolute tolerance-times-integral scale, minimum1e-10, thirteen-digit numeric comparison and scale-overflow acceptance"},
+    {"address": "0x046ee..0x04a62", "name": "adaptive integration driver", "scope": "Prepared real callback API, default1e-5 and negative toleranceF8, endpoint checks, repeated initial interval, ordered dyadic refinement, nativeF1/F3/FB and final cleanup; parser prefix/bound contract documented separately"}
+  ],
+  "constant_data": "Original10-byte BCD node/weight records ROM0x2b08..0x2bc6",
+  "token": "0x6a",
+  "api": "fx_number_integral(out,lower,upper,tolerance_or_NULL,function,userdata,control)",
+  "callback_contract": "Local X is passed to the host function in exactly the native0x171ea evaluation order. Native expression integration saves/restores globalX through its outer dispatcher; that global variable transaction is owned by the parser integration.",
+  "verification": "analysis/c-verification/numeric_integral.json",
+  "test": "python3 tools/test_numeric_integral_c.py --random-cases 1000",
+  "notes": "csrc/numeric/integral/EXECUTION.md",
+  "gaps": ["Standalone module does not parse expression tokens", "Complex callbacks and malformed BCD are excluded", "Reset/keyscan execution is outside the prepared native oracle"],
+  "completion": "Prepared real adaptive quadrature only; complete firmware equivalence remains unproven"
+}

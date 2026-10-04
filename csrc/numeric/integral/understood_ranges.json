@@ -1,0 +1,10 @@
+{
+  "basis": "Individually inspected half-open adaptive integration spans, with complete-expression native differential traces. Calls do not imply understanding of unlisted callback, variable, parser or scalar arithmetic callees.",
+  "ranges": [
+    {"start": "0x04490", "end": "0x044b8", "scope": "Weighted callback-value multiply and ordered decimal accumulation", "source": "csrc/numeric/fx_integral.c"},
+    {"start": "0x044b8", "end": "0x04544", "scope": "Symmetric left/right callback pair: scaled node, original subtraction/negation order, localX publication and sum cleanup", "source": "csrc/numeric/fx_integral.c"},
+    {"start": "0x04544", "end": "0x04696", "scope": "Complete embedded7/15-point Gauss-Kronrod rule, ROM constants, midpoint then paired samples, seven cancel polls, weighted scalar operations and error estimate", "source": "csrc/numeric/fx_integral.c"},
+    {"start": "0x04696", "end": "0x046ee", "scope": "Relative tolerance and minimum1e-10 gate, overflow acceptance and cancellation-suppressing numeric comparison", "source": "csrc/numeric/fx_integral.c"},
+    {"start": "0x046ee", "end": "0x04a62", "scope": "Complete adaptive integration driver and inspected parser/callback boundary: real bound/tolerance normalization, endpoint order, zero-width comparison, repeated initial rule, dyadic subdivision/backtracking, finite budgets and F1/F2/F3/F8/FB return paths", "source": "csrc/numeric/integral/EXECUTION.md"}
+  ]
+}

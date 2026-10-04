@@ -11,11 +11,12 @@ routine addresses, the semantic API being compared, and remaining gaps.
 
 | Subsystem | Current implementation |
 | --- | --- |
-| Platform | Startup/reset, prepared retained-state initialization, power-off and emulator host packets; peripheral registers and key drive |
-| Keyboard/editor | Matrix scan, bounded debounce/held sampling, key tables, modifier dispatch, nonblocking host key wait/controller, annunciator row, cursor, structured editing and display-to-input conversion |
-| Parser | Shared COMP/CMPLX literals, e/π, parentheses/signs, arithmetic/fractions, square/cube/nth roots, powers, factorial/percent/nPr/nCr, trig/hyperbolic functions, single/two-argument logarithms and exponentials; complex fractions, restricted powers, conjugation/magnitude/argument |
-| Numeric | Packed records, decimal and finite rational/surd arithmetic, roots and combinatorics; malformed zero-radicand records remain documented |
+| Platform | Startup/reset, retained and persistent state, replay history, power/host packets, nonblocking welcome/diagnostic events and contrast UI |
+| Keyboard/editor | Matrix scan, bounded debounce/held sampling, key tables, modifier dispatch, nonblocking host key wait/controller, annunciator row, cursor, structured editing and display-to-input conversion, input preparation, error dialogs/key acceptance and cursor recovery and input error/reset recovery |
+| Parser | Shared COMP/CMPLX literals, e/π, parentheses/signs, arithmetic/fractions, square/cube/nth roots, powers, factorial/percent/nPr/nCr, trig/hyperbolic functions, single/two-argument logarithms and exponentials; complex fractions, restricted powers, conjugation/magnitude/argument, scalar variables/terminal stores/M+/M-, COMP absolute/conjugate/argument and finite sums/products |
+| Numeric | Packed records, decimal and finite rational/surd arithmetic, roots/combinatorics and native zero-radicand/reciprocal behavior; finite sum/product kernels and adaptive Gauss–Kronrod integration |
 | Complex | Prepared arithmetic, classification, native return statuses, conjugation, magnitude, restricted roots/powers, polar coordinates and rounding |
+| Matrix/vector | Prepared arithmetic, transpose, determinant/inverse, dot/cross/magnitude, powers, numeric preparation and REF/RREF |
 | Statistics | Prepared moments, seven regression models/predictions, cache semantics, normal P/Q/R and standardization; table editing, cursor and STAT input commits |
 | Formatting | Decimal, rational/surd, fraction/π recognition, tagged prime output, width budgets and BASE-N integer output |
 | Trigonometry | Decimal rotation kernel, angle reduction, forward/inverse sin/cos/tan and forward special-result tables |
@@ -23,9 +24,9 @@ routine addresses, the semantic API being compared, and remaining gaps.
 | Integration | Expression-token probe and differential expression-to-LCD pipeline for supported grammar |
 
 Complete keyboard and mode UIs, event scheduling, menus/history and reset-to-key-sequence behavior still require
-implementation and verification. Numerical integration, differentiation, sums,
-solving, matrix/vector/table calculations and other advanced functions remain
-pending. Passing a subset suite does not complete those requirements.
+implementation and verification. Differentiation, solving, integration expression
+orchestration, matrix/vector object management and display, table mode and other
+advanced functions remain pending. Passing a subset suite does not complete those requirements.
 
 Build from the repository root with CMake and GCC or Clang. Formatting currently
 uses the compiler's unsigned 128-bit integer extension for exact recognition
@@ -65,6 +66,13 @@ For CMPLX, the JSON `tokens` field contains the composed natural result, as
 produced by the display controller. The ordinary COMP probe reports standalone
 scalar formatter tokens. Both pipelines compare their resulting PBM pixels
 with the original firmware.
+
+Scalar variable APIs use a separate typed bank for M, Ans, A–F, X and Y.
+Terminal stores commit after syntax and admission succeed; M+/M− preserve the
+expression result while updating M. Finite sum/product bodies use the same
+grammar with a local X, native bound checks, cancellation polls and X restoration.
+The prepared adaptive integration kernel is available separately; its expression
+orchestration remains pending.
 
 Raw powers include an implicit opening parenthesis after the caret. Thus
 `2^3+1)` means `2^(3+1)` and `2^3)+1` means `(2^3)+1`. The natural editor

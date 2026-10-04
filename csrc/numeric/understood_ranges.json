@@ -148,7 +148,7 @@
     {
       "start": "0x1b5a6",
       "end": "0x1b748",
-      "scope": "Decimal digit-pair square-root remainder algorithm, negative input error and exponent-prefix bias",
+      "scope": "Decimal digit-pair square-root remainder algorithm, negative input error and exponent-prefix bias; deterministic exponent-zero positive-zero component bias and unnormalized root mantissa",
       "source": "csrc/numeric/fx_numeric.c"
     },
     {
@@ -214,7 +214,7 @@
     {
       "start": "0x17e1a",
       "end": "0x18176",
-      "scope": "Four-product construction, conjugate scalar denominator, two-slot reduction, exact add/subtract/multiply/divide dispatch and original-operand fallback",
+      "scope": "Four-product construction, conjugate scalar denominator, two-slot reduction, exact add/subtract/multiply/divide dispatch and original-operand fallback; original four-product and reciprocal operand order preserving raw zero-times-one identity",
       "source": "csrc/numeric/fx_numeric.c"
     },
     {
@@ -293,6 +293,18 @@
       "start": "0x17746",
       "end": "0x178a4",
       "scope": "Radical fraction sign normalization, zero component skip, finite represented-integer GCD and reduction divisions; scalar decimal/rational triplet expansion with zero radicand rule",
+      "source": "csrc/numeric/fx_numeric.c"
+    },
+    {
+      "start": "0x17576",
+      "end": "0x17616",
+      "scope": "Two-component decimal evaluation, first-zero coefficient skip, sqrt/coefficient/denominator order, plain final addition and positive-zero low-level root path",
+      "source": "csrc/numeric/fx_numeric.c"
+    },
+    {
+      "start": "0x179a4",
+      "end": "0x17a46",
+      "scope": "Radical integer-component add/subtract/multiply selector, scalar error forwarding and second-operand \u00b11 copy/sign-toggle shortcuts preserving raw zero tags; unlisted called bodies are not implied",
       "source": "csrc/numeric/fx_numeric.c"
     }
   ],

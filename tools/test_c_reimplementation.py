@@ -8,7 +8,7 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-SUITES = ('tokens', 'platform', 'boot', 'keys', 'key_dispatch', 'key_wait', 'key_controller', 'annunciator', 'cursor', 'editor', 'editor_construct', 'input_codec', 'numeric', 'numeric_transcend', 'numeric_power', 'numeric_root', 'numeric_logbase', 'combinatorics', 'complex', 'complex_angles', 'complex_round', 'complex_dispatch', 'stats', 'stats_cache', 'stats_editor', 'stats_normal', 'trig', 'trig_math', 'trig_inverse', 'trig_hyperbolic', 'math_context', 'render', 'render_complex', 'format', 'format_base', 'format_budget', 'eval', 'eval_complex', 'cli', 'safety')
+SUITES = ('tokens', 'platform', 'boot', 'boot_events', 'persistent', 'diagnostic_contrast', 'keys', 'key_dispatch', 'key_wait', 'key_controller', 'annunciator', 'cursor', 'editor', 'editor_construct', 'input_codec', 'input_prepare', 'input_recover', 'error_display', 'error_event', 'numeric', 'numeric_transcend', 'numeric_power', 'numeric_root', 'numeric_logbase', 'numeric_calculus', 'numeric_integral', 'combinatorics', 'complex', 'complex_angles', 'complex_round', 'complex_dispatch', 'linalg', 'linalg_reduce', 'stats', 'stats_cache', 'stats_editor', 'stats_normal', 'trig', 'trig_math', 'trig_inverse', 'trig_hyperbolic', 'math_context', 'render', 'render_complex', 'format', 'format_base', 'format_budget', 'eval', 'eval_complex', 'eval_variables', 'eval_calculus', 'cli', 'safety')
 
 
 def audit():
@@ -27,7 +27,7 @@ def audit():
             p = ROOT / file
             if not p.exists() or hashlib.sha256(p.read_bytes()).hexdigest() != digest:
                 issues.append(f'{name}: changed or missing tested input {file}')
-        cases = report.get('cases', report.get('total_cases', report.get('checks_total', 0)))
+        cases = report.get('cases', report.get('total_cases', report.get('checks_total', report.get('checks', 0))))
         if isinstance(cases, dict):
             cases = report.get('total_cases', report.get('checks_total', sum(cases.values())))
         if type(cases) is not int or cases < 0:

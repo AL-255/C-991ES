@@ -1,0 +1,35 @@
+{
+  "subsystem": "nonblocking welcome and diagnostic boot events",
+  "implementation": "handwritten high-level C with named host phases; ROM execution belongs only to independent tests",
+  "sources": ["csrc/platform/fx_boot_events.c", "csrc/platform/fx_boot_events.h"],
+  "verification": ["tools/test_boot_events_c.py", "analysis/c-verification/boot_events.json"],
+  "understanding_ranges": "csrc/platform/boot_events/understood_ranges.json",
+  "implemented_routines": [
+    {"address": "0x7010 / 0x1e4aa", "name": "welcome banner and bounded key decision", "scope": "2381-count release/poll/scan/debounce phases, remembered raw pair, stable44 diagnostic branch, stable4/16 AC branch and native timeout asymmetry"},
+    {"address": "0x5550 / 0x557e / 0x5596", "name": "host control handshake", "scope": "nonblocking flag2 begin/finish, flag4 notification, explicit inherited timer argument for5596"},
+    {"address": "0x71ec / 0x72ee", "name": "diagnostic display and checksum", "scope": "ROM version metadata, negative16-bit ROM sum, stored checksum predicate, raw port caption, externally supplied architectural read-test result, port setup and host polling"},
+    {"address": "0x7150 / 0x715e / 0x717e / 0x71a6", "name": "diagnostic display patterns", "scope": "white/black, border with native untouched row0, sixteen rows per alternating stripe value, complete LCD flush"},
+    {"address": "0x70d4 / 0x73d8", "name": "physical keyboard diagnostic", "scope": "49 two-digit counters and immutable ROM pair codes, single-bit encoding for all byte values, wrong-key redraw/retry"},
+    {"address": "0x7044 / 0x740c", "name": "diagnostic lifecycles", "scope": "signature invalidation, cursor suppression, Alpha-only pattern waits, host diagnostic wait, delegated expanded contrast, physical-key test, final any-key prompt, contrast captured after wait and cold/default reset"}
+  ],
+  "host_contract": [
+    "Every tick performs one bounded peripheral, raw-key or semantic-key phase and returns WAIT, READY, RESET or EXPORT.",
+    "Welcome may use a row-sensitive physical key callback; NULL reads the passive F040 port.",
+    "Ordinary diagnostic key waits use host8E01/8E02 packets. The host clears a delivered pair after the completed tick; the firmware does not clear those bytes.",
+    "READY from a boot WELCOME/DIAGNOSTIC request includes its ordinary D74C..D7AE mode tail. Standalone7044 ends after its default-screen return.",
+    "Host-owned strings, raw pairs, descriptor fields, cursor bitmaps and counters introduce no synthetic persistent CPU-local RAM writes."
+  ],
+  "prepared_policy": [
+    "Native CPU stack8D00..8DED is excluded; every other RAM/MMIO byte and callback is compared.",
+    "The display-only adapter accepts the architectural7334 result at native7286. The standard host lifecycle supplies its verified A5 success result.",
+    "Complete7044 tests retain80FB=1 to bypass the separately verified1DB34 annunciator/classifier scratch policy; no numeric or header bytes are excluded from these full-sequence comparisons.",
+    "Welcome stable-pair preparation at1E51C covers matrix rows unavailable from a single passive nativeF040 byte.",
+    "ROM checksum/version variants are deterministic test images changing metadata only; executable instructions and fonts remain original."
+  ],
+  "gaps": [
+    "The native7334 CPU architecture/PSW test is not implemented or claimed as C instruction semantics.",
+    "Physical real-time interrupt, timer and keyboard scheduling remains with the host.",
+    "Existing raw-wait cursor-height bounds and key-controller event routing bounds remain explicit dependencies.",
+    "The ordinary main-event controller beyondD7AE remains separate."
+  ]
+}

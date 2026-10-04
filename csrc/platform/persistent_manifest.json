@@ -1,0 +1,32 @@
+{
+  "subsystem": "persistent result, variable, Ans and replay state",
+  "implementation": "handwritten readable C; instruction execution is confined to the native test oracle",
+  "sources": ["csrc/platform/fx_persistent.c", "csrc/platform/fx_persistent.h"],
+  "implemented_routines": [
+    {"address": "0x5176", "name": "fx_result_clear", "scope": "clear all twenty bytes of result8140"},
+    {"address": "0x5192 / 0x51aa / 0x51ae", "name": "result transient clears", "scope": "standalone flag/display/format resets without editor or renderer side effects"},
+    {"address": "0x1d636 / 0x1d646", "name": "result layout resets", "scope": "three layout dimensions, optionally followed by complete result flag reset"},
+    {"address": "0x3624 / 0x362c / 0x3644 / 0x3658", "name": "format and selection access", "scope": "byte-exact getters/setters, incoming-byte OR behavior and cache invalidation"},
+    {"address": "0x522a", "name": "variable and Ans stores", "scope": "opaque real record forward bus copy, modeC4 imaginary copy, supplied immutable host-record adapters; variable slots0..9"},
+    {"address": "0x11092", "name": "fx_replay_buffer", "scope": "all256 mode bytes and the original250-byte buffer selection"},
+    {"address": "0x1e946 / 0x1e9a0 / 0x1e9e8", "name": "replay queries", "scope": "entry boundaries, count admission and used bytes with explicit malformed-store bounds"},
+    {"address": "0x1ea0c", "name": "replay append", "scope": "prepared1ea3e classification boundary, complete-entry eviction, compaction, colon continuation and result/format/flag/expression serialization"},
+    {"address": "0x1eb76", "name": "replay recall", "scope": "prepared valid index, editor action1, numeric/format/flag restoration, history navigation and mode45/12 initial-format policy"}
+  ],
+  "verification": ["tools/test_persistent_c.py", "analysis/c-verification/persistent.json"],
+  "understanding_ranges": "csrc/platform/persistent/understood_ranges.json",
+  "prepared_policy": [
+    "Replay histories fit250bytes and contain complete entries followed by a zero-filled unused tail.",
+    "Prepared append receives the native imaginary classification as a semantic byte; every value except1 selects a twenty-byte result.",
+    "Normal capacity no-ops are preserved; byte-length wrapping, unterminated sources and the native251-byte finder overflow are rejected before replay mutation.",
+    "Recall uses an admitted1-based8113 index and at most99 expression bytes; the caller's count/mode admission is required.",
+    "Native CPU stack bytes are excluded; prepared append/recall otherwise compare whole RAM and callbacks. Convenience append explicitly excludes native numeric operand scratch8000..80db.",
+    "Supplied variable records are immutable host values. Use the address adapter for calculator RAM sources and native forward-copy overlap semantics."
+  ],
+  "gaps": [
+    "Full event-handler, evaluator source/commit and error-resume orchestration remain with the event controller.",
+    "Physical interrupt/timer scheduling remains with the host.",
+    "Out-of-range variable slots and native malformed-store/CPU-frame corruption are outside the prepared caller domain.",
+    "The convenience replay classifier does not reproduce native CPU register snapshots or incidental numeric operand scratch."
+  ]
+}

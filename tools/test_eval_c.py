@@ -15,6 +15,7 @@ import subprocess
 from nxu8.machine import Machine
 from trace_natural_result import settings
 from c_verification import write_report
+from c_build_inputs import implementation_inputs
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -57,7 +58,7 @@ def main():
     build.mkdir(parents=True, exist_ok=True)
     output = build / 'eval.so'
     sources = ['parse/fx_eval.c', 'parse/fx_tokens.c', 'data/fx_rom_data.c',
-               'numeric/fx_numeric.c', 'numeric/fx_transcend.c', 'numeric/fx_power.c', 'numeric/fx_root.c', 'numeric/fx_combinatorics.c', 'numeric/fx_logbase.c',
+               'numeric/fx_numeric.c', 'numeric/fx_transcend.c', 'numeric/fx_power.c', 'numeric/fx_root.c', 'numeric/fx_calculus.c', 'numeric/fx_combinatorics.c', 'numeric/fx_logbase.c',
                'complex/fx_complex.c', 'complex/fx_complex_angle.c', 'complex/fx_complex_round.c', 'complex/fx_complex_dispatch.c',
                'trig/fx_trig.c', 'trig/fx_trig_math.c', 'trig/fx_trig_inverse.c', 'trig/fx_trig_hyperbolic.c',
                'format/fx_format.c', 'render/fx_render.c', 'render/fx_render_context.c', 'render/fx_layout.c', 'render/fx_layout_validate.c']
@@ -342,13 +343,8 @@ def main():
     if args.records_only:
         report['comparison'] = 'Native evaluator status, both 10-byte numeric records and consumed input pointer only.'
     report = write_report(out / ('eval-records.json' if args.records_only else 'eval.json'), report,
-            [str(Path('csrc') / f) for f in sources] +
-            ['csrc/parse/fx_eval.h', 'csrc/numeric/fx_numeric.h', 'csrc/numeric/fx_transcend.h', 'csrc/numeric/fx_transcend_internal.h',
-             'csrc/numeric/fx_root.h', 'csrc/numeric/fx_combinatorics.h', 'csrc/numeric/fx_logbase.h', 'csrc/format/fx_format.h',
-             'csrc/render/fx_render.h', 'csrc/render/fx_layout_validate.h', 'csrc/render/fx_render_context.h',
-             'csrc/complex/fx_complex.h', 'csrc/complex/fx_complex_angle.h', 'csrc/complex/fx_complex_round.h', 'csrc/complex/fx_complex_dispatch.h',
-             'csrc/trig/fx_trig.h', 'csrc/trig/fx_trig_math.h', 'csrc/trig/fx_trig_inverse.h', 'csrc/trig/fx_trig_hyperbolic.h',
-             'tools/c_verification.py', 'tools/trace_natural_result.py',
+            implementation_inputs(ROOT, [str(Path('csrc') / f) for f in sources]) +
+            ['tools/c_build_inputs.py', 'tools/c_verification.py', 'tools/trace_natural_result.py',
              str(regression_file.relative_to(ROOT))], 'tools/test_eval_c.py')
     print(json.dumps(report, indent=2))
 

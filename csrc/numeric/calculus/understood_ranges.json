@@ -1,0 +1,8 @@
+{
+  "basis": "Individually inspected half-open finite sum/product spans. Bound-expression grammar and shared arithmetic/callback callees are separately inventoried; calls do not imply understanding of unlisted callees.",
+  "ranges": [
+    {"start": "0x0429c", "end": "0x042ae", "scope": "Scalar signed integral-bound gate and packed-BCD exponent<10 check", "source": "csrc/numeric/fx_calculus.c"},
+    {"start": "0x042ae", "end": "0x043a2", "scope": "Complete finite product: bound parsing contract, inclusive ascending X, cancel checks, expression callback, per-step numeric cleanup, overflow/errors and final decimal marker clearing", "source": "csrc/numeric/fx_calculus.c"},
+    {"start": "0x043a2", "end": "0x04490", "scope": "Complete finite sum: bound parsing contract, inclusive ascending X, cancel checks, expression callback, per-step numeric cleanup, overflow/errors and scalar result return", "source": "csrc/numeric/fx_calculus.c"}
+  ]
+}

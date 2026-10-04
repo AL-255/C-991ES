@@ -1,0 +1,17 @@
+{
+  "subsystem": "high_level_error_display",
+  "implementation_language": "C99",
+  "implementation_executes_firmware": false,
+  "implemented_routines": [
+    {"address":"0x3fba","name":"fx_error_dialog_draw","scope":"Four immutable host line pointers; LCD rows1/9/17/25, font7 and16-character limits; original bus/source wrapping and composition"},
+    {"address":"0x402e","name":"dialog initialization","scope":"Unconditional display-port sleep, annunciator bit clears and all512 LCD bytes cleared, with RAM framebuffer retained"},
+    {"address":"0x4074","name":"fx_error_display","scope":"Byte-wrapped(error-1) ROM word-table selection and four-line error painting; all256 byte indices verified"}
+  ],
+  "api": {"header":"csrc/ui/fx_error_display.h","return":"0 success,-1 invalid platform/descriptor/font,-2 unmapped source or native CPU-stack source alias"},
+  "gaps": [
+    "Physical LCD timing and CPU call-stack aliases are outside the portable host API",
+    "Missing font data and unmapped source spans are rejected before writes",
+    "Error key wait and restore are separate fx_error_event APIs"
+  ],
+  "verification": {"tool":"tools/test_error_display_c.py","report":"analysis/c-verification/error_display.json","cases":4919,"comparison":"Full persistent RAM/LCD/MMIO, per-address write counts and29 ordered original traces; CPU stack excluded"}
+}

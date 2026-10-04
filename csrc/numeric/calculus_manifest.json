@@ -1,0 +1,15 @@
+{
+  "subsystem": "real-finite-summation-product",
+  "implementation": "Readable handwritten C99 local-X callbacks and ascending finite-decimal accumulation; no CPU execution or host floating-point substitute",
+  "implemented_routines": [
+    {"address": "0x043a2..0x04490", "name": "finite summation", "scope": "Real scalar callback boundary, signed integral bounds below10^10, inclusive ascending evaluation, per-step cleanup, native F8/F1 and callback errors"},
+    {"address": "0x042ae..0x043a2", "name": "finite product", "scope": "Shared bounds and callbacks, original multiplication order, early overflow, per-step cleanup and final decimal marker removal"},
+    {"address": "0x0429c..0x042ae", "name": "integer-bound gate", "scope": "Fractional status and packed-BCD exponent carry check"}
+  ],
+  "tokens": {"summation": "0x69", "product": "0x5d"},
+  "callback_contract": "0x171ea re-evaluates the expression with local X at0x8276; the evaluator dispatcher saves/restores global X and calculus callbacks suppress natural surd production",
+  "verification": "analysis/c-verification/numeric_calculus.json",
+  "test": "python3 tools/test_numeric_calculus_c.py --random-cases 1000",
+  "gaps": ["Parser grammar and consumed-token integration are owned separately", "Complex COMP callbacks are outside this scalar API", "Integration, differentiation and solver algorithms are not yet implemented by this module", "Reset/keyscan execution is outside the prepared native oracle"],
+  "completion": "Prepared real sum/product callback parity; complete firmware equivalence remains unproven"
+}

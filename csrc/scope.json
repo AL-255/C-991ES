@@ -9,13 +9,15 @@
       "id": "platform",
       "scope": "Full startup, persistent state, power management, peripheral interactions and emulator callbacks",
       "status": "partial",
-      "manifest": "platform/manifest.json"
+      "manifest": "platform/manifest.json",
+      "implemented_subset": "Prepared boot and emulator host bridge, typed persistent variable/result/display state, replay append/eviction/recall and diagnostic contrast UI; full lifecycle scheduling and remaining boot diagnostics are pending"
     },
     {
       "id": "keyboard_ui",
       "scope": "Keyboard scanning, editing, cursor, menus, history and mode setup",
       "status": "partial",
-      "manifest": "ui/manifest.json"
+      "manifest": "ui/manifest.json",
+      "implemented_subset": "Prepared key controllers, editors/cursors, input export/equation normalization, error dialog/key acceptance and editable/cached-result cursor restoration; prepared input error/reset recovery is available; full input handler and mode UI remain pending"
     },
     {
       "id": "parser",
@@ -40,13 +42,13 @@
       "id": "advanced_math",
       "scope": "Numerical integration/differentiation/sums, solving, combinatorics, random functions and complex arithmetic",
       "status": "partial",
-      "implemented_subset": "Factorial, permutations, combinations and percent in COMP parser; COMP/CMPLX expression dispatch and prepared complex arithmetic, classification, native status, conjugation, magnitude, restricted roots/powers, polar coordinates and display rounding. Numerical integration/differentiation/sums, solving and random functions remain pending"
+      "implemented_subset": "Factorial/permutations/combinations/percent, shared COMP/CMPLX expressions, scalar absolute/conjugation/argument, finite sum/product expression orchestration and prepared adaptive Gauss-Kronrod integration. Differentiation, solver, integration expression orchestration and random functions remain pending"
     },
     {
       "id": "calculation_modes",
       "scope": "Statistics, distributions, equation, matrix, vector, table and base-N modes, constants and unit conversions",
       "status": "partial",
-      "implemented_subset": "Prepared statistics/regression kernels for seven models, statistics table editing/input commits and cache semantics, normal P/Q/R and standardization; equation/inequality result-display controllers and BASE-N integer formatting. Complete mode input/UI, equation solving, matrix/vector/table calculations, constants and conversions remain pending"
+      "implemented_subset": "Prepared statistics/regression kernels and table editor/cache/normal distribution kernels; matrix/vector arithmetic, determinant/inverse, REF/RREF and preparation kernels; equation/inequality result display and BASE-N integer formatting. Complete mode input/UI, object allocation/editing/display, equation solving, table mode, constants and conversions remain pending"
     },
     {
       "id": "format",
@@ -64,7 +66,7 @@
       "id": "end_to_end",
       "scope": "Runnable calculator with original expression and key-sequence input/output behavior",
       "status": "partial",
-      "implemented_subset": "Supported COMP arithmetic, fractions, square/cube/nth roots, powers, factorial/percent/nPr/nCr, forward/inverse trig and hyperbolic, single/two-argument logarithms and exponentials through records, formatter tokens, layout and LCD; structured display-to-input conversion and error cursor mapping. Prepared editor, cursor and nonblocking host key-wait/controller and annunciator APIs; complete key UI and other mode pipelines remain pending; shared CMPLX expression evaluation and prepared rectangular output composed through natural display tokens and LCD pixels"
+      "implemented_subset": "Supported COMP arithmetic, fractions, square/cube/nth roots, powers, factorial/percent/nPr/nCr, forward/inverse trig and hyperbolic, single/two-argument logarithms and exponentials through records, formatter tokens, layout and LCD; structured display-to-input conversion and error cursor mapping. Prepared editor, cursor and nonblocking host key-wait/controller and annunciator APIs; complete key UI and other mode pipelines remain pending; shared CMPLX expression evaluation and prepared rectangular output composed through natural display tokens and LCD pixels; prepared scalar variable transactions and finite sum/product expressions now share the evaluator grammar. Prepared input recovery and nonblocking diagnostic lifecycle are available; full keyboard handler and calculator lifecycle scheduling remain pending"
     },
     {
       "id": "verification",

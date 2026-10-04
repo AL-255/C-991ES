@@ -2,6 +2,91 @@
   "subsystem": "platform, token decoding and editor",
   "ranges": [
     {
+      "start":"0x1e67c","end":"0x1e760",
+      "scope":"Complete understood error/context recovery policy through existing editor/persistent/render APIs; saved nonerror mode89 rendering is an explicit inherited callee capability gap, with no new callee regions inferred",
+      "source":"csrc/ui/fx_input_recover.c"
+    },
+    {
+      "start":"0x3fba","end":"0x3fee",
+      "scope":"Complete four-lineLCD dialog composition atrows1/9/17/25 with16characterlimits; typedhostlinesreplaceCPUargumentframe",
+      "source":"csrc/ui/fx_error_display.c"
+    },
+    {
+      "start":"0x402e","end":"0x404a",
+      "scope":"LCD-only dialoginitialization: displayport/annunciatorclear, all512LCDbytesclear, RAMframebufferpreserved",
+      "source":"csrc/ui/fx_error_display.c"
+    },
+    {
+      "start":"0x4074","end":"0x40a2",
+      "scope":"Font7/errorbyteROMtable selection and fourlineerrorpainting; all256indicesverifiedwithinmappedsourcebounds",
+      "source":"csrc/ui/fx_error_display.c"
+    },
+    {
+      "start":"0x41a8","end":"0x41c2",
+      "scope":"ErrorAC/directionadmission and lowdisplaystate3/5restorepolicy",
+      "source":"csrc/ui/fx_error_event.c"
+    },
+    {
+      "start":"0x41f6","end":"0x4206",
+      "scope":"Command-inputleft/righttokenpredicate usingseparatelydocumented sharedbooleanreturns",
+      "source":"csrc/ui/fx_error_event.c"
+    },
+    {
+      "start":"0x1d652","end":"0x1d66c",
+      "scope":"Ordinaryinputscreen/statepreparation withoutclearingexpression",
+      "source":"csrc/ui/fx_error_event.c"
+    },
+    {
+      "start":"0x1dfd6","end":"0x1e47e",
+      "scope":"Hosterrortableconstruction/dataflow and12case mapping,selectedmessage/suffix/defaultserialization throughtypedhostbridge; originalunusedlocaltableentrieshavenopersistenteffects",
+      "source":"csrc/ui/fx_error_event.c"
+    },
+    {
+      "start":"0x1e47e","end":"0x1e4aa",
+      "scope":"Errorhosttext/dialog thenouterkeywait admission/retryloop, expressedasnonblockinghoststate; reset/exporthandledbyexistingcontroller",
+      "source":"csrc/ui/fx_error_event.c"
+    },
+    {
+      "start":"0x1ec72","end":"0x1ed68",
+      "scope":"Complete editableerror/backuprestore andcachedresultcursorpolicies throughsharedboot/busyAPIs; CPUlocalcontextreplacedwithnamedhostfields",
+      "source":"csrc/ui/fx_error_event.c"
+    },
+    {
+      "start":"0x32ca","end":"0x32e8",
+      "scope":"Nullable string length and forward copy adapters used by input preparation",
+      "source":"csrc/ui/fx_input_prepare.c"
+    },
+    {
+      "start":"0x7f92","end":"0x8000",
+      "scope":"Comparison-token scan and equation-mode=0 normalization through native editor APIs",
+      "source":"csrc/ui/fx_input_prepare.c"
+    },
+    {
+      "start":"0x8164","end":"0x8182",
+      "scope":"Forward zero-terminated string copy including terminator and original16bit address wrapping",
+      "source":"csrc/ui/fx_input_prepare.c"
+    },
+    {
+      "start":"0xc73a","end":"0xc758",
+      "scope":"Zero-terminated string length with original16bit address subtraction",
+      "source":"csrc/ui/fx_input_prepare.c"
+    },
+    {
+      "start":"0x11072","end":"0x11092",
+      "scope":"Complete mode-dependent evaluator workspace policy",
+      "source":"csrc/ui/fx_input_prepare.c"
+    },
+    {
+      "start":"0x15982","end":"0x1599e",
+      "scope":"Single-variable eligibility using decoded evaluator value/category",
+      "source":"csrc/ui/fx_input_prepare.c"
+    },
+    {
+      "start":"0x1e7b8","end":"0x1e946",
+      "scope":"Variable suffix, input-source routing and complete direct/exported/saved-solve input preparation; called natural codec/editor APIs are separately documented",
+      "source":"csrc/ui/fx_input_prepare.c"
+    },
+    {
       "start": "0x4062",
       "end": "0x4074",
       "scope": "Port pull-up configuration",

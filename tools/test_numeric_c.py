@@ -48,6 +48,7 @@ def raw_decimal(mantissa, exponent, sign, flags=0):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--random-cases', type=int, default=2000)
+    parser.add_argument('--no-report', action='store_true', help='Run a pilot without replacing the canonical report')
     args = parser.parse_args()
     build = ROOT / 'analysis/build/numeric'
     build.mkdir(parents=True, exist_ok=True)
@@ -531,7 +532,8 @@ def main():
                                 66666667,99999989,99999997,99999998,99999999]) if rng.randrange(3)==0 else rng.randrange(10000000,100000000)
         return component_fraction(numerator,denominator)
     component_suites=['canonical_roots','duplicate_raw_radicals','distinct_raw_radicals',
-                      'large_denominator_rationals','zero_components','zero_conjugate_denominators']
+                      'large_denominator_rationals','zero_components','zero_conjugate_denominators',
+                      'active_zero_radicals']
     def component_pair(suite_index,index):
         rng=random.Random(0x17271700+65537*suite_index+index)
         if suite_index==0:
@@ -569,13 +571,26 @@ def main():
             a,b=zeros(),zeros()
             if index%4==0:a=component_literal(rng.choice([-99,-1,0,1,99]))
             if index%13==0:a=component_large_fraction(rng)
-        else:
+        elif suite_index==5:
             factor=rng.randrange(1,10);radicand=rng.randrange(1,999//(factor*factor)+1)
             coefficient=rng.randrange(1,max(1,99//factor)+1);denominator=component_small(rng,False)
             b=component_raw([(factor*coefficient*rng.choice([-1,1]),radicand,denominator),
                              (coefficient*rng.choice([-1,1]),radicand*factor*factor,denominator)])
             a=component_large_fraction(rng) if index%3 else component_canonical(rng)
             if index%17==0:a=component_literal(rng.choice([-1,0,1,99]))
+        else:
+            def active_zero():
+                terms=[(component_signed(rng),component_rad(rng),component_small(rng)),
+                       (component_signed(rng),component_rad(rng),component_small(rng))]
+                slot=rng.randrange(2)
+                coefficient,_,denominator=terms[slot]
+                terms[slot]=(coefficient,0,denominator)
+                if index%7==0:terms[1-slot]=(component_signed(rng),0,component_small(rng))
+                return component_raw(terms)
+            a,b=active_zero(),active_zero()
+            if index%3==0:a=component_literal(rng.choice([-99,-48,-1,0,1,48,99]))
+            if index%11==0:b=component_large_fraction(rng)
+            if index%17==0:b=component_canonical(rng)
         if index%2 and suite_index!=5:a,b=b,a
         return a,b
     historical=json.loads((ROOT/'analysis/edge-cases/numeric-components.json').read_text())['historical_failures']
@@ -583,6 +598,25 @@ def main():
     component_fixtures += [(bytes.fromhex('80000001000301010100'),bytes.fromhex(raw),3)
                           for raw in ['80000001000200010100','80000001000200010600']]
     component_fixtures += [(bytes.fromhex('80151750048549020601'),bytes(10),op) for op in [0,1]]
+    zero_radical_history=json.loads((ROOT/'analysis/edge-cases/numeric-zero-radicand.json').read_text())['historical_failures']
+    component_fixtures += [(bytes.fromhex(f['a']),bytes.fromhex(f['b']),f['op']) for f in zero_radical_history]
+    # Multiplication by the second radical +1 copies its first raw record.
+    # Four-term and reciprocal product orders therefore affect zero tags.
+    component_fixtures += [
+        (bytes.fromhex('85121850000017810601'),component_literal(sign),2)
+        for sign in [-1,1]]
+    component_fixtures += [(bytes.fromhex('80005065080399550101'),component_literal(99),3),
+                          (bytes.fromhex('80008680000060800606'),bytes.fromhex('80002072000157830101'),2)]
+    component_fixtures += [(bytes.fromhex('80009900000084020101'),component_literal(-48),3),
+                          (bytes.fromhex('83635055000063000606'),component_literal(-1),3)]
+    for coefficient in [-99,-7,-1,1,7,99]:
+        for denominator in [0,1]:
+            for divisor in [-99,-48,-1,1,48,99]:
+                component_fixtures.append((component_raw([(coefficient,0,denominator),(84,0,2)]),
+                                           component_literal(divisor),3))
+                for zero_sign in [0,1,6]:
+                    component_fixtures.append((component_raw([(coefficient,0,denominator),(84,3,2)]),
+                                               component_raw([(0,0,1),(0,1,1)],[0,zero_sign]),3))
     for suite_index,suite in enumerate(component_suites):
         operations=[(a,b,op) for index in range(args.random_cases//2)
                     for a,b in [component_pair(suite_index,index)] for op in range(4)]
@@ -606,15 +640,86 @@ def main():
                 check(prefix+'_right_alias_record',b.raw(),expected,detail)
                 check(prefix+'_right_alias_other_input',a.raw(),a_raw,detail)
 
+    for fixture in zero_radical_history:
+        a_raw,b_raw=bytes.fromhex(fixture['a']),bytes.fromhex(fixture['b']);op=fixture['op']
+        for context in range(3):
+            for warmup in [None,'2','1e99']:
+                reset()
+                if context==1:m.ram[0x80fc] |= 0x40
+                if context==2:m.ram[0x8106]=0
+                if warmup is not None:
+                    put(0x8300,component_literal(warmup));m.er(0,0x8300)
+                    m.call(0x1bac4);m.call(0x1b5a6)
+                put(0x8300,a_raw);put(0x8320,b_raw);m.er(0,0x8300);m.er(2,0x8320)
+                m.call([0x1c6a4,0x1c690,0x1c6cc,0x1c6b8][op],limit=3000000)
+                expected=bytes(m.ram[0x8300:0x830a])
+                detail=f'op={op} {a_raw.hex()} {b_raw.hex()} context={context} warmup={warmup}'
+                check('zero_radical_historical_native_fixture',expected,bytes.fromhex(fixture['native']),detail)
+                for alias in ['separate','left','right']:
+                    a,b,out=number(a_raw),number(b_raw),Number()
+                    destination=a if alias=='left' else b if alias=='right' else out
+                    check('zero_radical_binary_context_status',lib.fx_number_binary(C.byref(destination),C.byref(a),C.byref(b),op),0,detail)
+                    check('zero_radical_binary_context_record',destination.raw(),expected,detail)
+                    if alias!='left':check('zero_radical_binary_context_left_input',a.raw(),a_raw,detail)
+                    if alias!='right':check('zero_radical_binary_context_right_input',b.raw(),b_raw,detail)
+
+    # A caller's display context does not change low-level component
+    # evaluation. Reuse the native arithmetic scratch state from nonzero
+    # roots to verify that positive-zero behavior is deterministic.
+    conversion_inputs=[]
+    for coefficient in [0,1,-1,3,-9,48,-48,99,-99]:
+        for denominator in [0,1,7,99]:
+            conversion_inputs += [component_raw([(coefficient,0,denominator),(0,2,1)]),
+                                  component_raw([(0,2,1),(coefficient,0,denominator)])]
+    for a_raw in conversion_inputs:
+        a=number(a_raw)
+        for context in range(3):
+            for warmup in [None,'2','999','1e-99','1e99']:
+                reset()
+                if context==1:m.ram[0x80fc] |= 0x40
+                if context==2:m.ram[0x8106]=0
+                if warmup is not None:
+                    put(0x8300,component_literal(warmup));m.er(0,0x8300)
+                    m.call(0x1bac4);m.call(0x1b5a6)
+                put(0x8300,a_raw);m.er(0,0x8300);m.er(2,0);m.call(0x178ba)
+                m.er(0,0);m.er(2,0x8320);m.call(0x17576)
+                expected=bytes(m.ram[0x8320:0x832a]);out=Number()
+                detail=f'{a_raw.hex()} context={context} warmup={warmup}'
+                check('zero_radical_conversion_status',lib.fx_number_to_decimal(C.byref(out),C.byref(a)),0,detail)
+                check('zero_radical_conversion_record',out.raw(),expected,detail)
+                check('zero_radical_conversion_input',a.raw(),a_raw,detail)
+                alias=number(a_raw)
+                check('zero_radical_conversion_alias_status',lib.fx_number_to_decimal(C.byref(alias),C.byref(alias)),0,detail)
+                check('zero_radical_conversion_alias_record',alias.raw(),expected,detail)
+
+    # Oversized computed components reach 0x17576 before a compact record
+    # exists. Positive-tagged zero and canonical zero must remain distinct.
+    for tagged in [False,True]:
+        for coefficient in [-10000000,-100,-48,0,48,100,10000000]:
+            for denominator in [0,1,100,10000000]:
+                components=(Number*6)()
+                values=[coefficient,0,denominator,1,2,1]
+                for i,value in enumerate(values):
+                    lib.fx_decimal_parse(C.byref(components[i]),str(value).encode())
+                if tagged:components[1].bytes[9]=1
+                before=bytes(components);reset();put(0x8640,before)
+                m.er(0,0);m.er(2,0x8300);m.call(0x17616);out=Number()
+                detail=f'tagged={tagged} {values}'
+                check('zero_radical_pack_status',lib.fx_surd_pack(C.byref(out),components),0,detail)
+                check('zero_radical_pack_record',out.raw(),bytes(m.ram[0x8300:0x830a]),detail)
+                check('zero_radical_pack_components',bytes(components),before,detail)
+
     manifest = {'rom_sha256': hashlib.sha256(rom).hexdigest(), 'seed': '0x991e5',
                 'random_cases_per_group': args.random_cases, 'checks': results,
                 'checks_total': sum(results.values()),
                 'scope': 'Finite routine-level differential tests; no claim of complete numeric firmware coverage.'}
     (build / 'results.json').write_text(json.dumps(manifest, indent=2) + '\n')
-    write_report('analysis/c-verification/numeric.json', manifest,
-                 ['csrc/numeric/fx_numeric.c', 'csrc/numeric/fx_numeric.h',
-                  'csrc/numeric/manifest.json', 'analysis/edge-cases/numeric-components.json', 'tools/trace_natural_result.py',
-                  'tools/c_verification.py'], 'tools/test_numeric_c.py')
+    if not args.no_report:
+        write_report('analysis/c-verification/numeric.json', manifest,
+                     ['csrc/numeric/fx_numeric.c', 'csrc/numeric/fx_numeric.h',
+                      'csrc/numeric/manifest.json', 'analysis/edge-cases/numeric-components.json',
+                      'analysis/edge-cases/numeric-zero-radicand.json', 'tools/trace_natural_result.py',
+                      'tools/c_verification.py'], 'tools/test_numeric_c.py')
     print(json.dumps(manifest, indent=2))
 
 

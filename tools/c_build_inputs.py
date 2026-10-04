@@ -3,13 +3,12 @@ import re
 from pathlib import Path
 
 
-def build_inputs(root):
-    root = Path(root)
+def implementation_inputs(root, sources):
+    """Pin a compiled source list and the quoted headers it actually includes."""
+    root = Path(root).resolve()
     source_root = root / 'csrc'
-    cmake = source_root / 'CMakeLists.txt'
-    pending = [source_root / name for name in
-               re.findall(r'(?<![\w/])([\w/]+\.c)(?!\w)', cmake.read_text())]
-    discovered = {cmake}
+    pending = [root / name for name in sources]
+    discovered = set()
     while pending:
         source = pending.pop().resolve()
         if source in discovered:
@@ -24,3 +23,11 @@ def build_inputs(root):
                 raise ValueError(f'Unresolved local include {name} from {source}')
             pending.append(header)
     return sorted(str(path.relative_to(root)) for path in discovered)
+
+
+def build_inputs(root):
+    root = Path(root).resolve()
+    cmake = root / 'csrc/CMakeLists.txt'
+    names = ['csrc/' + name for name in
+             re.findall(r'(?<![\w/])([\w/]+\.c)(?!\w)', cmake.read_text())]
+    return ['csrc/CMakeLists.txt'] + implementation_inputs(root, names)

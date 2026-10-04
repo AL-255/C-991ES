@@ -1,0 +1,21 @@
+{
+  "subsystem":"high_level_error_event_and_cursor_restore",
+  "implementation_language":"C99",
+  "implementation_executes_firmware":false,
+  "semantic_complete":false,
+  "implemented_routines":[
+    {"address":"0x1dfd6","name":"fx_error_write_host_text","scope":"Semantic12-case hosterror mapping, defaultunknown message, optionalError suffix and typed hostdescriptor packet publication; unused localtable entries have no persistent effect"},
+    {"address":"0x41a8","name":"fx_error_accepts_token","scope":"AC always, command-inputleft/right admission"},
+    {"address":"0x1e47e","name":"fx_error_event_begin/tick/finish","scope":"Hosterror publication, four-line dialog, nonblockingouterkeycontroller, ignored-key retries, exports/resetrequests and retainedacceptedtoken"},
+    {"address":"0x1ec72","name":"fx_error_cursor_restore","scope":"Token/screen/mode policies, error-editor reinitialization, backuprestore, cursorposition andbusyflag"},
+    {"address":"0x1ed16","name":"fx_error_result_cursor","scope":"Eligiblecachednaturalresultcursor advance/decrement andbusyclear atleftboundary"}
+  ],
+  "api":{"header":"csrc/ui/fx_error_event.h","state":"fx_error_event retains typedfx_key_controller anderror/token/event/active; fx_error_context names displayaddress/calculationmode","events":"WAIT0,TOKEN1,RESET2,EXPORT3; terminalevents retaineduntilfinish","cursor_restore":"1handled,4ineligible,-1malformed/unsupported"},
+  "gaps":[
+    "Full D9EE/F12A handler, evaluator, result/Ans/replay commits and special modeevent controllers remain separate APIs",
+    "Reset andphysicalhost scheduling are explicit eventboundaries; productiondoesnot executeCPU BRK or firmwareinstructions",
+    "Original unbounded source loops and CPU-framealiases are outside this host-local interface; unsupportededitor initialization returns-1",
+    "NativeCPUstack8D00..8DED (8C00..8DED forDFD6/E47E) and callednumericworkspace8000..80DB are excludedfrom persistentRAMcomparison"
+  ],
+  "verification":{"tool":"tools/test_error_event_c.py","report":"analysis/c-verification/error_event.json","cases":18543,"scope":"Source-pinned native hosttext/admission/errorrestore/resultcursor and event-injected begin/tick/retry/export/reset/finish; allremaining RAM,LCD,MMIO andcallbacks"}
+}

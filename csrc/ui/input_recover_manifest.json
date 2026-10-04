@@ -1,0 +1,18 @@
+{
+  "subsystem": "high_level_input_error_recovery",
+  "implementation_language": "C99",
+  "implementation_executes_firmware": false,
+  "semantic_complete": false,
+  "implemented_routines": [
+    {"address":"0x1e67c","name":"fx_input_recover_after_error","scope":"Editor initialization, saved real result restoration, mode12 reset, mode88 backup/solve-buffer copy/clear, ordinary result clear and input-state preparation; inherited renderer gap explicitly retained"},
+    {"address":"0x1e71e","name":"fx_input_reset_context","scope":"Context eligibility reset through existing editor/layout/result APIs; initial screens21/24 and conditional mode12 initialization"}
+  ],
+  "api": {"header":"csrc/ui/fx_input_recover.h","context":"Named host display/result addresses, calculation mode, saved-result flag and return value; no CPU frame in calculator RAM","recovery_return":"0/1 native retry decisions,-1 malformed/inherited unsupported context","reset_return":"0 success,-1 malformed/inherited unsupported context"},
+  "gaps": [
+    "Saved nonerror result in calculation mode89 inherits fx_display_special_real_result's explicit mode89 capability gap. Original native calls return;255 such fixtures retain native RAM/LCD/framebuffer hashes and explicit C failure in the report",
+    "Full evaluator/error handler, cursor recovery and key-event scheduling are separate APIs",
+    "Native unbounded string loops are bounded; CPU-frame aliases and physical scheduling are outside this host-local interface",
+    "Native numeric working regions8000..80DB/8640..867B and CPU stack8C00..8DED are excluded from persistent-RAM differential comparison"
+  ],
+  "verification": {"tool":"tools/test_input_recover_c.py","report":"analysis/c-verification/input_recover.json","cases":16476,"unsupported_native_fixtures":255,"comparison":"Native return and named context output plus all remaining64KiB RAM/LCD/MMIO and callbacks; typed host return value projected into one oracle-only context byte"}
+}

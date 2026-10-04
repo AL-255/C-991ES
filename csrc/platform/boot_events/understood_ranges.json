@@ -1,0 +1,17 @@
+{
+  "subsystem": "nonblocking welcome and diagnostic boot events",
+  "ranges": [
+    {"start": "0x5550", "end": "0x55aa", "scope": "Complete host flag2 handshake, flag4 notification, timer service split, nonzero raw4/16 result and caller-supplied timer for5596", "source": "csrc/platform/fx_boot_events.c"},
+    {"start": "0x7010", "end": "0x7044", "scope": "Diagnostic welcome banner and font7 text placement, LCD flush, timed decision and conditional full-diagnostic transfer", "source": "csrc/platform/fx_boot_events.c"},
+    {"start": "0x7044", "end": "0x70d4", "scope": "Full diagnostic signature/suppression, pattern/raw Alpha waits, diagnostic host wait, modifier reset, delegated expanded contrast,49-key test, final any-key prompt and contrast-preserving cold/default reset", "source": "csrc/platform/fx_boot_events.c"},
+    {"start": "0x70d4", "end": "0x7140", "scope": "Two-decimal-digit counter0..48, raw-pair wait, ROM expected-key comparison, wrong-key redraw and49-key completion; CPU text/pair locals are host values", "source": "csrc/platform/fx_boot_events.c"},
+    {"start": "0x7150", "end": "0x71ec", "scope": "White/black fills, two alternating stripe phases, native border rows/edge masks and raw Alpha wait handoff", "source": "csrc/platform/fx_boot_events.c"},
+    {"start": "0x71ec", "end": "0x7282", "scope": "Diagnostic ROM version/string construction, checksum compare/caption, raw-port OR30 character quirk and partial display flush; architecture-test call excluded", "source": "csrc/platform/fx_boot_events.c"},
+    {"start": "0x7286", "end": "0x72de", "scope": "Externally supplied architecture-test-result caption, Press AC, F049..F04C writes, LCD flush, host flag2 retry and key-port completion", "source": "csrc/platform/fx_boot_events.c"},
+    {"start": "0x72ee", "end": "0x7334", "scope": "Negative16-bit ROM checksum over segment8 full65536 bytes and segment1 first65532 bytes; hexadecimal display conversion", "source": "csrc/platform/fx_boot_events.c"},
+    {"start": "0x73d8", "end": "0x73f8", "scope": "All-byte single-bit diagnostic key encoding and framebuffer flush/raw Alpha wait wrapper", "source": "csrc/platform/fx_boot_events.c"},
+    {"start": "0x740c", "end": "0x742a", "scope": "Reset-key diagnostic body invalidates signature/suppresses cursor, polls diagnostic screen, cold-resets RAM and restores default screen", "source": "csrc/platform/fx_boot_events.c"},
+    {"start": "0x1dd82", "end": "0x1ddac", "scope": "Host-owned raw wait pair, fixed normal keymap and Alpha-only completion/retry without modifier updates", "source": "csrc/platform/fx_boot_events.c"},
+    {"start": "0x1e4aa", "end": "0x1e55e", "scope": "Full2381-count release, poll, scan/debounce and stable-pair welcome decision with native old/new decrement checks, remembered pair and peripheral exit writes", "source": "csrc/platform/fx_boot_events.c"}
+  ]
+}

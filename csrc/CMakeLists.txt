@@ -11,7 +11,10 @@ add_library(fx991_firmware STATIC
     parse/fx_eval.c
     platform/fx_platform.c
     platform/fx_boot.c
+    platform/fx_boot_events.c
     platform/fx_host_bridge.c
+    platform/fx_persistent.c
+    platform/fx_diagnostic_contrast.c
     ui/fx_keys.c
     ui/fx_cursor.c
     ui/fx_key_dispatch.c
@@ -22,16 +25,24 @@ add_library(fx991_firmware STATIC
     ui/fx_construct_editor.c
     ui/fx_natural_editor.c
     ui/fx_input_codec.c
+    ui/fx_input_prepare.c
+    ui/fx_input_recover.c
+    ui/fx_error_display.c
+    ui/fx_error_event.c
     numeric/fx_transcend.c
     numeric/fx_power.c
     numeric/fx_root.c
     numeric/fx_combinatorics.c
     numeric/fx_logbase.c
+    numeric/fx_calculus.c
+    numeric/fx_integral.c
     numeric/fx_numeric.c
     complex/fx_complex.c
     complex/fx_complex_angle.c
     complex/fx_complex_round.c
     complex/fx_complex_dispatch.c
+    linalg/fx_linalg.c
+    linalg/fx_linalg_reduce.c
     stats/fx_stats.c
     stats/fx_stats_cache.c
     stats/fx_stats_editor.c
@@ -83,7 +94,7 @@ if(BUILD_TESTING)
     set_tests_properties(public_api_bounds PROPERTIES
         ENVIRONMENT "ASAN_OPTIONS=detect_leaks=0:halt_on_error=1;UBSAN_OPTIONS=halt_on_error=1")
     find_package(Python3 REQUIRED COMPONENTS Interpreter)
-    foreach(subsystem tokens platform boot keys key_dispatch key_wait key_controller annunciator cursor editor editor_construct input_codec numeric numeric_transcend numeric_power numeric_root numeric_logbase combinatorics complex complex_angles complex_round complex_dispatch stats stats_cache stats_editor stats_normal trig trig_math trig_inverse trig_hyperbolic math_context render render_complex format format_base format_budget eval eval_complex cli)
+    foreach(subsystem tokens platform boot boot_events persistent diagnostic_contrast keys key_dispatch key_wait key_controller annunciator cursor editor editor_construct input_codec input_prepare input_recover error_display error_event numeric numeric_transcend numeric_power numeric_root numeric_logbase numeric_calculus numeric_integral combinatorics complex complex_angles complex_round complex_dispatch linalg linalg_reduce stats stats_cache stats_editor stats_normal trig trig_math trig_inverse trig_hyperbolic math_context render render_complex format format_base format_budget eval eval_complex eval_variables eval_calculus cli)
         add_test(NAME differential_${subsystem}
                  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../tools/test_${subsystem}_c.py)
         set_tests_properties(differential_${subsystem} PROPERTIES

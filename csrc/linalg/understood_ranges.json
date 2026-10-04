@@ -1,0 +1,36 @@
+{
+  "basis": "Individually inspected prepared matrix/vector numerical instruction spans, independently reviewed arithmetic order and original-ROM differential comparisons of complete nine-cell backing, dimension word, reference/scalar result, native numerical status and explicit timer-response check count. Numeric callees, evaluator reference rewriting and hardware timer scheduling are not included implicitly. Understanding is independent of whole-firmware completion.",
+  "ranges": [
+    {
+      "start": "0x13f52",
+      "end": "0x14776",
+      "scope": "Matrix/vector reference classification, dimension table and fixed nine-cell storage helpers; add/subtract and scalar multiply/general divide/fraction-preferring divide; active-cell rounding/absolute/rational preparation/integer cleanup; zeroed temporary matrix product with early dimension update and delayed commit; full-backing transpose; explicit one/two/three-dimensional determinant and ordered adjugate inverse with partial cancellation states; vector dot/cross and iterative complex magnitude, including forced-success scalar error outputs; copy/product/classification helpers and exact timer poll placement. Scalar callees and physical interrupt servicing excluded.",
+      "source": "csrc/linalg/fx_linalg.c"
+    },
+    {
+      "start": "0x1589c",
+      "end": "0x158b8",
+      "scope": "Matrix/vector unary negation prepares literal minus one and invokes ordered scalar multiplication with per-cell cancellation; caller scratch allocation and scalar copy callee excluded",
+      "source": "csrc/linalg/fx_linalg.c"
+    },
+    {
+      "start": "0x15bf8",
+      "end": "0x15c14",
+      "scope": "Prepared matrix square/cube wrapper executes one/two products against the caller-preserved original matrix, with immediate status exit and cumulative cancellation checks; reference preservation/slot allocation before this wrapper excluded",
+      "source": "csrc/linalg/fx_linalg.c"
+    },
+    {
+      "start": "0x15c9e",
+      "end": "0x15cbe",
+      "scope": "Scalar rounding adapter preserves the record twenty bytes after the current cell around display-round scratch use, restoring that observable backing record; rounding callee excluded",
+      "source": "csrc/linalg/fx_linalg.c"
+    },
+    {
+      "start": "0x14776",
+      "end": "0x14f0c",
+      "scope": "Prepared matrix REF/RREF admission dispatch and complete finite row-reduction helpers: active-cell marker/rational preparation; leading-position swaps; private absolute-valued pivot comparisons with restart and zero-candidate stop; fraction normalization and raw exponent-minus-eleven tiny-zero predicate; ordered cross-product forward elimination with full-nine-cell delayed commit; literal zero-column compression/recursive restoration; destructive row-prefix extraction and saved-pivot-preserving merge; ascending upper-coefficient elimination; fixed cell/row/full-backing copy helpers and every terminal timer poll. Canonical dimensions and scalar cells; physical interrupt service and scalar arithmetic callees excluded.",
+      "source": "csrc/linalg/fx_linalg_reduce.c"
+    }
+  ],
+  "partial_blocks": []
+}

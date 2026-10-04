@@ -1,0 +1,10 @@
+{
+  "subsystem": "diagnostic and setup contrast event component",
+  "ranges": [
+    {"start": "0x400c", "end": "0x402e", "scope": "Four-line contrast menu ROM text placement, retained cursor progression, RAM/LCD selection and active display handoff", "source": "csrc/platform/fx_diagnostic_contrast.c"},
+    {"start": "0x402e", "end": "0x404a", "scope": "Menu font7, LCD selection, unconditional display sleep and full512-byte LCD clear", "source": "csrc/platform/fx_diagnostic_contrast.c"},
+    {"start": "0x7140", "end": "0x7150", "scope": "Diagnostic font7 text placement at x0 and supplied row, used by the contrast value caption", "source": "csrc/platform/fx_diagnostic_contrast.c"},
+    {"start": "0x739e", "end": "0x73d8", "scope": "Native byte-to-caption conversion including high-nibble and signed unmasked low-position quirks; supplied host caption, LCD y8 placement and8121 protocol", "source": "csrc/platform/fx_diagnostic_contrast.c"},
+    {"start": "0xccf4", "end": "0xcd66", "scope": "Complete contrast retained value, normal/expanded limits, initial menu, semantic key-event boundary, busy flag updates, F032/8112 writes, repeated value caption and AC completion. Native1DB34 body and physical scheduling remain delegated", "source": "csrc/platform/fx_diagnostic_contrast.c"}
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "subsystem": "diagnostic and setup contrast event component",
+  "implementation": "handwritten readable C; instruction execution belongs only to the independent native oracle",
+  "sources": ["csrc/platform/fx_diagnostic_contrast.c", "csrc/platform/fx_diagnostic_contrast.h"],
+  "implemented_routines": [
+    {"address": "0xccf4", "name": "fx_diagnostic_contrast_begin / fx_diagnostic_contrast_step", "scope": "Host-owned retained value, normal4..29 and expanded0..31 limits, semantic token handoff, busy state, hardware contrast writes and AC completion"},
+    {"address": "0x400c / 0x402e", "name": "contrast menu placement", "scope": "Four ROM strings beginning11ce, font7, unconditional LCD sleep/clear, 8121 selection and display activation"},
+    {"address": "0x739e", "name": "fx_diagnostic_contrast_draw_value", "scope": "All256 value-byte caption quirks, supplied host text, font7 LCD y8 glyphs and8121 protocol"}
+  ],
+  "verification": ["tools/test_diagnostic_contrast_c.py", "analysis/c-verification/diagnostic_contrast.json"],
+  "understanding_ranges": "csrc/platform/diagnostic_contrast/understood_ranges.json",
+  "prepared_policy": [
+    "Begin compares the nativeCCF4 entry throughCD1E before the ordinary key controller.",
+    "Step accepts an already delivered semantic token at nativeCD24 and returns at the nextCD1E or AC completionCD44.",
+    "The host composes WAIT with its nonblocking key controller; no CPU frame, instruction address or fake RAM text local is exported into production state.",
+    "Existing contrast values are retained rather than clamped; all incoming byte values are covered by native tests.",
+    "Whole RAM, MMIO and callbacks compare with only native CPU stack8d00..8ded excluded. Complete native key-controller events copy the nativeCD24 RAM checkpoint first; the contrast comparison excludes no numeric or annunciator workspace."
+  ],
+  "gaps": [
+    "Physical keyboard, timer and interrupt scheduling remain with the host.",
+    "The complete diagnostic sequence and welcome/ordinary key controller are composed by their separate event components."
+  ]
+}

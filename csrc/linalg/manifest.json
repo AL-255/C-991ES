@@ -1,0 +1,65 @@
+{
+  "subsystem": "prepared matrix/vector numerical kernels",
+  "implementation_style": "Readable high-level C formulas with original finite-scalar operation order; no ROM/CPU execution, generated instruction lifts, or host floating point",
+  "source": "csrc/linalg/fx_linalg.c",
+  "public_api": "csrc/linalg/fx_linalg.h",
+  "entry_points": {
+    "13F88": "add",
+    "14042": "subtract",
+    "1404A": "scalar multiply",
+    "140B6": "scalar divide",
+    "140BE": "fraction-preferring scalar divide",
+    "140C6": "display round",
+    "1414A": "absolute",
+    "14152": "rational preparation",
+    "1415A": "integer cleanup",
+    "14162": "matrix multiply",
+    "14242": "transpose",
+    "142C0": "determinant",
+    "143EC": "inverse",
+    "14570": "vector dot",
+    "145FE": "vector cross",
+    "146D6": "vector magnitude",
+    "1589C": "negate",
+    "15BF8": "matrix square",
+    "15BFC": "matrix cube",
+    "14776": "row echelon form",
+    "14786": "reduced row echelon form"
+  },
+  "representation": {
+    "reference_bytes": 10,
+    "dimension_bytes": 2,
+    "physical_scalar_cells": 9,
+    "scalar_bytes": 10,
+    "physical_row_stride": 3,
+    "native_dimensions_base": "80E0",
+    "native_backing_base": "829E",
+    "native_slot_bytes": 90
+  },
+  "verified": {
+    "checks": 78642,
+    "native_calls": 13107,
+    "report": "analysis/c-verification/linalg.json",
+    "test": "tools/test_linalg_c.py"
+  },
+  "prepared_context": [
+    "Canonical ten-byte scalar cells, dimensions0..3; rich matrix/vector reference tags explicit.",
+    "Exact output permission resolved before entry; display settings explicit.",
+    "Timer cancellation response supplied explicitly; physical interrupt/key timing excluded."
+  ],
+  "remaining": [
+    "Evaluator reference allocation and rewrite",
+    "Persistent matrix/vector input/UI and object management",
+    "Matrix/vector result display composition",
+    "Physical timer/key cancellation controller"
+  ],
+  "full_firmware_complete": false,
+  "reduction_source": "csrc/linalg/fx_linalg_reduce.c",
+  "reduction_api": "csrc/linalg/fx_linalg_reduce.h",
+  "reduction_verified": {
+    "checks": 80052,
+    "native_calls": 13342,
+    "report": "analysis/c-verification/linalg_reduce.json",
+    "test": "tools/test_linalg_reduce_c.py"
+  }
+}

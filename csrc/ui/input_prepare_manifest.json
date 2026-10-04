@@ -1,0 +1,22 @@
+{
+  "subsystem": "high_level_input_preparation",
+  "implementation_language": "C99",
+  "implementation_executes_firmware": false,
+  "semantic_complete": false,
+  "implemented_routines": [
+    {"address":"0x11072","name":"fx_input_workspace","scope":"All byte-valued mode policies for evaluator source8398/8546/disabled0"},
+    {"address":"0x1e7ea","name":"fx_input_needs_export","scope":"Special-view and calculation-mode source routing"},
+    {"address":"0x1e7b8","name":"fx_input_append_variable_suffix","scope":"Ordinary-screen variable eligibility and8B/NUL suffix, including native low-byte length comparison"},
+    {"address":"0x7fca","name":"fx_input_normalize_equation","scope":"Equation comparison scan and native editor insertion of=0"},
+    {"address":"0x1e802","name":"fx_input_prepare_direct","scope":"Display source, tracked continuation root and conditional backup"},
+    {"address":"0x1e852","name":"fx_input_prepare_exported","scope":"Saved-display recall, variable/equation preprocessing, natural boundary/export and continuation low-byte arithmetic"},
+    {"address":"0x1e8f0","name":"fx_input_prepare_saved_solve","scope":"Saved solve85AA restoration and evaluator export"}
+  ],
+  "api": {"header":"csrc/ui/fx_input_prepare.h","source":"Host-owned uint16_t source output; no CPU frame","return":"1 ready,0 natural boundary failure,-1 bounded malformed input"},
+  "gaps": [
+    "Evaluator, replay/result commits and complete event handler remain separate APIs",
+    "The native unbounded full-address-space string loops are bounded at65536 iterations; an unterminated source returns-1",
+    "CPU stack aliases are outside this host-local ABI; numeric scratch and persistent editor effects are included in differential comparison"
+  ],
+  "verification": {"tool":"tools/test_input_prepare_c.py","report":"analysis/c-verification/input_prepare.json","comparison":"Original routine return/source and full persistent64KiB RAM/LCD/MMIO excluding only CPU stack8D00..8DED","cases":28908}
+}
