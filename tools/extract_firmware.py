@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Recover calculator code memory from the bundled Ver.4.00 installer.
+"""Recover calculator code memory from an externally supplied Ver.4.00 installer.
 
 Requires Python 3, 7z, and objdump. Does not execute any Windows code.
 """
@@ -14,7 +14,6 @@ import subprocess
 import tempfile
 
 
-INSTALLER = "fx-991ES PLUS C Emulator Ver.4.00.exe"
 PAYLOAD = "fx_991es_plus_c_emulator.exe"
 LOADERS = (0x414C20, 0x428C10, 0x43C9B0, 0x450860, 0x4649B0, 0x4785C0)
 WRITE_CODE_IAT = 0x4841EC
@@ -164,7 +163,8 @@ def reconstruct(executable):
 def main():
     root = Path(__file__).resolve().parents[1]
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--installer", type=Path, default=root / INSTALLER)
+    parser.add_argument("--installer", type=Path, required=True,
+                        help="Path to an external Ver.4.00 installer")
     parser.add_argument("--output", type=Path, default=root / "firmware")
     args = parser.parse_args()
     with tempfile.TemporaryDirectory(prefix="casio-firmware-") as temporary:

@@ -420,6 +420,172 @@
         "analysis/understanding/ui-mid/grid-controller-errata/GRID-BUSY-ERRATUM.md"
       ],
       "audit": "Root full C/model/notes read and independent complete211 ASM/helper/source/proof review. 64 current pin occurrences verified. 811 actual original calls:735 returns+76 INPUT boundaries;1614 O2/O3 named-service/state comparisons on original807 only; four genuine AC/native-only continuations add six PCs with fixed retained modes. All211 starts observed. Busy acquisition preserves prior bit7-set byte as separate immutable erratum. Prepared top1..252, valid three-row/column UI admission; raw byte-loop/frame overrun explained statically, named INPUT/raster/footer bodies and their opaque outputs delegated. No pixels, wholeRAM, mode-changing INPUT witness or production parity claim."
+    },
+    {
+      "start": "0xeca6",
+      "end": "0xed1e",
+      "scope": "Complete matrix/editor dimension entry, slot-copy/reset, direction/busy and selected-input caller control with explicit effectful known dependencies",
+      "source": "analysis/understanding/ui-mid/matrix-key-adapters/matrix_control.c",
+      "evidence": [
+        "analysis/understanding/ui-mid/matrix-key-adapters/MATRIX-FLOW.md",
+        "analysis/understanding/ui-mid/matrix-key-adapters/matrix-assembly.txt",
+        "analysis/understanding/ui-mid/matrix-key-adapters/matrix-proof.json.gz",
+        "analysis/understanding/ui-mid/matrix-key-adapters/MATRIX-PROVENANCE-SUCCESSOR.md",
+        "analysis/understanding/ui-mid/matrix-key-adapters/selected-successor-proof.json.gz",
+        "analysis/understanding/ui-mid/matrix-key-adapters/verify_selected_successor.py"
+      ],
+      "complete": true,
+      "audit": "Root full handwritten matrix/menu models, notes and independent all-ASM reviews read; 417 current proof/freeze source+loaded artifact pin occurrences verified. Exact180 new instruction starts. Matrix66 uses4984 unchanged historical observations plus1024 genuine fresh seed-only controls with C predictions BEFORE native;11480O2/O3 comparisons,12open native-only and boundary/suffix groups explicitly retained. Callback6:1078 original/2048 comparisons with54 real prefixes and prepared suffix controls; zero leaf2:256/512 GP/RAM comparisons, MOVflags static erratum. Menus106:29338 original/58676O2/O3 comparisons; dispatch39 target-entry boundaries distinct from genuine guardedchildreturns, arbitrary high-key targets not callable. ReturningchildR0 propagated as static erratum. Adapter26 delegates action menu; kind41 clear/reset empiricalmode3 only, othermodes named static dependency. Menu artifacts after-run capture only, not pre/post guards. No complete delegated body, allRAM beyond precise matrixframe exclusion, production or all-domain parity claim."
+    },
+    {
+      "start": "0xed4c",
+      "end": "0xed64",
+      "scope": "Complete matrix/editor dimension entry, slot-copy/reset, direction/busy and selected-input caller control with explicit effectful known dependencies",
+      "source": "analysis/understanding/ui-mid/matrix-key-adapters/matrix_control.c",
+      "evidence": [
+        "analysis/understanding/ui-mid/matrix-key-adapters/MATRIX-FLOW.md",
+        "analysis/understanding/ui-mid/matrix-key-adapters/matrix-assembly.txt",
+        "analysis/understanding/ui-mid/matrix-key-adapters/matrix-proof.json.gz",
+        "analysis/understanding/ui-mid/matrix-key-adapters/MATRIX-PROVENANCE-SUCCESSOR.md",
+        "analysis/understanding/ui-mid/matrix-key-adapters/selected-successor-proof.json.gz",
+        "analysis/understanding/ui-mid/matrix-key-adapters/verify_selected_successor.py"
+      ],
+      "complete": true,
+      "audit": "Root full handwritten matrix/menu models, notes and independent all-ASM reviews read; 417 current proof/freeze source+loaded artifact pin occurrences verified. Exact180 new instruction starts. Matrix66 uses4984 unchanged historical observations plus1024 genuine fresh seed-only controls with C predictions BEFORE native;11480O2/O3 comparisons,12open native-only and boundary/suffix groups explicitly retained. Callback6:1078 original/2048 comparisons with54 real prefixes and prepared suffix controls; zero leaf2:256/512 GP/RAM comparisons, MOVflags static erratum. Menus106:29338 original/58676O2/O3 comparisons; dispatch39 target-entry boundaries distinct from genuine guardedchildreturns, arbitrary high-key targets not callable. ReturningchildR0 propagated as static erratum. Adapter26 delegates action menu; kind41 clear/reset empiricalmode3 only, othermodes named static dependency. Menu artifacts after-run capture only, not pre/post guards. No complete delegated body, allRAM beyond precise matrixframe exclusion, production or all-domain parity claim."
+    },
+    {
+      "start": "0xedc0",
+      "end": "0xedec",
+      "scope": "Complete matrix/editor dimension entry, slot-copy/reset, direction/busy and selected-input caller control with explicit effectful known dependencies",
+      "source": "analysis/understanding/ui-mid/matrix-key-adapters/matrix_control.c",
+      "evidence": [
+        "analysis/understanding/ui-mid/matrix-key-adapters/MATRIX-FLOW.md",
+        "analysis/understanding/ui-mid/matrix-key-adapters/matrix-assembly.txt",
+        "analysis/understanding/ui-mid/matrix-key-adapters/matrix-proof.json.gz",
+        "analysis/understanding/ui-mid/matrix-key-adapters/MATRIX-PROVENANCE-SUCCESSOR.md",
+        "analysis/understanding/ui-mid/matrix-key-adapters/selected-successor-proof.json.gz",
+        "analysis/understanding/ui-mid/matrix-key-adapters/verify_selected_successor.py"
+      ],
+      "complete": true,
+      "audit": "Root full handwritten matrix/menu models, notes and independent all-ASM reviews read; 417 current proof/freeze source+loaded artifact pin occurrences verified. Exact180 new instruction starts. Matrix66 uses4984 unchanged historical observations plus1024 genuine fresh seed-only controls with C predictions BEFORE native;11480O2/O3 comparisons,12open native-only and boundary/suffix groups explicitly retained. Callback6:1078 original/2048 comparisons with54 real prefixes and prepared suffix controls; zero leaf2:256/512 GP/RAM comparisons, MOVflags static erratum. Menus106:29338 original/58676O2/O3 comparisons; dispatch39 target-entry boundaries distinct from genuine guardedchildreturns, arbitrary high-key targets not callable. ReturningchildR0 propagated as static erratum. Adapter26 delegates action menu; kind41 clear/reset empiricalmode3 only, othermodes named static dependency. Menu artifacts after-run capture only, not pre/post guards. No complete delegated body, allRAM beyond precise matrixframe exclusion, production or all-domain parity claim."
+    },
+    {
+      "start": "0x0D748",
+      "end": "0x0D74C",
+      "scope": "Named conditional post-readiness callback invocation0:7010; neighboring condition explained, callee excluded",
+      "source": "analysis/understanding/ui-mid/matrix-key-adapters/matrix_control.c",
+      "evidence": [
+        "analysis/understanding/ui-mid/matrix-key-adapters/TINY-CALLBACKS.md",
+        "analysis/understanding/ui-mid/matrix-key-adapters/tiny-callback-proof.json.gz"
+      ],
+      "complete": true,
+      "audit": "Root full handwritten matrix/menu models, notes and independent all-ASM reviews read; 417 current proof/freeze source+loaded artifact pin occurrences verified. Exact180 new instruction starts. Matrix66 uses4984 unchanged historical observations plus1024 genuine fresh seed-only controls with C predictions BEFORE native;11480O2/O3 comparisons,12open native-only and boundary/suffix groups explicitly retained. Callback6:1078 original/2048 comparisons with54 real prefixes and prepared suffix controls; zero leaf2:256/512 GP/RAM comparisons, MOVflags static erratum. Menus106:29338 original/58676O2/O3 comparisons; dispatch39 target-entry boundaries distinct from genuine guardedchildreturns, arbitrary high-key targets not callable. ReturningchildR0 propagated as static erratum. Adapter26 delegates action menu; kind41 clear/reset empiricalmode3 only, othermodes named static dependency. Menu artifacts after-run capture only, not pre/post guards. No complete delegated body, allRAM beyond precise matrixframe exclusion, production or all-domain parity claim."
+    },
+    {
+      "start": "0x0DC46",
+      "end": "0x0DC52",
+      "scope": "Exact descriptorframe-minus12 range/error-recovery callback and repeat iff rawreturnedbyte1",
+      "source": "analysis/understanding/ui-mid/matrix-key-adapters/matrix_control.c",
+      "evidence": [
+        "analysis/understanding/ui-mid/matrix-key-adapters/TINY-CALLBACKS.md",
+        "analysis/understanding/ui-mid/matrix-key-adapters/tiny-callback-proof.json.gz"
+      ],
+      "complete": true,
+      "audit": "Root full handwritten matrix/menu models, notes and independent all-ASM reviews read; 417 current proof/freeze source+loaded artifact pin occurrences verified. Exact180 new instruction starts. Matrix66 uses4984 unchanged historical observations plus1024 genuine fresh seed-only controls with C predictions BEFORE native;11480O2/O3 comparisons,12open native-only and boundary/suffix groups explicitly retained. Callback6:1078 original/2048 comparisons with54 real prefixes and prepared suffix controls; zero leaf2:256/512 GP/RAM comparisons, MOVflags static erratum. Menus106:29338 original/58676O2/O3 comparisons; dispatch39 target-entry boundaries distinct from genuine guardedchildreturns, arbitrary high-key targets not callable. ReturningchildR0 propagated as static erratum. Adapter26 delegates action menu; kind41 clear/reset empiricalmode3 only, othermodes named static dependency. Menu artifacts after-run capture only, not pre/post guards. No complete delegated body, allRAM beyond precise matrixframe exclusion, production or all-domain parity claim."
+    },
+    {
+      "start": "0x0D9EA",
+      "end": "0x0D9EE",
+      "scope": "Complete zero-return leaf; all other general registers and RAM preserved",
+      "source": "analysis/understanding/ui-mid/matrix-key-adapters/tiny_return.c",
+      "evidence": [
+        "analysis/understanding/ui-mid/matrix-key-adapters/TINY-RETURN.md",
+        "analysis/understanding/ui-mid/matrix-key-adapters/tiny-return-proof.json",
+        "analysis/understanding/ui-mid/matrix-key-adapters/TINY-RETURN-FLAGS-ERRATUM.md"
+      ],
+      "complete": true,
+      "audit": "Root full handwritten matrix/menu models, notes and independent all-ASM reviews read; 417 current proof/freeze source+loaded artifact pin occurrences verified. Exact180 new instruction starts. Matrix66 uses4984 unchanged historical observations plus1024 genuine fresh seed-only controls with C predictions BEFORE native;11480O2/O3 comparisons,12open native-only and boundary/suffix groups explicitly retained. Callback6:1078 original/2048 comparisons with54 real prefixes and prepared suffix controls; zero leaf2:256/512 GP/RAM comparisons, MOVflags static erratum. Menus106:29338 original/58676O2/O3 comparisons; dispatch39 target-entry boundaries distinct from genuine guardedchildreturns, arbitrary high-key targets not callable. ReturningchildR0 propagated as static erratum. Adapter26 delegates action menu; kind41 clear/reset empiricalmode3 only, othermodes named static dependency. Menu artifacts after-run capture only, not pre/post guards. No complete delegated body, allRAM beyond precise matrixframe exclusion, production or all-domain parity claim."
+    },
+    {
+      "start": "0xcd66",
+      "end": "0xcdca",
+      "scope": "Original dispatcher admission and actual far-target arrival; returning mode-gated children execute normally, other observations stop only after real POPPC. Unknown key targets may be outside callable firmware and are not executed.",
+      "source": "analysis/understanding/ui-mid/final-menus/fx_menu_dispatch.c",
+      "evidence": [
+        "analysis/understanding/ui-mid/final-menus/MENU-DISPATCH-HANDOFF.md",
+        "analysis/understanding/ui-mid/final-menus/menu-dispatch-proof.json.gz",
+        "analysis/understanding/ui-mid/final-menus-independent-review/group106-freeze.json"
+      ],
+      "audit": "Root full handwritten matrix/menu models, notes and independent all-ASM reviews read; 417 current proof/freeze source+loaded artifact pin occurrences verified. Exact180 new instruction starts. Matrix66 uses4984 unchanged historical observations plus1024 genuine fresh seed-only controls with C predictions BEFORE native;11480O2/O3 comparisons,12open native-only and boundary/suffix groups explicitly retained. Callback6:1078 original/2048 comparisons with54 real prefixes and prepared suffix controls; zero leaf2:256/512 GP/RAM comparisons, MOVflags static erratum. Menus106:29338 original/58676O2/O3 comparisons; dispatch39 target-entry boundaries distinct from genuine guardedchildreturns, arbitrary high-key targets not callable. ReturningchildR0 propagated as static erratum. Adapter26 delegates action menu; kind41 clear/reset empiricalmode3 only, othermodes named static dependency. Menu artifacts after-run capture only, not pre/post guards. No complete delegated body, allRAM beyond precise matrixframe exclusion, production or all-domain parity claim."
+    },
+    {
+      "start": "0xcdca",
+      "end": "0xce0a",
+      "scope": "Complete original mode-gated menu-adapters wrapper; independent ROM single-leaf selection contracts, genuine raw keys. Generic menu painting/timer/navigation persistent parity excluded.",
+      "source": "analysis/understanding/ui-mid/final-menus/fx_menu_adapters.c",
+      "evidence": [
+        "analysis/understanding/ui-mid/final-menus/MENU-ADAPTERS-HANDOFF.md",
+        "analysis/understanding/ui-mid/final-menus/menu-adapters-proof.json",
+        "analysis/understanding/ui-mid/final-menus-independent-review/group106-freeze.json"
+      ],
+      "audit": "Root full handwritten matrix/menu models, notes and independent all-ASM reviews read; 417 current proof/freeze source+loaded artifact pin occurrences verified. Exact180 new instruction starts. Matrix66 uses4984 unchanged historical observations plus1024 genuine fresh seed-only controls with C predictions BEFORE native;11480O2/O3 comparisons,12open native-only and boundary/suffix groups explicitly retained. Callback6:1078 original/2048 comparisons with54 real prefixes and prepared suffix controls; zero leaf2:256/512 GP/RAM comparisons, MOVflags static erratum. Menus106:29338 original/58676O2/O3 comparisons; dispatch39 target-entry boundaries distinct from genuine guardedchildreturns, arbitrary high-key targets not callable. ReturningchildR0 propagated as static erratum. Adapter26 delegates action menu; kind41 clear/reset empiricalmode3 only, othermodes named static dependency. Menu artifacts after-run capture only, not pre/post guards. No complete delegated body, allRAM beyond precise matrixframe exclusion, production or all-domain parity claim."
+    },
+    {
+      "start": "0xce54",
+      "end": "0xceb0",
+      "scope": "Complete original STAT kind confirmation with real raw keys; admission and conditional data/result reset effects composed from existing callees. Delegated renderer/keyboard full persistent parity excluded.",
+      "source": "analysis/understanding/ui-mid/final-menus/fx_stats_kind_confirmation.c",
+      "evidence": [
+        "analysis/understanding/ui-mid/final-menus/STATS-KIND-HANDOFF.md",
+        "analysis/understanding/ui-mid/final-menus/stats-kind-proof.json.gz",
+        "analysis/understanding/ui-mid/final-menus-independent-review/group106-freeze.json"
+      ],
+      "audit": "Root full handwritten matrix/menu models, notes and independent all-ASM reviews read; 417 current proof/freeze source+loaded artifact pin occurrences verified. Exact180 new instruction starts. Matrix66 uses4984 unchanged historical observations plus1024 genuine fresh seed-only controls with C predictions BEFORE native;11480O2/O3 comparisons,12open native-only and boundary/suffix groups explicitly retained. Callback6:1078 original/2048 comparisons with54 real prefixes and prepared suffix controls; zero leaf2:256/512 GP/RAM comparisons, MOVflags static erratum. Menus106:29338 original/58676O2/O3 comparisons; dispatch39 target-entry boundaries distinct from genuine guardedchildreturns, arbitrary high-key targets not callable. ReturningchildR0 propagated as static erratum. Adapter26 delegates action menu; kind41 clear/reset empiricalmode3 only, othermodes named static dependency. Menu artifacts after-run capture only, not pre/post guards. No complete delegated body, allRAM beyond precise matrixframe exclusion, production or all-domain parity claim."
+    },
+    {
+      "start": "0xce0a",
+      "end": "0xce54",
+      "scope": "Original STAT/distribution menu routing args; STAT child executes genuine ordinary editor-choice return, distribution observes realcalleeentry. Numerical/menu child internals excluded.",
+      "source": "analysis/understanding/ui-mid/final-menus/fx_statistics_menu_route.c",
+      "evidence": [
+        "analysis/understanding/ui-mid/final-menus/STATISTICS-MENU-ROUTE-HANDOFF.md",
+        "analysis/understanding/ui-mid/final-menus/statistics-menu-route-proof.json.gz"
+      ],
+      "audit": "Root read full model, original53/31 ASM/context, recipes and precise final peer reviews; 88 live source/artifact/freeze pin occurrences checked. Route31:2048 original/4096O2O3comparisons (2032 othermode full0,eight actual STAT FF returns,eight genuine distribution-entry boundaries); delegatedchildR0 propagated. STAT53:429original/858O2O3 comparisons of ordered caller-local write/service intents/args and rawR0/reopen;48 whole-entry keyboard/menu controls plus381 clearly prepared leaf seams, all endingCEC4 pre-epilogue150 orCEC0 prereopen279. All84instruction starts actuallyobserved/staticfullymapped. Sourceprepostguards; artifacts post-run custodycaptureonly. No completeSTATmenu returns, delegatedserviceRAM/epilogue/pixels or production/domain parity inferred."
+    },
+    {
+      "start": "0xcee2",
+      "end": "0xcf6e",
+      "scope": "Exact STAT ordinary-leaf caller policy, byte selector/context/row arithmetic, ordered local writes and named service calls. Whole generic menu and confirmation execute original ROM with real raw key masks; prepared leaf seam explicitly separate. Delegated storage/rendering full RAM parity and epilogue register preservation are excluded.",
+      "source": "analysis/understanding/ui-mid/stat-choice/stat_choice.c",
+      "evidence": [
+        "analysis/understanding/ui-mid/stat-choice/FLOW.md",
+        "analysis/understanding/ui-mid/stat-choice/proof.json.gz"
+      ],
+      "audit": "Root read full model, original53/31 ASM/context, recipes and precise final peer reviews; 88 live source/artifact/freeze pin occurrences checked. Route31:2048 original/4096O2O3comparisons (2032 othermode full0,eight actual STAT FF returns,eight genuine distribution-entry boundaries); delegatedchildR0 propagated. STAT53:429original/858O2O3 comparisons of ordered caller-local write/service intents/args and rawR0/reopen;48 whole-entry keyboard/menu controls plus381 clearly prepared leaf seams, all endingCEC4 pre-epilogue150 orCEC0 prereopen279. All84instruction starts actuallyobserved/staticfullymapped. Sourceprepostguards; artifacts post-run custodycaptureonly. No completeSTATmenu returns, delegatedserviceRAM/epilogue/pixels or production/domain parity inferred."
+    },
+    {
+      "start": "0xcfa8",
+      "end": "0xd074",
+      "scope": "Complete distribution-menu owner continuation: cached initial page, retained kind, literal action/selection tree, live flag/screen commit, byte row insertion request and callback ordering; prepared native service-input RAM owner-delta parity only, generic menu/insertion body and fixed prepared stack excluded.",
+      "source": "analysis/understanding/ui-mid/distribution-menu/model.c",
+      "evidence": [
+        "analysis/understanding/ui-mid/distribution-menu/FLOW.md",
+        "analysis/understanding/ui-mid/distribution-menu/assembly.txt",
+        "analysis/understanding/ui-mid/distribution-menu/proof.json",
+        "analysis/understanding/ui-mid/distribution-menu/probe.py",
+        "analysis/understanding/ui-mid/distribution-menu/native.c",
+        "analysis/understanding/ui-mid/distribution-menu/trace-0.csv.gz",
+        "analysis/understanding/ui-mid/distribution-menu/trace-47.csv.gz",
+        "analysis/understanding/ui-mid/distribution-menu/FLOW-v2.md",
+        "analysis/understanding/ui-mid/distribution-menu/claims-v2.json",
+        "analysis/understanding/ui-mid/distribution-menu/freeze.json",
+        "analysis/understanding/ui-mid/distribution-menu/freeze-v2.json",
+        "analysis/understanding/ui-mid/distribution-menu-independent-review/DISTRIBUTION84-REVIEW.md",
+        "analysis/understanding/ui-mid/distribution-menu-independent-review/distribution84-audit.json",
+        "analysis/understanding/ui-mid/distribution-menu-independent-review/distribution84-freeze.json"
+      ],
+      "audit": "Root read complete84-start original assembly, handwritten model, original/v2 flow, probe/proof and independent review; 73 live source/artifact/freeze hash occurrences checked. Exact48 real-key whole original calls,81 owner transitions,162 O2/O3 prepared owner-delta comparisons; all84 starts observed plus complete literal static branches. At actual D064 native generic-menu pre-owner RAM becomes model input before native resumes; independent ROM-descriptor/key-plan actions and choices checked. Non-insertion allRAM outside fixed prepared8C00..8DFF; insertion only six caller fields and exact CFDE BYTE argument/order. Generic-menu, insertion numerical/private effects and full-key-pipeline C parity excluded. Immutable v2 distinguishes80F9=0C mode from80FC=12(hex) screen; no replay or altered proof. Protocol-low57BA..57D2 evidence rebound to byte-identical durable assembly, zero new credit."
     }
   ]
 }

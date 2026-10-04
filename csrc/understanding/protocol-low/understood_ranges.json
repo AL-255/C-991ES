@@ -7,7 +7,7 @@
       "scope": "Save original caller code, pass it to1CDE4 error record writer at84E2, return original code with high bytezero even when stored code coerces to3; LR/ER12 preserved.",
       "source": "analysis/understanding/protocol-low/probability_status.c",
       "evidence": [
-        "analysis/build/understanding-priority/protocol-low/assembly.txt",
+        "analysis/understanding/protocol-low/assembly.txt",
         "analysis/understanding/protocol-low/error-publication-proof.json.gz"
       ],
       "audit": "Independent root static assembly/model review and matching recorded source/artifact pins; callable semantic scope only."

@@ -15,12 +15,13 @@ Outputs
 
 Reproduction
   From the repository root, run:
-    python3 tools/extract_firmware.py
+    python3 tools/extract_firmware.py --installer /path/to/installer.exe
 
   Requires Python 3, 7z, and GNU objdump. No Python packages are required.
-  Optional arguments: --installer PATH --output DIRECTORY
+  Supply an external Ver.4.00 installer with the required --installer PATH.
+  Optional argument: --output DIRECTORY
   The script checks the payload hash because loader addresses are specific
-  to the bundled version. Windows code is never executed.
+  to the specified version. Windows code is never executed.
 
 Method and validation
   The outer executable contains an MSI resource. Its embedded Data1.cab
