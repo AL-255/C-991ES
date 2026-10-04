@@ -42,7 +42,7 @@
       "scope": "Python transports requests to the compiled native C session; JavaScript draws returned pixels"
     },
     "static_webassembly": {
-      "status": "local_actual_browser_pass_deployment_pending",
+      "status": "actual_ci_http_and_public_browser_pass",
       "builder": "simulator/build_web.py",
       "output_directory": "simulator/dist",
       "deployment_workflow": ".github/workflows/pages.yml",
@@ -59,7 +59,7 @@
       "session_lifetime": "Opaque C session in the page module; reload creates fresh memory",
       "filesystem_runtime": false,
       "native_proof_is_wasm_proof": false,
-      "deployment_verified": false,
+      "deployment_verified": true,
       "previous_deployment_verification": {
         "status": "pass",
         "release_commit": "bd216d3280f3ce5bdf44a0835bdb74ae67f4abda",
@@ -77,8 +77,20 @@
         "scope": "Actual public HTTP delivery and desktop/mobile C-WASM UI proof; full firmware completeness remains false"
       },
       "deployment_verification": {
-        "status": "pending",
-        "scope": "New combined source release is locally verified; exact CI/public delivery must be checked after push. Previous deployment evidence is retained in deployment_history."
+        "status": "pass",
+        "release_commit": "92211514f6e4c386314aef73bf335c231d5158b5",
+        "ci_run_id": 37244733492,
+        "ci_run_url": "https://github.com/AL-255/casio-explore/actions/runs/37244733492",
+        "ci_summary": "simulator/verification/deployment_ci_distribution.json",
+        "ci_summary_sha256": "3705eb58d8234abae9d11ce4caf5e66c6e27bb4e42e6b2e682715191ecf403b5",
+        "ci_build_report_sha256": "1b7d7cc3f2cc607ed8ac449c797c3af0c921d5432e4e0b19dd059ccc5127fd22",
+        "public_summary": "simulator/verification/deployment_public_distribution.json",
+        "public_summary_sha256": "38863c162ee5adee73ed6336de3a2cf18acf2053ea67bd5250e449fe64166d38",
+        "actual_browser_executed_this_release": true,
+        "public_http_full_proof_sha256": "ca50ec511ec908688a343225d3d0d279460225659bfa13b209a1b5fcec1f5355",
+        "prepared_browser_full_proof_sha256": "0cd784077db75f5801da08f745d8b842e6166c66ee0763880e076afff61bb155",
+        "device_browser_full_proof_sha256": "7dc0dc41444d1c5221b8812caec1e806003ab9c601b66d33ba361ba9eabec200",
+        "scope": "Exact CI/local provenance and fresh public HTTP, desktop/mobile calculator and raw-device browser verification. Full firmware completion remains false."
       },
       "deployment_history": [
         {

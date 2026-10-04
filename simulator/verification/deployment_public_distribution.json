@@ -1,0 +1,153 @@
+{
+  "schema": 1,
+  "status": "pass",
+  "release_commit": "92211514f6e4c386314aef73bf335c231d5158b5",
+  "ci_run_id": 37244733492,
+  "site_url": "https://al-255.github.io/casio-explore/",
+  "device_url": "https://al-255.github.io/casio-explore/device/",
+  "ci_build_report_sha256": "1b7d7cc3f2cc607ed8ac449c797c3af0c921d5432e4e0b19dd059ccc5127fd22",
+  "actual_browser_executed_this_release": true,
+  "http": {
+    "report": {
+      "path": "analysis/build/github-pages-distribution-run37244733492/public-http.json",
+      "sha256": "ca50ec511ec908688a343225d3d0d279460225659bfa13b209a1b5fcec1f5355"
+    },
+    "resources": {
+      "index.html": {
+        "url": "https://al-255.github.io/casio-explore/",
+        "final_url": "https://al-255.github.io/casio-explore/",
+        "status": 200,
+        "content_type": "text/html",
+        "bytes": 8103,
+        "sha256": "ed4fe670187000004cbb37dae5cfea665793efc728fec48d41bd91d6c0d6e18c"
+      },
+      "app.js": {
+        "url": "https://al-255.github.io/casio-explore/app.js",
+        "final_url": "https://al-255.github.io/casio-explore/app.js",
+        "status": 200,
+        "content_type": "application/javascript",
+        "bytes": 10751,
+        "sha256": "b0330d143e3510053a513c2fac0b658674950fb5368fee8302f9875a5df6d486"
+      },
+      "engine.js": {
+        "url": "https://al-255.github.io/casio-explore/engine.js",
+        "final_url": "https://al-255.github.io/casio-explore/engine.js",
+        "status": 200,
+        "content_type": "application/javascript",
+        "bytes": 4647,
+        "sha256": "bebe985819c42dfc8d0dbae45bc88361bb45130121e1176c6fc86cafcaba0aa8"
+      },
+      "styles.css": {
+        "url": "https://al-255.github.io/casio-explore/styles.css",
+        "final_url": "https://al-255.github.io/casio-explore/styles.css",
+        "status": 200,
+        "content_type": "text/css",
+        "bytes": 11480,
+        "sha256": "c5e1ff281873a2f30e8340e8c14cd3284d9912e84b85de3e52d023abda14c851"
+      },
+      "fx991sim.js": {
+        "url": "https://al-255.github.io/casio-explore/fx991sim.js",
+        "final_url": "https://al-255.github.io/casio-explore/fx991sim.js",
+        "status": 200,
+        "content_type": "application/javascript",
+        "bytes": 9319,
+        "sha256": "231dfdf96c63a9c8c26d043c967318cd0dfab3fe06ddc6ba7bacc86435a816d6"
+      },
+      "fx991sim.wasm": {
+        "url": "https://al-255.github.io/casio-explore/fx991sim.wasm",
+        "final_url": "https://al-255.github.io/casio-explore/fx991sim.wasm",
+        "status": 200,
+        "content_type": "application/wasm",
+        "bytes": 622571,
+        "sha256": "b752e39704060b3c9735ce0c07b99748cee63b685790d802a9826341bcb4097b"
+      },
+      "device/index.html": {
+        "url": "https://al-255.github.io/casio-explore/device/index.html",
+        "final_url": "https://al-255.github.io/casio-explore/device/index.html",
+        "status": 200,
+        "content_type": "text/html",
+        "bytes": 1818,
+        "sha256": "dfa5a9105d13884b639732fcb72f297ad65b948461595a4c96a159f05473e8da"
+      },
+      "device/app.js": {
+        "url": "https://al-255.github.io/casio-explore/device/app.js",
+        "final_url": "https://al-255.github.io/casio-explore/device/app.js",
+        "status": 200,
+        "content_type": "application/javascript",
+        "bytes": 5202,
+        "sha256": "13a03fb4bccc0cf2dcc79d1f01e3e1feb556e3418829ed9ecdfe4b53a63a9543"
+      },
+      "device/styles.css": {
+        "url": "https://al-255.github.io/casio-explore/device/styles.css",
+        "final_url": "https://al-255.github.io/casio-explore/device/styles.css",
+        "status": 200,
+        "content_type": "text/css",
+        "bytes": 2916,
+        "sha256": "92f72ce8f80d3183523421473e0639a2a4e70b7576f4ef01c7865f8ef180b2ec"
+      }
+    },
+    "all9resources_exact_CI_hashes_and_MIME": true
+  },
+  "prepared_calculator": {
+    "report": {
+      "path": "analysis/build/github-pages-distribution-run37244733492/public-prepared-browser/browser-report.json",
+      "sha256": "0cd784077db75f5801da08f745d8b842e6166c66ee0763880e076afff61bb155"
+    },
+    "completed_at_utc": "2026-10-04T23:46:21.655907+00:00",
+    "actual_checks": 198,
+    "actual_engine_exchanges": 21,
+    "screenshots": 5,
+    "browser_version": "154.0.8037.57",
+    "scope": "Fresh public desktop/mobile execution with actual loaded-byte custody."
+  },
+  "device_preview": {
+    "report": {
+      "path": "analysis/build/device-browser/public-delivery/run-37244733492/report.json",
+      "sha256": "7dc0dc41444d1c5221b8812caec1e806003ab9c601b66d33ba361ba9eabec200"
+    },
+    "actual_states": 42,
+    "actual_LCD_pixel_comparisons": 129024,
+    "invalid_JS_guards": 5,
+    "screenshots": 2,
+    "actual_loaded_responses": {
+      "device/index.html": {
+        "url": "https://al-255.github.io/casio-explore/device/",
+        "status": 200,
+        "bytes": 1818,
+        "sha256": "dfa5a9105d13884b639732fcb72f297ad65b948461595a4c96a159f05473e8da"
+      },
+      "device/styles.css": {
+        "url": "https://al-255.github.io/casio-explore/device/styles.css",
+        "status": 200,
+        "bytes": 2916,
+        "sha256": "92f72ce8f80d3183523421473e0639a2a4e70b7576f4ef01c7865f8ef180b2ec"
+      },
+      "device/app.js": {
+        "url": "https://al-255.github.io/casio-explore/device/app.js",
+        "status": 200,
+        "bytes": 5202,
+        "sha256": "13a03fb4bccc0cf2dcc79d1f01e3e1feb556e3418829ed9ecdfe4b53a63a9543"
+      },
+      "fx991sim.js": {
+        "url": "https://al-255.github.io/casio-explore/fx991sim.js",
+        "status": 200,
+        "bytes": 9319,
+        "sha256": "231dfdf96c63a9c8c26d043c967318cd0dfab3fe06ddc6ba7bacc86435a816d6"
+      },
+      "fx991sim.wasm": {
+        "url": "https://al-255.github.io/casio-explore/fx991sim.wasm",
+        "status": 200,
+        "bytes": 622571,
+        "sha256": "b752e39704060b3c9735ce0c07b99748cee63b685790d802a9826341bcb4097b"
+      }
+    },
+    "actual_DOM_RGBA_archive_sha256": "875d39c5ab34845e718178f62d7ff8d82b42f6af78be8addd3a50dbe83976d51",
+    "scope": "Fresh public device controls and actual canvas comparisons against saved real C-device observations; no original CPU execution."
+  },
+  "limits": [
+    "Full C firmware completion remains false.",
+    "Actual deployed assets match the exact locally tested integer-only C/WASM module; complete original hardware/key timing parity is not claimed.",
+    "The thin device bridge and public GUI tests use saved host-C API observations, separate from the original-ROM native runtime proofs.",
+    "Advanced unsupported controllers and native numeric-workspace residuals remain disclosed."
+  ]
+}

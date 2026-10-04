@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "status": "pass",
+  "release_commit": "92211514f6e4c386314aef73bf335c231d5158b5",
+  "ci_run_id": 37244733492,
+  "ci_run_url": "https://github.com/AL-255/casio-explore/actions/runs/37244733492",
+  "build_completed_at_utc": "2026-10-04T23:43:35Z",
+  "deployment_completed_at_utc": "2026-10-04T23:43:49Z",
+  "ci_build_report": "analysis/build/github-pages-distribution-run37244733492/provenance/build-report.json",
+  "ci_build_report_sha256": "1b7d7cc3f2cc607ed8ac449c797c3af0c921d5432e4e0b19dd059ccc5127fd22",
+  "local_build_report_sha256": "e0bfeaff6604842be5b8b742a58ad5bb93019349e53ac7ab53f01cc84abd06c3",
+  "matching_source_pins": 259,
+  "matching_artifacts": 11,
+  "matching_compiler_pins": 9,
+  "source_or_compiler_drift": false,
+  "artifacts": {
+    "fx991sim.js": {
+      "sha256": "231dfdf96c63a9c8c26d043c967318cd0dfab3fe06ddc6ba7bacc86435a816d6",
+      "bytes": 9319
+    },
+    "fx991sim.wasm": {
+      "sha256": "b752e39704060b3c9735ce0c07b99748cee63b685790d802a9826341bcb4097b",
+      "bytes": 622571
+    },
+    "index.html": {
+      "sha256": "ed4fe670187000004cbb37dae5cfea665793efc728fec48d41bd91d6c0d6e18c",
+      "bytes": 8103
+    },
+    "app.js": {
+      "sha256": "b0330d143e3510053a513c2fac0b658674950fb5368fee8302f9875a5df6d486",
+      "bytes": 10751
+    },
+    "styles.css": {
+      "sha256": "c5e1ff281873a2f30e8340e8c14cd3284d9912e84b85de3e52d023abda14c851",
+      "bytes": 11480
+    },
+    "engine.js": {
+      "sha256": "bebe985819c42dfc8d0dbae45bc88361bb45130121e1176c6fc86cafcaba0aa8",
+      "bytes": 4647
+    },
+    ".nojekyll": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "package.json": {
+      "sha256": "1239d4d885dcad42201a27ed9324f8f0f760b78700d8db9ced39a511cffe7eae",
+      "bytes": 18
+    },
+    "device/index.html": {
+      "sha256": "dfa5a9105d13884b639732fcb72f297ad65b948461595a4c96a159f05473e8da",
+      "bytes": 1818
+    },
+    "device/app.js": {
+      "sha256": "13a03fb4bccc0cf2dcc79d1f01e3e1feb556e3418829ed9ecdfe4b53a63a9543",
+      "bytes": 5202
+    },
+    "device/styles.css": {
+      "sha256": "92f72ce8f80d3183523421473e0639a2a4e70b7576f4ef01c7865f8ef180b2ec",
+      "bytes": 2916
+    }
+  },
+  "scope": "Successful actual Pages deployment and exact CI/local build match. Browser execution is recorded separately; full firmware completion remains false."
+}
