@@ -436,5 +436,13 @@ fx_numeric_status fx_eval_surd_workspace_sqrt(fx_number *out,
     write_number(&p, 6, &source);
     /* Only now is the result packed. A format fallback retains all writes. */
     status = pack_pair(&p, out);
-    return status == FX_NUMERIC_OK ? status : fx_number_sqrt(out, &source, 1);
+    /*1C826..1C84A restores the saved rational when17616 produced only a
+     * decimal fallback. Its numerator/denominator roots retain their own
+     * rounding; converting the completed radical changes the low digits.
+     * All exact component writes above remain committed on this path. */
+    if (status != FX_NUMERIC_OK) return fx_number_sqrt(out, &source, 1);
+    if ((source.bytes[0] & 0xf0) == 0x20 &&
+        (out->bytes[0] & 0xf0) != 0x20 && (out->bytes[0] & 0xf0) != 0x80)
+        return fx_number_sqrt(out, &source, 0);
+    return status;
 }

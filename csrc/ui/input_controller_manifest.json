@@ -62,5 +62,13 @@
     "comparison": "Native checkpoints, handler/status/context return, all remaining64KiB RAM including records/tokens/LCD/MMIO, callback state, cancellation sample counts/X records and retained raw key pairs; exclusions are explicit in the canonical report.",
     "oracle": "Original ROM instruction execution through SimU8 with a test-only host5550/5564 response adapter; no firmware patch or skipped instruction."
   },
-  "implemented_parser_transactions": "Shared Pol6C/Rec6D, quotient/remainder5F and AF polar expression integration; paired transactions and presentation, coordinate writes before later syntax failures, quotient fallback sentinel clearing, and labels/metadata34/35/37 are compared."
+  "implemented_parser_transactions": "Shared Pol6C/Rec6D, quotient/remainder5F and AF polar expression integration; paired transactions and presentation, coordinate writes before later syntax failures, quotient fallback sentinel clearing, and labels/metadata34/35/37 are compared.",
+  "physical_result_copy": {
+    "primary": "169D0/169D2 writes first eight bytes then aligned two-byte tail.",
+    "secondary": "Successful ordinary live C4 uses 17284/169C0 first-eight plus aligned-two stores; paired Pol/Rec/quotient labels and screenC0 use D142 first-two plus aligned-eight stores.",
+    "zero": "1CDAE writes the requested word then an aligned eight-byte tail.",
+    "answer_bit4": "F52C uses the ordered D142 primary snapshot before replacing imaginary with zero.",
+    "verification": "analysis/c-verification/odd_result.json",
+    "limits": "Odd saved-result restoration and failed/cancelled INPUT are outside the new successful-path proof."
+  }
 }

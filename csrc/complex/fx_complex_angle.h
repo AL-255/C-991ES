@@ -16,6 +16,12 @@ fx_numeric_status fx_complex_to_polar(fx_complex *out, const fx_complex *in,
 fx_numeric_status fx_complex_to_polar_prepared(fx_complex *out,
     const fx_complex *in, fx_angle_unit unit, int exact_math,
     fx_complex_square_root root, void *userdata);
+fx_numeric_status fx_complex_to_polar_with_preparation(fx_complex *out,
+    const fx_complex *in, fx_angle_unit unit, int exact_math,
+    const fx_complex_preparation *preparation);
+fx_numeric_status fx_complex_argument_with_preparation(fx_complex *out,
+    const fx_complex *in, fx_angle_unit unit,
+    const fx_complex_preparation *preparation);
 fx_numeric_status fx_complex_from_polar(fx_complex *out, const fx_complex *in,
                                         fx_angle_unit unit, int exact_math);
 #endif

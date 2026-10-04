@@ -18,6 +18,7 @@
 #include "../numeric/fx_c4_integral_storage.h"
 #include "../numeric/fx_derivative.h"
 #include "../numeric/fx_derivative_storage.h"
+#include "../numeric/fx_c4_derivative_storage.h"
 #include "../numeric/fx_surd_components.h"
 #include "../numeric/fx_sexagesimal.h"
 #include "../numeric/fx_quotient_remainder.h"
@@ -54,6 +55,16 @@ typedef struct {
     fx_eval_status status;
     uint8_t unsupported;
 } parser;
+
+static void retain_workspace_source(parser *p)
+{
+    if (p->transport) {
+        size_t begin = p->transport->input_address, end = begin + p->length;
+        /* A component stage can replace the source's original terminator.
+         * Future token reads remain live within the actual RAM capacity. */
+        if (begin < 0x8780 && end > 0x8640) p->length = 65536u - begin;
+    }
+}
 
 static void variables_from_storage(parser *p)
 {
@@ -358,8 +369,21 @@ static void binary(parser *p, fx_complex *left, const fx_complex *right, fx_bina
         static const uint8_t tokens[] = {'+', '-', 0x4e, 0x4f};
         fx_complex_dispatch_context context = complex_context(p);
         uint8_t firmware_status = 0;
-        fx_numeric_status status = fx_complex_dispatch_binary(&output, left, right,
-                                                               tokens[op], &context, &firmware_status);
+        fx_numeric_status status;
+        if (p->storage && !left->imaginary.bytes[0] && !right->imaginary.bytes[0]) {
+            /*15FCE selects the scalar arithmetic leaf when both imaginary
+             * classifiers return zero, retaining the live SURD workspace. */
+            retain_workspace_source(p);
+            status = fx_eval_surd_workspace_binary(&output.real, p->storage->ram,
+                &left->real, &right->real, 0, 0, op);
+            if (status == FX_NUMERIC_OK) {
+                uint8_t leaf = output.real.bytes[0] >= 0xf0 ?
+                    output.real.bytes[0] & 15u : 0;
+                status = fx_complex_dispatch_cleanup(&output, &output, leaf,
+                    &context, &firmware_status);
+            }
+        } else status = fx_complex_dispatch_binary(&output, left, right,
+            tokens[op], &context, &firmware_status);
         accept_complex_operation(p, left, &output, status, firmware_status);
     } else if (p->options.calculation_context == 2) {
         unsigned native_status = 0;
@@ -413,6 +437,10 @@ static int omitted_closing(parser *p)
 
 static void calculus(parser *p, fx_complex *out, uint8_t token);
 static void coordinates(parser *p, fx_complex *out, uint8_t token);
+static fx_complex_preparation coordinate_preparation(parser *p);
+static fx_numeric_status coordinate_unary_storage(parser *p, fx_complex *out,
+    const fx_complex *in, uint8_t token, const fx_complex_dispatch_context *context,
+    uint8_t *firmware_status);
 
 static int function_prefix(uint8_t token)
 {
@@ -527,6 +555,10 @@ static void load_variable(parser *p, fx_complex *out, unsigned slot)
          * an evaluator failure. Its later arithmetic or17258 finish gate
          * decides whether this is Math3, Syntax2 or a successful F3 value. */
         if (header == 15) continue;
+        /*51CA/173FA copies foreign records unchanged. The physical paired
+         * derivative lets17258 classify them at the expression boundary. */
+        if (p->storage && p->options.calculation_context == 0xc4 &&
+            p->calculus_token == 0x6b && header >= 10 && header <= 14) continue;
         if (header == 6 || header == 9) {
             /* Direct loads retain the rich reference for the later operation
              * or17258 finish guard. Finite-series callbacks separately reject
@@ -555,6 +587,7 @@ static void load_variable(parser *p, fx_complex *out, unsigned slot)
         /* 51CA invokes173FA when18212 denies natural output. This path
          * converts compact radicals, preserving other scalar headers. */
         if (!exact_math(p) && kind == FX_NUMBER_SURD) {
+            if (p->storage) retain_workspace_source(p);
             fx_numeric_status status = p->storage ?
                 fx_surd_components_convert_copy(p->storage->ram,
                     components[index], components[index]) :
@@ -572,8 +605,13 @@ static void load_variable(parser *p, fx_complex *out, unsigned slot)
 static fx_numeric_status scalar_square_root(parser *p, fx_number *out,
                                             const fx_number *input)
 {
-    if (exact_math(p) || fx_number_kind(input) != FX_NUMBER_RATIONAL)
+    if (exact_math(p) || fx_number_kind(input) != FX_NUMBER_RATIONAL) {
+        if (p->storage) {
+            retain_workspace_source(p);
+            return fx_eval_surd_workspace_sqrt(out, p->storage->ram, input, exact_math(p));
+        }
         return fx_number_sqrt(out, input, exact_math(p));
+    }
     fx_rational rational;
     fx_number numerator, denominator;
     fx_numeric_status status = fx_rational_decode(&rational, input);
@@ -825,10 +863,12 @@ static void primary_value(parser *p, fx_complex *out)
         table_population_y(p,out);
         if(p->status==FX_EVAL_OK)++p->position;
     } else if (fx_decode_evaluator_token(token, p->options.calculation_context).kind == 6 &&
-               fx_decode_evaluator_token(token, p->options.calculation_context).value == 48 &&
+               (fx_decode_evaluator_token(token, p->options.calculation_context).value == 48 ||
+                fx_decode_evaluator_token(token, p->options.calculation_context).value == 43 ||
+                fx_decode_evaluator_token(token, p->options.calculation_context).value == 46) &&
                p->storage && !p->storage->ram[0x80de]) {
-        /* Dynamic X population deviation13418 takes12DE6's empty-table
-         * admission before any sampling or persistent cache publication. */
+        /* Dynamic X population deviation13418 and moments135A4/13544 admit an
+         * empty table as Math3 before persistent cache publication. */
         fx_number_error(&out->real, 3);
         p->status = FX_EVAL_MATH;
         if (p->preflight_mode == 2) p->preflight_constant_error = 1;
@@ -904,7 +944,9 @@ static void primary_value(parser *p, fx_complex *out)
                 uint8_t firmware_status = 0;
                 fx_numeric_status status = has_base ?
                     fx_complex_dispatch_binary(&output, out, &second_argument, token, &context, &firmware_status) :
-                    fx_complex_dispatch_unary(&output, out, token, &context, &firmware_status);
+                    (p->storage && (token == 0x63 || token == 0xc3 || token == 0x98) ?
+                        coordinate_unary_storage(p, &output, out, token, &context, &firmware_status) :
+                        fx_complex_dispatch_unary(&output, out, token, &context, &firmware_status));
                 accept_complex_operation(p, out, &output, status, firmware_status);
             } else {
                 fx_numeric_status status;
@@ -925,7 +967,10 @@ static void primary_value(parser *p, fx_complex *out)
                     /* COMP selects scalar1C312, avoiding the CMPLX norm.
                      * Classification precedes clearing the decimal marker. */
                     uint8_t classification;
-                    status = fx_scalar_numeric_classify(&classification, &out->real);
+                    fx_complex_preparation preparation = coordinate_preparation(p);
+                    status = p->storage ? preparation.classify(&classification,
+                        &out->real, preparation.userdata) :
+                        fx_scalar_numeric_classify(&classification, &out->real);
                     output = *out;
                     if (status == FX_NUMERIC_OK && classification == 0xf0)
                         fx_number_error(&output.real, 3);
@@ -943,7 +988,12 @@ static void primary_value(parser *p, fx_complex *out)
                     if (status == FX_NUMERIC_OK && native_status) p->status = (fx_eval_status)native_status;
                 }
                 else if (token == 0xc3 && p->options.angle_unit >= 4 && p->options.angle_unit <= 6)
-                    status = fx_complex_argument(&output, out, (fx_angle_unit)(p->options.angle_unit-4));
+                    {
+                    fx_complex_preparation preparation = coordinate_preparation(p);
+                    status = p->storage ? fx_complex_argument_with_preparation(&output, out,
+                        (fx_angle_unit)(p->options.angle_unit-4), &preparation) :
+                        fx_complex_argument(&output, out, (fx_angle_unit)(p->options.angle_unit-4));
+                }
                 else if (token == 0x98) status = scalar_square_root(p, &output.real, &out->real);
                 else if (token == 0xa8) status = fx_number_cbrt(&output.real, &out->real);
                 else if (token == 0x68) status = has_base ? fx_number_log_base(&output.real, &out->real, &second_argument.real) :
@@ -1002,7 +1052,7 @@ static int implicit_start(uint8_t token, uint8_t context)
 {
     fx_evaluator_token decoded = fx_decode_evaluator_token(token, context);
     return token == 0x8a || token == 0x8c || variable_slot(token, context) >= 0 || token == '(' || token == 0x80 || token == 0x81 || token == 0x82 || function_prefix(token) ||
-           (decoded.kind == 6 && (decoded.value < 40 || decoded.value == 48)) || decoded.kind == 7 ||
+           (decoded.kind == 6 && (decoded.value < 40 || decoded.value == 48 || decoded.value == 43 || decoded.value == 46)) || decoded.kind == 7 ||
            (context == 2 && token >= 0x50 && token <= 0x53);
 }
 
@@ -1065,8 +1115,81 @@ static void conversion(parser *p, fx_complex *out, fx_evaluator_token decoded)
 static fx_numeric_status coordinate_square_root(fx_number *out,
     const fx_number *input, int exact, void *userdata)
 {
-    fx_eval_storage *storage = userdata;
+    parser *p = userdata;
+    fx_eval_storage *storage = p->storage;
+    retain_workspace_source(p);
     return fx_eval_surd_workspace_sqrt(out, storage->ram, input, exact);
+}
+
+static fx_numeric_status coordinate_decimal_prepare(fx_number *out,
+    const fx_number *input, void *userdata)
+{
+    parser *p = userdata;
+    fx_eval_storage *storage = p->storage;
+    retain_workspace_source(p);
+    return fx_number_kind(input) == FX_NUMBER_SURD ?
+        fx_surd_components_convert_copy(storage->ram, out, input) :
+        fx_number_to_decimal(out, input);
+}
+
+static fx_numeric_status coordinate_classify(uint8_t *classification,
+    const fx_number *input, void *userdata)
+{
+    fx_number decimal;
+    fx_numeric_status status;
+    parser *p = userdata;
+    fx_eval_storage *storage = p->storage;
+    retain_workspace_source(p);
+    if ((input->bytes[0] & 0xf0) == 0x80 && input->bytes[9] &&
+        input->bytes[8] + input->bytes[9] == 7) {
+        status = fx_surd_components_convert_copy(storage->ram, &decimal, input);
+        if (status != FX_NUMERIC_OK) return status;
+        /*1CD56 gives17576 the actual numerical destination poolslot0. */
+        memcpy(storage->ram + 0x8640, decimal.bytes, 10);
+        *classification = decimal.bytes[9] >= 4 ? 2 : 4;
+        return FX_NUMERIC_OK;
+    }
+    return fx_scalar_numeric_classify(classification, input);
+}
+
+static fx_numeric_status coordinate_binary_prepare(fx_number *out,
+    const fx_number *left, const fx_number *right,
+    fx_binary_op operation, void *userdata)
+{
+    parser *p = userdata;
+    fx_eval_storage *storage = p->storage;
+    retain_workspace_source(p);
+    return fx_eval_surd_workspace_binary(out, storage->ram,
+        left, right, 0, 0, operation);
+}
+
+static fx_complex_preparation coordinate_preparation(parser *p)
+{
+    const fx_complex_preparation preparation = {coordinate_square_root,
+        coordinate_decimal_prepare, coordinate_classify,
+        coordinate_binary_prepare, p};
+    return preparation;
+}
+
+static fx_numeric_status coordinate_unary_storage(parser *p, fx_complex *out,
+    const fx_complex *in, uint8_t token, const fx_complex_dispatch_context *context,
+    uint8_t *firmware_status)
+{
+    fx_complex result;
+    fx_complex_preparation preparation = coordinate_preparation(p);
+    fx_numeric_status status = token == 0x63 ?
+        fx_complex_magnitude_with_preparation(&result, in, context->exact_math, &preparation) :
+        token == 0x98 ? fx_complex_sqrt_with_preparation(&result, in,
+            context->exact_math, &preparation) :
+        fx_complex_argument_with_preparation(&result, in,
+            (fx_angle_unit)(context->angle_unit-4), &preparation);
+    uint8_t leaf = 0;
+    if (status == FX_NUMERIC_OK)
+        status = fx_complex_firmware_status(&leaf, token == 0x63 ?
+            FX_COMPLEX_MAGNITUDE_RETURN : token == 0x98 ? FX_COMPLEX_SQRT_RETURN :
+            FX_COMPLEX_ARGUMENT_RETURN, in, &result);
+    return status == FX_NUMERIC_OK ?
+        fx_complex_dispatch_cleanup(out, &result, leaf, context, firmware_status) : status;
 }
 
 /* Physical Rec preserves each exact multiplication's live SURD workspace.
@@ -1077,32 +1200,33 @@ static fx_numeric_status coordinates_from_polar_storage(parser *p,
 {
     fx_complex source = *in, result;
     fx_number sine, cosine, decimal;
-    fx_decimal radius;
+    uint8_t classification;
     fx_numeric_status status;
     if (source.real.bytes[0] >= 0xf0 || source.imaginary.bytes[0] >= 0xf0) {
         fx_number_error(&out->real, 3); fx_number_error(&out->imaginary, 3);
         return FX_NUMERIC_OK;
     }
     source.real.bytes[0] &= (uint8_t)~0x40;
-    status = fx_number_kind(&source.real) == FX_NUMBER_SURD ?
-        fx_surd_components_convert_copy(p->storage->ram, &decimal, &source.real) :
-        fx_number_to_decimal(&decimal, &source.real);
+    /*182EC clears the marker, then CCF6 classifies the original radius.
+     * Opposing-sign SURD classification owns its slot0 conversion commit. */
+    status = coordinate_classify(&classification, &source.real, p);
     if (status != FX_NUMERIC_OK) return status;
-    if (fx_decimal_decode(&radius, &decimal) != FX_NUMERIC_OK) return FX_NUMERIC_INVALID;
-    if (radius.sign < 0) {
+    if (classification == 2) {
         fx_number_error(&out->real, 3); fx_number_error(&out->imaginary, 3);
         return FX_NUMERIC_OK;
     }
-    /* Trig's prepared SURD angle conversion is a separate physical seam.
-     * Ordinary angles can compose the already verified ordered products. */
-    if (fx_number_kind(&source.imaginary) == FX_NUMBER_SURD)
-        return FX_NUMERIC_UNIMPLEMENTED;
-    status = fx_trig_evaluate(&sine, &source.imaginary, FX_SINE, unit, exact_math(p), 0);
+    /*6268/6272 each prepare their own copied angle through17470 before
+     * evaluating sine/cosine. Preserve the original angle for the second. */
+    status = coordinate_decimal_prepare(&decimal, &source.imaginary, p);
+    if (status == FX_NUMERIC_OK)
+        status = fx_trig_evaluate(&sine, &decimal, FX_SINE, unit, exact_math(p), 0);
     if (status == FX_NUMERIC_OK)
         status = fx_eval_surd_workspace_binary(&result.imaginary, p->storage->ram,
             &sine, &source.real, 0, 0, FX_MULTIPLY);
     if (status == FX_NUMERIC_OK)
-        status = fx_trig_evaluate(&cosine, &source.imaginary, FX_COSINE, unit, exact_math(p), 0);
+        status = coordinate_decimal_prepare(&decimal, &source.imaginary, p);
+    if (status == FX_NUMERIC_OK)
+        status = fx_trig_evaluate(&cosine, &decimal, FX_COSINE, unit, exact_math(p), 0);
     if (status == FX_NUMERIC_OK)
         status = fx_eval_surd_workspace_binary(&result.real, p->storage->ram,
             &source.real, &cosine, 0, 0, FX_MULTIPLY);
@@ -1160,11 +1284,12 @@ static void coordinates(parser *p, fx_complex *out, uint8_t token)
         operands.real = out->real;
         operands.imaginary = second.real;
         fx_angle_unit unit = (fx_angle_unit)(p->options.angle_unit - 4);
+        fx_complex_preparation preparation = coordinate_preparation(p);
         fx_numeric_status status = token == 0x6c ?
-            (p->storage ? fx_complex_to_polar_prepared(&converted, &operands,
-                unit, exact_math(p), coordinate_square_root, p->storage) :
+            (p->storage ? fx_complex_to_polar_with_preparation(&converted, &operands,
+                unit, exact_math(p), &preparation) :
                 fx_complex_to_polar(&converted, &operands, unit, exact_math(p))) :
-            (p->storage && fx_number_kind(&operands.imaginary) != FX_NUMBER_SURD ?
+            (p->storage ?
                 coordinates_from_polar_storage(p, &converted, &operands, unit) :
                           fx_complex_from_polar(&converted, &operands, unit, exact_math(p)));
         if (status != FX_NUMERIC_OK) { unsupported(p, token); return; }
@@ -1222,8 +1347,11 @@ static void polar_operator(parser *p, fx_complex *out, const fx_complex *right)
     }
     operands.real = out->real;
     operands.imaginary = right->real;
-    fx_numeric_status status = fx_complex_from_polar(&converted, &operands,
-        (fx_angle_unit)(p->options.angle_unit - 4), exact_math(p));
+    fx_numeric_status status = p->storage ?
+        coordinates_from_polar_storage(p, &converted, &operands,
+            (fx_angle_unit)(p->options.angle_unit - 4)) :
+        fx_complex_from_polar(&converted, &operands,
+            (fx_angle_unit)(p->options.angle_unit - 4), exact_math(p));
     if (status != FX_NUMERIC_OK) { unsupported(p, 0xaf); return; }
     uint8_t native_status = 0;
     status = fx_complex_firmware_status(&native_status, FX_COMPLEX_FROM_POLAR_RETURN,
@@ -1411,6 +1539,15 @@ static void expression(parser *p, fx_complex *out, unsigned minimum)
         fx_complex right;
         int implicit = 0;
         int logical = 0;
+        if (decoded.kind == 3 && decoded.value == 54 && p->storage &&
+            !p->storage->ram[0x80de] && p->preflight_mode != 1) {
+            /*131FC's second quadratic inverse prediction queries its empty
+             * dataset before any persistent cache commit. Keep its token as
+             * the error cursor, matching ordinary16336 postfix admission. */
+            if (70 < minimum) return;
+            p->status = FX_EVAL_MATH;
+            return;
+        }
         if (token == 0x5c || token == 0xa5 ||
             (decoded.kind == 3 && decoded.value >= 55 && decoded.value <= 94)) {
             /* Unit postfixes have native rank9: above implicit product8,
@@ -1643,7 +1780,7 @@ typedef struct {
     uint32_t cancellation_checks;
     uint16_t *physical_cursor;
     uint16_t error_sink;
-    uint8_t physical_integral;
+    uint8_t physical_integral, paired_derivative;
     fx_number sample_imaginary;
 } calculus_call;
 
@@ -1739,6 +1876,16 @@ static void physical_record_store(fx_eval_storage *storage, uint16_t address,
     memcpy(storage->ram + address + 8u - (address & 1u), value->bytes + 8, 2);
 }
 
+/*D142 publishes the secondary field in the opposite physical order:
+ * its first word uses the supplied address, followed by an aligned eight
+ * byte tail. The immutable record keeps overlapping stores deterministic. */
+static void physical_secondary_store(fx_eval_storage *storage, uint16_t address,
+                                      const fx_number *value)
+{
+    memcpy(storage->ram + address, value->bytes, 2);
+    memcpy(storage->ram + address + 2u - (address & 1u), value->bytes + 2, 8);
+}
+
 static void integral_publish_x(const fx_number *x, void *userdata)
 {
     calculus_call *call = userdata;
@@ -1759,6 +1906,16 @@ static void integral_publish_x_c4(const fx_complex *x, void *userdata)
     bank_from_storage(p);
 }
 
+/* The paired derivative leaf has already published physical X according
+ * to live80F9. This hook refreshes views without repeating its transfer. */
+static void derivative_refresh_x_c4(const fx_complex *x, void *userdata)
+{
+    calculus_call *call = userdata;
+    (void)x;
+    variables_from_storage(call->parent);
+    bank_from_storage(call->parent);
+}
+
 static void integral_callback_context(uint16_t sink, uint16_t *cursor, void *userdata)
 {
     calculus_call *call = userdata;
@@ -1771,10 +1928,13 @@ static fx_numeric_status calculus_evaluate(fx_number *out, const fx_number *x, v
     calculus_call *call = userdata;
     parser callback = *call->parent;
     fx_complex value;
-    if (call->physical_integral && callback.transport->before_sample)
+    if ((call->physical_integral || call->paired_derivative) && callback.transport &&
+        callback.transport->before_sample)
         callback.transport->before_sample(callback.storage,
             (uint16_t)(callback.transport->input_address + call->body_start),
             call->error_sink, callback.transport->userdata);
+    if (call->paired_derivative)
+        callback.options.calculation_context = callback.storage->ram[0x80f9];
     callback.position = call->body_start;
     callback.length = call->body_end;
     callback.status = FX_EVAL_OK;
@@ -1794,7 +1954,7 @@ static fx_numeric_status calculus_evaluate(fx_number *out, const fx_number *x, v
         variables_from_storage(&callback);
         bank_from_storage(&callback);
     }
-    if (!call->physical_integral) {
+    if (!call->physical_integral && !call->paired_derivative) {
         callback.variables->values[FX_VARIABLE_X][0] = *x;
         variables_to_storage(&callback); /*522A publishes local scalar X. */
     }
@@ -1832,7 +1992,7 @@ static fx_numeric_status calculus_evaluate(fx_number *out, const fx_number *x, v
         fx_number_error(out, (unsigned)callback.status);
         /*17250 writes actual evaluator errors at inherited ER8. The
          * quadrature pair's ROM node sink is immutable and rejects writes. */
-        if (call->physical_integral && callback.storage && call->error_sink >= 0x8000 &&
+        if ((call->physical_integral || call->paired_derivative) && callback.storage && call->error_sink >= 0x8000 &&
             call->error_sink <= 65526u)
             physical_record_store(callback.storage, call->error_sink, out);
     }
@@ -1867,10 +2027,13 @@ static void calculus(parser *p, fx_complex *out, uint8_t token)
     int physical_derivative = p->storage && token == 0x6b;
     int physical_integral = p->storage && p->transport && token == 0x6a;
     int paired_integral = physical_integral && p->options.calculation_context == 0xc4;
+    int paired_derivative = physical_derivative && p->options.calculation_context == 0xc4;
     fx_complex paired_result;
     fx_complex_zero(&paired_result);
     call.physical_integral = (uint8_t)physical_integral;
-    call.error_sink = p->transport ? p->transport->output_address : 0;
+    call.paired_derivative = (uint8_t)paired_derivative;
+    call.error_sink = paired_derivative ? 0x85b4u :
+        p->transport ? p->transport->output_address : 0;
     fx_integral_storage integral_storage = {
         p->storage ? p->storage->ram : NULL,
         p->storage ? p->storage->ram_size : 0
@@ -1887,10 +2050,11 @@ static void calculus(parser *p, fx_complex *out, uint8_t token)
     if (p->options.calculation_context != 0xc1 &&
         !(p->storage && (p->options.calculation_context == 6 || p->options.calculation_context == 7 ||
             (p->options.calculation_context == 0x88 && !p->table_continuation))) &&
-        !paired_integral) {
+        !paired_integral && !paired_derivative) {
         unsupported(p, token); return;
     }
     fx_complex_zero(&saved_x);
+    if (paired_derivative) p->calculus_token = token;
     load_variable(p, &saved_x, FX_VARIABLE_X);
     if (p->status != FX_EVAL_OK) return;
     ++p->position;
@@ -1905,7 +2069,12 @@ static void calculus(parser *p, fx_complex *out, uint8_t token)
     expression(p, &ignored, 0);
     calculus_expression_finish(p, &ignored);
     if (p->status != FX_EVAL_OK) goto restore;
-    if (peek(p) != ',') { p->status = FX_EVAL_SYNTAX; goto restore; }
+    if (peek(p) != ',') {
+        /* The FF entry can finish a nested function at input-end. The
+         * enclosing1723E Syntax return retracts that consumed final byte. */
+        if (paired_derivative && !peek(p) && p->position) --p->position;
+        p->status = FX_EVAL_SYNTAX; goto restore;
+    }
     call.body_end = p->position++;
     p->calculus_mode = 2;
     p->preflight_mode = 0;
@@ -1915,7 +2084,10 @@ static void calculus(parser *p, fx_complex *out, uint8_t token)
     if (physical_derivative) {
         /*04B20..04B2A stores the point BEFORE parsing explicit tolerance. */
         variables_to_storage(p);
-        derivative_preparation = fx_derivative_storage_point(&derivative_storage, &lower.real);
+        derivative_preparation = paired_derivative ?
+            fx_c4_derivative_point(&derivative_storage, &lower) :
+            fx_derivative_storage_point(&derivative_storage, &lower.real);
+        variables_from_storage(p);
         bank_from_storage(p);
         if (derivative_preparation != FX_NUMERIC_OK) { unsupported(p, token); goto restore; }
     }
@@ -1967,8 +2139,12 @@ static void calculus(parser *p, fx_complex *out, uint8_t token)
     p->calculus_mode = 1;
     fx_numeric_status status;
     if (physical_derivative) {
-        derivative_preparation = fx_derivative_storage_tolerance(&derivative_storage,
-            has_tolerance ? &tolerance.real : NULL, &derivative_native_status);
+        derivative_preparation = paired_derivative ?
+            fx_c4_derivative_tolerance(&derivative_storage,
+                has_tolerance ? &tolerance : NULL, &derivative_native_status) :
+            fx_derivative_storage_tolerance(&derivative_storage,
+                has_tolerance ? &tolerance.real : NULL, &derivative_native_status);
+        variables_from_storage(p);
         bank_from_storage(p);
         if (derivative_preparation != FX_NUMERIC_OK) { unsupported(p, token); goto restore; }
     }
@@ -2022,12 +2198,22 @@ static void calculus(parser *p, fx_complex *out, uint8_t token)
                                     calculus_evaluate, &call, &control);
     else if (physical_derivative) {
         if (derivative_native_status) {
+            /* R6=2 comma leaves the source on that separator.1723E
+             * retracts its preceding byte when tolerance admission fails. */
+            if (paired_derivative && peek(p) == ',' && p->position) --p->position;
             fx_number_error(&result, derivative_native_status);
             status = FX_NUMERIC_OK;
         } else {
             /*171EA evaluator-error85B4 publication is driver-owned; do not
              * rewrite a successful F-valued callback's separate EQ result. */
-            status = fx_number_derivative_storage(&result, &derivative_storage,
+            if (paired_derivative) {
+                status = fx_c4_derivative_run(&paired_result, &derivative_storage,
+                    calculus_evaluate_c4, &call, derivative_refresh_x_c4,
+                    &control, &derivative_native_status);
+                result = paired_result.real;
+                if (status == FX_NUMERIC_OK && derivative_native_status)
+                    fx_number_error(&result, derivative_native_status);
+            } else status = fx_number_derivative_storage(&result, &derivative_storage,
                 calculus_evaluate, &call, &control);
         }
         variables_from_storage(p);
@@ -2044,7 +2230,7 @@ static void calculus(parser *p, fx_complex *out, uint8_t token)
         goto restore;
     }
     fx_complex_zero(out);
-    if (paired_integral) *out = paired_result;
+    if (paired_integral || paired_derivative) *out = paired_result;
     out->real = result;
     if (fx_number_kind(&result) == FX_NUMBER_ERROR) {
         p->status = (fx_eval_status)(result.bytes[0] & 15);
@@ -2064,7 +2250,8 @@ static void calculus(parser *p, fx_complex *out, uint8_t token)
     }
 restore:
     p->variables->values[FX_VARIABLE_X][0] = saved_x.real;
-    if (paired_integral) p->variables->values[FX_VARIABLE_X][1] = saved_x.imaginary;
+    if (paired_integral || (paired_derivative && p->storage->ram[0x80f9] == 0xc4))
+        p->variables->values[FX_VARIABLE_X][1] = saved_x.imaginary;
     p->options.math_output = exact;
     p->calculus_mode = 0;
     p->calculus_token = 0;
@@ -2200,6 +2387,10 @@ static fx_eval_status evaluate_transported(const uint8_t *input, size_t length,
              * post-read admission; they do not require a numerical leaf. */
             ++p.position;
             p.status = FX_EVAL_SYNTAX;
+        } else if (token.kind == 1 && token.value == 95 &&
+                   p.options.calculation_context != 2) {
+            /*16B54 rejects a late unary-minus prefix after an operand. */
+            p.status = FX_EVAL_SYNTAX;
         } else if (token.kind == 10 || peek(&p) == ')' || peek(&p) == ',' || peek(&p) == '.' ||
             (peek(&p) >= '0' && peek(&p) <= '9')) p.status = FX_EVAL_SYNTAX;
         else unsupported(&p, peek(&p));
@@ -2252,12 +2443,20 @@ static fx_eval_status evaluate_transported(const uint8_t *input, size_t length,
         result->value[1] = *initial_secondary;
     if (transport && p.status >= 0) {
         physical_record_store(storage, transport->output_address, &result->value[0]);
-        if ((p.options.calculation_context == 0xc4 && p.status == FX_EVAL_OK) ||
+        if ((storage->ram[0x80f9] == 0xc4 && p.status == FX_EVAL_OK) ||
             (p.status == FX_EVAL_OK && (p.environment.screen & 0x40)) ||
             p.status == FX_EVAL_POLAR_PAIR || p.status == FX_EVAL_RECTANGULAR_PAIR ||
             p.status == FX_EVAL_QUOTIENT_PAIR)
-            physical_record_store(storage, (uint16_t)(transport->output_address + 10),
-                                  &result->value[1]);
+        {
+            /*17284 ordinary C4 copies both records through169C0 (8+2).
+             * Paired/C0 publication uses the separate69AE/D142 (2+8). */
+            if (storage->ram[0x80f9] == 0xc4 && p.status == FX_EVAL_OK &&
+                !(p.environment.screen & 0x40))
+                physical_record_store(storage, (uint16_t)(transport->output_address + 10),
+                                      &result->value[1]);
+            else physical_secondary_store(storage, (uint16_t)(transport->output_address + 10),
+                                          &result->value[1]);
+        }
         else memcpy(result->value[1].bytes,
                     storage->ram + transport->output_address + 10, 10);
         uint16_t cursor = (uint16_t)(transport->input_address + result->consumed);

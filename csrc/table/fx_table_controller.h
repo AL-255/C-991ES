@@ -40,7 +40,8 @@ typedef struct {
 /* Actual TABLE88 F12A function/range branches, with ordinary display/context
  * addresses and expressions of at most99 bytes. Function acceptance saves
  * text without validating it. The standard special_view policy is admitted
- * for range items1..3; natural input and saved-Math restoration are unsupported.
+ * for range items1..3. Natural function input uses the ordinary editor/export
+ * policy; saved-Math restoration remains unsupported.
  * PARAMETER_EVALUATION requests ordinary171F4, using context.result_address
  * and current_source. GENERATION requests the TABLE kernel: only its evaluator
  * callback uses actual171EA mode88/continuation1 and unsigned255 success.

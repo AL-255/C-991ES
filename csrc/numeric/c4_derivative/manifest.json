@@ -1,0 +1,52 @@
+{
+  "subsystem": "paired-copy derivative storage",
+  "complete": false,
+  "implementation": "Readable RAM-backed finite-decimal Richardson differentiation with ordered paired copies and live-mode X publication.",
+  "sources": [
+    "csrc/numeric/fx_c4_derivative_storage.c",
+    "csrc/numeric/fx_c4_derivative_storage.h",
+    "csrc/parse/fx_eval.c"
+  ],
+  "original_entries": [
+    "0x4b1e",
+    "0x4b40",
+    "0x4b6a",
+    "0x4b94"
+  ],
+  "limits": [
+    "The tested expression adapter preserves syntax/cursor, callback finishing, evaluator-error publication, cancellation and saved-X restoration. Uncovered mode-changing callbacks and arbitrary CPU-frame aliases remain unproven.",
+    "The core preserves paired transfers but performs scalar ten-byte arithmetic; this does not implement ordinary complex differentiation.",
+    "Full persistent RAM and native B exhaustion are not established by the prepared core corpus."
+  ],
+  "verification": {
+    "tool": "tools/test_numeric_c4_derivative_c.py",
+    "scope": "Prepared point/tolerance and core effects on production sources; whole expression binding has its separate proof below.",
+    "report": "analysis/c-verification/numeric_c4_derivative.json",
+    "native_calls": 254,
+    "original_instructions": 13094255,
+    "checks_per_optimization": 8380,
+    "optimizations": [
+      "O2",
+      "O3"
+    ]
+  },
+  "expression_verification": {
+    "tool": "tools/test_eval_c4_derivative_c.py",
+    "report": "analysis/c-verification/eval_c4_derivative.json",
+    "original_calls": 330,
+    "cohorts": {
+      "initial_derivative": 170,
+      "derivative_aliases": 112,
+      "syntax_tolerance": 28,
+      "ordinary_finalizer_compatibility": 20
+    },
+    "original_instructions": 24132150,
+    "checks": 21385203,
+    "check_units": "Includes individual persistent RAM-byte comparisons; this is not instruction coverage.",
+    "optimizations": [
+      "O2",
+      "O3"
+    ],
+    "limits": "Original observed CPU frame excluded; bounded corpus, not general complex differentiation."
+  }
+}

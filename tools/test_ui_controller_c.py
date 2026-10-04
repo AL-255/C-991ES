@@ -12,12 +12,13 @@ from nxu8.machine import Machine
 from test_platform_c import Platform
 from test_input_controller_c import MODULES, Context, Controller as Input, Control
 from trace_natural_result import settings
+from test_table_controller_c import Controller as Table
 
 class Controller(C.Structure):
     _fields_=[('context',Context),('input',Input),('cancellation',Control),
               ('request',C.c_int),*[(n,C.c_uint8) for n in
               ('phase','active','refresh_only','structured_input','command_token',
-               'command_index','handler_action','saved_result_state')]]
+               'command_index','handler_action','saved_result_state')],('table',Table)]
 
 def main():
     ap=argparse.ArgumentParser(description=__doc__)
@@ -248,7 +249,7 @@ def main():
                      'request':state.request,'native_format':native.ram[0x8100],
                      'native_ram_sha256':hashlib.sha256(bytes(native.ram)).hexdigest(),
                      'native_lcd_sha256':hashlib.sha256(bytes(native.ram[0xf800:0xfa00])).hexdigest()})
-    for mode in (2,0x88,0x89):
+    for mode in (2,0x89):
         state=prepare(mode=mode)
         assert lib.fx_ui_controller_tick(C.byref(p),C.byref(state))==5 and state.request==1
         count('explicit_special_context_request')

@@ -31,6 +31,15 @@ static void copy_forward(fx_platform *p, uint16_t destination,
         put_byte(p, (uint16_t)(destination + n), byte_at(p, (uint16_t)(source + n)));
 }
 
+/*1CDAE with digit zero: the first word uses the supplied address, then
+ * EA+ advances to an even address for the remaining four words. At an odd
+ * address the two stores overlap by one byte and preserve the last byte. */
+void fx_number_zero_address(fx_platform *p, uint16_t address)
+{
+    clear_bytes(p, address, 2);
+    clear_bytes(p, (uint16_t)((address + 2u) & 0xfffeu), 8);
+}
+
 void fx_result_clear(fx_platform *p) { clear_bytes(p, 0x8140, 20); }
 
 void fx_result_clear_format(fx_platform *p)

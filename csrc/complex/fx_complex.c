@@ -290,14 +290,17 @@ fx_numeric_status fx_complex_cleanup(fx_complex *out, const fx_complex *in)
     return status;
 }
 
-static fx_numeric_status absolute_component(fx_number *out, const fx_number *in)
+static fx_numeric_status absolute_component(fx_number *out, const fx_number *in,
+    const fx_complex_preparation *preparation)
 {
     fx_number number = *in;
     uint8_t classification;
     fx_numeric_status status;
     /* CCF6 classifies before C312 clears bit40. In particular the marked
      * rational header6x is a domain error rather than an ordinary fraction. */
-    status = fx_scalar_numeric_classify(&classification, &number);
+    status = preparation && preparation->classify ?
+        preparation->classify(&classification, &number, preparation->userdata) :
+        fx_scalar_numeric_classify(&classification, &number);
     if (status != FX_NUMERIC_OK) return status;
     if (classification == 0xf0) {
         fx_number_error(out, 3); return FX_NUMERIC_OK;
@@ -308,9 +311,9 @@ static fx_numeric_status absolute_component(fx_number *out, const fx_number *in)
     return status;
 }
 
-fx_numeric_status fx_complex_magnitude_prepared(fx_complex *out,
-    const fx_complex *in, int exact_math, fx_complex_square_root root,
-    void *userdata)
+fx_numeric_status fx_complex_magnitude_with_preparation(fx_complex *out,
+    const fx_complex *in, int exact_math,
+    const fx_complex_preparation *preparation)
 {
     fx_complex result;
     fx_number real, imaginary, x, y, square_x, square_y, sum, ratio, one;
@@ -322,8 +325,8 @@ fx_numeric_status fx_complex_magnitude_prepared(fx_complex *out,
     if (result.real.bytes[0] >= 0xf0 || result.imaginary.bytes[0] >= 0xf0) {
         fx_number_error(&result.real, 3); *out = result; return FX_NUMERIC_OK;
     }
-    status = absolute_component(&real, &result.real);
-    if (status == FX_NUMERIC_OK) status = absolute_component(&imaginary, &result.imaginary);
+    status = absolute_component(&real, &result.real, preparation);
+    if (status == FX_NUMERIC_OK) status = absolute_component(&imaginary, &result.imaginary, preparation);
     if (status != FX_NUMERIC_OK) return status;
     fx_number_zero(&result.imaginary);
     if (!imaginary.bytes[0]) { result.real = real; *out = result; return FX_NUMERIC_OK; }
@@ -331,8 +334,12 @@ fx_numeric_status fx_complex_magnitude_prepared(fx_complex *out,
     if (real.bytes[0] >= 0xf0 || imaginary.bytes[0] >= 0xf0) {
         complex_error(out); return FX_NUMERIC_OK;
     }
-    status = fx_number_to_decimal(&x, &real);
-    if (status == FX_NUMERIC_OK) status = fx_number_to_decimal(&y, &imaginary);
+    status = preparation && preparation->decimal ?
+        preparation->decimal(&x, &real, preparation->userdata) :
+        fx_number_to_decimal(&x, &real);
+    if (status == FX_NUMERIC_OK) status = preparation && preparation->decimal ?
+        preparation->decimal(&y, &imaginary, preparation->userdata) :
+        fx_number_to_decimal(&y, &imaginary);
     if (status != FX_NUMERIC_OK) return status;
     if (fx_decimal_decode(&decoded_x, &x) != FX_NUMERIC_OK ||
         fx_decimal_decode(&decoded_y, &y) != FX_NUMERIC_OK) return FX_NUMERIC_INVALID;
@@ -348,7 +355,8 @@ fx_numeric_status fx_complex_magnitude_prepared(fx_complex *out,
         if (status == FX_NUMERIC_OK) status = fx_number_integer_power(&square_y, &y, 2);
         if (status == FX_NUMERIC_OK) status = fx_decimal_binary(&sum, &square_x, &square_y, FX_ADD);
         if (status == FX_NUMERIC_OK)
-            status = root ? root(&result.real, &sum, exact_math, userdata) :
+            status = preparation && preparation->root ?
+                preparation->root(&result.real, &sum, exact_math, preparation->userdata) :
                             fx_number_sqrt(&result.real, &sum, exact_math);
     } else {
         /* Outside the safe square range, divide the smaller component by
@@ -362,13 +370,26 @@ fx_numeric_status fx_complex_magnitude_prepared(fx_complex *out,
         (void)fx_decimal_from_integer(&one, 1);
         if (status == FX_NUMERIC_OK) status = fx_decimal_binary(&ratio, &ratio, &one, FX_ADD);
         if (status == FX_NUMERIC_OK)
-            status = root ? root(&ratio, &ratio, 0, userdata) :
+            status = preparation && preparation->root ?
+                preparation->root(&ratio, &ratio, 0, preparation->userdata) :
                             fx_number_sqrt(&ratio, &ratio, 0);
         if (status == FX_NUMERIC_OK)
-            status = fx_number_binary(&result.real, &ratio, large ? &real : &imaginary, FX_MULTIPLY);
+            status = preparation && preparation->binary ?
+                preparation->binary(&result.real, &ratio,
+                    large ? &real : &imaginary, FX_MULTIPLY, preparation->userdata) :
+                fx_number_binary(&result.real, &ratio,
+                    large ? &real : &imaginary, FX_MULTIPLY);
     }
     if (status == FX_NUMERIC_OK) *out = result;
     return status;
+}
+
+fx_numeric_status fx_complex_magnitude_prepared(fx_complex *out,
+    const fx_complex *in, int exact_math, fx_complex_square_root root,
+    void *userdata)
+{
+    const fx_complex_preparation preparation = {root, NULL, NULL, NULL, userdata};
+    return fx_complex_magnitude_with_preparation(out, in, exact_math, &preparation);
 }
 
 fx_numeric_status fx_complex_magnitude(fx_complex *out, const fx_complex *in,
@@ -377,8 +398,9 @@ fx_numeric_status fx_complex_magnitude(fx_complex *out, const fx_complex *in,
     return fx_complex_magnitude_prepared(out, in, exact_math, NULL, NULL);
 }
 
-fx_numeric_status fx_complex_sqrt(fx_complex *out, const fx_complex *in,
-                                  int exact_math)
+fx_numeric_status fx_complex_sqrt_with_preparation(fx_complex *out,
+    const fx_complex *in, int exact_math,
+    const fx_complex_preparation *preparation)
 {
     fx_complex result;
     fx_number root;
@@ -387,25 +409,39 @@ fx_numeric_status fx_complex_sqrt(fx_complex *out, const fx_complex *in,
     int negative;
     if (!out || !in || (exact_math != 0 && exact_math != 1)) return FX_NUMERIC_INVALID;
     result = *in;
-    status = fx_scalar_numeric_classify(&classification, &result.imaginary);
+    status = preparation && preparation->classify ?
+        preparation->classify(&classification, &result.imaginary, preparation->userdata) :
+        fx_scalar_numeric_classify(&classification, &result.imaginary);
     if (status != FX_NUMERIC_OK) return status;
     if (classification != 1) {
         fx_number_error(&result.real, 3); *out = result; return FX_NUMERIC_OK;
     }
     if (fx_number_kind(&result.real) == FX_NUMBER_SURD) {
-        status = fx_number_to_decimal(&result.real, &result.real);
+        status = preparation && preparation->decimal ?
+            preparation->decimal(&result.real, &result.real, preparation->userdata) :
+            fx_number_to_decimal(&result.real, &result.real);
         if (status != FX_NUMERIC_OK) return status;
     }
-    status = fx_scalar_numeric_classify(&classification, &result.real);
+    status = preparation && preparation->classify ?
+        preparation->classify(&classification, &result.real, preparation->userdata) :
+        fx_scalar_numeric_classify(&classification, &result.real);
     if (status != FX_NUMERIC_OK) return status;
     if (classification == 0xf0) {
         fx_number_error(&result.real, 3); *out = result; return FX_NUMERIC_OK;
     }
     negative = classification == 2;
     if (negative) status = fx_number_negate(&result.real, &result.real);
-    if (status == FX_NUMERIC_OK) status = fx_number_sqrt(&root, &result.real, exact_math);
+    if (status == FX_NUMERIC_OK) status = preparation && preparation->root ?
+        preparation->root(&root, &result.real, exact_math, preparation->userdata) :
+        fx_number_sqrt(&root, &result.real, exact_math);
     if (status != FX_NUMERIC_OK) return status;
     if (negative) { result.imaginary = root; fx_number_zero(&result.real); }
     else result.real = root;
     *out = result; return FX_NUMERIC_OK;
+}
+
+fx_numeric_status fx_complex_sqrt(fx_complex *out, const fx_complex *in,
+                                  int exact_math)
+{
+    return fx_complex_sqrt_with_preparation(out, in, exact_math, NULL);
 }

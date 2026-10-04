@@ -73,7 +73,7 @@ static fx_runtime_status input_status(fx_platform *p,fx_runtime *s,
         s->event=FX_RUNTIME_EVENT_INPUT_PREPARED; return FX_RUNTIME_ADVANCED;
     case FX_UI_WAIT:
         s->event=FX_RUNTIME_EVENT_WAIT_ITERATION; return FX_RUNTIME_WAIT;
-    case FX_UI_EXPORT: return export_event(s,s->input.input.error.key.export_mask);
+    case FX_UI_EXPORT: return export_event(s,fx_ui_controller_export_mask(&s->input));
     case FX_UI_RESET: return reset_event(p,s);
     case FX_UI_HANDLER_REQUEST:
         return body(s,FX_RUNTIME_INPUT_BODY,s->input.request,0,status);

@@ -14,7 +14,8 @@ static int coordinate_zero(const fx_number *value)
 }
 
 static fx_numeric_status argument_scalar(fx_number *out, const fx_number *x,
-                                          const fx_number *y, fx_angle_unit unit)
+                                          const fx_number *y, fx_angle_unit unit,
+                                          const fx_complex_preparation *preparation)
 {
     static const fx_number quarter[3] = {
         {{0x09,0,0,0,0,0,0,0,0x01,0x01}},
@@ -28,8 +29,15 @@ static fx_numeric_status argument_scalar(fx_number *out, const fx_number *x,
     if (x->bytes[0] >= 0xf0 || y->bytes[0] >= 0xf0) {
         fx_number_error(out, 3); return FX_NUMERIC_OK;
     }
-    status = fx_number_to_decimal(&real, x);
-    if (status == FX_NUMERIC_OK) status = fx_number_to_decimal(&imaginary, y);
+    /*17442 prepares the right coordinate before falling through17470 to
+     * prepare the left coordinate. Both records are copied mathematical
+     * inputs; the callback commits only each actual conversion stage. */
+    status = preparation && preparation->decimal ?
+        preparation->decimal(&imaginary, y, preparation->userdata) :
+        fx_number_to_decimal(&imaginary, y);
+    if (status == FX_NUMERIC_OK) status = preparation && preparation->decimal ?
+        preparation->decimal(&real, x, preparation->userdata) :
+        fx_number_to_decimal(&real, x);
     if (status != FX_NUMERIC_OK) return status;
     if (fx_decimal_decode(&a, &real) != FX_NUMERIC_OK ||
         fx_decimal_decode(&b, &imaginary) != FX_NUMERIC_OK) return FX_NUMERIC_INVALID;
@@ -57,42 +65,53 @@ static fx_numeric_status argument_scalar(fx_number *out, const fx_number *x,
     return status;
 }
 
-fx_numeric_status fx_complex_argument(fx_complex *out, const fx_complex *in,
-                                       fx_angle_unit unit)
+fx_numeric_status fx_complex_argument_with_preparation(fx_complex *out,
+    const fx_complex *in, fx_angle_unit unit,
+    const fx_complex_preparation *preparation)
 {
     fx_complex result;
-    fx_number real;
+    fx_number real, imaginary;
     fx_numeric_status status;
     if (!out || !in || unit < FX_DEGREES || unit > FX_GRADIANS) return FX_NUMERIC_INVALID;
-    real = in->real;
+    real = in->real; imaginary = in->imaginary;
     /* 18708 checks the real component's 15C82 preparation status, whose
      * header guard runs before clearing bit40. The imaginary preparation
      * status is not checked before entering the two-coordinate kernel. */
     if (fx_number_kind(&real) == FX_NUMBER_SURD) {
-        status = fx_number_to_decimal(&real, &real);
+        status = preparation && preparation->decimal ?
+            preparation->decimal(&real, &real, preparation->userdata) :
+            fx_number_to_decimal(&real, &real);
         if (status != FX_NUMERIC_OK) return status;
     }
     if (real.bytes[0] > 0x4f) {
         fx_number_error(&result.real, 3); fx_number_zero(&result.imaginary);
         *out = result; return FX_NUMERIC_OK;
     }
-    status = argument_scalar(&result.real, &real, &in->imaginary, unit);
+    /*18708 performs both15C82 preparations in real/imaginary order. The
+     * real guard above is decisive; the imaginary guard's status is ignored.
+     * Its compact conversion still commits before the two-coordinate stage. */
+    if (preparation && preparation->decimal &&
+        fx_number_kind(&imaginary) == FX_NUMBER_SURD) {
+        status = preparation->decimal(&imaginary, &imaginary, preparation->userdata);
+        if (status != FX_NUMERIC_OK) return status;
+    }
+    status = argument_scalar(&result.real, &real, &imaginary, unit, preparation);
     fx_number_zero(&result.imaginary);
     if (status == FX_NUMERIC_OK) *out = result;
     return status;
 }
 
-fx_numeric_status fx_complex_to_polar_prepared(fx_complex *out,
+fx_numeric_status fx_complex_to_polar_with_preparation(fx_complex *out,
     const fx_complex *in, fx_angle_unit unit, int exact_math,
-    fx_complex_square_root root, void *userdata)
+    const fx_complex_preparation *preparation)
 {
     fx_complex radius, result;
     fx_numeric_status status;
     if (!out || !in || unit < FX_DEGREES || unit > FX_GRADIANS ||
         (exact_math != 0 && exact_math != 1)) return FX_NUMERIC_INVALID;
-    status = fx_complex_magnitude_prepared(&radius, in, exact_math, root, userdata);
+    status = fx_complex_magnitude_with_preparation(&radius, in, exact_math, preparation);
     if (status == FX_NUMERIC_OK)
-        status = argument_scalar(&result.imaginary, &in->real, &in->imaginary, unit);
+        status = argument_scalar(&result.imaginary, &in->real, &in->imaginary, unit, preparation);
     if (status != FX_NUMERIC_OK) return status;
     result.real = radius.real;
     /* 1CADE returns success on either zero-axis branch even if C312
@@ -104,6 +123,20 @@ fx_numeric_status fx_complex_to_polar_prepared(fx_complex *out,
         in->real.bytes[0] >= 0xf0 || in->imaginary.bytes[0] >= 0xf0)
         coordinate_error(&result);
     *out = result; return FX_NUMERIC_OK;
+}
+
+fx_numeric_status fx_complex_argument(fx_complex *out, const fx_complex *in,
+    fx_angle_unit unit)
+{
+    return fx_complex_argument_with_preparation(out, in, unit, NULL);
+}
+
+fx_numeric_status fx_complex_to_polar_prepared(fx_complex *out,
+    const fx_complex *in, fx_angle_unit unit, int exact_math,
+    fx_complex_square_root root, void *userdata)
+{
+    const fx_complex_preparation preparation = {root, NULL, NULL, NULL, userdata};
+    return fx_complex_to_polar_with_preparation(out, in, unit, exact_math, &preparation);
 }
 
 fx_numeric_status fx_complex_to_polar(fx_complex *out, const fx_complex *in,

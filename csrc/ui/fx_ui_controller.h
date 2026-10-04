@@ -2,6 +2,7 @@
 #ifndef FX_UI_CONTROLLER_H
 #define FX_UI_CONTROLLER_H
 #include "fx_input_controller.h"
+#include "../table/fx_table_controller.h"
 
 typedef enum {
     FX_UI_WAIT = 0, FX_UI_COMPLETE = 1, FX_UI_RESET = 2,
@@ -23,6 +24,7 @@ typedef struct {
     fx_ui_request_kind request;
     uint8_t phase, active, refresh_only, structured_input;
     uint8_t command_token, command_index, handler_action, saved_result_state;
+    fx_table_controller table;
 } fx_ui_controller;
 
 /* D9EE normalization, font and named context preparation through DA58.
@@ -44,4 +46,6 @@ fx_ui_status fx_ui_controller_resume(fx_platform *platform,
 /* Consume completion/reset and expose the original D9EE context byte4. */
 fx_ui_status fx_ui_controller_finish(fx_ui_controller *state,
     uint8_t *context_return);
+/* Active retained wait exporter, including TABLE errors. */
+uint8_t fx_ui_controller_export_mask(const fx_ui_controller *state);
 #endif

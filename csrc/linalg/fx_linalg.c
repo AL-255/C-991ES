@@ -1,8 +1,10 @@
 /* Original finite-scalar operation order, expressed as matrix formulas.
  * GPL-3.0-or-later. No ROM execution or host floating point. */
 #include "fx_linalg.h"
+#include "fx_linalg_stage.h"
 #include "../complex/fx_complex.h"
 #include "../complex/fx_complex_round.h"
+#include <stddef.h>
 
 static unsigned kind(const fx_linalg_value *v) { return v->reference.bytes[0] >> 4; }
 static uint8_t error(const fx_number *n) { return n->bytes[0] >= 0xf0 ? n->bytes[0] & 15 : 0; }
@@ -10,10 +12,19 @@ static void reject(fx_linalg_result *r, uint8_t status)
 {
     fx_number_error(&r->value.reference, status); r->firmware_status = status;
 }
-static int interrupted(fx_linalg_result *r, const fx_linalg_context *context)
+typedef struct {
+    fx_linalg_stage_callback callback;
+    void *userdata;
+} stage_observer;
+static int interrupted(fx_linalg_result *r, const fx_linalg_context *context,
+                       const stage_observer *observer)
 {
+    int requested = 0;
     ++r->cancellation_checks;
-    return context->cancel_at && r->cancellation_checks == context->cancel_at;
+    if (observer && observer->callback)
+        requested = observer->callback(r, observer->userdata);
+    return requested || (context->cancel_at &&
+                         r->cancellation_checks == context->cancel_at);
 }
 static int valid(const fx_linalg_value *v, const fx_linalg_context *context)
 {
@@ -137,17 +148,18 @@ fx_numeric_status fx_linalg_scalar(fx_linalg_result *out,
                          operation == FX_LINALG_SCALE ? FX_MULTIPLY : FX_DIVIDE);
         if (status != FX_NUMERIC_OK) return status;
         if (error(&result.value.cells[index])) { reject(&result, error(&result.value.cells[index])); goto done; }
-        if (interrupted(&result, context)) { reject(&result, 1); goto done; }
+        if (interrupted(&result, context, NULL)) { reject(&result, 1); goto done; }
     }
 done:
     *out = result; return FX_NUMERIC_OK;
 }
 
-fx_numeric_status fx_linalg_binary(fx_linalg_result *out,
+static fx_numeric_status binary_work(fx_linalg_result *out,
                                    const fx_linalg_value *left,
                                    const fx_linalg_value *right,
                                    fx_linalg_binary_op operation,
-                                   const fx_linalg_context *context)
+                                   const fx_linalg_context *context,
+                                   const stage_observer *observer)
 {
     fx_linalg_result result;
     fx_linalg_value a, b;
@@ -174,7 +186,7 @@ fx_numeric_status fx_linalg_binary(fx_linalg_result *out,
                 if (status == FX_NUMERIC_OK) status = arithmetic(&temp[index], &temp[index], &product, FX_ADD);
                 if (status != FX_NUMERIC_OK) return status;
                 if (error(&temp[index])) { reject(&result, error(&temp[index])); goto done; }
-                if (interrupted(&result, context)) { reject(&result, 1); goto done; }
+                if (interrupted(&result, context, observer)) { reject(&result, 1); goto done; }
             }
         for (index = 0; index < 9; ++index) result.value.cells[index] = temp[index];
     } else {
@@ -217,7 +229,8 @@ done:
 
 static fx_numeric_status determinant(fx_number *out, fx_linalg_result *result,
                                      const fx_number cells[9], unsigned size,
-                                     const fx_linalg_context *context)
+                                     const fx_linalg_context *context,
+                                     const stage_observer *observer)
 {
     static const unsigned cycles[6][3] = {{0,4,8},{1,5,6},{2,3,7},{2,4,6},{1,3,8},{0,5,7}};
     fx_number product;
@@ -228,7 +241,7 @@ static fx_numeric_status determinant(fx_number *out, fx_linalg_result *result,
         status = minor(out, cells, 0, 4, 1, 3);
         if (status != FX_NUMERIC_OK) return status;
         if (error(out)) { reject(result, error(out)); return FX_NUMERIC_OK; }
-        if (interrupted(result, context)) reject(result, 1);
+        if (interrupted(result, context, observer)) reject(result, 1);
         return FX_NUMERIC_OK;
     }
     status = triple(out, cells, 0, 4, 8);
@@ -236,18 +249,19 @@ static fx_numeric_status determinant(fx_number *out, fx_linalg_result *result,
         status = triple(&product, cells, cycles[index][0], cycles[index][1], cycles[index][2]);
         if (status == FX_NUMERIC_OK)
             status = arithmetic(out, out, &product, index < 3 ? FX_ADD : FX_SUBTRACT);
-        if (index == 2 && interrupted(result, context)) { reject(result, 1); return status; }
+        if (index == 2 && interrupted(result, context, observer)) { reject(result, 1); return status; }
     }
     if (status != FX_NUMERIC_OK) return status;
     if (error(out)) reject(result, error(out));
-    else if (interrupted(result, context)) reject(result, 1);
+    else if (interrupted(result, context, observer)) reject(result, 1);
     return FX_NUMERIC_OK;
 }
 
-fx_numeric_status fx_linalg_unary(fx_linalg_result *out,
+static fx_numeric_status unary_work(fx_linalg_result *out,
                                   const fx_linalg_value *input,
                                   fx_linalg_unary_op operation,
-                                  const fx_linalg_context *context)
+                                  const fx_linalg_context *context,
+                                  const stage_observer *observer)
 {
     static const unsigned cofactors[9][4] = {
         {4,8,5,7},{2,7,1,8},{1,5,2,4},
@@ -329,9 +343,9 @@ fx_numeric_status fx_linalg_unary(fx_linalg_result *out,
             index = row * 3 + col;
             status = prepare(&workspace[index], &input->cells[index]);
             if (status != FX_NUMERIC_OK) return status;
-            if (interrupted(&result, context)) { reject(&result, 1); goto done; }
+            if (interrupted(&result, context, observer)) { reject(&result, 1); goto done; }
         }
-        status = determinant(&det, &result, workspace, dimension, context);
+        status = determinant(&det, &result, workspace, dimension, context, observer);
         if (status != FX_NUMERIC_OK) return status;
         if (result.firmware_status) goto done;
         if (operation == FX_LINALG_DETERMINANT) result.value.reference = det;
@@ -345,11 +359,11 @@ fx_numeric_status fx_linalg_unary(fx_linalg_result *out,
                 status = fx_number_negate(&result.value.cells[1], &workspace[1]);
                 if (status == FX_NUMERIC_OK) status = fx_number_negate(&result.value.cells[3], &workspace[3]);
                 if (status != FX_NUMERIC_OK) return status;
-                if (interrupted(&result, context)) { reject(&result, 1); goto done; }
+                if (interrupted(&result, context, observer)) { reject(&result, 1); goto done; }
             } else for (index = 0; index < 9; ++index) {
                 status = minor(&result.value.cells[index], workspace, cofactors[index][0], cofactors[index][1], cofactors[index][2], cofactors[index][3]);
                 if (status != FX_NUMERIC_OK) return status;
-                if (index % 3 == 2 && interrupted(&result, context)) { reject(&result, 1); goto done; }
+                if (index % 3 == 2 && interrupted(&result, context, observer)) { reject(&result, 1); goto done; }
             }
             if ((det.bytes[0] >> 4) >= 6) { reject(&result, 3); goto done; }
             for (row = 0; row < dimension; ++row) for (col = 0; col < dimension; ++col) {
@@ -357,10 +371,42 @@ fx_numeric_status fx_linalg_unary(fx_linalg_result *out,
                 status = fraction_divide(&result.value.cells[index], &result.value.cells[index], &det);
                 if (status != FX_NUMERIC_OK) return status;
                 if (error(&result.value.cells[index])) { reject(&result, error(&result.value.cells[index])); goto done; }
-                if (interrupted(&result, context)) { reject(&result, 1); goto done; }
+                if (interrupted(&result, context, observer)) { reject(&result, 1); goto done; }
             }
         }
     }
 done:
     *out = result; return FX_NUMERIC_OK;
+}
+
+fx_numeric_status fx_linalg_binary(fx_linalg_result *out,
+                                   const fx_linalg_value *left,
+                                   const fx_linalg_value *right,
+                                   fx_linalg_binary_op operation,
+                                   const fx_linalg_context *context)
+{
+    return binary_work(out, left, right, operation, context, NULL);
+}
+fx_numeric_status fx_linalg_unary(fx_linalg_result *out,
+                                  const fx_linalg_value *input,
+                                  fx_linalg_unary_op operation,
+                                  const fx_linalg_context *context)
+{
+    return unary_work(out, input, operation, context, NULL);
+}
+fx_numeric_status fx_linalg_inverse_observed(fx_linalg_result *out,
+    const fx_linalg_value *input, const fx_linalg_context *context,
+    fx_linalg_stage_callback callback, void *userdata)
+{
+    stage_observer observer = {callback, userdata};
+    return unary_work(out, input, FX_LINALG_INVERSE, context, &observer);
+}
+fx_numeric_status fx_linalg_multiply_observed(fx_linalg_result *out,
+    const fx_linalg_value *left, const fx_linalg_value *right,
+    const fx_linalg_context *context, fx_linalg_stage_callback callback,
+    void *userdata)
+{
+    stage_observer observer = {callback, userdata};
+    return binary_work(out, left, right, FX_LINALG_MATRIX_MULTIPLY,
+                       context, &observer);
 }

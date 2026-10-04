@@ -5,6 +5,8 @@
 #include "../numeric/fx_numeric.h"
 
 /* Standalone controller state operations, without editor/render side effects. */
+/*1CDAE digit zero, including the supplied word address and aligned tail. */
+void fx_number_zero_address(fx_platform *platform, uint16_t address);
 void fx_result_clear(fx_platform *platform);                    /* 5176 */
 void fx_result_clear_flags(fx_platform *platform);              /* 5192 */
 void fx_result_clear_display_state(fx_platform *platform);      /* 51aa */

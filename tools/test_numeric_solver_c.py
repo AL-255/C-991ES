@@ -62,8 +62,8 @@ def main():
                'csrc/complex/fx_complex_round.c', 'csrc/numeric/fx_root.c',
                'csrc/numeric/fx_transcend.c', 'csrc/trig/fx_trig_inverse.c',
                'csrc/trig/fx_trig_math.c', 'csrc/trig/fx_trig.c']
-    headers = ['csrc/numeric/fx_solver.h', 'csrc/numeric/fx_numeric.h',
-               'csrc/linalg/fx_linalg.h', 'csrc/complex/fx_complex.h',
+    headers = ['csrc/numeric/fx_solver.h', 'csrc/numeric/fx_solver_stage.h', 'csrc/numeric/fx_numeric.h',
+               'csrc/linalg/fx_linalg.h', 'csrc/linalg/fx_linalg_stage.h', 'csrc/complex/fx_complex.h',
                'csrc/complex/fx_complex_round.h', 'csrc/numeric/fx_root.h',
                'csrc/numeric/fx_transcend.h', 'csrc/numeric/fx_transcend_internal.h', 'csrc/numeric/fx_transcend_guarded.h',
                'csrc/trig/fx_trig_inverse.h', 'csrc/trig/fx_trig_math.h', 'csrc/trig/fx_trig.h']

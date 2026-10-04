@@ -5,11 +5,13 @@
   ],
   "tests": [
     "tools/test_equation_workflow_c.py",
-    "tools/test_equation_commit_c.py"
+    "tools/test_equation_commit_c.py",
+    "tools/test_runtime_equation_canonical_c.py"
   ],
   "verification": [
     "analysis/c-verification/equation_workflow.json",
-    "analysis/c-verification/equation_commit.json"
+    "analysis/c-verification/equation_commit.json",
+    "analysis/c-verification/runtime_equation_canonical.json"
   ],
   "scope": "Prepared successful simultaneous linear2/3 coefficient grid, typed commits, later solve, root replay and return to coefficients.",
   "complete": false,
@@ -19,11 +21,22 @@
     "Physical odd-EA two-byte plus aligned eight-byte load-before-store coefficient copy",
     "Whole INPUT coefficient commit bypassing scalar Ans/replay",
     "Successful numerical solver, physical bank/root publication and replay labels",
-    "Retained independent state through five prepared workflows"
+    "Retained independent state through five prepared workflows",
+    "Single-pass observed linear solver publishes live banks before actual timer/cancellation boundaries; four complete boot/key workflows and 54 retained singular/cancellation prefixes have fresh O2/O3 proofs."
   ],
   "limits": [
-    "Whole-main EQN runtime integration, polynomial/INEQ/complex roots and singular/error/cancellation publication remain incomplete.",
+    "Default owned EQN runtime bodies, polynomial/INEQ/complex roots and E884 error UI continuation remain incomplete. A typed provider composes the tested linear workflows; singular/cancellation prefixes remain pending after their actual effects.",
     "Workflows exclude numerical8000..80DB, inactive8640..87CF and actual witnessed CPU-frame writes; the independent grid8001 residual remains documented.",
     "Complete coefficient commit controls compare all RAM outside witnessed CPU-frame writes."
-  ]
+  ],
+  "runtime_proof": {
+    "original_recipes": 58,
+    "checkpoints_per_optimization": 8492,
+    "checks_per_optimization": 27124,
+    "persistent_timer_snapshots_per_optimization": 849,
+    "optimizations": [
+      "O2",
+      "O3"
+    ]
+  }
 }

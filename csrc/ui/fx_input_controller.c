@@ -29,8 +29,19 @@ static void load_records(fx_platform *p, uint16_t a, fx_number values[2])
 { for (unsigned n=0;n<20;++n) values[n/10].bytes[n%10]=byte_at(p,(uint16_t)(a+n)); }
 static void write_records(fx_platform *p, uint16_t a, const fx_number values[2])
 { for (unsigned n=0;n<20;++n) put_byte(p,(uint16_t)(a+n),values[n/10].bytes[n%10]); }
+/*F52C takes a D142 snapshot into an even temporary before replacing its
+ * imaginary component. Source EA+ aligns the eight-byte tail after the
+ * initial word, independently of the primary result's store layout. */
+static void load_answer_primary(fx_platform *p, uint16_t address, fx_number *value)
+{
+    for (unsigned n = 0; n < 2; ++n)
+        value->bytes[n] = byte_at(p, (uint16_t)(address + n));
+    uint16_t tail = (uint16_t)((address + 2u) & 0xfffeu);
+    for (unsigned n = 0; n < 8; ++n)
+        value->bytes[n + 2] = byte_at(p, (uint16_t)(tail + n));
+}
 static void zero_imaginary(fx_platform *p, uint16_t result)
-{ for (unsigned n=10;n<20;++n) put_byte(p,(uint16_t)(result+n),0); }
+{ fx_number_zero_address(p, (uint16_t)(result + 10u)); }
 static void select_initial_format(fx_platform *p)
 { fx_result_set_format(p,byte_at(p,0x80f5)==0xf0 ? 13 : 0); }
 static fx_input_status complete(fx_input_controller *s, uint8_t action)
@@ -218,7 +229,7 @@ static fx_input_status commit_result(fx_platform *p, fx_input_controller *s)
     if (s->context.calculation_mode==0xc1)
         for (unsigned n=0;n<10;++n) put_byte(p,(uint16_t)(0x828a+n),byte_at(p,(uint16_t)(0x8230+n)));
     if (byte_at(p,0x80ff)&16) {
-        fx_number answer[2]; load_records(p,s->context.result_address,answer);
+        fx_number answer[2]; load_answer_primary(p,s->context.result_address,&answer[0]);
         fx_number_zero(&answer[1]); fx_store_ans_records(p,answer);
     } else fx_store_ans_address(p,s->context.result_address);
     if (byte_at(p,(uint16_t)(s->current_source-1))==':') {

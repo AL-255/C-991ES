@@ -29,7 +29,7 @@ def main():
  p=argparse.ArgumentParser(description=__doc__);p.add_argument('--random-cases',type=int,default=12000);p.add_argument('--no-report',action='store_true');a=p.parse_args()
  build=ROOT/'analysis/build/linalg';build.mkdir(parents=True,exist_ok=True)
  sources=['csrc/linalg/fx_linalg.c','csrc/complex/fx_complex.c','csrc/complex/fx_complex_round.c','csrc/numeric/fx_numeric.c']
- headers=['csrc/linalg/fx_linalg.h','csrc/complex/fx_complex.h','csrc/complex/fx_complex_round.h','csrc/numeric/fx_numeric.h']
+ headers=['csrc/linalg/fx_linalg.h','csrc/linalg/fx_linalg_stage.h','csrc/complex/fx_complex.h','csrc/complex/fx_complex_round.h','csrc/numeric/fx_numeric.h']
  library=build/'linalg.so'
  # Expose the actual private numerical selector only in the test library.
  # Production keeps the same public ABI and never includes an oracle.

@@ -103,9 +103,8 @@ fx_ui_status fx_equation_controller_begin(fx_platform *p,fx_equation_controller 
     memset(s,0,sizeof *s);s->cancellation=saved;s->active=1;s->returned=1;
     uint8_t token=get(p,0x80f5);
     if((token==0xed||token==0xf0)&&!get(p,0x80fd)) {
-        if(control&&control->cancelled)return FX_UI_UNIMPLEMENTED;
         fx_solver_result numerical;
-        if(fx_equation_solve_linear(p,&s->returned,&numerical))return FX_UI_UNIMPLEMENTED;
+        if(fx_equation_solve_linear_controlled(p,&s->returned,&numerical,&s->cancellation))return FX_UI_UNIMPLEMENTED;
         s->phase=3;return FX_UI_COMPLETE;
     }
     put(p,0x8129,0);put(p,0x80fd,0);

@@ -110,7 +110,9 @@ if a.optimization is None:
         raise AssertionError('Native/runtime observations differ between O2 and O3')
     report = dict(status='pass', full_firmware_complete=False,
         cases=16, observations_per_optimization=reports[0]['observations'], checks_per_optimization=reports[0]['checks'],
-        original_body_controls=6,pending_body_controls_per_optimization=5,native_completed_former_body_controls_per_optimization=1,
+        original_body_controls=6,
+        pending_body_controls_per_optimization=len(reports[0]['pending_bodies']),
+        native_completed_former_body_controls_per_optimization=len(reports[0]['completed_former_body_controls']),
         optimization_reports=reports,
         numerical_residual_observations_per_optimization=len(reports[0]['numeric_scratch_residuals']),
         limits=reports[0]['limits'])
@@ -312,16 +314,18 @@ with gzip.open(BUILD/'observations.jsonl.gz','wt') as archive:
  raw(0x36);assert step('FIX:precision-wait')==0;release()
  raw(0x34);assert step('FIX:four-digits')==1;release();assert step('FIX:SETUP-return')==1
  assert ram[0x8102]==8 and ram[0x8103]==4;checks+=1
- # WholeD9EE TABLE request is retained at its captured preparation boundary.
- # It must later compose token admission and actualF12A TABLE entry; this
- # test intentionally never pretends that the coarse request is that leaf.
+ # Preserve the original TABLE empty-function readiness sequence. Actual
+ # wholeD9EE now completes; compare its caller return and main continuation.
  seed=boot(0);sequences.append(dict(id=sequence_id,group='TABLE-wholeINPUT-request',initial_ram_zlib_base64=packed(seed),initial_ram_sha256=digest_bytes(seed)))
  raw(0xe4);assert step('TABLE:MODE-entry')==1;assert step('TABLE:MODE-wait')==0;release()
  raw(0x37);assert step('TABLE:MODE-choice',True)==1;release();assert step('TABLE:MODE-return',True)==1
  assert step('TABLE:wholeINPUT-entry',True)==1;assert step('TABLE:wholeINPUT-preparation',True)==1
- assert lib.fx_runtime_step(C.byref(p),s,None,0)==4 and field(9)==2 and field(10)==1
- assert field(21)==0x8154 and field(22)==0x8140
- retain_body('TABLE:retain-wholeINPUT-body')
+ status=step('TABLE:wholeINPUT-completed',True);assert status==1 and field(1)==4
+ completed=dict(sequence=sequence_id,label='TABLE:completed-wholeINPUT-body',former_kind=2,former_operation=1,context_return=field(12),handler_action=field(13),native_completion_pc=nl.harness_get_pc(),ram_sha256=digest_bytes(bytes(ram)))
+ completed_bodies.append(completed);checks+=1
+ archive.write(json.dumps(dict(**completed,type='native-completed-former-body-control'))+'\n')
+ assert step('TABLE:wholeINPUT-cycle-return',True)==1
+ release();assert step('TABLE:next-real-key-wait',True)==0
  # STAT admission remains delegated. The explicit host reply0 must expose
  # its secondSCREEN18 request, rather than reporting INVALID after the real
  # main controller has already advanced that state. This reply control is
@@ -334,19 +338,19 @@ with gzip.open(BUILD/'observations.jsonl.gz','wt') as archive:
  retain_body('STAT:retain-admission')
  assert lib.fx_runtime_accept_body(C.byref(p),s,0,0)==4 and field(9)==1 and field(10)==6
  retain_body('STAT:retain-second-request-after-host-reply')
- # Dedicated MATRIX/VECTOR screen bodies and TABLE wholeD9EE readiness
+ # Dedicated MATRIX/VECTOR screen bodies and the four remaining typed body controls
  # remain explicit runtime requests in this fixture. The completed rich AC
  # control above uses its actual whole UI; it never substitutes direct F12A.
- # No success is synthesized for the five remaining typed body controls.
+ # No success is synthesized for the four remaining typed body controls.
 assert token_index == len(fixture['rows'][sequence_id-1]['physical_tokens'])
-assert len(rows) == 343 and sequence_id == 16 and checks == 1048
-assert len(pending_bodies)==5 and len(completed_bodies)==1
+assert len(rows) == 346 and sequence_id == 16 and checks == 1057
+assert len(pending_bodies)==4 and len(completed_bodies)==2
 assert len(pending_bodies)+len(completed_bodies)==6
 assert_stable()
 changed=[]
 if any(digest(q) != h for q, h in compiled_artifacts.items()):
  raise RuntimeError('Compiled artifact changed during execution')
-report=dict(optimization=a.optimization,sequences=sequences,observations=len(rows),checks=checks,failures=failures,transport_abi=actual_abi,numeric_scratch_residuals=residuals,pending_bodies=pending_bodies,completed_former_body_controls=completed_bodies,input_pins=pins,end_pins={str(q):digest(q) for q in source_paths},source_changes=changed,rows=rows,limits=['Ordinary COMP/CMPLX and the original rich back/AC wholeD9EE control are composed. The same six original body-control recipes remain: five typed requests are retained and one former rich readiness request now completes through actual wholeD9EE and main return. TABLE readiness remains coarseDA58, not actualF12A; retained/STAT-host-reply controls claim no native completion.','Parameter-menu wrapper remains a typed MAIN request; MODE nested MATRIX/VECTOR menus are actually composed.','Physical timer acknowledgment is a named host event, not elapsed wall time or simulated interrupt.','Only witnessed original CPU-frame writes are excluded; arithmetic and MATRIX-cancel default-title/TABLE-mode numeric8000..80DB differences are retained as explicit residuals.','Native machine PC is set only once at reset6F82 for each sequence; every later checkpoint retains actual stack/register continuations.','The scheduler does not model CPU architecture self-test; boot event lifecycle uses the frozen verified-success policy. Welcome/diagnostic and raw reset routes are composed but have not been proved through new uninterrupted6F82 sequences.'])
+report=dict(optimization=a.optimization,sequences=sequences,observations=len(rows),checks=checks,failures=failures,transport_abi=actual_abi,numeric_scratch_residuals=residuals,pending_bodies=pending_bodies,completed_former_body_controls=completed_bodies,input_pins=pins,end_pins={str(q):digest(q) for q in source_paths},source_changes=changed,rows=rows,limits=['Ordinary COMP/CMPLX and the original rich back/AC wholeD9EE control are composed. The same six original body-control recipes remain: four typed requests are retained; the former rich readiness and TABLE empty-function readiness controls now complete through actual wholeD9EE and main return. Full TABLE key/range/grid interaction is proved separately; retained/STAT-host-reply controls claim no native completion.','Parameter-menu wrapper remains a typed MAIN request; MODE nested MATRIX/VECTOR menus are actually composed.','Physical timer acknowledgment is a named host event, not elapsed wall time or simulated interrupt.','Only witnessed original CPU-frame writes are excluded; arithmetic and MATRIX-cancel default-title/TABLE-mode numeric8000..80DB differences are retained as explicit residuals.','Native machine PC is set only once at reset6F82 for each sequence; every later checkpoint retains actual stack/register continuations.','The scheduler does not model CPU architecture self-test; boot event lifecycle uses the frozen verified-success policy. Welcome/diagnostic and raw reset routes are composed but have not been proved through new uninterrupted6F82 sequences.'])
 report['artifacts']={str(q):digest(q) for q in [BUILD/'runtime.so',nd/'nxu8-harness.so',BUILD/'observations.jsonl.gz']}
 assert a.private_report is not None or a.no_report
 if a.private_report:

@@ -162,7 +162,8 @@ int fx_display_complex_result(fx_render *r, uint16_t address, fx_box *box)
         && mode!=6 && mode!=7)
         || (font!=6 && font!=7 && font!=10) || (r->memory[0x80ff]&0x10)
         || r->memory[0x8127] || (!fx_display_has_formula_view(r)
-            && !(r->memory[0x80fc]==0xa0 && r->memory[0x80fd]==2))) return -1;
+            && !(r->memory[0x80fc]==0xa0 && r->memory[0x80fd]==2)
+            && !(mode==0x88 && r->memory[0x80fc]==6))) return -1;
     int permitted=fx_display_has_natural_input(r)||fx_display_has_natural_result(r);
     int natural=permitted && selection!=10;
     /* A natural result in a mode without persistent scratch uses the native

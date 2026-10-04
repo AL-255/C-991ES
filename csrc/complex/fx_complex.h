@@ -63,9 +63,32 @@ typedef fx_numeric_status (*fx_complex_square_root)(fx_number *out,
 fx_numeric_status fx_complex_magnitude_prepared(fx_complex *out,
     const fx_complex *in, int exact_math, fx_complex_square_root root,
     void *userdata);
+/* Mathematical preparation policies run at the actual classify, decimal
+ * preparation and root stages. They may commit a prepared data workspace;
+ * no CPU state or completed-coordinate snapshot is supplied. */
+typedef fx_numeric_status (*fx_complex_decimal_prepare)(fx_number *out,
+    const fx_number *input, void *userdata);
+typedef fx_numeric_status (*fx_complex_scalar_classify)(uint8_t *classification,
+    const fx_number *input, void *userdata);
+typedef fx_numeric_status (*fx_complex_binary_prepare)(fx_number *out,
+    const fx_number *left, const fx_number *right,
+    fx_binary_op operation, void *userdata);
+typedef struct {
+    fx_complex_square_root root;
+    fx_complex_decimal_prepare decimal;
+    fx_complex_scalar_classify classify;
+    fx_complex_binary_prepare binary;
+    void *userdata;
+} fx_complex_preparation;
+fx_numeric_status fx_complex_magnitude_with_preparation(fx_complex *out,
+    const fx_complex *in, int exact_math,
+    const fx_complex_preparation *preparation);
 /* Native1CBFC permits a zero imaginary input only. Negative real inputs
  * produce a positive imaginary root; compact real surds are made decimal
  * before rooting. Admission errors preserve the input imaginary record. */
+fx_numeric_status fx_complex_sqrt_with_preparation(fx_complex *out,
+    const fx_complex *in, int exact_math,
+    const fx_complex_preparation *preparation);
 fx_numeric_status fx_complex_sqrt(fx_complex *out, const fx_complex *in,
                                   int exact_math);
 #endif

@@ -32,7 +32,7 @@ def main():
   ap.error('Canonical publication requires the complete default O2 prepared-controller corpus; use --no-report for other runs')
  HERE.mkdir(parents=True,exist_ok=True)
  archive=FIXTURES/args.corpus/'native-states.jsonl.gz';original_report=FIXTURES/args.corpus/'observations.json'
- names=list(dict.fromkeys(['csrc/'+m+'.c' for m in MODULES]+['csrc/stats/fx_stats_editor.c']))
+ names=list(dict.fromkeys(['csrc/'+m+'.c' for m in MODULES]+['csrc/stats/fx_stats_editor.c','csrc/table/fx_table_controller.c']))
  deps=[ROOT/n for n in implementation_inputs(ROOT,names)]+[ROOT/'csrc/table/fx_table_controller.c',ROOT/'csrc/table/fx_table_controller.h',Path(__file__),archive,original_report,
   *[ROOT/'tools'/n for n in ('c_build_inputs.py','test_input_controller_c.py','test_error_event_c.py','test_key_controller_c.py','test_platform_c.py')],
   FIXTURES/args.corpus/'collect.py',FIXTURES/args.corpus/'oracle.c',ROOT/'firmware/fx-991es-plus-c-ver4.bin',ROOT/'analysis/disassembly/complete.asm']
@@ -44,7 +44,7 @@ def main():
   assert recorded==[pins[str(FIXTURES/args.corpus/basename)]],('Original source transport mismatch',basename)
  libpath=HERE/('controller-'+args.optimization+'.so')
  subprocess.run(['gcc','-std=c99','-'+args.optimization,'-Wall','-Wextra','-Werror','-shared','-fPIC','-Wl,--no-undefined',
-  '-I'+str(ROOT/'csrc/table'),'-I'+str(ROOT/'csrc'),*[str(ROOT/n) for n in names],str(ROOT/'csrc/table/fx_table_controller.c'),'-o',str(libpath)],check=True)
+  '-I'+str(ROOT/'csrc/table'),'-I'+str(ROOT/'csrc'),*[str(ROOT/n) for n in names],'-o',str(libpath)],check=True)
  pins[str(libpath)]=sha(libpath)
  lib=C.CDLL(str(libpath));pp=C.POINTER(Platform);ss=C.POINTER(Controller)
  lib.fx_table_controller_begin.argtypes=[pp,ss,C.POINTER(Context)];lib.fx_table_controller_accept_execution.argtypes=[pp,ss,C.c_int,C.c_uint16]

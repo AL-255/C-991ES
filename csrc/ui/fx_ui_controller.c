@@ -1,6 +1,8 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 #include "fx_ui_controller.h"
 #include "fx_equation_controller.h"
+#include "../table/fx_table_runtime.h"
+#include "../table/fx_table_presentation.h"
 #include "fx_input_display.h"
 #include "fx_input_recover.h"
 #include "fx_editor.h"
@@ -17,7 +19,7 @@
 #include "../trig/fx_math_context.h"
 #include <string.h>
 
-enum { UI_READY=1, UI_INPUT, UI_DONE, UI_RESET, UI_REQUEST, UI_ERROR };
+enum { UI_READY=1, UI_INPUT, UI_DONE, UI_RESET, UI_REQUEST, UI_ERROR, UI_TABLE };
 static uint8_t read_byte(fx_platform *p,uint16_t a) { return fx_data_read(p,0,a); }
 static void write_byte(fx_platform *p,uint16_t a,uint8_t v) { fx_data_write(p,0,a,v); }
 static int editing(fx_platform *p) { return (read_byte(p,0x80fe)&15)==1; }
@@ -118,7 +120,7 @@ static int prepare_edit(fx_platform *p)
     uint8_t token=read_byte(p,0x80f5);
     if (fx_editor_has_natural_input(p) && (token==0xae || token==0x9f)) token=0;
     uint8_t kind=fx_decode_evaluator_token(token,read_byte(p,0x80f9)).kind;
-    if (!(read_byte(p,0x80f9)==0x45 && read_byte(p,0x80fc)==21) && (kind==2 || kind==3 || kind==8) && insert(p,0x8b,0)<0) return -1;
+    if (!(read_byte(p,0x80f9)==0x45 && read_byte(p,0x80fc)==21) && !(read_byte(p,0x80f9)==0x88 && read_byte(p,0x80fc)!=1) && (kind==2 || kind==3 || kind==8) && insert(p,0x8b,0)<0) return -1;
     return 0;
 }
 
@@ -148,14 +150,17 @@ static fx_ui_status redraw(fx_platform *p,fx_ui_controller *s,int expression)
     uint8_t screen=read_byte(p,0x80fc);
     int bank_screen=(s->context.calculation_mode==6 || s->context.calculation_mode==7)
         && (screen==19 || screen==20);
-    if (s->context.special_view || (screen!=1 && !bank_screen && !(s->context.calculation_mode==0x45 && screen==21)))
+    int table_screen=s->context.calculation_mode==0x88 && (screen==1 || screen==6);
+    if ((!table_screen && s->context.special_view) || (screen!=1 && !bank_screen && !table_screen && !(s->context.calculation_mode==0x45 && screen==21)))
         return request(s,FX_UI_REQUEST_SPECIAL_CONTEXT);
     fx_render r={p->rom,p->rom_size,p->ram};
     if (expression && (!bank_screen || read_byte(p,0x80fe)==1)) {
         int edit=read_byte(p,0x80fe)==1;
         write_byte(p,0x8126,(uint8_t)edit);
         if (!edit) write_byte(p,0x8114,0);
-        if (s->context.calculation_mode==0x45 && read_byte(p,0x80fc)==1) {
+        if (table_screen) {
+            if (fx_table_refresh_expression(p)) return FX_UI_UNIMPLEMENTED;
+        } else if (s->context.calculation_mode==0x45 && read_byte(p,0x80fc)==1) {
             uint8_t index=read_byte(p,0x8113);
             if(!index || index>3 || read_byte(p,0x80fa)>2)return FX_UI_UNIMPLEMENTED;
             fx_clear_framebuffer(&r);
@@ -205,6 +210,44 @@ static fx_ui_status finish_action(fx_platform *p,fx_ui_controller *s,uint8_t act
     s->phase=UI_DONE; return FX_UI_COMPLETE;
 }
 
+/* A TABLE row readiness poll carries only external cancellation; all device
+ * writes remain the named5550 implementation. */
+typedef struct { fx_platform *p; fx_ui_controller *s; } table_poll_context;
+static int table_poll(void *userdata,uint8_t *ram)
+{
+    (void)ram;
+    table_poll_context *poll=userdata;
+    int cancel=poll->s->cancellation.cancelled &&
+        poll->s->cancellation.cancelled(poll->s->cancellation.userdata);
+    return fx_table_poll_device(poll->p,cancel ? 2 : 0);
+}
+
+static fx_ui_status table_status(fx_platform *p,fx_ui_controller *s,
+    fx_table_controller_status status)
+{
+    if(status==FX_TABLE_CONTROLLER_REQUEST) { s->phase=UI_TABLE; return FX_UI_PREPARED; }
+    if(status==FX_TABLE_CONTROLLER_WAIT) { s->phase=UI_TABLE; return FX_UI_WAIT; }
+    if(status==FX_TABLE_CONTROLLER_EXPORT) return FX_UI_EXPORT;
+    if(status==FX_TABLE_CONTROLLER_RESET) { s->phase=UI_RESET; return FX_UI_RESET; }
+    if(status<0) return status==FX_TABLE_CONTROLLER_RESOURCE_LIMIT ? FX_UI_RESOURCE_LIMIT : FX_UI_UNIMPLEMENTED;
+    if(status!=FX_TABLE_CONTROLLER_COMPLETE)return FX_UI_INVALID;
+    s->context=s->table.context;
+    uint8_t action;
+    if(fx_table_controller_finish(&s->table,&action)!=FX_TABLE_CONTROLLER_COMPLETE)return FX_UI_INVALID;
+    return finish_action(p,s,action);
+}
+
+static fx_ui_status prepared_evaluation(fx_platform *p,fx_ui_controller *s)
+{
+    if(s->context.calculation_mode==0x88)
+        return table_status(p,s,fx_table_controller_begin(p,&s->table,&s->context));
+    fx_input_status status=fx_input_controller_begin(p,&s->input,&s->context,&s->cancellation);
+    if (status<0) return status==FX_INPUT_RESOURCE_LIMIT ? FX_UI_RESOURCE_LIMIT : FX_UI_UNIMPLEMENTED;
+    if (status==FX_INPUT_PREPARED) { s->phase=UI_INPUT; return FX_UI_PREPARED; }
+    s->context=s->input.context;
+    return finish_action(p,s,s->input.handler_action);
+}
+
 static fx_ui_status input_action(fx_platform *p,fx_ui_controller *s)
 {
     uint8_t token=read_byte(p,0x80f5);
@@ -227,20 +270,12 @@ static fx_ui_status input_action(fx_platform *p,fx_ui_controller *s)
     if (needs_left && (was_nonempty || s->context.saved_math_result || s->context.special_view))
         return finish_action(p,s,1);
     accept_token(p,fx_key_can_math_input(p) ? 0xf0 : 0xed,1);
-    fx_input_status status=fx_input_controller_begin(p,&s->input,&s->context,&s->cancellation);
-    if (status<0) return status==FX_INPUT_RESOURCE_LIMIT ? FX_UI_RESOURCE_LIMIT : FX_UI_UNIMPLEMENTED;
-    if (status==FX_INPUT_PREPARED) { s->phase=UI_INPUT; return FX_UI_PREPARED; }
-    s->context=s->input.context;
-    return finish_action(p,s,s->input.handler_action);
+    return prepared_evaluation(p,s);
 }
 
 static fx_ui_status evaluate_action(fx_platform *p,fx_ui_controller *s)
 {
-    fx_input_status status=fx_input_controller_begin(p,&s->input,&s->context,&s->cancellation);
-    if (status<0) return status==FX_INPUT_RESOURCE_LIMIT ? FX_UI_RESOURCE_LIMIT : FX_UI_UNIMPLEMENTED;
-    if (status==FX_INPUT_PREPARED) { s->phase=UI_INPUT; return FX_UI_PREPARED; }
-    s->context=s->input.context;
-    return finish_action(p,s,s->input.handler_action);
+    return prepared_evaluation(p,s);
 }
 
 static fx_ui_status command(fx_platform *p,fx_ui_controller *s,unsigned index)
@@ -262,7 +297,7 @@ static fx_ui_status command(fx_platform *p,fx_ui_controller *s,unsigned index)
     case 13:case 16:
         return evaluate_action(p,s);
     case 4: {
-        if (!fx_editor_has_natural_input(p)) {
+        if (!(s->context.calculation_mode==0x88 && read_byte(p,0x80fc)==1) && !fx_editor_has_natural_input(p)) {
             fx_render r={p->rom,p->rom_size,p->ram};
             const fx_number zero={{0}};
             if (fx_display_special_real_number(&r,&zero,NULL)!=1) return FX_UI_UNIMPLEMENTED;
@@ -429,14 +464,16 @@ static fx_ui_status data_action(fx_platform *p,fx_ui_controller *s)
     }
     if (read_byte(p,0x80fe)&64) return finish_action(p,s,0);
     token=read_byte(p,0x80f5);
-    if (s->context.calculation_mode==0xc4) {
-        for (uint16_t a=0x1077;a<0x1081;++a) {
+    if (s->context.calculation_mode==0xc4 || s->context.calculation_mode==0x88) {
+        uint16_t first=s->context.calculation_mode==0x88 ? 0x106d : 0x1077;
+        for (uint16_t a=first;a<0x1081;++a) {
             uint8_t forbidden=read_byte(p,a);
             if (!forbidden) break;
             if (forbidden==token) { token=0; break; }
         }
         write_byte(p,0x80f5,token);
     }
+    if (s->context.calculation_mode==0x88 && token==0x3d) { token=0; write_byte(p,0x80f5,0); }
     if (token==0xa4 && !read_byte(p,0x8106)) { token=0; write_byte(p,0x80f5,0); }
     if (!token) return finish_action(p,s,0);
     if (fx_key_is_data_token(p,token) && prepare_edit(p)) return FX_UI_UNIMPLEMENTED;
@@ -484,6 +521,16 @@ fx_ui_status fx_ui_controller_tick(fx_platform *p,fx_ui_controller *s)
         }
         return finish_action(p,s,1);
     }
+    if(s->phase==UI_TABLE) {
+        fx_table_controller_status status;
+        if(s->table.request==FX_TABLE_REQUEST_PARAMETER_EVALUATION ||
+           s->table.request==FX_TABLE_REQUEST_GENERATION) {
+            table_poll_context poll={p,s};
+            fx_table_execution execution;
+            status=fx_table_execute_request(p,&s->table,table_poll,&poll,&execution);
+        } else status=fx_table_controller_tick(p,&s->table);
+        return table_status(p,s,status);
+    }
     if (s->phase==UI_INPUT) {
         fx_input_status status=fx_input_controller_tick(p,&s->input);
         if (status==FX_INPUT_WAIT) return FX_UI_WAIT;
@@ -495,11 +542,11 @@ fx_ui_status fx_ui_controller_tick(fx_platform *p,fx_ui_controller *s)
     }
     if (s->phase!=UI_READY) return FX_UI_INVALID;
     if ((s->context.calculation_mode!=0xc1 && s->context.calculation_mode!=0xc4 && s->context.calculation_mode!=6 &&
-         s->context.calculation_mode!=7 && (s->context.calculation_mode!=0x45 || read_byte(p,0x80fa)<1 || read_byte(p,0x80fa)>2)) ||
+         s->context.calculation_mode!=7 && s->context.calculation_mode!=0x88 && (s->context.calculation_mode!=0x45 || read_byte(p,0x80fa)<1 || read_byte(p,0x80fa)>2)) ||
         (read_byte(p,0x80fc)!=1 && !((s->context.calculation_mode==6 ||
           s->context.calculation_mode==7) && (read_byte(p,0x80fc)==19 ||
-          read_byte(p,0x80fc)==20)) && !(s->context.calculation_mode==0x45 && read_byte(p,0x80fc)==21) && !(read_byte(p,0x80fc)==0xa0 &&
-          read_byte(p,0x80fd)!=2)) || s->context.special_view)
+          read_byte(p,0x80fc)==20)) && !(s->context.calculation_mode==0x88 && read_byte(p,0x80fc)==6) && !(s->context.calculation_mode==0x45 && read_byte(p,0x80fc)==21) && !(read_byte(p,0x80fc)==0xa0 &&
+          read_byte(p,0x80fd)!=2)) || (s->context.special_view && !(s->context.calculation_mode==0x88 && read_byte(p,0x80fc)==6)))
         return request(s,FX_UI_REQUEST_SPECIAL_CONTEXT);
     if (s->refresh_only) return redraw(p,s,1);
     uint8_t token=read_byte(p,0x80f5);
@@ -525,4 +572,10 @@ fx_ui_status fx_ui_controller_finish(fx_ui_controller *s,uint8_t *context_return
     if (context_return) *context_return=s->context.return_value;
     s->active=0;
     return s->phase==UI_RESET ? FX_UI_RESET : FX_UI_COMPLETE;
+}
+
+uint8_t fx_ui_controller_export_mask(const fx_ui_controller *s)
+{
+    if(!s)return 0;
+    return s->phase==UI_TABLE ? s->table.error.key.export_mask : s->input.error.key.export_mask;
 }

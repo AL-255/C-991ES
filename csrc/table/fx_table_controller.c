@@ -6,6 +6,8 @@
 #include "../platform/fx_boot.h"
 #include "../platform/fx_persistent.h"
 #include "../stats/fx_stats_editor.h"
+#include "../numeric/fx_surd_components.h"
+#include "../numeric/fx_raw_fraction_convert.h"
 #include <string.h>
 
 enum {
@@ -46,11 +48,33 @@ static void write_number(fx_platform *p, uint16_t a, const fx_number *n)
     for (unsigned i = 0; i < 10; i++) write_byte(p, (uint16_t)(a + i), n->bytes[i]);
 }
 
-static void copy_number(fx_platform *p, uint16_t to, uint16_t from)
+/* A scalar conversion and5166 copy each read the prefix word before the
+ * aligned eight-byte tail. Keep the converter's live source commit before
+ * re-reading that record for the caller copy, including odd source addresses. */
+static fx_number physical_scalar(fx_platform *p,uint16_t source)
 {
-    fx_number n = read_number(p, from);
-    write_number(p, to, &n);
+    fx_number value;
+    value.bytes[0]=read_byte(p,source);
+    value.bytes[1]=read_byte(p,(uint16_t)(source+1));
+    uint16_t tail=(uint16_t)((source+2u)&0xfffeu);
+    for(unsigned i=0;i<8;++i)value.bytes[i+2]=read_byte(p,(uint16_t)(tail+i));
+    return value;
 }
+static int prepare_scalar(fx_platform *p,uint16_t source)
+{
+    if(source<0x8000 || source>65526)return -1;
+    if((read_byte(p,source)&0xf0u)==0x80 &&
+       fx_surd_components_convert_live(p->ram,source,source)!=FX_NUMERIC_OK)return -1;
+    uint8_t header=read_byte(p,source);
+    if(header>0x4f)return 0;
+    write_byte(p,source,(uint8_t)(header&~0x40u));
+    fx_number value=physical_scalar(p,source),converted;
+    fx_numeric_status status=(value.bytes[0]&0xb0u)==0x20 ?
+        fx_raw_fraction_convert(&converted,&value) : fx_number_to_decimal(&converted,&value);
+    if(status!=FX_NUMERIC_OK)return -1;
+    write_number(p,source,&converted);return 0;
+}
+
 
 static int copy_expression(fx_platform *p, uint16_t to, uint16_t from)
 {
@@ -120,7 +144,7 @@ fx_table_controller_status fx_table_controller_begin(fx_platform *p,
     s->context = *c;
     s->active = 1;
     if (read_byte(p, 0x80f9) != 0x88 || c->calculation_mode != 0x88 ||
-        c->natural_input || c->saved_math_result)
+        c->saved_math_result)
         return FX_TABLE_CONTROLLER_UNIMPLEMENTED;
     uint8_t screen = read_byte(p, 0x80fc), item = read_byte(p, 0x80fd);
     if (screen == 1) {
@@ -168,23 +192,25 @@ static fx_table_controller_status parameter_commit(fx_platform *p, fx_table_cont
     uint8_t kind = read_byte(p, s->context.result_address) & 0xf0u;
     if (kind == 0x60 || kind == 0x90) return FX_TABLE_CONTROLLER_UNIMPLEMENTED;
     if (s->execution_status == 0 || s->execution_status == 36) {
-        for (unsigned i = 10; i < 20; i++) write_byte(p, (uint16_t)(s->context.result_address + i), 0);
+        fx_number_zero_address(p, (uint16_t)(s->context.result_address + 10u));
     } else if (s->execution_status == 34) write_byte(p, 0x80ff, 18);
     else if (s->execution_status == 35) write_byte(p, 0x80ff, 17);
     else if (s->execution_status == 37) {
         if (read_byte(p, (uint16_t)(s->context.result_address + 10)) == 0x70) {
-            for (unsigned i = 10; i < 20; i++) write_byte(p, (uint16_t)(s->context.result_address + i), 0);
+            fx_number_zero_address(p, (uint16_t)(s->context.result_address + 10u));
         }
         else write_byte(p, 0x80ff, 20);
     }
     if (read_byte(p, 0x80ff) & 16u) {
-        for (unsigned i = 10; i < 20; i++) write_byte(p, (uint16_t)(s->context.result_address + i), 0);
+        fx_number_zero_address(p, (uint16_t)(s->context.result_address + 10u));
     }
     write_byte(p, 0x80ff, 0);
     fx_result_clear_display_state(p);
     uint8_t item = read_byte(p, 0x80fd);
     if (item < 1 || item > 3) return FX_TABLE_CONTROLLER_UNIMPLEMENTED;
-    copy_number(p, (uint16_t)(0x829e + 10u * (item - 1)), s->context.result_address);
+    if(prepare_scalar(p,s->context.result_address))return FX_TABLE_CONTROLLER_UNIMPLEMENTED;
+    fx_number committed=physical_scalar(p,s->context.result_address);
+    write_number(p,(uint16_t)(0x829e + 10u * (item - 1)),&committed);
     write_byte(p, 0x80fd, (uint8_t)(item + 1));
     write_byte(p, 0x80fe, 3);
     s->context.return_value = 0;

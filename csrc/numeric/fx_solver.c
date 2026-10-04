@@ -1,6 +1,8 @@
 /* Equation formulas in the original finite-scalar operation order.
  * GPL-3.0-or-later. No ROM execution or host floating point. */
 #include "fx_solver.h"
+#include "fx_solver_stage.h"
+#include "../linalg/fx_linalg_stage.h"
 #include "fx_root.h"
 #include "../linalg/fx_linalg.h"
 #include "../trig/fx_trig_inverse.h"
@@ -91,8 +93,44 @@ static fx_linalg_context following_context(const fx_solver_context *context,
         ? context->cancel_at - r->cancellation_checks : 0;
     return next;
 }
+typedef struct {
+    fx_solver_result *result;
+    fx_solver_stage_callback callback;
+    void *userdata;
+    fx_solver_linear_stage stage;
+} linear_observer;
+static int observe_matrix(const fx_linalg_result *matrix, void *userdata)
+{
+    linear_observer *observer = userdata;
+    fx_solver_result snapshot = *observer->result;
+    unsigned i;
+    snapshot.cancellation_checks += matrix->cancellation_checks;
+    snapshot.coefficient_rows = matrix->value.rows;
+    snapshot.coefficient_columns = matrix->value.columns;
+    for (i = 0; i < 9; ++i)
+        snapshot.coefficient_work[i] = matrix->value.cells[i];
+    return observer->callback
+        ? observer->callback(&snapshot, observer->stage, observer->userdata) : 0;
+}
+static int observe_solver_poll(fx_solver_result *result,
+                              const fx_solver_context *context,
+                              linear_observer *observer,
+                              fx_solver_linear_stage stage)
+{
+    int requested = 0;
+    ++result->cancellation_checks;
+    if (observer && observer->callback)
+        requested = observer->callback(result, stage, observer->userdata);
+    if (requested || (context->cancel_at &&
+                      context->cancel_at == result->cancellation_checks)) {
+        result->firmware_status = 1;
+        return 1;
+    }
+    return 0;
+}
 static fx_numeric_status linear(fx_solver_result *r, const fx_number c[12],
-                                unsigned dimension, const fx_solver_context *context)
+                                unsigned dimension, const fx_solver_context *context,
+                                linear_observer *observer)
 {
     fx_linalg_value matrix, rhs;
     fx_linalg_result stage;
@@ -114,17 +152,21 @@ static fx_numeric_status linear(fx_solver_result *r, const fx_number c[12],
     status = fx_linalg_unary(&stage, &rhs, FX_LINALG_RATIONAL_PREPARE, &next);
     if (status != FX_NUMERIC_OK) return status;
     rhs = stage.value; memcpy(r->root_work, rhs.cells, sizeof rhs.cells);
-    if (poll(r, context)) return FX_NUMERIC_OK;
+    if (observe_solver_poll(r, context, observer, FX_SOLVER_RHS_PREPARED)) return FX_NUMERIC_OK;
     next = following_context(context, r);
-    status = fx_linalg_unary(&stage, &matrix, FX_LINALG_INVERSE, &next);
+    if (observer) observer->stage = FX_SOLVER_MATRIX_INVERTING;
+    status = fx_linalg_inverse_observed(&stage, &matrix, &next,
+        observer ? observe_matrix : NULL, observer);
     if (status != FX_NUMERIC_OK) return status;
     matrix = stage.value;
     r->cancellation_checks += stage.cancellation_checks;
     r->firmware_status = stage.firmware_status;
     memcpy(r->coefficient_work, matrix.cells, sizeof matrix.cells);
-    if (r->firmware_status || poll(r, context)) return FX_NUMERIC_OK;
+    if (r->firmware_status || observe_solver_poll(r, context, observer, FX_SOLVER_INVERSE_PREPARED)) return FX_NUMERIC_OK;
     next = following_context(context, r);
-    status = fx_linalg_binary(&stage, &matrix, &rhs, FX_LINALG_MATRIX_MULTIPLY, &next);
+    if (observer) observer->stage = FX_SOLVER_MATRIX_MULTIPLYING;
+    status = fx_linalg_multiply_observed(&stage, &matrix, &rhs, &next,
+        observer ? observe_matrix : NULL, observer);
     if (status != FX_NUMERIC_OK) return status;
     r->cancellation_checks += stage.cancellation_checks;
     r->firmware_status = stage.firmware_status;
@@ -368,7 +410,7 @@ fx_numeric_status fx_solver_solve(fx_solver_result *out,
         return FX_NUMERIC_INVALID;
     memcpy(input, coefficients, sizeof input); memset(&result, 0, sizeof result);
     if (kind < FX_SOLVER_QUADRATIC) {
-        status = linear(&result, input, (unsigned)kind+1, context);
+        status = linear(&result, input, (unsigned)kind+1, context, NULL);
         if (status != FX_NUMERIC_OK) return status;
     } else {
         result.coefficient_rows = result.coefficient_columns = result.root_rows = result.root_columns = 3;
@@ -429,4 +471,30 @@ fx_numeric_status fx_solver_cleanup(fx_solver_result *out,
         result.firmware_status = native;
     }
     *out = result; return FX_NUMERIC_OK;
+}
+
+fx_numeric_status fx_solver_solve_linear_observed(fx_solver_result *out,
+    const fx_number coefficients[12], fx_solver_kind kind,
+    const fx_solver_context *context, fx_solver_stage_callback callback,
+    void *userdata)
+{
+    fx_solver_result result;
+    fx_number input[12];
+    fx_numeric_status status;
+    unsigned i;
+    linear_observer observer = {&result, callback, userdata, FX_SOLVER_RHS_PREPARED};
+    if (!out || !coefficients || !context || context->exact_math > 1 ||
+        context->real_only > 1 || kind < FX_SOLVER_LINEAR2 || kind > FX_SOLVER_LINEAR3)
+        return FX_NUMERIC_INVALID;
+    memcpy(input, coefficients, sizeof input);
+    memset(&result, 0, sizeof result);
+    status = linear(&result, input, (unsigned)kind + 1, context, &observer);
+    if (status != FX_NUMERIC_OK) return status;
+    if (result.firmware_status) result.count = 0;
+    for (i = 0; i < result.count; ++i) {
+        result.roots[i].real = result.coefficient_work[i*3];
+        result.roots[i].imaginary = result.coefficient_work[i*3+1];
+    }
+    *out = result;
+    return FX_NUMERIC_OK;
 }
