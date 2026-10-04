@@ -27,6 +27,10 @@ fx_numeric_status fx_complex_dispatch_unary(fx_complex *out, const fx_complex *i
 fx_numeric_status fx_complex_dispatch_binary(fx_complex *out, const fx_complex *left,
     const fx_complex *right, uint8_t token, const fx_complex_dispatch_context *context,
     uint8_t *firmware_status);
+fx_numeric_status fx_complex_dispatch_binary_with_preparation(fx_complex *out, const fx_complex *left,
+    const fx_complex *right, uint8_t token, const fx_complex_dispatch_context *context,
+    uint8_t *firmware_status,
+    const fx_complex_preparation *preparation);
 /* Cleanup alone also accepts scalar contexts: C4 skips compact-real surds,
  * marked-real decimals clean only real, other C4 records clean both; scalar
  * contexts skip headers60 and above. A nonzero leaf status bypasses cleanup. */

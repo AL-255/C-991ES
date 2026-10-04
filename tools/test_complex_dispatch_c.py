@@ -19,7 +19,12 @@ parser.add_argument('--no-report',action='store_true')
 args=parser.parse_args()
 build=ROOT/'analysis/build/complex-dispatch'
 build.mkdir(parents=True,exist_ok=True)
-SOURCES=['complex/fx_complex_dispatch.c','complex/fx_complex.c','complex/fx_complex_angle.c','complex/fx_complex_round.c','numeric/fx_numeric.c','numeric/fx_transcend.c','numeric/fx_power.c','numeric/fx_root.c','numeric/fx_combinatorics.c','numeric/fx_logbase.c','trig/fx_trig.c','trig/fx_trig_math.c','trig/fx_trig_inverse.c','trig/fx_trig_hyperbolic.c']
+SOURCES=['complex/fx_complex_dispatch.c','complex/fx_complex.c','complex/fx_complex_angle.c','complex/fx_complex_round.c','numeric/fx_numeric.c','numeric/fx_transcend.c','numeric/fx_power.c','numeric/fx_root.c','numeric/fx_combinatorics.c','numeric/fx_logbase.c','trig/fx_trig.c','trig/fx_trig_math.c','trig/fx_trig_inverse.c','trig/fx_trig_hyperbolic.c',
+           'numeric/fx_surd_components.c',
+           'numeric/fx_raw_decimal_divide.c',
+           'numeric/fx_raw_decimal_multiply_add.c',
+           'numeric/fx_raw_decimal_parts.c'
+]
 subprocess.run(['gcc','-std=c99','-O2','-Wall','-Wextra','-Werror','-pedantic','-shared','-fPIC',*[str(ROOT/'csrc'/p) for p in SOURCES],'-o',str(build/'complex-dispatch.so')],check=True)
 lib=C.CDLL(str(build/'complex-dispatch.so'));ptr=C.POINTER(Complex);ctxptr=C.POINTER(Context);byteptr=C.POINTER(C.c_uint8)
 lib.fx_complex_dispatch_binary.argtypes=[ptr,ptr,ptr,C.c_uint8,ctxptr,byteptr]
@@ -271,7 +276,13 @@ if not args.no_report:
              'complex/fx_complex_round.h','numeric/fx_numeric.h','numeric/fx_transcend.h',
              'numeric/fx_transcend_internal.h','numeric/fx_transcend_guarded.h',
              'numeric/fx_root.h','numeric/fx_combinatorics.h','numeric/fx_logbase.h',
-             'trig/fx_trig.h','trig/fx_trig_math.h','trig/fx_trig_inverse.h','trig/fx_trig_hyperbolic.h']
+             'trig/fx_trig.h','trig/fx_trig_math.h','trig/fx_trig_inverse.h','trig/fx_trig_hyperbolic.h',
+               'numeric/fx_surd_components.h',
+               'numeric/fx_numeric_components.h',
+               'numeric/fx_raw_decimal_divide.h',
+               'numeric/fx_raw_decimal_multiply_add.h',
+               'numeric/fx_raw_decimal_parts.h'
+]
     write_report('analysis/c-verification/complex_dispatch.json',report,
                  ['csrc/'+p for p in SOURCES+headers]+['tools/trace_natural_result.py','tools/c_verification.py'],'tools/test_complex_dispatch_c.py')
 print(json.dumps({'status':'pass','total_cases':total,'cases':counts,'full_firmware_complete':False}))

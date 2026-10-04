@@ -61,12 +61,23 @@ def main():
                'csrc/linalg/fx_linalg.c', 'csrc/complex/fx_complex.c',
                'csrc/complex/fx_complex_round.c', 'csrc/numeric/fx_root.c',
                'csrc/numeric/fx_transcend.c', 'csrc/trig/fx_trig_inverse.c',
-               'csrc/trig/fx_trig_math.c', 'csrc/trig/fx_trig.c']
+               'csrc/trig/fx_trig_math.c', 'csrc/trig/fx_trig.c',
+                 'csrc/numeric/fx_surd_components.c',
+                 'csrc/numeric/fx_raw_decimal_divide.c',
+                 'csrc/numeric/fx_raw_decimal_multiply_add.c',
+                 'csrc/numeric/fx_raw_decimal_parts.c'
+]
     headers = ['csrc/numeric/fx_solver.h', 'csrc/numeric/fx_solver_stage.h', 'csrc/numeric/fx_numeric.h',
                'csrc/linalg/fx_linalg.h', 'csrc/linalg/fx_linalg_stage.h', 'csrc/complex/fx_complex.h',
                'csrc/complex/fx_complex_round.h', 'csrc/numeric/fx_root.h',
                'csrc/numeric/fx_transcend.h', 'csrc/numeric/fx_transcend_internal.h', 'csrc/numeric/fx_transcend_guarded.h',
-               'csrc/trig/fx_trig_inverse.h', 'csrc/trig/fx_trig_math.h', 'csrc/trig/fx_trig.h']
+               'csrc/trig/fx_trig_inverse.h', 'csrc/trig/fx_trig_math.h', 'csrc/trig/fx_trig.h',
+                 'csrc/numeric/fx_surd_components.h',
+                 'csrc/numeric/fx_numeric_components.h',
+                 'csrc/numeric/fx_raw_decimal_divide.h',
+                 'csrc/numeric/fx_raw_decimal_multiply_add.h',
+                 'csrc/numeric/fx_raw_decimal_parts.h'
+]
     library = build / 'solver.so'
     subprocess.run(['gcc', '-std=c99', '-O3', '-Wall', '-Wextra', '-Werror', '-pedantic',
                     '-shared', '-fPIC', *(str(ROOT / p) for p in sources), '-o', str(library)], check=True)

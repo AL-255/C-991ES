@@ -28,7 +28,12 @@ def main():
     library = build / 'complex-angles.so'
     sources = ['csrc/complex/fx_complex.c','csrc/complex/fx_complex_angle.c',
                'csrc/numeric/fx_numeric.c','csrc/trig/fx_trig.c',
-               'csrc/trig/fx_trig_math.c','csrc/trig/fx_trig_inverse.c']
+               'csrc/trig/fx_trig_math.c','csrc/trig/fx_trig_inverse.c',
+                 'csrc/numeric/fx_surd_components.c',
+                 'csrc/numeric/fx_raw_decimal_divide.c',
+                 'csrc/numeric/fx_raw_decimal_multiply_add.c',
+                 'csrc/numeric/fx_raw_decimal_parts.c'
+]
     subprocess.run(['gcc','-std=c99','-O2','-Wall','-Wextra','-Werror','-pedantic','-shared','-fPIC',
                     *(str(ROOT / source) for source in sources),'-o',str(library)],check=True)
     lib = C.CDLL(str(library));pointer=C.POINTER(Complex)
@@ -158,7 +163,13 @@ def main():
         else:write_report(path,report,[*sources,'csrc/complex/fx_complex.h','csrc/complex/fx_complex_angle.h',
                                       'csrc/numeric/fx_numeric.h','csrc/trig/fx_trig.h',
                                       'csrc/trig/fx_trig_math.h','csrc/trig/fx_trig_inverse.h',
-                                      'tools/test_complex_c.py','tools/trace_natural_result.py','tools/c_verification.py'],
+                                      'tools/test_complex_c.py','tools/trace_natural_result.py','tools/c_verification.py',
+                                         'csrc/numeric/fx_surd_components.h',
+                                         'csrc/numeric/fx_numeric_components.h',
+                                         'csrc/numeric/fx_raw_decimal_divide.h',
+                                         'csrc/numeric/fx_raw_decimal_multiply_add.h',
+                                         'csrc/numeric/fx_raw_decimal_parts.h'
+],
                           'tools/test_complex_angles_c.py')
     print(f'{sum(counts.values())} complex coordinate checks, {len(failures)} mismatches')
     for failure in failures[:20]:print(failure)

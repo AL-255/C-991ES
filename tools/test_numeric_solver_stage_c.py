@@ -35,7 +35,11 @@ SOURCES = [
     'csrc/numeric/fx_numeric.c', 'csrc/linalg/fx_linalg.c',
     'csrc/complex/fx_complex.c', 'csrc/complex/fx_complex_round.c',
     'csrc/numeric/fx_root.c', 'csrc/numeric/fx_transcend.c',
-    'csrc/trig/fx_trig_inverse.c', 'csrc/trig/fx_trig_math.c', 'csrc/trig/fx_trig.c'
+    'csrc/trig/fx_trig_inverse.c', 'csrc/trig/fx_trig_math.c', 'csrc/trig/fx_trig.c',
+    'csrc/numeric/fx_surd_components.c',
+    'csrc/numeric/fx_raw_decimal_divide.c',
+    'csrc/numeric/fx_raw_decimal_multiply_add.c',
+    'csrc/numeric/fx_raw_decimal_parts.c'
 ]
 
 class Number(C.Structure):

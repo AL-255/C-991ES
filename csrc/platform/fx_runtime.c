@@ -8,16 +8,38 @@ static fx_runtime_status body(fx_runtime *s, fx_runtime_body_kind kind,
     memset(&s->request,0,sizeof s->request);
     s->request.kind=kind; s->request.operation=operation;
     s->request.argument=argument; s->request.status=status;
-    if (kind==FX_RUNTIME_INPUT_BODY || kind==FX_RUNTIME_INPUT_GAP) {
-        s->request.context_return=s->input.context.return_value;
-        s->request.action=s->input.handler_action;
-        s->request.expression_address=s->input.context.display_address;
-        s->request.result_address=s->input.context.result_address;
-        s->request.prepared_source=s->input.input.prepared_source;
-        s->request.current_source=s->input.input.current_source;
+    const fx_ui_controller *input=NULL;
+    if(kind==FX_RUNTIME_INPUT_BODY || kind==FX_RUNTIME_INPUT_GAP)input=&s->input;
+    else if(kind==FX_RUNTIME_EQUATION_GAP && s->equation.input.active)input=&s->equation.input;
+    else if(kind==FX_RUNTIME_TABLE_GAP && s->table.input.active)input=&s->table.input;
+    if(input) {
+        s->request.context_return=input->context.return_value;
+        s->request.action=input->handler_action;
+        s->request.expression_address=input->context.display_address;
+        s->request.result_address=input->context.result_address;
+        s->request.prepared_source=input->input.prepared_source;
+        s->request.current_source=input->input.current_source;
     }
     s->phase=FX_RUNTIME_BODY; s->event=FX_RUNTIME_EVENT_BODY;
     return FX_RUNTIME_REQUEST;
+}
+static fx_runtime_status main_request(fx_platform *p,fx_runtime *s,
+    fx_main_status status)
+{
+    unsigned operation=s->main.pending_request;
+    s->event=FX_RUNTIME_EVENT_MAIN_HANDLER;
+    if(operation==FX_MAIN_INPUT)s->phase=FX_RUNTIME_START_INPUT;
+    else if(operation==FX_MAIN_MODE_MENU || operation==FX_MAIN_SETUP_MENU)
+        s->phase=FX_RUNTIME_START_MENU;
+    else if(operation==FX_MAIN_SCREEN21 && p->ram[0x80f9]==0x45 &&
+            p->ram[0x80fa]>=1 && p->ram[0x80fa]<=2)
+        s->phase=FX_RUNTIME_START_EQUATION;
+    else if(p->ram[0x80f9]==0x88 && (operation==FX_MAIN_SCREEN6 ||
+            operation==FX_MAIN_SCREEN18_ADMISSION || operation==FX_MAIN_SCREEN18))
+        s->phase=FX_RUNTIME_START_TABLE;
+    else return body(s,FX_RUNTIME_MAIN_BODY,operation,s->main.argument,status);
+    memset(&s->request,0,sizeof s->request);
+    return FX_RUNTIME_ADVANCED;
 }
 static fx_runtime_status ready(fx_runtime *s)
 {
@@ -123,6 +145,43 @@ static fx_runtime_status bank_status(fx_platform *p,fx_runtime *s,
     default: return body(s,FX_RUNTIME_MENU_GAP,s->main.pending_request,0,status);
     }
 }
+static fx_runtime_status equation_status(fx_platform *p,fx_runtime *s,
+    fx_ui_status status)
+{
+    switch(status) {
+    case FX_UI_COMPLETE:
+        s->phase=FX_RUNTIME_RETURN_EQUATION;
+        s->event=FX_RUNTIME_EVENT_HANDLER_RETURN;return FX_RUNTIME_ADVANCED;
+    case FX_UI_PREPARED:
+        s->event=FX_RUNTIME_EVENT_INPUT_PREPARED;return FX_RUNTIME_ADVANCED;
+    case FX_UI_WAIT:
+        s->event=FX_RUNTIME_EVENT_WAIT_ITERATION;return FX_RUNTIME_WAIT;
+    case FX_UI_EXPORT:
+        return export_event(s,fx_equation_controller_export_mask(&s->equation));
+    case FX_UI_RESET:return reset_event(p,s);
+    default:
+        return body(s,FX_RUNTIME_EQUATION_GAP,s->main.pending_request,
+                    (uint8_t)s->equation.input.request,status);
+    }
+}
+static fx_runtime_status table_status(fx_platform *p,fx_runtime *s,
+    fx_ui_status status)
+{
+    switch(status) {
+    case FX_UI_COMPLETE:
+        s->phase=FX_RUNTIME_RETURN_TABLE;
+        s->event=FX_RUNTIME_EVENT_HANDLER_RETURN;return FX_RUNTIME_ADVANCED;
+    case FX_UI_PREPARED:
+        s->event=FX_RUNTIME_EVENT_INPUT_PREPARED;return FX_RUNTIME_ADVANCED;
+    case FX_UI_WAIT:
+        s->event=FX_RUNTIME_EVENT_WAIT_ITERATION;return FX_RUNTIME_WAIT;
+    case FX_UI_EXPORT:return export_event(s,fx_table_body_export_mask(&s->table));
+    case FX_UI_RESET:return reset_event(p,s);
+    default:
+        return body(s,FX_RUNTIME_TABLE_GAP,s->main.pending_request,
+                    (uint8_t)s->table.table.request,status);
+    }
+}
 fx_runtime_status fx_runtime_step(fx_platform *p,fx_runtime *s,
     const fx_key_input *physical_input,uint8_t timer_elapsed)
 {
@@ -163,12 +222,7 @@ fx_runtime_status fx_runtime_step(fx_platform *p,fx_runtime *s,
             s->event=FX_RUNTIME_EVENT_CYCLE_RETURN; return FX_RUNTIME_ADVANCED;
         }
         if (status!=FX_MAIN_REQUEST) return body(s,FX_RUNTIME_MAIN_GAP,0,0,status);
-        s->event=FX_RUNTIME_EVENT_MAIN_HANDLER;
-        if (s->main.pending_request==FX_MAIN_INPUT) s->phase=FX_RUNTIME_START_INPUT;
-        else if (s->main.pending_request==FX_MAIN_MODE_MENU ||
-                 s->main.pending_request==FX_MAIN_SETUP_MENU) s->phase=FX_RUNTIME_START_MENU;
-        else return body(s,FX_RUNTIME_MAIN_BODY,s->main.pending_request,s->main.argument,status);
-        return FX_RUNTIME_ADVANCED;
+        return main_request(p,s,status);
     }
     case FX_RUNTIME_START_INPUT:
         s->phase=FX_RUNTIME_INPUT;
@@ -204,6 +258,33 @@ fx_runtime_status fx_runtime_step(fx_platform *p,fx_runtime *s,
             return FX_RUNTIME_INVALID;
         s->phase=FX_RUNTIME_MENU;
         return menu_status(p,s,fx_mode_setup_accept_handler(p,&s->mode,s->returned),0);
+    case FX_RUNTIME_START_EQUATION:
+        s->phase=FX_RUNTIME_EQUATION;
+        return equation_status(p,s,fx_equation_controller_begin(p,&s->equation,&s->cancellation));
+    case FX_RUNTIME_EQUATION:
+        return equation_status(p,s,fx_equation_controller_tick(p,&s->equation));
+    case FX_RUNTIME_RETURN_EQUATION:
+        if(fx_equation_controller_finish(&s->equation,&s->returned)!=FX_UI_COMPLETE)
+            return FX_RUNTIME_INVALID;
+        if(fx_main_loop_accept_handler(p,&s->main,s->returned)!=FX_MAIN_ADVANCED)
+            return FX_RUNTIME_INVALID;
+        s->phase=FX_RUNTIME_MAIN;s->event=FX_RUNTIME_EVENT_CYCLE_RETURN;
+        return FX_RUNTIME_ADVANCED;
+    case FX_RUNTIME_START_TABLE:
+        s->phase=FX_RUNTIME_TABLE;
+        return table_status(p,s,fx_table_body_begin(p,&s->table,
+            (fx_main_request)s->main.pending_request,&s->cancellation));
+    case FX_RUNTIME_TABLE:
+        return table_status(p,s,fx_table_body_tick(p,&s->table));
+    case FX_RUNTIME_RETURN_TABLE: {
+        s->returned=s->table.returned;
+        fx_main_status status=fx_main_loop_accept_handler(p,&s->main,s->returned);
+        if(status!=FX_MAIN_ADVANCED && status!=FX_MAIN_REQUEST)return FX_RUNTIME_INVALID;
+        s->table.active=0;
+        if(status==FX_MAIN_REQUEST)return main_request(p,s,status);
+        s->phase=FX_RUNTIME_MAIN;s->event=FX_RUNTIME_EVENT_CYCLE_RETURN;
+        return FX_RUNTIME_ADVANCED;
+    }
     default: return FX_RUNTIME_INVALID;
     }
 }
@@ -214,8 +295,7 @@ fx_runtime_status fx_runtime_accept_body(fx_platform *p,fx_runtime *s,
         return FX_RUNTIME_INVALID;
     if (s->request.kind==FX_RUNTIME_MAIN_BODY) {
         fx_main_status status=fx_main_loop_accept_handler(p,&s->main,context_return);
-        if (status==FX_MAIN_REQUEST)
-            return body(s,FX_RUNTIME_MAIN_BODY,s->main.pending_request,s->main.argument,status);
+        if (status==FX_MAIN_REQUEST)return main_request(p,s,status);
         if (status!=FX_MAIN_ADVANCED) return FX_RUNTIME_INVALID;
         memset(&s->request,0,sizeof s->request); s->phase=FX_RUNTIME_MAIN;
         s->event=FX_RUNTIME_EVENT_CYCLE_RETURN; return FX_RUNTIME_ADVANCED;

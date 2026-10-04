@@ -48,10 +48,21 @@ def main():
     args = parser.parse_args()
     build = ROOT / 'analysis/build/numeric/solve'; build.mkdir(parents=True, exist_ok=True)
     sources = ['csrc/numeric/fx_solve.c', 'csrc/numeric/fx_numeric.c', 'csrc/complex/fx_complex.c',
-               'csrc/numeric/fx_transcend.c']
+               'csrc/numeric/fx_transcend.c',
+                 'csrc/numeric/fx_surd_components.c',
+                 'csrc/numeric/fx_raw_decimal_divide.c',
+                 'csrc/numeric/fx_raw_decimal_multiply_add.c',
+                 'csrc/numeric/fx_raw_decimal_parts.c'
+]
     headers = ['csrc/numeric/fx_solve.h', 'csrc/numeric/fx_calculus.h', 'csrc/numeric/fx_numeric.h',
                'csrc/complex/fx_complex.h', 'csrc/numeric/fx_transcend.h',
-               'csrc/numeric/fx_transcend_internal.h', 'csrc/numeric/fx_transcend_guarded.h']
+               'csrc/numeric/fx_transcend_internal.h', 'csrc/numeric/fx_transcend_guarded.h',
+                 'csrc/numeric/fx_surd_components.h',
+                 'csrc/numeric/fx_numeric_components.h',
+                 'csrc/numeric/fx_raw_decimal_divide.h',
+                 'csrc/numeric/fx_raw_decimal_multiply_add.h',
+                 'csrc/numeric/fx_raw_decimal_parts.h'
+]
     library = build / 'solve.so'
     subprocess.run(['gcc', '-std=c99', '-O3', '-Wall', '-Wextra', '-Werror', '-pedantic',
                     '-shared', '-fPIC', *(str(ROOT / p) for p in sources), '-o', str(library)], check=True)

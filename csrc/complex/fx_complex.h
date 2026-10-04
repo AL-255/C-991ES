@@ -80,6 +80,9 @@ typedef struct {
     fx_complex_binary_prepare binary;
     void *userdata;
 } fx_complex_preparation;
+fx_numeric_status fx_complex_binary_with_preparation(fx_complex *out,
+    const fx_complex *a, const fx_complex *b, fx_binary_op operation,
+    const fx_complex_preparation *preparation);
 fx_numeric_status fx_complex_magnitude_with_preparation(fx_complex *out,
     const fx_complex *in, int exact_math,
     const fx_complex_preparation *preparation);

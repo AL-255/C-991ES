@@ -31,7 +31,17 @@ SOURCES=['csrc/render/fx_result_pair.c','csrc/render/fx_result_pair.h',
  'csrc/format/fx_format.c','csrc/format/fx_format.h','csrc/format/fx_format_budget.c','csrc/format/fx_format_budget.h',
  'csrc/trig/fx_trig.c','csrc/trig/fx_trig.h','csrc/trig/fx_trig_math.c','csrc/trig/fx_trig_math.h',
  'csrc/trig/fx_trig_inverse.c','csrc/trig/fx_trig_inverse.h','csrc/trig/fx_math_context.c','csrc/trig/fx_math_context.h',
- 'csrc/numeric/fx_numeric.c','csrc/numeric/fx_numeric.h']
+ 'csrc/numeric/fx_numeric.c','csrc/numeric/fx_numeric.h',
+           'csrc/numeric/fx_surd_components.c',
+           'csrc/numeric/fx_raw_decimal_divide.c',
+           'csrc/numeric/fx_raw_decimal_multiply_add.c',
+           'csrc/numeric/fx_raw_decimal_parts.c',
+           'csrc/numeric/fx_surd_components.h',
+           'csrc/numeric/fx_numeric_components.h',
+           'csrc/numeric/fx_raw_decimal_divide.h',
+           'csrc/numeric/fx_raw_decimal_multiply_add.h',
+           'csrc/numeric/fx_raw_decimal_parts.h'
+]
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)

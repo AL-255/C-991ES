@@ -1,0 +1,33 @@
+{
+  "schema": "simulator-verification-summary-v1",
+  "suite": "simulator_http",
+  "status": "pass",
+  "full_firmware_complete": false,
+  "publication_kind": "Summary of actual completed local HTTP/CLI proof; not a new server or firmware execution",
+  "full_proof_diagnostic_path": "analysis/build/simulator-http/actual-integration-final.json",
+  "full_proof_sha256": "7cfe86c35fdb378e5be3a10b45631c02b56dc1c0369de7181d8e4ccea8ad0d9a",
+  "checks": 118,
+  "scope": "Actual HTTP/CLI integration; no mock arithmetic; not full firmware parity",
+  "tested_inputs_sha256": {
+    "tools/test_simulator_http.py": "244aa4c5544be639521c6b65be0d533578cde27699690dbaeff1890f497c30c0",
+    "simulator/serve.py": "47a47793b263d59e3df5ef908dcd141565bb0aebdb5f8bd9328db99fdda43b03",
+    "csrc/app/fx991sim.c": "fc0423c97e6c3f91d52e09575aa7c733caa935c31bcbe348141cac6ab5ebc571",
+    "simulator/web/app.js": "b0330d143e3510053a513c2fac0b658674950fb5368fee8302f9875a5df6d486",
+    "simulator/web/engine.js": "bebe985819c42dfc8d0dbae45bc88361bb45130121e1176c6fc86cafcaba0aa8",
+    "simulator/web/index.html": "fe39017fc4c711c764e1ef4ffa6b225b811010216bc6db732dc1de458e92b153",
+    "simulator/web/styles.css": "c5e1ff281873a2f30e8340e8c14cd3284d9912e84b85de3e52d023abda14c851",
+    "csrc/app/fx_simulator_engine.c": "09ca9a2c0e171a625cb99b3369f8b837e12c9a0b78066fdf40465b6dac8af5f6",
+    "csrc/app/fx_simulator_engine.h": "6b8431f322685aa78ac3dcb4ba5e55302b99f372f4873daa1444afbaaf191c17",
+    "csrc/app/fx_simulator_input.c": "82058422d272eab0aab8de0157a167dab32eb0ea8dba449a00acaf457c393527",
+    "csrc/app/fx_simulator_input.h": "593012255b145bbe02cffb0f7895c57cba6a95f1bf4bd73cd5d9b89a8c89a0d7"
+  },
+  "source_pin_count": 11,
+  "compiled_artifacts_sha256": {
+    "/home/yukidama/github/casio-fx-991es-emulator/analysis/build/simulator/fx991sim": "afec46dae237becb45a0e919bad6d1402bb57657c8e2ef7f10ae692ad9772fe8",
+    "/home/yukidama/github/casio-fx-991es-emulator/analysis/build/simulator/libfx991_simulator.so": "d64be631aeb05157aa9b1f8120b929ac48df553884ba7d7d6840f8a876a64385"
+  },
+  "currentness_audit_utc": "2026-10-04T21:01:00.924184+00:00",
+  "currentness_scope": "Declared C/application/transport/UI sources and actual CLI/shared-library artifacts matched original final proof pins at publication.",
+  "native_calls": 0,
+  "public_deployment_verified": false
+}

@@ -1,0 +1,194 @@
+{
+  "name": "Prepared high-level C calculator simulator",
+  "full_firmware_complete": false,
+  "documented_understanding_is_implementation_completion": false,
+  "production_sources": [
+    "csrc/app/fx_simulator_input.c",
+    "csrc/app/fx_simulator_input.h",
+    "csrc/app/fx_simulator_engine.c",
+    "csrc/app/fx_simulator_engine.h",
+    "csrc/app/fx991sim.c"
+  ],
+  "transport_sources": [
+    "simulator/serve.py",
+    "simulator/web/engine.js",
+    "simulator/web/index.html",
+    "simulator/web/app.js",
+    "simulator/web/styles.css"
+  ],
+  "build": {
+    "cmake_source": "csrc/CMakeLists.txt",
+    "shared_library_target": "fx991_simulator",
+    "cli_target": "fx991sim",
+    "library_dependency": "fx991_firmware",
+    "default_build_directory": "analysis/build/simulator",
+    "launcher": "python3 simulator/serve.py",
+    "compiler_temporary_directory": "<build-directory>/compiler-tmp",
+    "runtime_rom_execution": false,
+    "runtime_cpu_emulator_link": false,
+    "runtime_installer_dependency": false,
+    "host_floating_point_expression_evaluation": false,
+    "immutable_firmware_data": "csrc/data/fx_rom_data.c",
+    "requirements": ["Python3 standard library", "CMake", "GCC or Clang with unsigned128-bit integer support"]
+  },
+  "browser_backends": {
+    "local_native_http": {
+      "status": "implemented",
+      "launcher": "python3 simulator/serve.py",
+      "scope": "Python transports requests to the compiled native C session; JavaScript draws returned pixels"
+    },
+    "static_webassembly": {
+      "status": "local_actual_wasm_and_static_ui_proofs_pass",
+      "builder": "simulator/build_web.py",
+      "output_directory": "simulator/dist",
+      "deployment_workflow": ".github/workflows/pages.yml",
+      "hosted_target": "https://al-255.github.io/casio-explore/",
+      "scope": "Static deployment of the same high-level C engine compiled for browser execution; JavaScript transport/runtime glue is separate from C calculator arithmetic",
+      "toolchain": "Official emsdk6.0.11",
+      "emsdk_tag_commit": "dd8e25632640cfc1fb570c7fa4cc374e8a5e5a72",
+      "emscripten_build_commit": "f6264d4a4dd9ba24a9f0a5702835a44d1463de13",
+      "compiler_temporary_directory": "analysis/build/simulator-wasm/compiler-tmp",
+      "builder_python_requirement": "Python3.9 or newer",
+      "build_report_sha256": "0bed07636505ef3d0956f4a7457ccafeb7e8abe701fef0dfd5026d8982ed0b86",
+      "javascript_artifact_sha256": "a2ef17728fad53fe2ae330849bade7eadd44dd1e4f33846e138cbcfae929bd77",
+      "wasm_artifact_sha256": "d3f3336cdd123b5ce5ac260b19abd10a12039cf92a7b9904e538981c3482a117",
+      "session_lifetime": "Opaque C session in the page module; reload creates fresh memory",
+      "filesystem_runtime": false,
+      "native_proof_is_wasm_proof": false,
+      "deployment_verified": false
+    }
+  },
+  "api": {
+    "session_type": "opaque fx_simulator",
+    "functions": ["fxsim_create", "fxsim_destroy", "fxsim_reset", "fxsim_evaluate"],
+    "input": "ASCII expression; bounded4096 bytes excluding NUL",
+    "modes": {"0": "COMP", "1": "CMPLX", "2": "BIN", "3": "OCT", "4": "DEC", "5": "HEX"},
+    "angles": {"0": "DEG", "1": "RAD", "2": "GRAD"},
+    "math": {"0": "linear output", "1": "natural output"},
+    "successful_native_statuses": [0,34,35,37],
+    "response": "JSON, including native status, exact packed records, formatter tokens and framebuffer",
+    "error_positions": {
+      "encoder": "ASCII byte offset",
+      "evaluator": "native INPUT-token index"
+    },
+    "encoder_failure": "Invalid/unsupported ASCII is a separate encode-phase response; native arithmetic and radix admission remain evaluator policies",
+    "preans": "ASCII PreAns is admitted only in COMP, matching native C8 override"
+  },
+  "implemented_interface_scope": {
+    "evaluation": "ASCII lowering into supported native-token prepared COMP/CMPLX/BASE-N expression grammar",
+    "implicit_product": "Native implicit-multiplication precedence is retained",
+    "power": "ASCII powers are right-associative; native implicit power groups are closed explicitly",
+    "persistent_session_fields": ["ten scalar variable pairs including Ans", "PreAns", "random seed"],
+    "stores": "Terminal ->A..F/X/Y/M",
+    "display": "Prepared expression/result rendering at96x32,384 row-major packed framebuffer bytes; exact formatting follows mode and mathematical admission",
+    "plain_text": "Best-effort transliteration of formatter-owned DISPLAY tokens, not numeric recomputation",
+    "browser": "Expression editing, scientific insertions, mode/angle/output selectors, LCD drawing,20-entry page-local history, reset",
+    "history": "Recalls expression and settings; re-evaluation uses current C calculator memory",
+    "http_sessions": "Opaque C sessions keyed by cookie; one-hour inactivity expiry,64-session capacity with oldest-session eviction, all lost when server stops",
+    "python_transport": "Standard-library HTTP and ctypes calls, no expression arithmetic",
+    "javascript_transport": "Text editing, request transport and framebuffer drawing, no expression arithmetic"
+  },
+  "explicit_nonclaims": [
+    "Full physical-key acquisition, timing or key-to-result pipeline parity",
+    "Interactive reset/boot/main-loop lifecycle equivalence",
+    "Advanced EQN/STAT/MATRIX/VECTOR/TABLE/SOLVE browser screens",
+    "Retention of the complete native physical RAM image between requests",
+    "Every native expression or function is implemented",
+    "The100percent documented instruction-understanding metric proves full C completion",
+    "Plain-text transliteration replaces native pixel output"
+  ],
+  "verification": [
+    {
+      "tool": "tools/test_simulator_input_c.py",
+      "report": "analysis/c-verification/simulator_input.json",
+      "status": "pass",
+      "checks": 3804,
+      "builds": ["O2", "O3"],
+      "native_calls": 0,
+      "scope": "Exact token fixtures, syntax, output transaction, capacities, source/output overlap and bounded input"
+    },
+    {
+      "tool": "tools/test_simulator_native_c.py",
+      "report": "simulator/verification/native.json",
+      "full_proof_diagnostic_path": "analysis/build/simulator-native-review/release-report.json",
+      "status": "pass",
+      "input_fixture": "analysis/native-fixtures/simulator/inputs.json",
+      "input_fixture_sha256": "8578435bfa9f7683e887a2254db31349d2b1d85b9d329f54d2618df83ff005c7",
+      "versioned_native_observations": "analysis/native-observations/simulator/native-55.json",
+      "versioned_native_observations_sha256": "994fb7377426f2d6c10014d940d77744ca201a9c681b261ccceb7d4447d31792",
+      "expression_controls": 55,
+      "backend_comparisons": 165,
+      "builds": ["O2", "O3", "served Release"],
+      "native_calls": 298,
+      "native_instructions": 2051060,
+      "report_sha256": "65ac2a37f2fb6fc0e442c4a6970f341b19f68dd12156250b2b9681c71f1442a5",
+      "full_proof_sha256": "8294be1f3d7ae11a0d73675981d36c9b2694c0f1789f94e1c0e488026e832b7f",
+      "source_pin_count": 252,
+      "release_scope": "Versioned default fixture genuinely replayed after tool-path publication; historical private proof remains separate",
+      "scope": "Prepared original171F4/F12A/formatter/result-paint pipeline; independently written ASCII/native input pairs, records, state and LCD pixels"
+    },
+    {
+      "tool": "tools/test_simulator_safety_c.py",
+      "report": "simulator/verification/safety.json",
+      "full_proof_diagnostic_path": "analysis/build/simulator-safety/report.json",
+      "status": "pass",
+      "report_sha256": "77ad9de2495407cc353b3c424daf822be27c5eb3194f0d89d888c7c7ca792d96",
+      "full_proof_sha256": "ff2ea2de54c82f2832b4fa7d68e943e73f6e5c341736b8c3cf3cc34643be86e6",
+      "source_pin_count": 239,
+      "checks": 4881,
+      "calls": 464,
+      "scope": "C boundary/session/source-artifact guards and sanitizer smoke; does not establish original whole-key parity"
+    },
+    {
+      "tool": "tools/test_simulator_http.py",
+      "report": "simulator/verification/http.json",
+      "report_sha256": "2d5bbc562f7faa00e2949c4a82fa8e5d5f7ab4089df6cc2db9a760d5618237c8",
+      "full_proof_sha256": "7cfe86c35fdb378e5be3a10b45631c02b56dc1c0369de7181d8e4ccea8ad0d9a",
+      "status": "pass",
+      "checks": 118,
+      "source_pin_count": 11,
+      "scope": "Actual local HTTP server/C CLI transport and session integration"
+    },
+    {
+      "tool": "tools/test_simulator_browser.py",
+      "report": "simulator/verification/browser_native.json",
+      "report_sha256": "04b6cf9071f20841c5f9a581299e4d0df5d0741b96c039a6d42386449ee854cf",
+      "full_proof_sha256": "c5fb492478910a86b4600c81f70427d8ba1317ebd8417feda530f656b4de81e4",
+      "status": "pass",
+      "checks": 226,
+      "source_pin_count": 247,
+      "full_original_snapshot_current": false,
+      "currentness_scope": "Executed native runtime/facade/UI remains current; unrelated WASM builder pin is preserved as changed historical context",
+      "scope": "Actual native HTTP browser controls and canvas pixels; no original-ROM or complete key-pipeline proof"
+    },
+    {
+      "tool": "tools/test_simulator_browser.py",
+      "report": "simulator/verification/browser_wasm.json",
+      "report_sha256": "5072ef9e1806daab8071b6f4eb03b2c5d5f1a34e2ed75ce86df77d9d30ba7942",
+      "full_proof_sha256": "0f3158d9cf6d379468944a41ec427c84824070e9dab6550b23fa9c4f06345e24",
+      "status": "pass",
+      "checks": 198,
+      "actual_C_WASM_evaluations": 21,
+      "screenshots": 5,
+      "source_pin_count": 247,
+      "scope": "Actual local static-WASM browser controls and canvas pixels; public deployment remains separately unverified"
+    },
+    {
+      "tool": "tools/test_simulator_wasm_c.py",
+      "report": "simulator/verification/wasm.json",
+      "report_sha256": "b3fd0678a8ee461e4c0ccffc0551b6b0ef5c92a8f9f633e3bca1e7be1bab62ad",
+      "full_proof_sha256": "21ecafd1cfa6618c23fb302fd1a159bd4064eaa5589b5d4ab04dc9412bb57c16",
+      "status": "pass",
+      "saved_observation_rows": 55,
+      "direct_native_field_checks": 583,
+      "encoder_boundary_field_checks": 22,
+      "saved_C_JSON_field_checks": 660,
+      "ABI_boundary_growth_session_checks": 1117,
+      "source_and_artifact_pin_count": 256,
+      "native_calls": 0,
+      "plain_field_scope": "C-only transliteration",
+      "pagehide_scope": "Synthetic persisted true/false event controls; actual BFcache navigation is not proved",
+      "scope": "Actual browser-compiled C ABI and comparison-only saved native observations; no fresh ROM execution or complete key/RAM parity"
+    }
+  ]
+}

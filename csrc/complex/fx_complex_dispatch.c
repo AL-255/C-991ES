@@ -146,9 +146,19 @@ fx_numeric_status fx_complex_dispatch_unary(fx_complex *out, const fx_complex *i
     return status == FX_NUMERIC_OK ? fx_complex_dispatch_cleanup(out,&result,leaf,context,firmware_status) : status;
 }
 
-fx_numeric_status fx_complex_dispatch_binary(fx_complex *out, const fx_complex *left,
+static fx_numeric_status prepared_dispatch_binary(fx_number *out,
+    const fx_number *a, const fx_number *b, fx_binary_op operation,
+    const fx_complex_preparation *preparation)
+{
+    return preparation && preparation->binary ?
+        preparation->binary(out,a,b,operation,preparation->userdata) :
+        fx_number_binary(out,a,b,operation);
+}
+
+fx_numeric_status fx_complex_dispatch_binary_with_preparation(fx_complex *out, const fx_complex *left,
     const fx_complex *right, uint8_t token, const fx_complex_dispatch_context *context,
-    uint8_t *firmware_status)
+    uint8_t *firmware_status,
+    const fx_complex_preparation *preparation)
 {
     static const fx_number one = {{1,0,0,0,0,0,0,0,0,1}};
     fx_complex a, b, result;
@@ -182,11 +192,15 @@ fx_numeric_status fx_complex_dispatch_binary(fx_complex *out, const fx_complex *
         return fx_complex_dispatch_cleanup(out,&result,(uint8_t)scalar_status(&result.real),
                                            context,firmware_status);
     }
-    status = fx_scalar_numeric_classify(&left_class,&a.imaginary);
+    status = preparation && preparation->classify ?
+        preparation->classify(&left_class,&a.imaginary,preparation->userdata) :
+        fx_scalar_numeric_classify(&left_class,&a.imaginary);
     if (status != FX_NUMERIC_OK) return status;
     real_path = left_class == 1;
     if (real_path) {
-        status = fx_scalar_numeric_classify(&right_class,&b.imaginary);
+        status = preparation && preparation->classify ?
+        preparation->classify(&right_class,&b.imaginary,preparation->userdata) :
+        fx_scalar_numeric_classify(&right_class,&b.imaginary);
         if (status != FX_NUMERIC_OK) return status;
         real_path = right_class == 1;
     }
@@ -195,11 +209,13 @@ fx_numeric_status fx_complex_dispatch_binary(fx_complex *out, const fx_complex *
     else if (real_path) {
         if (a.real.bytes[0] >= 0xf0 || b.real.bytes[0] >= 0xf0) {
             fx_number_error(&result.real,3); status = FX_NUMERIC_OK;
-        } else status = fx_number_binary(&result.real,&a.real,&b.real,operation);
+        } else status = prepared_dispatch_binary(&result.real,&a.real,&b.real,operation,preparation);
     }
     else if (operation == FX_MULTIPLY && b.imaginary.bytes[0] == 1 &&
              !memcmp(&b.imaginary,&one,sizeof(one))) {
-        status = fx_scalar_numeric_classify(&right_class,&b.real);
+        status = preparation && preparation->classify ?
+        preparation->classify(&right_class,&b.real,preparation->userdata) :
+        fx_scalar_numeric_classify(&right_class,&b.real);
         if (status != FX_NUMERIC_OK) return status;
         if (right_class == 1) {
             /* Native16000 negates old imaginary, rotates old real to imaginary,
@@ -208,8 +224,8 @@ fx_numeric_status fx_complex_dispatch_binary(fx_complex *out, const fx_complex *
             status = fx_number_negate(&result.real,&a.imaginary);
             return status == FX_NUMERIC_OK ? fx_complex_dispatch_cleanup(out,&result,0,context,firmware_status) : status;
         }
-        status = fx_complex_binary(&result,&a,&b,operation);
-    } else status = fx_complex_binary(&result,&a,&b,operation);
+        status = fx_complex_binary_with_preparation(&result,&a,&b,operation,preparation);
+    } else status = fx_complex_binary_with_preparation(&result,&a,&b,operation,preparation);
     if (status != FX_NUMERIC_OK) return status;
     leaf = (uint8_t)scalar_status(&result.real);
     /* General real power1118E reports30 on its format guard, even though
@@ -223,4 +239,12 @@ fx_numeric_status fx_complex_dispatch_binary(fx_complex *out, const fx_complex *
          ((b.real.bytes[0] & 0xf0) >= 0x30 && (b.real.bytes[0] & 0xf0) != 0x40 &&
           (b.real.bytes[0] & 0xf0) != 0x80))) leaf = 0x30;
     return fx_complex_dispatch_cleanup(out,&result,leaf,context,firmware_status);
+}
+
+fx_numeric_status fx_complex_dispatch_binary(fx_complex *out, const fx_complex *left,
+    const fx_complex *right, uint8_t token, const fx_complex_dispatch_context *context,
+    uint8_t *firmware_status)
+{
+    return fx_complex_dispatch_binary_with_preparation(out,left,right,token,
+        context,firmware_status,NULL);
 }

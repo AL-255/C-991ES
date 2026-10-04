@@ -1,6 +1,7 @@
 /* Complex formulas with the original scalar operation order.
  * GPL-3.0-or-later. No host floating point or firmware execution. */
 #include "fx_complex.h"
+#include "../numeric/fx_surd_components.h"
 
 unsigned fx_complex_error_status(const fx_complex *value)
 {
@@ -14,19 +15,24 @@ fx_numeric_status fx_scalar_numeric_classify(uint8_t *classification,
 {
     unsigned header, sign;
     uint8_t result;
-    fx_number decimal;
+    fx_number decimal, components[6];
     fx_numeric_status status;
     if (!classification || !input) return FX_NUMERIC_INVALID;
     header = input->bytes[0] & 0xf0;
     if (!input->bytes[0]) result = 1;
     else if (header == 0x80) {
-        sign = input->bytes[9] ? input->bytes[8] + input->bytes[9] : input->bytes[8];
+        sign = input->bytes[9] ? (uint8_t)(input->bytes[8] + input->bytes[9])
+                              : input->bytes[8];
         if (input->bytes[9] && sign == 7) {
-            status = fx_number_to_decimal(&decimal, input);
+            status = fx_surd_components_unpack_copy(components, input);
+            if (status == FX_NUMERIC_OK)
+                status = fx_surd_components_decimal(&decimal, components);
             if (status != FX_NUMERIC_OK) return status;
             sign = decimal.bytes[9];
         }
-        /* The surd branch deliberately bypasses the ordinary zero test. */
+        /* Native compact sign addition wraps to eight bits. Conversion remains
+         * on this sign branch even when it produces zero or an error record:
+         * its final raw sign determines the class directly. */
         result = sign >= 4 ? 2 : 4;
     } else if (header >= 0x50) result = 0xf0;
     else if (!input->bytes[8] && !input->bytes[9]) result = 1;
@@ -115,8 +121,17 @@ static void complex_error(fx_complex *out)
 
 /* 1876C selects the rational division entry when both operands are ordinary
  * decimal records. Exact integer ratios retain a fraction when it fits. */
+static fx_numeric_status prepared_binary(fx_number *out,
+    const fx_number *a, const fx_number *b, fx_binary_op operation,
+    const fx_complex_preparation *preparation)
+{
+    return preparation && preparation->binary ?
+        preparation->binary(out, a, b, operation, preparation->userdata) :
+        fx_number_binary(out, a, b, operation);
+}
+
 static fx_numeric_status component_divide(fx_number *out, const fx_number *a,
-                                          const fx_number *b)
+                                          const fx_number *b, const fx_complex_preparation *preparation)
 {
     int64_t numerator, denominator;
     if (a->bytes[0] < 10 && b->bytes[0] < 10 &&
@@ -127,11 +142,12 @@ static fx_numeric_status component_divide(fx_number *out, const fx_number *a,
         ratio.numerator = numerator; ratio.denominator = (uint64_t)denominator; ratio.flags = 0;
         return fx_rational_encode(out, &ratio);
     }
-    return fx_number_binary(out, a, b, FX_DIVIDE);
+    return prepared_binary(out, a, b, FX_DIVIDE, preparation);
 }
 
-fx_numeric_status fx_complex_binary(fx_complex *out, const fx_complex *a,
-                                    const fx_complex *b, fx_binary_op operation)
+fx_numeric_status fx_complex_binary_with_preparation(fx_complex *out,
+    const fx_complex *a, const fx_complex *b, fx_binary_op operation,
+    const fx_complex_preparation *preparation)
 {
     fx_complex left, right, result;
     fx_number first, second, denominator;
@@ -152,60 +168,69 @@ fx_numeric_status fx_complex_binary(fx_complex *out, const fx_complex *a,
                 status = fx_number_negate(&right.imaginary, &right.imaginary);
             if (status != FX_NUMERIC_OK) return status;
         }
-        status = fx_number_binary(&result.real, &left.real, &right.real, FX_ADD);
+        /*1841C completes the imaginary sum before18426's real sum. */
+        status = prepared_binary(&result.imaginary, &left.imaginary, &right.imaginary, FX_ADD, preparation);
         if (status == FX_NUMERIC_OK)
-            status = fx_number_binary(&result.imaginary, &left.imaginary, &right.imaginary, FX_ADD);
+            status = prepared_binary(&result.real, &left.real, &right.real, FX_ADD, preparation);
     } else if (operation == FX_MULTIPLY) {
         /* The imaginary component is completed before the real component. */
-        status = fx_number_binary(&first, &left.real, &right.imaginary, FX_MULTIPLY);
+        /*185F2 saves imaginary*real before real*imaginary;183DE adds
+         * the latter current operand to the former saved product. */
+        status = prepared_binary(&first, &left.imaginary, &right.real, FX_MULTIPLY, preparation);
         if (status == FX_NUMERIC_OK)
-            status = fx_number_binary(&second, &left.imaginary, &right.real, FX_MULTIPLY);
+            status = prepared_binary(&second, &left.real, &right.imaginary, FX_MULTIPLY, preparation);
         if (status == FX_NUMERIC_OK)
-            status = fx_number_binary(&result.imaginary, &first, &second, FX_ADD);
+            status = prepared_binary(&result.imaginary, &second, &first, FX_ADD, preparation);
         if (status == FX_NUMERIC_OK)
-            status = fx_number_binary(&first, &left.real, &right.real, FX_MULTIPLY);
+            status = prepared_binary(&first, &left.imaginary, &right.imaginary, FX_MULTIPLY, preparation);
         if (status == FX_NUMERIC_OK)
-            status = fx_number_binary(&second, &left.imaginary, &right.imaginary, FX_MULTIPLY);
+            status = prepared_binary(&second, &left.real, &right.real, FX_MULTIPLY, preparation);
         if (status == FX_NUMERIC_OK)
-            status = fx_number_binary(&result.real, &first, &second, FX_SUBTRACT);
+            status = prepared_binary(&result.real, &second, &first, FX_SUBTRACT, preparation);
     } else if (!left.real.bytes[0] && !right.real.bytes[0]) {
-        status = component_divide(&result.real, &left.imaginary, &right.imaginary);
+        status = component_divide(&result.real, &left.imaginary, &right.imaginary, preparation);
         fx_number_zero(&result.imaginary);
     } else if (!left.real.bytes[0] && !right.imaginary.bytes[0]) {
         fx_number_zero(&result.real);
-        status = component_divide(&result.imaginary, &left.imaginary, &right.real);
+        status = component_divide(&result.imaginary, &left.imaginary, &right.real, preparation);
     } else if (!left.imaginary.bytes[0] && !right.real.bytes[0]) {
         fx_number_zero(&result.real);
-        status = component_divide(&result.imaginary, &left.real, &right.imaginary);
+        status = component_divide(&result.imaginary, &left.real, &right.imaginary, preparation);
         if (status == FX_NUMERIC_OK)
             status = fx_number_negate(&result.imaginary, &result.imaginary);
     } else {
-        status = fx_number_binary(&first, &right.real, &right.real, FX_MULTIPLY);
+        status = prepared_binary(&first, &right.real, &right.real, FX_MULTIPLY, preparation);
         if (status == FX_NUMERIC_OK)
-            status = fx_number_binary(&second, &right.imaginary, &right.imaginary, FX_MULTIPLY);
+            status = prepared_binary(&second, &right.imaginary, &right.imaginary, FX_MULTIPLY, preparation);
         if (status == FX_NUMERIC_OK)
-            status = fx_number_binary(&denominator, &second, &first, FX_ADD);
+            status = prepared_binary(&denominator, &second, &first, FX_ADD, preparation);
         if (status == FX_NUMERIC_OK)
-            status = fx_number_binary(&first, &left.real, &right.imaginary, FX_MULTIPLY);
+            status = prepared_binary(&first, &left.imaginary, &right.real, FX_MULTIPLY, preparation);
         if (status == FX_NUMERIC_OK)
-            status = fx_number_binary(&second, &left.imaginary, &right.real, FX_MULTIPLY);
+            status = prepared_binary(&second, &left.real, &right.imaginary, FX_MULTIPLY, preparation);
         if (status == FX_NUMERIC_OK)
-            status = fx_number_binary(&first, &second, &first, FX_SUBTRACT);
+            status = prepared_binary(&first, &first, &second, FX_SUBTRACT, preparation);
         if (status == FX_NUMERIC_OK)
-            status = component_divide(&result.imaginary, &first, &denominator);
+            status = component_divide(&result.imaginary, &first, &denominator, preparation);
         if (status == FX_NUMERIC_OK)
-            status = fx_number_binary(&first, &left.real, &right.real, FX_MULTIPLY);
+            status = prepared_binary(&first, &left.imaginary, &right.imaginary, FX_MULTIPLY, preparation);
         if (status == FX_NUMERIC_OK)
-            status = fx_number_binary(&second, &left.imaginary, &right.imaginary, FX_MULTIPLY);
+            status = prepared_binary(&second, &left.real, &right.real, FX_MULTIPLY, preparation);
         if (status == FX_NUMERIC_OK)
-            status = fx_number_binary(&first, &first, &second, FX_ADD);
+            status = prepared_binary(&first, &second, &first, FX_ADD, preparation);
         if (status == FX_NUMERIC_OK)
-            status = component_divide(&result.real, &first, &denominator);
+            status = component_divide(&result.real, &first, &denominator, preparation);
     }
     if (status != FX_NUMERIC_OK) return status;
     if (result.real.bytes[0] >= 0xf0 || result.imaginary.bytes[0] >= 0xf0)
         complex_error(&result);
     *out = result; return FX_NUMERIC_OK;
+}
+
+fx_numeric_status fx_complex_binary(fx_complex *out, const fx_complex *a,
+                                    const fx_complex *b, fx_binary_op operation)
+{
+    return fx_complex_binary_with_preparation(out, a, b, operation, NULL);
 }
 
 fx_numeric_status fx_complex_conjugate(fx_complex *out, const fx_complex *in)

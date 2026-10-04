@@ -1,6 +1,12 @@
 /* Native finite-decimal rank diagnostics and zero-pivot shortcuts.
  * GPL-3.0-or-later. No instruction execution or host floating point. */
-#include "fx_solver.h"
+#include "fx_solver_classifier_stage.h"
+#include <string.h>
+
+typedef struct {
+    fx_solver_classification_callback callback;
+    void *userdata;
+} classification_observer;
 
 /* These are determinant and minor formulas, in their original sum order.
  * Swapping pivots or reordering terms changes native cancellation behavior. */
@@ -21,8 +27,12 @@ static const uint8_t rhs_minors[9][4] = {
     {5,11,10,8},{0,11,9,6},{1,11,9,7},{2,11,9,8}
 };
 
-static fx_numeric_status number_class(uint8_t *out, const fx_number *in)
+static fx_numeric_status number_class(const classification_observer *observer, uint8_t *out, const fx_number *in)
 {
+    if (observer && observer->callback) {
+        fx_numeric_status status = observer->callback(in, observer->userdata);
+        if (status != FX_NUMERIC_OK) return status;
+    }
     return fx_scalar_numeric_classify(out, in);
 }
 static fx_numeric_status ordinary_operand(fx_number *out, const fx_number *in)
@@ -53,54 +63,56 @@ static fx_numeric_status ordinary(fx_number *out, const fx_number *a,
                                      fx_decimal_binary(out, &first, &second, operation);
 }
 /* 0x1181a rejects multiplication underflow of two nonzero source values. */
-static fx_numeric_status checked_product(fx_number *out, const fx_number *a,
+static fx_numeric_status checked_product(const classification_observer *observer, fx_number *out, const fx_number *a,
                                          const fx_number *b)
 {
     uint8_t first_type, second_type, result_type;
-    fx_numeric_status status = number_class(&first_type, a);
-    if (status == FX_NUMERIC_OK) status = number_class(&second_type, b);
+    /* Native 0x11822 classifies the other operand before 0x1182c's current
+     * operand. Their order becomes observable through conversion hooks. */
+    fx_numeric_status status = number_class(observer, &second_type, b);
+    if (status == FX_NUMERIC_OK) status = number_class(observer, &first_type, a);
     if (status == FX_NUMERIC_OK) status = ordinary(out, a, b, FX_MULTIPLY);
     if (status != FX_NUMERIC_OK || out->bytes[0] >= 0xf0) return status;
-    status = number_class(&result_type, out);
+    status = number_class(observer, &result_type, out);
     if (status == FX_NUMERIC_OK && result_type == 1 && first_type != 1 && second_type != 1)
         fx_number_error(out, 3);
     return status;
 }
-static fx_numeric_status minor_class(uint8_t *out, const fx_number c[12],
+static fx_numeric_status minor_class(const classification_observer *observer, uint8_t *out, const fx_number c[12],
                                      const uint8_t indices[4])
 {
     fx_number first, second;
-    fx_numeric_status status = checked_product(&first, &c[indices[0]], &c[indices[1]]);
-    if (status == FX_NUMERIC_OK) status = checked_product(&second, &c[indices[2]], &c[indices[3]]);
+    fx_numeric_status status = checked_product(observer, &first, &c[indices[0]], &c[indices[1]]);
+    if (status == FX_NUMERIC_OK) status = checked_product(observer, &second, &c[indices[2]], &c[indices[3]]);
     if (status == FX_NUMERIC_OK) status = ordinary(&first, &first, &second, FX_SUBTRACT);
-    return status == FX_NUMERIC_OK ? number_class(out, &first) : status;
+    return status == FX_NUMERIC_OK ? number_class(observer, out, &first) : status;
 }
-static fx_numeric_status triple(fx_number *out, const fx_number c[12],
+static fx_numeric_status triple(const classification_observer *observer, fx_number *out, const fx_number c[12],
                                 const uint8_t indices[3])
 {
-    fx_numeric_status status = checked_product(out, &c[indices[0]], &c[indices[1]]);
-    return status == FX_NUMERIC_OK ? checked_product(out, out, &c[indices[2]]) : status;
+    fx_numeric_status status = checked_product(observer, out, &c[indices[0]], &c[indices[1]]);
+    return status == FX_NUMERIC_OK ? checked_product(observer, out, out, &c[indices[2]]) : status;
 }
-static fx_numeric_status determinant_class(uint8_t *out, const fx_number c[12],
+static fx_numeric_status determinant_class(const classification_observer *observer, uint8_t *out, const fx_number c[12],
                                            const uint8_t terms[6][3])
 {
     fx_number sum, product;
     unsigned i;
-    fx_numeric_status status = triple(&sum, c, terms[0]);
+    fx_numeric_status status = triple(observer, &sum, c, terms[0]);
     for (i = 1; status == FX_NUMERIC_OK && i < 6; ++i) {
-        status = triple(&product, c, terms[i]);
+        status = triple(observer, &product, c, terms[i]);
         if (status == FX_NUMERIC_OK)
             status = ordinary(&sum, &sum, &product, i == 3 || i == 4 ? FX_ADD : FX_SUBTRACT);
     }
-    return status == FX_NUMERIC_OK ? number_class(out, &sum) : status;
+    return status == FX_NUMERIC_OK ? number_class(observer, out, &sum) : status;
 }
-static fx_numeric_status column_class(uint8_t *out, const fx_number c[12],
+static fx_numeric_status column_class(const classification_observer *observer, uint8_t *out, const fx_number c[12],
                                       unsigned first, unsigned stride)
 {
     unsigned i;
     fx_numeric_status status;
     for (i = 0; i < 3; ++i) {
-        status = number_class(out, &c[first+i*stride]);
+        status = number_class(observer, out, &c[first+i*stride]);
         if (status != FX_NUMERIC_OK || *out != 1) return status;
     }
     return FX_NUMERIC_OK;
@@ -110,39 +122,40 @@ static uint8_t consistency_result(uint8_t type)
     return type == 1 ? 1 : type == 0xf0 ? 3 : 2;
 }
 #define STEP(operation) do { status = (operation); if (status != FX_NUMERIC_OK) return status; } while (0)
-static fx_numeric_status two_equations(uint8_t *out, const fx_number c[12])
+static fx_numeric_status two_equations(const classification_observer *observer, uint8_t *out, const fx_number c[12])
 {
     static const uint8_t b_rhs[4] = {1,5,2,4}, determinant[4] = {0,4,1,3},
                          a_rhs[4] = {0,5,2,3};
     uint8_t a0, a1, b0, b1, rhs0, rhs1, type;
     fx_numeric_status status;
-    STEP(number_class(&a0, &c[0]));
-    if (a0 == 1) { STEP(number_class(&a1, &c[3])); }
+    STEP(number_class(observer, &a0, &c[0]));
+    if (a0 == 1) { STEP(number_class(observer, &a1, &c[3])); }
     else a1 = 0;
     if (a0 == 1 && a1 == 1) {
-        STEP(number_class(&b0, &c[1]));
+        STEP(number_class(observer, &b0, &c[1]));
         if (b0 == 1) {
-            STEP(number_class(&b1, &c[4])); STEP(number_class(&rhs0, &c[2]));
-            if (b1 == 1 && rhs0 == 1) { STEP(number_class(&rhs1, &c[5])); }
+            STEP(number_class(observer, &b1, &c[4])); STEP(number_class(observer, &rhs0, &c[2]));
+            if (b1 == 1 && rhs0 == 1) { STEP(number_class(observer, &rhs1, &c[5])); }
             else rhs1 = 1;
             *out = rhs0 == 1 && rhs1 == 1 ? 1 : 2; return FX_NUMERIC_OK;
         }
-        STEP(number_class(&b1, &c[4]));
+        STEP(number_class(observer, &b1, &c[4]));
         if (b1 == 1) {
-            STEP(number_class(&rhs1, &c[5])); *out = rhs1 == 1 ? 1 : 2;
+            STEP(number_class(observer, &rhs1, &c[5])); *out = rhs1 == 1 ? 1 : 2;
             return FX_NUMERIC_OK;
         }
-        STEP(minor_class(&type, c, b_rhs)); *out = consistency_result(type);
+        STEP(minor_class(observer, &type, c, b_rhs)); *out = consistency_result(type);
         return FX_NUMERIC_OK;
     }
-    STEP(minor_class(&type, c, determinant));
+    STEP(minor_class(observer, &type, c, determinant));
     if (type != 1) { *out = 3; return FX_NUMERIC_OK; }
-    STEP(minor_class(&type, c, a_rhs)); *out = consistency_result(type);
+    STEP(minor_class(observer, &type, c, a_rhs)); *out = consistency_result(type);
     return FX_NUMERIC_OK;
 }
-fx_numeric_status fx_solver_classify_degenerate(uint8_t *classification,
-                                               const fx_number coefficients[12],
-                                               fx_solver_kind kind)
+static fx_numeric_status classify_degenerate(const classification_observer *observer,
+                                             uint8_t *classification,
+                                             const fx_number coefficients[12],
+                                             fx_solver_kind kind)
 {
     static const uint8_t last_column_rhs[2][4] = {{2,10,9,5},{2,11,9,8}};
     uint8_t type, first_column;
@@ -150,37 +163,60 @@ fx_numeric_status fx_solver_classify_degenerate(uint8_t *classification,
     fx_numeric_status status;
     if (!classification || !coefficients || kind < FX_SOLVER_LINEAR2 || kind > FX_SOLVER_LINEAR3)
         return FX_NUMERIC_INVALID;
-    if (kind == FX_SOLVER_LINEAR2) return two_equations(classification, coefficients);
-    STEP(column_class(&first_column, coefficients, 0, 3));
+    if (kind == FX_SOLVER_LINEAR2) return two_equations(observer, classification, coefficients);
+    STEP(column_class(observer, &first_column, coefficients, 0, 3));
     if (first_column == 1) {
-        STEP(column_class(&type, coefficients, 1, 3));
+        STEP(column_class(observer, &type, coefficients, 1, 3));
         if (type == 1) {
-            STEP(column_class(&type, coefficients, 2, 3));
+            STEP(column_class(observer, &type, coefficients, 2, 3));
             if (type == 1) {
-                STEP(column_class(&type, coefficients, 9, 1));
+                STEP(column_class(observer, &type, coefficients, 9, 1));
                 *classification = consistency_result(type); return FX_NUMERIC_OK;
             }
             /* Native deliberately keeps the first row as pivot here. */
-            STEP(minor_class(&type, coefficients, last_column_rhs[0]));
-            if (type == 1) STEP(minor_class(&type, coefficients, last_column_rhs[1]));
+            STEP(minor_class(observer, &type, coefficients, last_column_rhs[0]));
+            if (type == 1) STEP(minor_class(observer, &type, coefficients, last_column_rhs[1]));
             *classification = consistency_result(type); return FX_NUMERIC_OK;
         }
     } else {
-        STEP(determinant_class(&type, coefficients, coefficient_determinant));
+        STEP(determinant_class(observer, &type, coefficients, coefficient_determinant));
         if (type != 1) { *classification = 3; return FX_NUMERIC_OK; }
     }
     for (i = 0; i < 3; ++i) {
-        STEP(determinant_class(&type, coefficients, augmented_determinants[i]));
+        STEP(determinant_class(observer, &type, coefficients, augmented_determinants[i]));
         if (type != 1) { *classification = consistency_result(type); return FX_NUMERIC_OK; }
     }
     for (i = 0; i < 9; ++i) {
-        STEP(minor_class(&type, coefficients, coefficient_minors[i]));
+        STEP(minor_class(observer, &type, coefficients, coefficient_minors[i]));
         if (type != 1) { *classification = type == 0xf0 ? 3 : 1; return FX_NUMERIC_OK; }
     }
     for (i = 0; i < 9; ++i) {
-        STEP(minor_class(&type, coefficients, rhs_minors[i]));
+        STEP(minor_class(observer, &type, coefficients, rhs_minors[i]));
         if (type != 1) { *classification = consistency_result(type); return FX_NUMERIC_OK; }
     }
     *classification = 1; return FX_NUMERIC_OK;
 }
 #undef STEP
+
+
+fx_numeric_status fx_solver_classify_degenerate_observed(uint8_t *classification,
+    const fx_number coefficients[12], fx_solver_kind kind,
+    fx_solver_classification_callback callback, void *userdata)
+{
+    fx_number captured[12];
+    classification_observer observer = {callback, userdata};
+    if (!classification || !coefficients ||
+        kind < FX_SOLVER_LINEAR2 || kind > FX_SOLVER_LINEAR3)
+        return FX_NUMERIC_INVALID;
+    /* A callback may publish pool work or other physical state. Capture all
+     * coefficient records before any output or callback can alias them. */
+    memcpy(captured, coefficients, sizeof captured);
+    return classify_degenerate(&observer, classification, captured, kind);
+}
+
+fx_numeric_status fx_solver_classify_degenerate(uint8_t *classification,
+    const fx_number coefficients[12], fx_solver_kind kind)
+{
+    return fx_solver_classify_degenerate_observed(classification, coefficients,
+                                                  kind, NULL, NULL);
+}

@@ -1,0 +1,67 @@
+name: Publish C calculator simulator
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'csrc/**'
+      - 'simulator/build_web.py'
+      - 'simulator/web/**'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out simulator source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Check out official Emscripten SDK
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: emscripten-core/emsdk
+          ref: dd8e25632640cfc1fb570c7fa4cc374e8a5e5a72 # 6.0.11
+          path: analysis/build/emsdk
+          persist-credentials: false
+      - name: Install pinned compiler
+        run: |
+          analysis/build/emsdk/emsdk install 6.0.11
+          analysis/build/emsdk/emsdk activate 6.0.11
+      - name: Build the high-level C engine for the browser
+        shell: bash
+        run: |
+          source analysis/build/emsdk/emsdk_env.sh
+          python3 simulator/build_web.py --sdk analysis/build/emsdk --output simulator/dist --report analysis/build/simulator-wasm/build-report.json
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
+      - name: Upload static calculator
+        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
+        with:
+          path: simulator/dist
+      - name: Retain exact compiler and source provenance
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: calculator-build-provenance
+          path: analysis/build/simulator-wasm/build-report.json
+          if-no-files-found: error
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish calculator
+        id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4

@@ -5,6 +5,8 @@ Every implemented subsystem is handwritten, readable C. The executable does
 not run the original firmware or link the CPU emulator. Fonts, spelling tables,
 and numeric constants remain immutable data from the extracted image.
 
+A [browser calculator](../simulator/README.md) and the `fx991sim` command-line interface now compose the supported expression engine, persistent typed variables, exact formatter and 96×32 LCD output. Run `python3 simulator/serve.py` from the repository root. These interfaces use the prepared expression pipeline; the complete physical-key and advanced-mode lifecycle remains pending.
+
 The project is **incomplete**. [scope.json](scope.json) tracks the whole requested
 firmware scope. Each subsystem's `manifest.json` identifies implemented original
 routine addresses, the semantic API being compared, and remaining gaps.

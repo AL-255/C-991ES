@@ -23,6 +23,16 @@ fx_numeric_status fx_eval_surd_workspace_binary(fx_number *out,
     uint8_t storage_ram[65536], const fx_number *current, const fx_number *other,
     uint16_t physical_current, uint16_t physical_other, fx_binary_op operation);
 
+/* Scalar1C780/1C76C policy for named value records. exact_math denies or
+ * permits approximate rational/compact-radical recognition. Decodable20
+ * rational operands with full sign bytes1/6 retain an exact fraction when their independent
+ * numerator and denominator roots pass native integer admission.
+ * Marked headers and other tail metadata use the unchanged value fallback.
+ * Some malformed decoded fields remain outside the verified native domain.
+ * Output may alias input; this value helper emits no physical RAM writes. */
+fx_numeric_status fx_eval_scalar_square_root(fx_number *out,
+    const fx_number *input, int exact_math);
+
 /* Ordered bounded exact square-root stages1C780. Initial expansion and
  * numerator/denominator normalization are committed before result packing.
  * Existing numeric kernels own numerical fallback and error records. */

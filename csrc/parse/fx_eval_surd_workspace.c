@@ -397,6 +397,50 @@ static int normalize_square_root(pool *p, unsigned input, unsigned output)
     return 1;
 }
 
+/* 1C76C/196A0 ordinary square roots preserve decodable20 fractions
+ * when both independently rounded component roots pass9738. Denying exact
+ * radical recognition at18212 does not disable this rational constructor.
+ * Full sign bytes1/6 admit this path. Marked headers and other tail metadata
+ * retain the prior value-kernel fallback; malformed decoded fields retain
+ * the existing COMP policy without a broad raw-record parity claim. */
+fx_numeric_status fx_eval_scalar_square_root(fx_number *out,
+    const fx_number *input, int exact_math)
+{
+    fx_number source;
+    if (!out || !input) return FX_NUMERIC_INVALID;
+    source = *input;
+    input = &source;
+    if (exact_math || (source.bytes[0] & 0xf0) != 0x20 ||
+        (source.bytes[9] != 1 && source.bytes[9] != 6))
+        return fx_number_sqrt(out, input, exact_math);
+    fx_rational rational;
+    fx_number numerator, denominator;
+    fx_numeric_status status = fx_rational_decode(&rational, input);
+    if (status != FX_NUMERIC_OK) return status;
+    if (rational.numerator < 0) { fx_number_error(out, 3); return FX_NUMERIC_OK; }
+    if (rational.denominator > (uint64_t)INT64_MAX) return FX_NUMERIC_UNREPRESENTABLE;
+    status = fx_decimal_from_integer(&numerator, rational.numerator);
+    if (status != FX_NUMERIC_OK) return status;
+    status = fx_decimal_from_integer(&denominator, (int64_t)rational.denominator);
+    if (status != FX_NUMERIC_OK) return status;
+    status = fx_decimal_sqrt(&numerator, &numerator);
+    if (status != FX_NUMERIC_OK) return status;
+    status = fx_decimal_integer_cleanup(&numerator);
+    if (status != FX_NUMERIC_OK) return status;
+    status = fx_decimal_sqrt(&denominator, &denominator);
+    if (status != FX_NUMERIC_OK) return status;
+    status = fx_decimal_integer_cleanup(&denominator);
+    if (status != FX_NUMERIC_OK) return status;
+    int64_t n, d;
+    if (!fx_number_fractional_status(&numerator) && !fx_number_fractional_status(&denominator) &&
+        fx_decimal_to_integer(&n, &numerator) == FX_NUMERIC_OK &&
+        fx_decimal_to_integer(&d, &denominator) == FX_NUMERIC_OK && d > 0) {
+        fx_rational root = {n, (uint64_t)d, 0};
+        return fx_rational_encode(out, &root);
+    }
+    return fx_decimal_binary(out, &numerator, &denominator, FX_DIVIDE);
+}
+
 fx_numeric_status fx_eval_surd_workspace_sqrt(fx_number *out,
     uint8_t ram[65536], const fx_number *input, int exact_math)
 {
@@ -406,7 +450,7 @@ fx_numeric_status fx_eval_surd_workspace_sqrt(fx_number *out,
     fx_numeric_status status;
     if (!out || !ram || !input) return FX_NUMERIC_INVALID;
     source = *input;
-    if (!exact_math) return fx_number_sqrt(out, &source, 0);
+    if (!exact_math) return fx_eval_scalar_square_root(out, &source, 0);
     if ((source.bytes[0] & 0xf0) == 0 && source.bytes[9] <= 1 &&
         (source.bytes[9] == 0 || source.bytes[8] < 7)) {
         /*11110 finishes its bounded rational recognition before17820.

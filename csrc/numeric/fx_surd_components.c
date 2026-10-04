@@ -33,45 +33,57 @@ static fx_number packed_radical(uint8_t high, uint8_t low)
     return out;
 }
 
-static void commit_component(uint8_t ram[65536], unsigned index,
-                              const fx_number *number)
+typedef void (*component_commit)(void *destination, unsigned index,
+                                 const fx_number *number);
+
+static void commit_component_ram(void *destination, unsigned index,
+                                  const fx_number *number)
 {
+    uint8_t *ram = (uint8_t *)destination;
     memcpy(ram + COMPONENT_POOL + 10 * index, number->bytes, 10);
 }
 
-static void emit_components(uint8_t ram[65536], const uint8_t *source)
+static void commit_component_value(void *destination, unsigned index,
+                                    const fx_number *number)
+{
+    fx_number *components = (fx_number *)destination;
+    components[index] = *number;
+}
+
+static void emit_components(void *destination, component_commit commit,
+                             const uint8_t *source)
 {
     fx_number component;
     uint8_t coefficient = source[2];
     if (!coefficient) {
         memset(&component, 0, sizeof(component));
-        commit_component(ram, 0, &component);
-        commit_component(ram, 1, &component);
+        commit(destination, 0, &component);
+        commit(destination, 1, &component);
         component = packed_pair(1, 1);
-        commit_component(ram, 2, &component);
+        commit(destination, 2, &component);
     } else {
         component = packed_pair(coefficient, source[9]);
-        commit_component(ram, 0, &component);
+        commit(destination, 0, &component);
         component = packed_radical(source[0], source[1]);
-        commit_component(ram, 1, &component);
+        commit(destination, 1, &component);
         component = packed_pair(source[3], 1);
-        commit_component(ram, 2, &component);
+        commit(destination, 2, &component);
     }
     /* Each preceding commit can change these live source fields. There is
      * no second-term empty-triple shortcut in the native prepared emitter. */
     component = packed_pair(source[6], source[8]);
-    commit_component(ram, 3, &component);
+    commit(destination, 3, &component);
     component = packed_radical(source[4], source[5]);
-    commit_component(ram, 4, &component);
+    commit(destination, 4, &component);
     component = packed_pair(source[7], 1);
-    commit_component(ram, 5, &component);
+    commit(destination, 5, &component);
 }
 
 fx_numeric_status fx_surd_components_emit_live(uint8_t ram[65536],
                                                  uint16_t source)
 {
     if (!ram || source > 65526u) return FX_NUMERIC_INVALID;
-    emit_components(ram, ram + source);
+    emit_components(ram, commit_component_ram, ram + source);
     return FX_NUMERIC_OK;
 }
 
@@ -81,7 +93,17 @@ fx_numeric_status fx_surd_components_emit_copy(uint8_t ram[65536],
     fx_number saved;
     if (!ram || !source) return FX_NUMERIC_INVALID;
     saved = *source;
-    emit_components(ram, saved.bytes);
+    emit_components(ram, commit_component_ram, saved.bytes);
+    return FX_NUMERIC_OK;
+}
+
+fx_numeric_status fx_surd_components_unpack_copy(fx_number out[6],
+                                                    const fx_number *source)
+{
+    fx_number saved;
+    if (!out || !source) return FX_NUMERIC_INVALID;
+    saved = *source;
+    emit_components(out, commit_component_value, saved.bytes);
     return FX_NUMERIC_OK;
 }
 

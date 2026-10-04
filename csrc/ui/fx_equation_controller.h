@@ -8,11 +8,14 @@
 typedef struct {
     fx_ui_controller input;
     fx_calculus_control cancellation;
+    fx_error_event error;
     uint8_t phase, active, returned;
 } fx_equation_controller;
 fx_ui_status fx_equation_controller_begin(fx_platform *, fx_equation_controller *, const fx_calculus_control *);
 fx_ui_status fx_equation_controller_tick(fx_platform *, fx_equation_controller *);
 fx_ui_status fx_equation_controller_finish(fx_equation_controller *, uint8_t *);
+/* Active host exporter: error key wait or nested coefficient INPUT. */
+uint8_t fx_equation_controller_export_mask(const fx_equation_controller *);
 int fx_equation_move_selection(fx_platform *, uint8_t token);
 int fx_equation_commit_coefficient(fx_platform *, uint16_t source);
 int fx_equation_present_coefficients(fx_platform *);

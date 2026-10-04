@@ -7,6 +7,7 @@
 #include "fx_input_recover.h"
 #include "fx_editor.h"
 #include "../platform/fx_boot.h"
+#include "../platform/fx_host_bridge.h"
 #include "../platform/fx_persistent.h"
 #include "../platform/fx_result_classify.h"
 #include "../render/fx_render.h"
@@ -14,6 +15,7 @@
 #include "../render/fx_result_pair.h"
 #include "../render/fx_result_linear.h"
 #include "../render/fx_result_special.h"
+#include "../render/fx_result_inequality.h"
 #include "../parse/fx_tokens.h"
 #include "../complex/fx_complex.h"
 #include "../trig/fx_math_context.h"
@@ -154,7 +156,20 @@ static fx_ui_status redraw(fx_platform *p,fx_ui_controller *s,int expression)
     if ((!table_screen && s->context.special_view) || (screen!=1 && !bank_screen && !table_screen && !(s->context.calculation_mode==0x45 && screen==21)))
         return request(s,FX_UI_REQUEST_SPECIAL_CONTEXT);
     fx_render r={p->rom,p->rom_size,p->ram};
-    if (expression && (!bank_screen || read_byte(p,0x80fe)==1)) {
+    int equation_caption=s->context.calculation_mode==0x45 && screen==1
+        && read_byte(p,0x80fd)==3;
+    if (equation_caption) {
+        /* 1EE7C skips expression rendering; B070/B4B0 writes the caption
+         * into the ordinary host text packet and publishes AF5A status. */
+        if (read_byte(p,0x80fa)<1 || read_byte(p,0x80fa)>2
+            || read_byte(p,0x8135)<1 || read_byte(p,0x8135)>2)
+            return FX_UI_UNIMPLEMENTED;
+        if (fx_display_equation_caption(&r,0x9838,NULL)!=1)
+            return FX_UI_UNIMPLEMENTED;
+        fx_host_descriptor descriptor; fx_host_descriptor_default(&descriptor);
+        if (fx_host_write_text_packet_fields(p,&descriptor)) return FX_UI_RESOURCE_LIMIT;
+    }
+    if (!equation_caption && expression && (!bank_screen || read_byte(p,0x80fe)==1)) {
         int edit=read_byte(p,0x80fe)==1;
         write_byte(p,0x8126,(uint8_t)edit);
         if (!edit) write_byte(p,0x8114,0);
@@ -173,7 +188,7 @@ static fx_ui_status redraw(fx_platform *p,fx_ui_controller *s,int expression)
             if (!fx_render_viewport(&r,NULL)) return FX_UI_UNIMPLEMENTED;
         } else if (fx_input_draw_linear_expression(p)) return FX_UI_UNIMPLEMENTED;
     }
-    if (read_byte(p,0x80fe)!=1) {
+    if (!equation_caption && read_byte(p,0x80fe)!=1) {
         if (s->context.calculation_mode==2 && read_byte(p,0x80fa)==1)
             return request(s,FX_UI_REQUEST_BASE_RESULT);
         /* EFC0 computes magnitude only as a domain check on host copies.
@@ -285,6 +300,13 @@ static fx_ui_status command(fx_platform *p,fx_ui_controller *s,unsigned index)
     case 6: { /* F01A reset/AC policy. */
         fx_input_recovery_context c={s->context.display_address,s->context.result_address,
             s->context.calculation_mode,s->context.saved_math_result,s->context.return_value};
+        if (s->context.calculation_mode==0x45 && read_byte(p,0x80fc)==1) {
+            /* F01A selects E71E for the equation result/caption screen.
+             * Its action0/return0 lets the main loop paint coefficient input. */
+            if (fx_input_reset_context(p,&c)<0) return FX_UI_UNIMPLEMENTED;
+            s->context.return_value=c.return_value;
+            return finish_action(p,s,0);
+        }
         int result=fx_input_recover_after_error(p,&c);
         if (result<0) return FX_UI_UNIMPLEMENTED;
         s->context.return_value=c.return_value;

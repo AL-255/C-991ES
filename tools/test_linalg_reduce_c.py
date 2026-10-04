@@ -25,7 +25,12 @@ def main():
     parser.add_argument('--no-report',action='store_true')
     args=parser.parse_args()
     build=ROOT/'analysis/build/linalg-reduce';build.mkdir(parents=True,exist_ok=True)
-    sources=['csrc/linalg/fx_linalg_reduce.c','csrc/linalg/fx_linalg.c','csrc/complex/fx_complex.c','csrc/complex/fx_complex_round.c','csrc/numeric/fx_numeric.c']
+    sources=['csrc/linalg/fx_linalg_reduce.c','csrc/linalg/fx_linalg.c','csrc/complex/fx_complex.c','csrc/complex/fx_complex_round.c','csrc/numeric/fx_numeric.c',
+               'csrc/numeric/fx_surd_components.c',
+               'csrc/numeric/fx_raw_decimal_divide.c',
+               'csrc/numeric/fx_raw_decimal_multiply_add.c',
+               'csrc/numeric/fx_raw_decimal_parts.c'
+]
     subprocess.run(['gcc','-std=c99','-O2','-Wall','-Wextra','-Werror','-pedantic','-shared','-fPIC','-I'+str(ROOT/'csrc/linalg'),'-I'+str(ROOT/'csrc/complex'),*(str(ROOT/x) for x in sources),'-o',str(build/'reduce.so')],check=True)
     lib=C.CDLL(str(build/'reduce.so'));lib.fx_linalg_echelon.argtypes=[C.POINTER(Result),C.POINTER(Value),C.c_int,C.POINTER(Context)];lib.fx_decimal_parse.argtypes=[C.POINTER(Number),C.c_char_p];lib.fx_rational_encode.argtypes=[C.POINTER(Number),C.POINTER(Rational)];lib.fx_surd_pack.argtypes=[C.POINTER(Number),C.POINTER(Number)]
     oracle=build/'oracle';oracle.mkdir(exist_ok=True);helper=oracle/'helper.c'
@@ -99,7 +104,13 @@ def main():
      run(v,i%2,Context(i%2,0,0,rng.choice([0,0,0,1,2,5,10,20,40,60])),label='random-'+str(i),alias=bool(i%2))
     report={'checks':checks,'native_calls':calls,'failures':failures,'scope':'Prepared matrix REF14776/RREF14786 with exact finite product/subtraction/normalization order, recursive shifts and cancellation partial-state parity.','output':'Complete90-byte backing, dimension word, ten-byte reference/result, native R0 and reached timer check count.','oracle_context':'Unchanged original ROM and CPU; prepared RAM8E00 timer response supplied atPC5564. Canonical rich matrix references and ten-byte scalar cells; scalar exact permission explicit.','limits':['Physical timer/key interrupt scheduling and persistent matrix UI are outside this numerical entry API.','Caller slot/reference rewriting and malformed BCD are excluded.']}
     if not failures and not args.no_report:
-        headers=['csrc/linalg/fx_linalg_reduce.h','csrc/linalg/fx_linalg.h','csrc/linalg/fx_linalg_stage.h','csrc/complex/fx_complex.h','csrc/complex/fx_complex_round.h','csrc/numeric/fx_numeric.h']
+        headers=['csrc/linalg/fx_linalg_reduce.h','csrc/linalg/fx_linalg.h','csrc/linalg/fx_linalg_stage.h','csrc/complex/fx_complex.h','csrc/complex/fx_complex_round.h','csrc/numeric/fx_numeric.h',
+                   'csrc/numeric/fx_surd_components.h',
+                   'csrc/numeric/fx_numeric_components.h',
+                   'csrc/numeric/fx_raw_decimal_divide.h',
+                   'csrc/numeric/fx_raw_decimal_multiply_add.h',
+                   'csrc/numeric/fx_raw_decimal_parts.h'
+]
         report=write_report('analysis/c-verification/linalg_reduce.json',report,sources+headers+['tools/test_linalg_c.py','tools/trace_natural_result.py','tools/c_verification.py'],'tools/test_linalg_reduce_c.py')
     print(json.dumps({k:v for k,v in report.items() if k!='tested_inputs_sha256'},indent=2))
     return int(bool(failures))

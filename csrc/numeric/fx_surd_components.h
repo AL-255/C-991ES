@@ -15,6 +15,12 @@ fx_numeric_status fx_surd_components_emit_live(uint8_t ram[65536],
 fx_numeric_status fx_surd_components_emit_copy(uint8_t ram[65536],
                                               const fx_number *source);
 
+/* Capture a compact source, then construct the same six ordered component
+ * values without a physical RAM destination. Source and output may overlap;
+ * no strict canonical sign check is applied during unpacking. */
+fx_numeric_status fx_surd_components_unpack_copy(fx_number out[6],
+                                                 const fx_number *source);
+
 /* A completed six-component snapshot is safe after emission:17576 performs
  * no further component-pool writes before its final destination commit.
  * The proved active radical domain is positive-tagged packed integers 0..999;

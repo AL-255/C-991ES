@@ -2,6 +2,8 @@
 
 Research into the Casio fx-991ES Plus firmware, with original execution traces and an ongoing implementation in readable, high-level C.
 
+The [browser calculator simulator](https://al-255.github.io/casio-explore/) runs the C expression engine through WebAssembly and draws its original-size pixel display. For a native local build, start `python3 simulator/serve.py`, then open [http://127.0.0.1:9910](http://127.0.0.1:9910). The [simulator guide](simulator/README.md) documents both builds and their scope.
+
 The [C implementation guide](csrc/README.md) describes the compiled subsystems, build commands, differential tests, and remaining implementation scope. Original CPU execution is confined to the test oracles.
 
 The extracted images and their provenance are recorded in [firmware/extraction.json](firmware/extraction.json). The [complete disassembly](analysis/disassembly/complete.asm) reconstructs the firmware bytes.

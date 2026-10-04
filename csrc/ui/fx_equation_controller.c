@@ -1,5 +1,8 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 #include "fx_equation_controller.h"
+#include "fx_error_boundary.h"
+#include "../numeric/fx_solver_classifier_stage.h"
+#include "../numeric/fx_surd_components.h"
 #include "fx_mode_setup.h"
 #include "fx_equation_result.h"
 #include <string.h>
@@ -93,6 +96,66 @@ int fx_equation_present_coefficients(fx_platform *p)
  put(p,0x811f,7);return fx_display_special_real_number(&r,&number,NULL)==1?0:-1;
 }
 
+/* E47E waits for AC or an eligible cursor token. The accepted token is
+ * retained by51B2 for the next automatic main cycle; no body reply is needed
+ * while the error's key controller remains active. */
+static fx_ui_status equation_error_status(fx_platform *p,fx_equation_controller *s,
+                                         fx_key_controller_status event)
+{
+    if(event==FX_KEY_CONTROLLER_WAIT)return FX_UI_WAIT;
+    if(event==FX_KEY_CONTROLLER_EXPORT)return FX_UI_EXPORT;
+    if(event==FX_KEY_CONTROLLER_RESET){s->phase=5;return FX_UI_RESET;}
+    if(event!=FX_KEY_CONTROLLER_TOKEN)return FX_UI_UNIMPLEMENTED;
+    uint8_t token;
+    if(fx_error_event_finish(&s->error,&token)!=FX_KEY_CONTROLLER_TOKEN)
+        return FX_UI_INVALID;
+    put(p,0x80f5,token);put(p,0x80f7,1);
+    s->returned=1;s->phase=3;return FX_UI_COMPLETE;
+}
+/* 1CCF6 converts a reached mixed-sign surd through the live component pool.
+ * Classification still belongs to the solver policy; this hook supplies no
+ * class and is never a blanket conversion of unvisited coefficients. */
+static fx_numeric_status publish_failure_classification(const fx_number *value,
+                                                       void *userdata)
+{
+    fx_platform *p=(fx_platform *)userdata;
+    if ((value->bytes[0]&0xf0)==0x80 && value->bytes[9] &&
+        (uint8_t)(value->bytes[8]+value->bytes[9])==7) {
+        fx_number converted;
+        fx_numeric_status status=fx_surd_components_convert_copy(p->ram,&converted,value);
+        if(status!=FX_NUMERIC_OK)return status;
+        for(unsigned n=0;n<10;++n)put(p,(uint16_t)(0x8640+n),converted.bytes[n]);
+    }
+    return FX_NUMERIC_OK;
+}
+static fx_ui_status equation_solver_failure(fx_platform *p,
+    fx_equation_controller *s,const fx_solver_result *numerical)
+{
+    uint8_t error=numerical->firmware_status;
+    if(error!=1 && error!=3)return FX_UI_UNIMPLEMENTED;
+    if(error==3) {
+        fx_number coefficients[12];memset(coefficients,0,sizeof coefficients);
+        unsigned count=get(p,0x80fa)==1?6:12;
+        for(unsigned i=0;i<count;++i)
+            for(unsigned n=0;n<10;++n)
+                coefficients[i].bytes[n]=get(p,(uint16_t)(0x829e + 10*i+n));
+        /*112F6 begins with5192/C046, then classifies the original entries. */
+        fx_result_clear_flags(p);
+        fx_result_set_format(p,get(p,0x8106) && !get(p,0x810c)?13:0);
+        uint8_t classification;
+        if(fx_solver_classify_degenerate_observed(&classification,coefficients,
+            (fx_solver_kind)get(p,0x80fa),publish_failure_classification,p)!=FX_NUMERIC_OK)return FX_UI_UNIMPLEMENTED;
+        put(p,0x8135,classification);
+        if(classification==1 || classification==2) {
+            put(p,0x80fc,1);put(p,0x80fd,3);
+            s->returned=0;s->phase=3;return FX_UI_COMPLETE;
+        }
+        if(classification!=3)return FX_UI_UNIMPLEMENTED;
+    }
+    s->phase=4;
+    return equation_error_status(p,s,fx_error_event_begin(p,&s->error,error));
+}
+
 /* E862/E906 retain their outer return1 even when nested whole INPUT returns0. */
 fx_ui_status fx_equation_controller_begin(fx_platform *p,fx_equation_controller *s,
     const fx_calculus_control *control)
@@ -103,8 +166,9 @@ fx_ui_status fx_equation_controller_begin(fx_platform *p,fx_equation_controller 
     memset(s,0,sizeof *s);s->cancellation=saved;s->active=1;s->returned=1;
     uint8_t token=get(p,0x80f5);
     if((token==0xed||token==0xf0)&&!get(p,0x80fd)) {
-        fx_solver_result numerical;
-        if(fx_equation_solve_linear_controlled(p,&s->returned,&numerical,&s->cancellation))return FX_UI_UNIMPLEMENTED;
+        fx_solver_result numerical;memset(&numerical,0,sizeof numerical);
+        if(fx_equation_solve_linear_controlled(p,&s->returned,&numerical,&s->cancellation))
+            return equation_solver_failure(p,s,&numerical);
         s->phase=3;return FX_UI_COMPLETE;
     }
     put(p,0x8129,0);put(p,0x80fd,0);
@@ -128,6 +192,9 @@ fx_ui_status fx_equation_controller_tick(fx_platform *p,fx_equation_controller *
 {
     if(!p||!s||!s->active)return FX_UI_INVALID;
     if(s->phase==3)return FX_UI_COMPLETE;
+    if(s->phase==5)return FX_UI_RESET;
+    if(s->phase==4)return equation_error_status(p,s,
+        fx_error_event_tick_export_boundary(p,&s->error));
     if(s->phase!=2)return FX_UI_UNIMPLEMENTED;
     fx_ui_status status=fx_ui_controller_tick(p,&s->input);
     if(status==FX_UI_COMPLETE) {
@@ -142,4 +209,12 @@ fx_ui_status fx_equation_controller_finish(fx_equation_controller *s,uint8_t *re
     if(!s||!s->active||s->phase!=3)return FX_UI_INVALID;
     if(returned)*returned=s->returned;
     s->active=0;return FX_UI_COMPLETE;
+}
+
+uint8_t fx_equation_controller_export_mask(const fx_equation_controller *s)
+{
+    if (!s || !s->active) return 0;
+    if (s->phase==4 || s->phase==5) return s->error.key.export_mask;
+    if (s->phase==2) return s->input.input.error.key.export_mask;
+    return 0;
 }

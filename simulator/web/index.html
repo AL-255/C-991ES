@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#111b21">
+  <title>Casio Explore · Scientific calculator</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <header class="page-header">
+    <a class="wordmark" href="./" aria-label="Casio Explore home"><span class="brand-icon" aria-hidden="true">∑</span> CASIO <strong>EXPLORE</strong></a>
+    <span class="engine-badge"><span></span> HIGH-LEVEL C ENGINE</span>
+  </header>
+  <main class="workspace">
+    <section class="calculator" aria-label="Scientific calculator">
+      <div class="device-top"><div><p class="eyebrow">SCIENTIFIC CALCULATOR</p><h1>Natural expressions.<br>Exact results.</h1></div><span class="device-mark" aria-hidden="true">fx / C</span></div>
+      <div class="display-shell">
+        <div class="display-annunciators"><span id="screen-mode">COMP</span><span id="screen-angle">DEG</span><span id="screen-math">MATH</span><span class="pixel-label">96 × 32</span></div>
+        <canvas id="lcd" width="96" height="32" role="img" aria-label="Native calculator LCD, ready for an expression"></canvas>
+        <div class="display-footer"><span id="display-state">READY</span><span id="display-caption">Native result pixels</span></div>
+      </div>
+      <form id="expression-form" autocomplete="off">
+        <label class="input-label" for="expression">EXPRESSION <span>Enter to evaluate</span></label>
+        <div class="expression-wrap"><input id="expression" name="expression" type="text" maxlength="4096" spellcheck="false" placeholder="(sqrt(998) - sqrt(997)) / 99" aria-describedby="syntax-help" enterkeyhint="go"><button class="input-submit" type="submit" aria-label="Evaluate expression">↵</button></div>
+        <p id="syntax-help" class="syntax-help">Use parentheses, <code>sqrt( )</code> and <code>pi</code>. <span id="base-help" hidden>Letters A–F are hexadecimal digits.</span></p>
+      </form>
+      <div class="settings" aria-label="Calculation settings">
+        <label>Mode<select id="mode"><option value="0">COMP</option><option value="1">CMPLX</option><option value="2">BIN</option><option value="3">OCT</option><option value="4">DEC</option><option value="5">HEX</option></select></label>
+        <label>Angle<select id="angle"><option value="0">DEG</option><option value="1">RAD</option><option value="2">GRAD</option></select></label>
+        <label class="math-setting"><span>Natural display</span><input id="math" type="checkbox" checked><span class="toggle" aria-hidden="true"></span></label>
+      </div>
+      <div class="function-row" aria-label="Common scientific functions">
+        <button type="button" data-insert="sin()" data-caret="-1">sin</button><button type="button" data-insert="cos()" data-caret="-1">cos</button><button type="button" data-insert="tan()" data-caret="-1">tan</button><button type="button" data-insert="sqrt()" data-caret="-1">√</button><button type="button" data-insert="^">x<sup>y</sup></button><button type="button" data-insert="log()" data-caret="-1">log</button>
+      </div>
+      <div class="keypad" aria-label="Calculator keys">
+        <button type="button" data-insert="7">7</button><button type="button" data-insert="8">8</button><button type="button" data-insert="9">9</button><button type="button" class="key-function" data-insert="(">(</button><button type="button" class="key-function" data-insert=")">)</button><button type="button" class="key-delete" data-action="delete">DEL</button>
+        <button type="button" data-insert="4">4</button><button type="button" data-insert="5">5</button><button type="button" data-insert="6">6</button><button type="button" class="key-operator" data-insert="*">×</button><button type="button" class="key-operator" data-insert="/">÷</button><button type="button" class="key-delete" data-action="clear">AC</button>
+        <button type="button" data-insert="1">1</button><button type="button" data-insert="2">2</button><button type="button" data-insert="3">3</button><button type="button" class="key-operator" data-insert="+">+</button><button type="button" class="key-operator" data-insert="-">−</button><button type="button" class="key-function" data-insert="Ans">Ans</button>
+        <button type="button" data-insert="0">0</button><button type="button" data-insert=".">.</button><button type="button" class="key-function" data-insert="pi">π</button><button type="button" class="key-function" data-insert="E">EXP</button><button type="button" class="key-equals" data-action="evaluate">=</button>
+      </div>
+      <div class="device-bottom"><span><kbd>Enter</kbd> evaluate · <kbd>Esc</kbd> clear</span><button id="reset" type="button">Reset calculator <span aria-hidden="true">↺</span></button></div>
+    </section>
+    <aside class="companion">
+      <section class="intro"><p class="eyebrow">AN EXPRESSION WORKBENCH</p><h2>See the math <br>take shape.</h2><p>Evaluate with the reconstructed C engine and see its original 96 × 32 pixel output.</p></section>
+      <section class="panel examples"><div class="panel-heading"><h3>Try an expression</h3><span>01 / EXPLORE</span></div>
+        <button type="button" class="example" data-example="surds"><span class="example-symbol">√</span><span><strong>Two radicals, one fraction</strong><code>(√998 − √997) / 99</code></span><span class="example-arrow">↗</span></button>
+        <button type="button" class="example" data-example="sine"><span class="example-symbol">∠</span><span><strong>A familiar exact angle</strong><code>sin(30°)</code></span><span class="example-arrow">↗</span></button>
+        <button type="button" class="example" data-example="arcsine"><span class="example-symbol">π</span><span><strong>A rational multiple of π</strong><code>asin(0.5) · radians</code></span><span class="example-arrow">↗</span></button>
+      </section>
+      <section class="panel function-palette"><div class="panel-heading"><h3>Function palette</h3><span>02 / INSERT</span></div><div class="palette-grid">
+        <button type="button" data-insert="asin()" data-caret="-1">sin⁻¹</button><button type="button" data-insert="acos()" data-caret="-1">cos⁻¹</button><button type="button" data-insert="atan()" data-caret="-1">tan⁻¹</button><button type="button" data-insert="ln()" data-caret="-1">ln</button><button type="button" data-insert="abs()" data-caret="-1">|x|</button><button type="button" data-insert="exp()" data-caret="-1">eˣ</button><button type="button" data-insert="sinh()" data-caret="-1">sinh</button><button type="button" data-insert="cosh()" data-caret="-1">cosh</button><button type="button" data-insert="tanh()" data-caret="-1">tanh</button><button type="button" data-insert="!">x!</button><button type="button" data-insert="i">i</button><button type="button" data-insert="e">e</button>
+      </div></section>
+      <section class="panel history-panel"><div class="panel-heading"><h3>Session history</h3><button id="clear-history" type="button">Clear</button></div><ol id="history"></ol><p id="history-empty" class="empty-state">Your calculations will appear here.<br>Select one to return to its expression.</p></section>
+      <section class="result-info" aria-live="polite" aria-atomic="true"><span id="status-dot" class="status-dot"></span><div><strong id="status-title">Ready to calculate</strong><p id="status-message">Choose an example or enter an expression.</p></div></section>
+      <details class="raw-details"><summary>Inspect native result <span aria-hidden="true">+</span></summary><dl><dt>Status</dt><dd id="raw-status">—</dd><dt>Real record</dt><dd id="raw-real">—</dd><dt>Imaginary record</dt><dd id="raw-imag">—</dd><dt>Display tokens</dt><dd id="raw-tokens">—</dd></dl></details>
+    </aside>
+  </main>
+  <footer class="page-footer"><span>CASIO EXPLORE / FIRMWARE RESEARCH</span><span>C evaluation · No JavaScript math</span></footer>
+</body>
+</html>

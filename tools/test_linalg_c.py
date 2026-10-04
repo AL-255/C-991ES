@@ -28,8 +28,19 @@ UNARY=[0x14242,0x142c0,0x143ec,0x146d6,0x1414a,0x140c6,0x14152,0x1415a,0x1589c,0
 def main():
  p=argparse.ArgumentParser(description=__doc__);p.add_argument('--random-cases',type=int,default=12000);p.add_argument('--no-report',action='store_true');a=p.parse_args()
  build=ROOT/'analysis/build/linalg';build.mkdir(parents=True,exist_ok=True)
- sources=['csrc/linalg/fx_linalg.c','csrc/complex/fx_complex.c','csrc/complex/fx_complex_round.c','csrc/numeric/fx_numeric.c']
- headers=['csrc/linalg/fx_linalg.h','csrc/linalg/fx_linalg_stage.h','csrc/complex/fx_complex.h','csrc/complex/fx_complex_round.h','csrc/numeric/fx_numeric.h']
+ sources=['csrc/linalg/fx_linalg.c','csrc/complex/fx_complex.c','csrc/complex/fx_complex_round.c','csrc/numeric/fx_numeric.c',
+            'csrc/numeric/fx_surd_components.c',
+            'csrc/numeric/fx_raw_decimal_divide.c',
+            'csrc/numeric/fx_raw_decimal_multiply_add.c',
+            'csrc/numeric/fx_raw_decimal_parts.c'
+]
+ headers=['csrc/linalg/fx_linalg.h','csrc/linalg/fx_linalg_stage.h','csrc/complex/fx_complex.h','csrc/complex/fx_complex_round.h','csrc/numeric/fx_numeric.h',
+            'csrc/numeric/fx_surd_components.h',
+            'csrc/numeric/fx_numeric_components.h',
+            'csrc/numeric/fx_raw_decimal_divide.h',
+            'csrc/numeric/fx_raw_decimal_multiply_add.h',
+            'csrc/numeric/fx_raw_decimal_parts.h'
+]
  library=build/'linalg.so'
  # Expose the actual private numerical selector only in the test library.
  # Production keeps the same public ABI and never includes an oracle.

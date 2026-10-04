@@ -46,7 +46,12 @@ def main():
     build = ROOT / 'analysis/build/complex'
     build.mkdir(parents=True, exist_ok=True)
     library = build / 'complex.so'
-    sources = ['csrc/complex/fx_complex.c', 'csrc/numeric/fx_numeric.c']
+    sources = ['csrc/complex/fx_complex.c', 'csrc/numeric/fx_numeric.c',
+                 'csrc/numeric/fx_surd_components.c',
+                 'csrc/numeric/fx_raw_decimal_divide.c',
+                 'csrc/numeric/fx_raw_decimal_multiply_add.c',
+                 'csrc/numeric/fx_raw_decimal_parts.c'
+]
     subprocess.run(['gcc', '-std=c99', '-O2', '-Wall', '-Wextra', '-Werror', '-pedantic',
                     '-shared', '-fPIC', *(str(ROOT / p) for p in sources), '-o', str(library)], check=True)
     lib = C.CDLL(str(library))
@@ -269,7 +274,13 @@ def main():
     if not args.no_report:
         if failures: report['status'] = 'fail';path.write_text(json.dumps(report,indent=2) + '\n')
         else: write_report(path,report,[*sources,'csrc/complex/fx_complex.h','csrc/numeric/fx_numeric.h',
-                                      'tools/trace_natural_result.py','tools/c_verification.py'],
+                                      'tools/trace_natural_result.py','tools/c_verification.py',
+                                          'csrc/numeric/fx_surd_components.h',
+                                          'csrc/numeric/fx_numeric_components.h',
+                                          'csrc/numeric/fx_raw_decimal_divide.h',
+                                          'csrc/numeric/fx_raw_decimal_multiply_add.h',
+                                          'csrc/numeric/fx_raw_decimal_parts.h'
+],
                           'tools/test_complex_c.py')
     print(f'{sum(counts.values())} complex checks, {len(failures)} mismatches')
     for failure in failures[:20]: print(failure)

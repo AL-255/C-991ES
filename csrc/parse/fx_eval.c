@@ -35,6 +35,8 @@
 typedef struct {
     const uint8_t *input;
     size_t length, position;
+    size_t lookahead_position;
+    uint8_t lookahead_token, lookahead_valid;
     unsigned depth;
     unsigned operator_depth, value_depth, group_depth;
     uint8_t equation_used;
@@ -113,6 +115,8 @@ static uint8_t exact_math(const parser *p)
 
 static uint8_t peek(const parser *p)
 {
+    if (p->lookahead_valid && p->position == p->lookahead_position)
+        return p->lookahead_token;
     return p->position < p->length ? p->input[p->position] : 0;
 }
 
@@ -355,10 +359,19 @@ static void accept_real_result(parser *p, fx_complex *destination,
     }
 }
 
+static fx_complex_preparation coordinate_preparation(parser *p);
+
 static void binary(parser *p, fx_complex *left, const fx_complex *right, fx_binary_op op)
 {
     fx_complex output = *left;
     if (p->preflight_mode == 1) { fx_complex_zero(left); return; }
+    if (p->transport) {
+        /*16336 drains this binary reduction after159D0 already decoded
+         * the following token. Preserve that token across live pool writes. */
+        p->lookahead_token = peek(p);
+        p->lookahead_position = p->position;
+        p->lookahead_valid = 1;
+    }
     if (stage_binary(p, left, right, (uint8_t)(43 + op))) return;
     if ((p->environment.screen & 0x40) &&
         (!scalar_header_admitted(right) || !scalar_header_admitted(left))) {
@@ -382,6 +395,10 @@ static void binary(parser *p, fx_complex *left, const fx_complex *right, fx_bina
                 status = fx_complex_dispatch_cleanup(&output, &output, leaf,
                     &context, &firmware_status);
             }
+        } else if (p->storage) {
+            fx_complex_preparation preparation = coordinate_preparation(p);
+            status = fx_complex_dispatch_binary_with_preparation(&output, left,
+                right, tokens[op], &context, &firmware_status, &preparation);
         } else status = fx_complex_dispatch_binary(&output, left, right,
             tokens[op], &context, &firmware_status);
         accept_complex_operation(p, left, &output, status, firmware_status);
@@ -605,39 +622,12 @@ static void load_variable(parser *p, fx_complex *out, unsigned slot)
 static fx_numeric_status scalar_square_root(parser *p, fx_number *out,
                                             const fx_number *input)
 {
-    if (exact_math(p) || fx_number_kind(input) != FX_NUMBER_RATIONAL) {
-        if (p->storage) {
-            retain_workspace_source(p);
-            return fx_eval_surd_workspace_sqrt(out, p->storage->ram, input, exact_math(p));
-        }
-        return fx_number_sqrt(out, input, exact_math(p));
+    if (p->storage &&
+        (exact_math(p) || fx_number_kind(input) != FX_NUMBER_RATIONAL)) {
+        retain_workspace_source(p);
+        return fx_eval_surd_workspace_sqrt(out, p->storage->ram, input, exact_math(p));
     }
-    fx_rational rational;
-    fx_number numerator, denominator;
-    fx_numeric_status status = fx_rational_decode(&rational, input);
-    if (status != FX_NUMERIC_OK) return status;
-    if (rational.numerator < 0) { fx_number_error(out, 3); return FX_NUMERIC_OK; }
-    if (rational.denominator > (uint64_t)INT64_MAX) return FX_NUMERIC_UNREPRESENTABLE;
-    status = fx_decimal_from_integer(&numerator, rational.numerator);
-    if (status != FX_NUMERIC_OK) return status;
-    status = fx_decimal_from_integer(&denominator, (int64_t)rational.denominator);
-    if (status != FX_NUMERIC_OK) return status;
-    status = fx_decimal_sqrt(&numerator, &numerator);
-    if (status != FX_NUMERIC_OK) return status;
-    status = fx_decimal_integer_cleanup(&numerator);
-    if (status != FX_NUMERIC_OK) return status;
-    status = fx_decimal_sqrt(&denominator, &denominator);
-    if (status != FX_NUMERIC_OK) return status;
-    status = fx_decimal_integer_cleanup(&denominator);
-    if (status != FX_NUMERIC_OK) return status;
-    int64_t n, d;
-    if (!fx_number_fractional_status(&numerator) && !fx_number_fractional_status(&denominator) &&
-        fx_decimal_to_integer(&n, &numerator) == FX_NUMERIC_OK &&
-        fx_decimal_to_integer(&d, &denominator) == FX_NUMERIC_OK && d > 0) {
-        fx_rational root = {n, (uint64_t)d, 0};
-        return fx_rational_encode(out, &root);
-    }
-    return fx_decimal_binary(out, &numerator, &denominator, FX_DIVIDE);
+    return fx_eval_scalar_square_root(out, input, exact_math(p));
 }
 
 static int solve_suffix_admitted(const parser *p)
@@ -872,6 +862,22 @@ static void primary_value(parser *p, fx_complex *out)
         fx_number_error(&out->real, 3);
         p->status = FX_EVAL_MATH;
         if (p->preflight_mode == 2) p->preflight_constant_error = 1;
+    } else if (fx_decode_evaluator_token(token, p->options.calculation_context).kind == 6 &&
+               (fx_decode_evaluator_token(token, p->options.calculation_context).value == 50 ||
+                fx_decode_evaluator_token(token, p->options.calculation_context).value == 51)) {
+        /*133E2/133B2 compute X cubes/fourths without persistent cache writes.
+         * Dynamic constant errors bypass preflight's arithmetic normalization. */
+        fx_evaluator_token decoded = fx_decode_evaluator_token(token, p->options.calculation_context);
+        int status = p->storage ?
+            fx_stats_higher_x_prepared(&out->real, p->storage->ram,
+                p->storage->ram_size, decoded.value == 50 ? 3u : 4u) :
+            FX_NUMERIC_UNIMPLEMENTED;
+        if (status < 0) unsupported(p, token);
+        else {
+            p->status = (fx_eval_status)status;
+            if (p->preflight_mode == 2 && status) p->preflight_constant_error = 1;
+            if (!status) ++p->position;
+        }
     } else if (token == 0x8a) {
         stored_y_mean(p, out);
         if (p->status == FX_EVAL_OK) ++p->position;
@@ -1041,7 +1047,7 @@ static void primary_value(parser *p, fx_complex *out)
     else {
         fx_evaluator_token decoded = fx_decode_evaluator_token(token, p->options.calculation_context);
         if (decoded.kind == 2 || decoded.kind == 3 || decoded.kind == 8 || decoded.kind == 15 ||
-            (p->table_continuation && decoded.kind == 10))
+            decoded.kind == 10)
             p->status = FX_EVAL_SYNTAX;
         else unsupported(p, token);
     }
@@ -1052,7 +1058,7 @@ static int implicit_start(uint8_t token, uint8_t context)
 {
     fx_evaluator_token decoded = fx_decode_evaluator_token(token, context);
     return token == 0x8a || token == 0x8c || variable_slot(token, context) >= 0 || token == '(' || token == 0x80 || token == 0x81 || token == 0x82 || function_prefix(token) ||
-           (decoded.kind == 6 && (decoded.value < 40 || decoded.value == 48 || decoded.value == 43 || decoded.value == 46)) || decoded.kind == 7 ||
+           (decoded.kind == 6 && (decoded.value < 40 || decoded.value == 48 || decoded.value == 43 || decoded.value == 46 || decoded.value == 50 || decoded.value == 51)) || decoded.kind == 7 ||
            (context == 2 && token >= 0x50 && token <= 0x53);
 }
 
@@ -1937,6 +1943,9 @@ static fx_numeric_status calculus_evaluate(fx_number *out, const fx_number *x, v
         callback.options.calculation_context = callback.storage->ram[0x80f9];
     callback.position = call->body_start;
     callback.length = call->body_end;
+    /*171EA starts a fresh decoder stream for every sample. A token cached
+     * by the outer argument scan belongs to that scan, not this body view. */
+    callback.lookahead_valid = 0;
     callback.status = FX_EVAL_OK;
     callback.operator_depth = 0;
     callback.group_depth = 0;
@@ -2028,6 +2037,8 @@ static void calculus(parser *p, fx_complex *out, uint8_t token)
     int physical_integral = p->storage && p->transport && token == 0x6a;
     int paired_integral = physical_integral && p->options.calculation_context == 0xc4;
     int paired_derivative = physical_derivative && p->options.calculation_context == 0xc4;
+    int paired_series_preflight = p->storage && p->options.calculation_context == 0xc4 &&
+        (token == 0x69 || token == 0x5d);
     fx_complex paired_result;
     fx_complex_zero(&paired_result);
     call.physical_integral = (uint8_t)physical_integral;
@@ -2050,7 +2061,7 @@ static void calculus(parser *p, fx_complex *out, uint8_t token)
     if (p->options.calculation_context != 0xc1 &&
         !(p->storage && (p->options.calculation_context == 6 || p->options.calculation_context == 7 ||
             (p->options.calculation_context == 0x88 && !p->table_continuation))) &&
-        !paired_integral && !paired_derivative) {
+        !paired_integral && !paired_derivative && !paired_series_preflight) {
         unsupported(p, token); return;
     }
     fx_complex_zero(&saved_x);
@@ -2075,6 +2086,10 @@ static void calculus(parser *p, fx_complex *out, uint8_t token)
         if (paired_derivative && !peek(p) && p->position) --p->position;
         p->status = FX_EVAL_SYNTAX; goto restore;
     }
+    /* C4 finite-series syntax preflight and saved-X effects precede the
+     * still-unimplemented numerical paired loop. Never replace an invalid
+     * body with a host backend limitation. */
+    if (paired_series_preflight) { unsupported(p, token); goto restore; }
     call.body_end = p->position++;
     p->calculus_mode = 2;
     p->preflight_mode = 0;
@@ -2250,7 +2265,8 @@ static void calculus(parser *p, fx_complex *out, uint8_t token)
     }
 restore:
     p->variables->values[FX_VARIABLE_X][0] = saved_x.real;
-    if (paired_integral || (paired_derivative && p->storage->ram[0x80f9] == 0xc4))
+    if (paired_integral || ((paired_derivative || paired_series_preflight) &&
+        p->storage->ram[0x80f9] == 0xc4))
         p->variables->values[FX_VARIABLE_X][1] = saved_x.imaginary;
     p->options.math_output = exact;
     p->calculus_mode = 0;

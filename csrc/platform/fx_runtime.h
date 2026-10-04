@@ -6,6 +6,8 @@
 #include "ui/fx_ui_controller.h"
 #include "ui/fx_mode_setup.h"
 #include "ui/fx_mode_bank_menu.h"
+#include "ui/fx_equation_controller.h"
+#include "table/fx_table_body.h"
 
 typedef enum {
     FX_RUNTIME_WAIT = 0, FX_RUNTIME_ADVANCED = 1,
@@ -18,7 +20,9 @@ typedef enum {
     FX_RUNTIME_START_INPUT, FX_RUNTIME_INPUT, FX_RUNTIME_RETURN_INPUT,
     FX_RUNTIME_START_MENU, FX_RUNTIME_MENU, FX_RUNTIME_RETURN_MENU,
     FX_RUNTIME_START_BANK, FX_RUNTIME_BANK, FX_RUNTIME_RETURN_BANK,
-    FX_RUNTIME_BODY
+    FX_RUNTIME_BODY,
+    FX_RUNTIME_START_EQUATION, FX_RUNTIME_EQUATION, FX_RUNTIME_RETURN_EQUATION,
+    FX_RUNTIME_START_TABLE, FX_RUNTIME_TABLE, FX_RUNTIME_RETURN_TABLE
 } fx_runtime_phase;
 typedef enum {
     FX_RUNTIME_EVENT_NONE = 0, FX_RUNTIME_EVENT_BOOT_READY,
@@ -31,7 +35,8 @@ typedef enum {
 typedef enum {
     FX_RUNTIME_BODY_NONE = 0, FX_RUNTIME_MAIN_BODY,
     FX_RUNTIME_INPUT_BODY, FX_RUNTIME_INPUT_GAP,
-    FX_RUNTIME_MENU_GAP, FX_RUNTIME_BOOT_GAP, FX_RUNTIME_MAIN_GAP
+    FX_RUNTIME_MENU_GAP, FX_RUNTIME_BOOT_GAP, FX_RUNTIME_MAIN_GAP,
+    FX_RUNTIME_EQUATION_GAP, FX_RUNTIME_TABLE_GAP
 } fx_runtime_body_kind;
 typedef struct {
     fx_runtime_body_kind kind;
@@ -52,6 +57,8 @@ typedef struct {
     fx_ui_controller input;
     fx_mode_setup mode;
     fx_mode_bank_menu bank;
+    fx_equation_controller equation;
+    fx_table_body table;
     fx_calculus_control cancellation;
     fx_runtime_request request;
     fx_runtime_phase phase;
@@ -65,7 +72,9 @@ typedef struct {
  * Welcome/diagnostic continues in bounded steps. */
 fx_runtime_status fx_runtime_reset(fx_platform *, fx_runtime *,
     const fx_calculus_control *);
-/* Exactly one semantic controller step. Raw8E01/02 packets remain host-owned.
+/* Implemented linear EQN and TABLE main bodies are owned by this runtime.
+ * Incomplete body prefixes remain typed gaps and cannot be accepted as success.
+ * Exactly one semantic controller step. Raw8E01/02 packets remain host-owned.
  * A pending timer performs no writes until timer_elapsed is nonzero. */
 fx_runtime_status fx_runtime_step(fx_platform *, fx_runtime *,
     const fx_key_input *physical_input, uint8_t timer_elapsed);
