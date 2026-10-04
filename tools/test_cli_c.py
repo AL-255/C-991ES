@@ -26,6 +26,8 @@ def main():
               b'\x6810)', b'\xa3\x81)', b'\xa3\x98.5))']
     inputs += [b'\x731)', b'\x93\x602)', b'\x70.5)', b'\x71.5)', b'\x72.5)',
                b'\x90.5)', b'\x912)', b'\x92.5)', b'\xa3\x731))']
+    inputs += [b'\xa88)', b'\xa8\x608)', b'3\x9f8)', b'3\x9f8+19)', b'2\x9f2)',
+               b'5\x57', b'10\x25', b'5\xbe2', b'5\xbf2', b'\x682,8)', b'\x68(1+1),4+4)']
     for _ in range(100):
         a, b, c = (str(rng.randrange(1, 100)).encode() for _ in range(3))
         inputs.append(b'(' + a + b'\xae' + b + b'-\x98' + c + b'))')
@@ -37,6 +39,8 @@ def main():
                       b'\x73\xb81\xb9', b'\x93\xb82\xb9', b'\x70.5)',
                       b'\x90.5)', b'\x98\xb8\xae\xbb\xb81\xb9\xb82\xb9\xbc\xb9',
                       b'\xae\xbb\xb8(\x98\xb8998\xb9-\x98\xb8997\xb9)\xb9\xb899\xb9\xbc']
+    display_inputs += [b'\x9f\xbb\xb83\xb9\xb88\xb9\xbc', b'\x68\xb82\xba8\xb9',
+                       b'\xa88)', b'5\x57', b'5\xbf2', b'10\x25']
     cases = [(tokens, None) for tokens in inputs]
     for display in display_inputs:
         m.reset(); settings(m); m.word(0x812c, 0x8154)
@@ -77,7 +81,7 @@ def main():
     for args in [[], ['--eval', 'z'], ['--eval', '0'], ['--format', 'ff'], ['--token', '100'],
                  ['--token', 'xyz'], ['--eval', '31', '--unknown'], ['--format', '0'*20, '--unknown']]:
         assert subprocess.run([str(executable), *args], capture_output=True).returncode == 2, args
-    for tokens, status in [(b'1+', 2), (b'1\x4f0', 3), (b'\xa830', -1)]:
+    for tokens, status in [(b'1+', 2), (b'1\x4f0', 3), (b'1\x97', -1)]:
         proc = subprocess.run([str(executable), '--eval', tokens.hex()], capture_output=True, text=True)
         assert proc.returncode == 1 and json.loads(proc.stdout)['eval_status'] == status
     boundary_errors = [b'\x98\xb8(2\xb9', b'\x98\xb82)\xb9', b'\x98\xb81,2\xb9']

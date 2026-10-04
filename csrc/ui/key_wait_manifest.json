@@ -1,0 +1,34 @@
+{
+  "subsystem": "high_level_nonblocking_emulator_key_wait",
+  "implementation_language": "C99",
+  "implementation_executes_firmware": false,
+  "implementation_uses_host_floating_point": false,
+  "semantic_complete": false,
+  "implemented_routines": [
+    {
+      "address": "0x1d802",
+      "name": "emulator_key_wait",
+      "scope": "Host-owned cursor bitmaps and blink state; begin, mandatory per-key tick, no-key timer/counter iteration, raw pair transfer and hidden-pixel restoration. Canonical visible fonts6/7/10, all65536 raw host pairs, clipped/wrapped coordinates, callback events and finite counter wrapping."
+    }
+  ],
+  "api": {
+    "header": "csrc/ui/fx_key_wait.h",
+    "state": "fx_key_wait owns two20-byte bitmaps, framebuffer/destination addresses, blink phase/gate/countdown/period, remaining-transition and idle counters, active and ready flags",
+    "begin": "fx_key_wait_begin initializes native phase0, period/countdown1 and1195 transitions; writes8E00=1",
+    "tick": "fx_key_wait_tick advances blink and timer129A before checking8E01|8E02; increments8224 only when idle",
+    "finish": "fx_key_wait_finish clears8E00, reads/stores the raw pair in bus order and restores hidden pixels;8E01/8E02 remain unchanged unless the supplied output destination aliases them"
+  },
+  "gaps": [
+    "Visible fonts outside6/7/10, suppressed heights above10, and height growth into native uncaptured local bytes return explicit unsupported status",
+    "Destination aliases to original CPU-call-stack memory are outside the native parity domain",
+    "Outer1DB34 status/framebuffer/numeric bridge exports, host reset commands and menu/keypress integration belong to separate controllers",
+    "Physical-time scheduling, interrupts and complete reset-to-keypress device I/O remain pending"
+  ],
+  "verification": {
+    "tool": "tools/test_key_wait_c.py",
+    "report": "analysis/c-verification/key_wait.json",
+    "oracle": "Original ROM1D802 in independent SimU8; checkpoints1D8A4,1D8B6,1D8D2,1D8D4 and return",
+    "comparison": "Complete persistent RAM/MMIO and callback events; original CPU-call-stack8D00..8DED excluded. Defined native cursor fields are inspected independently, never exported to C memory.",
+    "limitation": "Routine-level emulator lifecycle with passive physical peripherals; not a firmware-completion claim"
+  }
+}

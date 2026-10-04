@@ -39,7 +39,7 @@
     }
   ],
   "gaps": [
-    "General nth-root evaluator dispatch is not exposed; real evaluator power is tracked separately by power_manifest.json",
+    "Real evaluator power and root dispatch are tracked separately by power_manifest.json and root_manifest.json",
     "Complex logarithms and routine-level global workspace side effects"
   ],
   "verification": "analysis/c-verification/numeric_transcend.json",

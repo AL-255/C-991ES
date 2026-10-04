@@ -28,7 +28,7 @@
     {"address": "0x1c544", "name": "inverse_tangent", "scope": "same inverse angular core with reciprocal reduction for arguments of magnitude1 onward"},
     {"address": "0x1a3ac", "name": "evaluate_inverse_angle", "scope": "inverse mode9 only; original domain construction, min/max quotient, quarter-angle multiplication, cleanup, complements and sign restoration"},
     {"address": "0x1a5a2", "name": "prepare_sum_difference_coordinates", "scope": "inverse angular sqrt((1+x)*(1-x)), inverse hyperbolic tangent(1+x)/(1-x), and forward hyperbolic tangent exponential sum/difference"},
-    {"address": "0x1aca2", "name": "inverse_decimal_angular_rotations", "scope": "inverse angular mode2 followed by angle reconstruction mode10, eighteen-digit coordinates and original guard/index handling"},
+    {"address": "0x1aca2", "name": "inverse_decimal_angular_rotations", "scope": "inverse angular mode2 followed by angle reconstruction mode10, eighteen-digit coordinates and original guard/index handling; external15-digit and prepared17-digit guarded kernel entries"},
     {"address": "0x1c532", "name": "hyperbolic_sine", "scope": "canonical decimal/rational/surd inputs, small-argument fourth-order correction, natural exponential sum/difference, native errors and signs"},
     {"address": "0x1c520", "name": "hyperbolic_cosine", "scope": "natural exponential/reciprocal sum and divide2, independent of argument sign"},
     {"address": "0x1c50e", "name": "hyperbolic_tangent", "scope": "small-argument correction or exponential sum/difference quotient, including saturation after exponential range failure"},
@@ -69,7 +69,7 @@
     "tool": "tools/test_trig_inverse_c.py",
     "report": "analysis/c-verification/trig_inverse.json",
     "oracle": "original extracted ROM1ACA2 and complete1C568/1C556/1C544 entries",
-    "input": "identical decimal/rational/two-term-surd/error numeric records, function and resolved output unit",
+    "input": "identical decimal/rational/two-term-surd/error numeric records, prepared17-digit guarded kernel coordinates, function and resolved output unit",
     "output": "all10 kernel/core result bytes, source immutability, aliases and explicit-vs-global angle unit resolution",
     "limitation": "Prepared numeric routine contexts; malformedBCD, hyperbolic and reset-to-keypress I/O coverage excluded"
   },

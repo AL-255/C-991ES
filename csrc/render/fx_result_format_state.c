@@ -46,6 +46,8 @@ static void store_result_kind(fx_render *render, const fx_number *value,
 static void formatter_display_state(fx_render *render, const fx_number *value,
                                      uint8_t selection_byte)
 {
+    /* C060 emits the error spelling before any numeric recognition path. */
+    if ((value->bytes[0] & 0xf0) == 0xf0) return;
     uint8_t selection = selection_byte & 15, previous = selection_byte >> 4;
     if (selection >= 1 && selection <= 10) return;
     if ((value->bytes[0] & 0xf0) == 0x40

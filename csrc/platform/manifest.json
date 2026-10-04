@@ -1,31 +1,249 @@
 {
-  "subsystem": "startup data and passive peripheral control",
+  "subsystem": "startup, boot, retained state, emulator host packets and passive peripheral control",
   "implementation": "handwritten high-level C, no instruction execution",
   "implemented_routines": [
-    {"address": "0x6f86", "name": "startup data copy", "scope": "only through 0x6fd8; full boot remains incomplete"},
-    {"address": "0x538a", "name": "timer configuration", "scope": "register writes, without physical timing"},
-    {"address": "0x53d0", "name": "timer restart", "scope": "register writes"},
-    {"address": "0x53f0", "name": "timer flags", "scope": "returned byte"},
-    {"address": "0x53f8", "name": "busy acquire", "scope": "returned byte and state"},
-    {"address": "0x540a", "name": "busy mark", "scope": "state"},
-    {"address": "0x540e", "name": "busy clear", "scope": "state"},
-    {"address": "0x5416", "name": "busy query", "scope": "returned byte"},
-    {"address": "0x541e", "name": "secondary busy query", "scope": "returned byte"},
-    {"address": "0x5472", "name": "key port configuration", "scope": "register writes"},
-    {"address": "0x5482", "name": "interrupt port configuration", "scope": "register writes"},
-    {"address": "0x54aa", "name": "display port configuration", "scope": "register writes"},
-    {"address": "0x54c6", "name": "display port restart", "scope": "register writes"},
-    {"address": "0x54d8", "name": "display port active", "scope": "register writes"},
-    {"address": "0x542a", "name": "configure peripheral ports", "scope": "all peripheral register writes; CPU busy-loop timing excluded"},
-    {"address": "0x54e0", "name": "display port sleep", "scope": "mode-dependent port and LCD flag writes"},
-    {"address": "0x550a", "name": "set LCD flag", "scope": "zero/nonzero argument, unrelated bits preserved"},
-    {"address": "0x5514", "name": "disable display", "scope": "register write"},
-    {"address": "0x551c", "name": "enable key drive", "scope": "register write"},
-    {"address": "0x5524", "name": "disable key drive", "scope": "register write"},
-    {"address": "0x552c", "name": "select all key rows", "scope": "register write"},
-    {"address": "0x5534", "name": "deselect all key rows", "scope": "register write"},
-    {"address": "0x553c", "name": "any key query", "scope": "row selection and all 256 passive input bytes"}
+    {
+      "address": "0x6f86",
+      "name": "startup data copy",
+      "scope": "only through 0x6fd8; full boot remains incomplete"
+    },
+    {
+      "address": "0x538a",
+      "name": "timer configuration",
+      "scope": "register writes, without physical timing"
+    },
+    {
+      "address": "0x53d0",
+      "name": "timer restart",
+      "scope": "register writes"
+    },
+    {
+      "address": "0x53f0",
+      "name": "timer flags",
+      "scope": "returned byte"
+    },
+    {
+      "address": "0x53f8",
+      "name": "busy acquire",
+      "scope": "returned byte and state"
+    },
+    {
+      "address": "0x540a",
+      "name": "busy mark",
+      "scope": "state"
+    },
+    {
+      "address": "0x540e",
+      "name": "busy clear",
+      "scope": "state"
+    },
+    {
+      "address": "0x5416",
+      "name": "busy query",
+      "scope": "returned byte"
+    },
+    {
+      "address": "0x541e",
+      "name": "secondary busy query",
+      "scope": "returned byte"
+    },
+    {
+      "address": "0x5472",
+      "name": "key port configuration",
+      "scope": "register writes"
+    },
+    {
+      "address": "0x5482",
+      "name": "interrupt port configuration",
+      "scope": "register writes"
+    },
+    {
+      "address": "0x54aa",
+      "name": "display port configuration",
+      "scope": "register writes"
+    },
+    {
+      "address": "0x54c6",
+      "name": "display port restart",
+      "scope": "register writes"
+    },
+    {
+      "address": "0x54d8",
+      "name": "display port active",
+      "scope": "register writes"
+    },
+    {
+      "address": "0x542a",
+      "name": "configure peripheral ports",
+      "scope": "all peripheral register writes; CPU busy-loop timing excluded"
+    },
+    {
+      "address": "0x54e0",
+      "name": "display port sleep",
+      "scope": "mode-dependent port and LCD flag writes"
+    },
+    {
+      "address": "0x550a",
+      "name": "set LCD flag",
+      "scope": "zero/nonzero argument, unrelated bits preserved"
+    },
+    {
+      "address": "0x5514",
+      "name": "disable display",
+      "scope": "register write"
+    },
+    {
+      "address": "0x551c",
+      "name": "enable key drive",
+      "scope": "register write"
+    },
+    {
+      "address": "0x5524",
+      "name": "disable key drive",
+      "scope": "register write"
+    },
+    {
+      "address": "0x552c",
+      "name": "select all key rows",
+      "scope": "register write"
+    },
+    {
+      "address": "0x5534",
+      "name": "deselect all key rows",
+      "scope": "register write"
+    },
+    {
+      "address": "0x553c",
+      "name": "any key query",
+      "scope": "row selection and all 256 passive input bytes"
+    },
+    {
+      "address": "0x792c",
+      "name": "Ten native emulator descriptor pointers, little-endian writes and wrapping",
+      "scope": "Complete semantic span 0x792c..0x796e; see boot verification limitations"
+    },
+    {
+      "address": "0x796e",
+      "name": "Complete48-byte host status packet, modifier/angle/cursor metadata and eligibility",
+      "scope": "Complete semantic span 0x796e..0x7a5e; see boot verification limitations"
+    },
+    {
+      "address": "0x742c",
+      "name": "384 visible LCD bytes and80/01 host framebuffer header",
+      "scope": "Complete semantic span 0x742c..0x747a; see boot verification limitations"
+    },
+    {
+      "address": "0xaf5a",
+      "name": "Status/text headers and ASCII-hex packet length; unterminated strings bounded",
+      "scope": "Complete semantic span 0xaf5a..0xafe2; see boot verification limitations"
+    },
+    {
+      "address": "0x52e2",
+      "name": "Retained-state signature, contrast range, ten numeric-tag fields and port snapshot validity",
+      "scope": "Complete semantic span 0x52e2..0x5338; see boot verification limitations"
+    },
+    {
+      "address": "0x5192",
+      "name": "Transient evaluator/format reset flags",
+      "scope": "Complete semantic span 0x5192..0x51aa; see boot verification limitations"
+    },
+    {
+      "address": "0x1d636",
+      "name": "Reset layout row/font flags and transient formatter state",
+      "scope": "Complete semantic span 0x1d636..0x1d652; see boot verification limitations"
+    },
+    {
+      "address": "0x1d6ec",
+      "name": "Cold RAM initialization, contrast/port snapshot, default settings, workspace clearing and retained signature",
+      "scope": "Complete semantic span 0x1d6ec..0x1d74a; see boot verification limitations"
+    },
+    {
+      "address": "0x1d77e",
+      "name": "Display/exported input clearing and complete mode-dependent result workspace clearing",
+      "scope": "Complete semantic span 0x1d77e..0x1d7c6; see boot verification limitations"
+    },
+    {
+      "address": "0x11884",
+      "name": "Copy thirteen ROM defaults into settings8102..810e",
+      "scope": "Complete semantic span 0x11884..0x118a0; see boot verification limitations"
+    },
+    {
+      "address": "0x1e55e",
+      "name": "Editor initialization actions, expression retention, special-screen label, cursor/viewport reset and default-line dispatch",
+      "scope": "Complete semantic span 0x1e55e..0x1e60e; see boot verification limitations"
+    },
+    {
+      "address": "0x1e63e",
+      "name": "Mode-specific default-line policy, BASE-N labels and zero-number legacy display through the supplied-record renderer",
+      "scope": "Complete semantic span 0x1e63e..0x1e67c; see boot verification limitations"
+    },
+    {
+      "address": "0x802a",
+      "name": "BASE-N label concatenation/right alignment from startup metadata; oversized native locals bounded",
+      "scope": "Complete semantic span 0x802a..0x8078; see boot verification limitations"
+    },
+    {
+      "address": "0x40a2",
+      "name": "Default screen flags, contrast, editor/result workspace, mode88 cache and framebuffer flush",
+      "scope": "Complete semantic span 0x40a2..0x4106; see boot verification limitations"
+    },
+    {
+      "address": "0x1f8a0",
+      "name": "Mode88 line/cache reset",
+      "scope": "Complete semantic span 0x1f8a0..0x1f8be; see boot verification limitations"
+    },
+    {
+      "address": "0x6fe6",
+      "name": "Five-read7b welcome key probe, boot-state pair and key-row deselection",
+      "scope": "Complete semantic span 0x6fe6..0x7010; see boot verification limitations"
+    },
+    {
+      "address": "0xd6fe",
+      "name": "Boot stack-guard data, peripheral/timer setup and conditional retained-state cold initialization",
+      "scope": "Complete semantic span 0xd6fe..0xd730; see boot verification limitations"
+    },
+    {
+      "address": "0xd730",
+      "name": "Boot default-screen setup, display gates, diagnostic branch and welcome-key decision up to event transfer",
+      "scope": "Complete semantic span 0xd730..0xd748; see boot verification limitations"
+    },
+    {
+      "address": "0xd74c",
+      "name": "Boot equation/inequality mode flags and LCD clearing; mode12 menu transfer remains external",
+      "scope": "Complete semantic span 0xd74c..0xd7a6; see boot verification limitations"
+    },
+    {
+      "address": "0xd7aa",
+      "name": "No-op ROM hook and transfer to the main controller; the controller body is excluded",
+      "scope": "Complete semantic span 0xd7aa..0xd7b4; see boot verification limitations"
+    },
+    {
+      "address": "0x73f8",
+      "name": "Three passive reset-key samples and diagnostic entry decision only; diagnostic body excluded",
+      "scope": "Complete semantic span 0x73f8..0x740c; see boot verification limitations"
+    },
+    {
+      "address": "0x5338",
+      "name": "Power-off preparation",
+      "scope": "Complete bitmap/port/timer effects through native reset transfer6F82; physical time is handled by the host scheduler"
+    },
+    {
+      "address": "0x6f82 / 0x6fd8 / 0xd6fe",
+      "name": "High-level reset entry",
+      "scope": "Startup data initialization, callback register, boot validation/default-screen effects throughD7AE; welcome/diagnostic transitions exposed as statuses"
+    }
   ],
-  "gaps": ["full boot", "keyboard scanning and interrupts", "physical timer behavior", "Windows emulator callback handling", "power management and persistent state"],
-  "verification": "tools/test_platform_c.py"
+  "gaps": [
+    "Full main calculator event loop",
+    "Physical keyboard/timer interrupt scheduling",
+    "Diagnostic screens and welcome-key blocking controller",
+    "Mode12 boot menu transfer",
+    "Original Windows host execution; firmware packets are verified without invoking the host process",
+    "Native numeric operand workspace8000..80db after legacy formatter paths"
+  ],
+  "verification": [
+    "tools/test_platform_c.py",
+    "tools/test_boot_c.py"
+  ],
+  "understanding_ranges": "csrc/platform/understood_ranges.json"
 }

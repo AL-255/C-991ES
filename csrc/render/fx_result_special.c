@@ -17,23 +17,18 @@ static void base_indicator(fx_render *render)
     fx_draw_text(render, 78, 12, &source);
 }
 
-int fx_display_special_real_result(fx_render *render, uint16_t value_address,
+int fx_display_special_real_number(fx_render *render, const fx_number *value,
                                    fx_box *final_box)
 {
     uint8_t font = render->memory[0x811f], mode = render->memory[0x80f9];
     if (font != 6 && font != 7 && font != 10) return -1;
-    if (value_address && (mode == 137 || render->memory[0x8127]
+    int error = value && (value->bytes[0] & 0xf0) == 0xf0;
+    if (value && !error && (mode == 137 || render->memory[0x8127]
                           || (mode != 2 && (render->memory[0x80ff] & 0x10)))) return -1;
     if (mode == 2) base_indicator(render);
     uint8_t text[512] = {0};
     size_t length = 0;
-    if (value_address) {
-        fx_number value;
-        for (unsigned n = 0; n < sizeof value.bytes; ++n)
-            value.bytes[n] = read_byte(render, (uint16_t)(value_address + n));
-        /* C060 handles error records before dispatching to BASE-N. Their
-         * mode-specific error text remains an explicit controller gap. */
-        if ((value.bytes[0] & 0xf0) == 0xf0) return -1;
+    if (value) {
         fx_format_options options = fx_format_default_options();
         options.selection = render->memory[0x8100];
         options.math_output = (uint8_t)fx_display_has_natural_result(render);
@@ -42,14 +37,14 @@ int fx_display_special_real_result(fx_render *render, uint16_t value_address,
         options.digits = render->memory[0x8103];
         options.decimal_dot = render->memory[0x8104];
         fx_format_result result;
-        fx_format_status status = mode == 2
-            ? fx_format_base(&value, render->memory[0x80fa], text, sizeof text, &result)
-            : fx_format_number(&value, &options, text, sizeof text, &result);
+        fx_format_status status = mode == 2 && !error
+            ? fx_format_base(value, render->memory[0x80fa], text, sizeof text, &result)
+            : fx_format_number(value, &options, text, sizeof text, &result);
         if (status != FX_FORMAT_OK)
             return 0;
         length = result.length;
         if (mode == 2) render->memory[0x8100] &= 15;
-        else fx_apply_result_format_state(render, &value, options.selection, result.kind);
+        else fx_apply_result_format_state(render, value, options.selection, result.kind);
     } else render->memory[0x8100] &= 15;
     uint8_t y = font == 10 ? 22 : 25;
     fx_clear_from_row(render, y);
@@ -64,4 +59,14 @@ int fx_display_special_real_result(fx_render *render, uint16_t value_address,
         final_box->depth = fx_font_depth(render);
     }
     return 1;
+}
+
+int fx_display_special_real_result(fx_render *render, uint16_t value_address,
+                                   fx_box *final_box)
+{
+    if (!value_address) return fx_display_special_real_number(render, NULL, final_box);
+    fx_number value;
+    for (unsigned n = 0; n < sizeof value.bytes; ++n)
+        value.bytes[n] = read_byte(render, (uint16_t)(value_address + n));
+    return fx_display_special_real_number(render, &value, final_box);
 }

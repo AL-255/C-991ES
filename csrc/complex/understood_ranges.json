@@ -1,0 +1,96 @@
+{
+  "basis": "Individually inspected half-open instruction spans, canonical complex records and prepared scalar settings. Scalar callees are not included implicitly. Numeric scratch RAM equivalence and malformed BCD behavior are not claimed. Understanding is independent of full firmware completion.",
+  "ranges": [
+    {
+      "start": "0x183c4",
+      "end": "0x186a8",
+      "scope": "Complete complex add/subtract/multiply/divide wrappers, copied real-marker normalization, ordered component products/numerators, numerical error normalization, scalar workspace helpers and reciprocal/square/cube wrappers with original-before-stored-square cube order; scalar callees excluded",
+      "source": "csrc/complex/fx_complex.c"
+    },
+    {
+      "start": "0x1876c",
+      "end": "0x1878a",
+      "scope": "Component division chooses integer-ratio rational construction only when both ordinary decimal headers are below ten; otherwise ordinary scalar division, preserving native numerical status",
+      "source": "csrc/complex/fx_complex.c"
+    },
+    {
+      "start": "0x1ccf6",
+      "end": "0x1cd60",
+      "scope": "Scalar zero/negative/positive/domain classification before metadata clearing, compact-surd coefficient-sign selection and mixed-sign decimal conversion that deliberately bypasses the ordinary zero test",
+      "source": "csrc/complex/fx_complex.c"
+    },
+    {
+      "start": "0x1cd8a",
+      "end": "0x1cd90",
+      "scope": "Shared scalar classification return preserves its result while restoring saved registers",
+      "source": "csrc/complex/fx_complex.c"
+    },
+    {
+      "start": "0x15d4e",
+      "end": "0x15d62",
+      "scope": "Complex negation in imaginary-then-real order, early nonzero imaginary error status, F0 zero-code continuation and component addressing",
+      "source": "csrc/complex/fx_complex.c"
+    },
+    {
+      "start": "0x182ec",
+      "end": "0x183c4",
+      "scope": "Polar/rectangular conversion wrappers: operand guards, radius sign policy, ordered special-result sin/cos multiplication, magnitude/argument composition, dual F3 normalization and native successful zero-axis F3-radius/angle pairs",
+      "source": "csrc/complex/fx_complex_angle.c"
+    },
+    {
+      "start": "0x186a8",
+      "end": "0x18708",
+      "scope": "Restricted complex exponent selector, conjugation and early real-error branch including incoming ER4-selected imaginary reset",
+      "source": "csrc/complex/fx_complex.c"
+    },
+    {
+      "start": "0x18708",
+      "end": "0x18724",
+      "scope": "Argument scalar preparation, ordered atan2 call and imaginary reset",
+      "source": "csrc/complex/fx_complex_angle.c"
+    },
+    {
+      "start": "0x18724",
+      "end": "0x1876c",
+      "scope": "Ordered per-component cleanup, distinct real versus imaginary error normalization branches and F0 zero-code continuation",
+      "source": "csrc/complex/fx_complex.c"
+    },
+    {
+      "start": "0x18d78",
+      "end": "0x18ea2",
+      "scope": "Canonical atan2: zero/error guards, mandatory stored y/x before inverse tangent reciprocal, quadrant reconstruction, signed output and quarter-turn unit selection; scalar arithmetic/trig callees excluded",
+      "source": "csrc/complex/fx_complex_angle.c"
+    },
+    {
+      "start": "0x1cade",
+      "end": "0x1cbfc",
+      "scope": "Complex magnitude: scalar absolute preprocessing, zero components and their forced-success status, safe square raw exponent interval, decimal squared sum and exact-root recognition; large/tiny or compact-cancellation-zero components use smaller/larger ratio, root then ordered scale multiplication",
+      "source": "csrc/complex/fx_complex.c"
+    },
+    {
+      "start": "0x1c312",
+      "end": "0x1c340",
+      "scope": "Scalar absolute component preparation, sign classification, header40 clearing and domain/error replacement",
+      "source": "csrc/complex/fx_complex.c"
+    },
+    {
+      "start": "0x15c82",
+      "end": "0x15c9e",
+      "scope": "Scalar output preprocessing: surd conversion before header guard, marked rational rejection, metadata clearing and ordinary rational conversion status",
+      "source": "csrc/complex/fx_complex_round.c"
+    },
+    {
+      "start": "0x15cbe",
+      "end": "0x15d4e",
+      "scope": "Prepared display-precision rounding: Norm ten digits, Sci zero-to-ten precision, Fix fractional-part short circuit then multiply/integral-round/divide order; imaginary-first CMPLX wrapper and early native error return",
+      "source": "csrc/complex/fx_complex_round.c"
+    },
+    {
+      "start": "0x1cbfc",
+      "end": "0x1cc70",
+      "scope": "Restricted CMPLX square root: native zero-class imaginary admission (compact cancellation remains rejected), scalar real surd conversion before sign classification, positive real root or positive imaginary root for negative real, explicit exact-output permission and forced-success post-admission return",
+      "source": "csrc/complex/fx_complex.c"
+    }
+  ],
+  "partial_blocks": []
+}

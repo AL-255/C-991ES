@@ -1,0 +1,18 @@
+{
+  "implementation": "Readable C normal-distribution approximation and prepared statistics standardization",
+  "firmware_execution_in_implementation": false,
+  "original_rom_sha256": "28b5c3907a67426a1601dbf82ebf62b850333e889fcc958d698786d3e5f5fb7d",
+  "entry_points": {
+    "0x118f4": "positive tail approximation kernel",
+    "0x13662": "P cumulative probability",
+    "0x13702": "Q probability from zero to absolute input",
+    "0x1371c": "R upper-tail probability",
+    "0x13740": "t standardization using x mean and population deviation"
+  },
+  "source": "csrc/stats/normal/fx_stats_normal.c",
+  "constants": "Six original decimal coefficients at ROM2bfe and original pi literal from1d16e; typed static numeric data only",
+  "verification": "analysis/c-verification/stats_normal.json",
+  "understood_ranges": "csrc/stats/normal/understood_ranges.json",
+  "complete": false,
+  "remaining": ["statistics mode/controller integration", "physical UI and interrupt timing", "CPU scratch workspace RAM"]
+}

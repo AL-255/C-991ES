@@ -1,0 +1,16 @@
+{
+  "subsystem": "scalar-combinatorics",
+  "implementation": "Readable handwritten C99 descending decimal products and termwise surd scaling; no CPU execution or floating-point substitute",
+  "implemented_routines": [
+    {"address": "0x1c1a2", "name": "factorial", "scope": "Canonical real operands, nonnegative integer gate, descending15-digit products and F3 domain/overflow errors"},
+    {"address": "0x1c0aa", "name": "permutation", "scope": "Nonnegative integral n/r below10^10, r<=n, descending n!/(n-r)! product and native intermediate overflow"},
+    {"address": "0x1c096", "name": "combination", "scope": "Shared n/r gates; symmetric min(r,n-r) factorial divisor, descending numerator order and original finite-decimal division"},
+    {"address": "0x16182", "name": "percent", "scope": "Metadata clearing and division by100, exact rational/surd results, termwise reduced surd decimal fallback and F3 error records"},
+    {"address": "0x191e8..0x19360", "name": "shared combinatorial product algorithm", "scope": "Operand range checks, saved lower bound selection, factorial loop and permutation/combination result paths"}
+  ],
+  "tokens": {"factorial": "0x57", "permutation": "0xbe", "combination": "0xbf", "percent": "0x25"},
+  "verification": "analysis/c-verification/combinatorics.json",
+  "test": "python3 tools/test_combinatorics_c.py --random-cases 3000",
+  "gaps": ["Expression precedence/dispatch and consumed-pointer behavior are verified separately by parser integration", "General surd arithmetic is owned by the numeric foundation; this module preserves term ordering specifically for percent", "Malformed BCD, global numeric scratch RAM and reset-to-keypress execution are outside this API"],
+  "completion": "Prepared scalar routine parity; complete firmware equivalence remains unproven"
+}

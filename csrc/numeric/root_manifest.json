@@ -1,0 +1,21 @@
+{
+  "subsystem": "numeric-root",
+  "implementation": "Readable C99 real root dispatcher, exact rational component reconstruction and guarded decimal log/root factor composition; no CPU interpreter, ROM execution or host floating-point arithmetic",
+  "implemented_routines": [
+    {"address": "0x1122c", "name": "general real nth-root format dispatcher", "scope": "Canonical decimal, rational and compact two-surd operands; degree-first native mapping, radical decimal conversion, scalar header eligibility and negative-radicand short rational degree recognition"},
+    {"address": "0x1c664", "name": "general root public wrapper", "scope": "Scalar operand exchange and exact/decimal root dispatch"},
+    {"address": "0x1c878", "name": "cube-root public wrapper", "scope": "Unary scalar header40 clearing, radical decimal conversion and hardcoded integral degree3"},
+    {"address": "0x196ec", "name": "cube-root degree construction", "scope": "Canonical zero-filled degree3 record and shared root-mode dispatch"},
+    {"address": "0x1954c", "name": "negative-radicand rational-degree preparation", "scope": "Root-mode odd numerator requirement, denominator parity saved sign and original raw fraction division order"},
+    {"address": "0x19772", "name": "rational root dispatch", "scope": "Independent integral component roots with cleanup, rational result retention and original-operand decimal fallback"},
+    {"address": "0x1a81c", "name": "guarded decimal real root", "scope": "Native initial-root operation policy, reciprocal-integer power switching, guarded logarithm/degree division, finite range and saved-sign behavior"}
+  ],
+  "gaps": [
+    "Complex roots and routine-level global scratch RAM side effects",
+    "Malformed numeric records outside normalized decimal and canonical exact-record domains",
+    "Exhaustive operand-state equivalence outside the finite differential suite"
+  ],
+  "verification": "analysis/c-verification/numeric_root.json",
+  "test": "python3 tools/test_numeric_root_c.py --random-cases 5000",
+  "completion": "Partial subsystem implementation; full numeric firmware equivalence is not established"
+}

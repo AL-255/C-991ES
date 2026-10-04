@@ -361,12 +361,12 @@ static guarded_decimal guarded_quotient(const guarded_decimal *numerator, const 
     return result;
 }
 
-fx_numeric_status fx_transcend_power_decimal(fx_number *out, const fx_number *base,
-                                             const fx_number *exponent) {
+static fx_numeric_status real_power_decimal(fx_number *out, const fx_number *base,
+                                             const fx_number *exponent, int initial_root) {
     fx_number brecord, erecord, one, reciprocal;
     fx_decimal b, e, degree;
     guarded_decimal logarithm, argument;
-    int exponent_integral, base_integral, exponent_odd, unused_odd, root = 0, negate = 0;
+    int exponent_integral, base_integral, exponent_odd, unused_odd, root = initial_root, negate = 0;
     fx_numeric_status status;
     if ((base->bytes[0] & 0xf0) >= 0x30 || (exponent->bytes[0] & 0xf0) >= 0x30) {
         fx_number_error(out, 3); return FX_NUMERIC_OK;
@@ -382,6 +382,7 @@ fx_numeric_status fx_transcend_power_decimal(fx_number *out, const fx_number *ba
         fx_decimal_decode(&e, &erecord) != FX_NUMERIC_OK) return FX_NUMERIC_INVALID;
     if ((b.sign && b.mantissa < UINT64_C(100000000000000)) ||
         (e.sign && e.mantissa < UINT64_C(100000000000000))) return FX_NUMERIC_INVALID;
+    if (initial_root && !e.sign) { fx_number_error(out, 3); return FX_NUMERIC_OK; }
     exponent_integral = power_integer(&e, &exponent_odd);
     degree = e;
     if (!exponent_integral) {
@@ -391,10 +392,15 @@ fx_numeric_status fx_transcend_power_decimal(fx_number *out, const fx_number *ba
         if (fx_decimal_decode(&degree, &reciprocal) != FX_NUMERIC_OK) {
             fx_number_error(out, 3); return FX_NUMERIC_OK;
         }
-        root = power_integer(&degree, &exponent_odd);
+        /* 0x1a8a4 flips between root and power once for an integral
+         * reciprocal. If both classify nonintegral, it restores the original
+         * operand and operation rather than using a twice-rounded reciprocal. */
+        exponent_integral = power_integer(&degree, &exponent_odd);
+        if (exponent_integral) root = !root;
+        else degree = e;
     }
     if (b.sign < 0) {
-        if ((!exponent_integral && !root) || (root && !exponent_odd)) {
+        if (!exponent_integral || (root && !exponent_odd)) {
             fx_number_error(out, 3); return FX_NUMERIC_OK;
         }
         negate = exponent_odd;
@@ -407,10 +413,20 @@ fx_numeric_status fx_transcend_power_decimal(fx_number *out, const fx_number *ba
     }
     base_integral = power_integer(&b, &unused_odd);
     logarithm = logarithm_value(&b);
-    argument = root ? guarded_quotient(&logarithm, &degree) : guarded_product(&logarithm, &e);
+    argument = root ? guarded_quotient(&logarithm, &degree) : guarded_product(&logarithm, &degree);
     if (argument.mantissa && argument.exponent > 99) { fx_number_error(out, 3); return FX_NUMERIC_OK; }
-    status = exponentiate_guarded(out, argument, exponent_integral && base_integral);
+    status = exponentiate_guarded(out, argument, exponent_integral && base_integral && !root);
     /* 0x1a92e adds the saved sign directly even to zero and error records. */
     if (status == FX_NUMERIC_OK && negate) out->bytes[9] = (uint8_t)((out->bytes[9] + 5) % 10);
     return status;
+}
+
+fx_numeric_status fx_transcend_power_decimal(fx_number *out, const fx_number *base,
+                                             const fx_number *exponent) {
+    return real_power_decimal(out, base, exponent, 0);
+}
+
+fx_numeric_status fx_transcend_root_decimal(fx_number *out, const fx_number *radicand,
+                                            const fx_number *degree) {
+    return real_power_decimal(out, radicand, degree, 1);
 }

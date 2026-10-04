@@ -14,8 +14,9 @@
     {"address": "0xbc4a", "name": "format_scientific_decimal", "scope": "Sci 1..10 with packed superscript exponent tokens"},
     {"address": "0xbd78", "name": "format_sexagesimal", "scope": "selection1 and marked decimals at selection0/13; decimal minute/second arithmetic, cleanup, centisecond rounding, width limits and numeric fallback"},
     {"address": "0x7c46", "name": "format_recurring_decimal", "scope": "bounded integer long division and remainder-cycle detection, exact and recognized rationals, terminating/oversized-period numeric fallback"},
-    {"address": "0x7ee0", "name": "format_prime_factors", "scope": "canonical ordinary and marked decimal records with exponent-99..99, prime powers, fractional quotient termination and signed parenthesized remaining factor"},
-    {"address": "0x13c66", "name": "bounded_prime_factorization", "scope": "trial division by the 168 primes through997 using the original finite-decimal quotient/remainder behavior"},
+    {"address": "0x7ee0", "name": "format_prime_factors", "scope": "canonical ordinary/marked decimal and tagged rational/surd storage, exponent-99..99, prime powers, original stored-byte quotient termination and signed parenthesized remaining factor"},
+    {"address": "0x13c66", "name": "bounded_prime_factorization", "scope": "trial division by the 168 primes through997 using finite decimal quotient/remainder behavior; tagged records use raw packed-decimal bytes with separator/carry semantics and noncanonical leading digits"},
+    {"address": "0x10e14", "name": "format_error_tokens", "scope": "C060 error selection bypass; kind0, ERROR for codes0..12/14/15 and empty tokens for13"},
     {"address": "0x10b7e", "name": "recognize_ordinary_fraction", "scope": "bounded continued-fraction interval recognition, decimal exponent -8..6 and original display digit budget; finite differential verification"},
     {"address": "0x10b60", "name": "cleanup_and_test_integer", "scope": "last-BCD-pair probe for rational and pi recognition; exponent-dependent mantissa boundaries"},
     {"address": "0x10c2c", "name": "recognize_pi_coefficient", "scope": "firmware pi division, scale25200, integer cleanup and gcd reduction for unmarked decimal records"},
@@ -23,14 +24,14 @@
     {"address": "0x10da6", "name": "engineering_normal_width", "scope": "Norm1/Norm2 significant-position budget after engineering exponent placement"},
     {"address": "0x10dca", "name": "engineering_fix_scientific_width", "scope": "Fix/Sci rounding, digit budgets and zero trimming including compact contexts1..3 and restored full width for contexts4..6"},
     {"address": "0x3374", "name": "append_exponent_tokens", "scope": "engineering quotient/remainder superscript tokens, including boundary exponents above99"},
+    {"address": "0x3500", "name": "format_decimal_width_budget", "scope": "both native caller budgets6/table and12/inequality; ten-significant-digit pre-round then width truncation, small/ordinary glyphs, alternate exponent font, 80FF20 low threshold, ordinary rational/surd decimal conversion, marked6x rational rejection, ERROR and empty null-source output; ignores Norm/Fix/Sci"},
     {"address": "0x158b8", "name": "format_base_n_result", "scope": "full80FA masks1/7/9/F, fixed-width binary/octal/hex and unpadded decimal, negative two's complement, native radix rejection and empty tagged-record outputs"},
     {"address": "0x15a1e", "name": "extract_base_decimal_digits", "scope": "original absolute-value plus10^10 operation, ten packed digit extraction and original15-digit arithmetic behavior for fractional/large records"},
     {"address": "0x15a94", "name": "convert_base_decimal_digits", "scope": "ten-digit decimal accumulation modulo32bits, binary signed16-bit range check and negative two's-complement conversion"}
   ],
   "gaps": [
     "Malformed or noncanonical surd BCD records outside the verified codec domain",
-    "Prime-factorization of tagged rational/surd records; native raw interpretation differs from canonical numeric conversion",
-    "Error screens and modal vector/matrix formatting",
+    "Error-screen UI controllers and modal vector/matrix formatting",
     "BASE-N settings other than80FA1/7/9/F and malformed decimal BCD records",
     "Complex-result composition and UI controller state side effects",
     "Alternate global modal settings outside the options API and their UI state side effects",
@@ -51,5 +52,13 @@
     "input": "canonical decimal records across exponents-99..99, signs, radix range/wrap boundaries, fractional and tagged/error controls, complete valid80FA masks",
     "output": "exact tokens, source immutability, empty rejection outputs, required length and bounded NUL writes",
     "limitation": "Numeric scratch/call-stack writes and LCD mode header belong to controller integration; invalid base settings and malformedBCD are explicit unsupported paths"
+  },
+  "budget_verification": {
+    "tool": "tools/test_format_budget_c.py",
+    "report": "analysis/c-verification/format_budget.json",
+    "oracle": "original extracted ROM3500 in independent SimU8 core",
+    "input": "budgets6/12, decimal exponent/sign/rounding boundaries, marked and tagged canonical records, errors, null source, both exponent fonts, 80FF low threshold and8104 punctuation",
+    "output": "exact tokens, required length, immutable source and bounded NUL writes",
+    "limitation": "Prepared routine contexts; original numeric scratch/call-stack writes are not implementation outputs; no native callers use other budgets"
   }
 }

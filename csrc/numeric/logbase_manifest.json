@@ -1,0 +1,14 @@
+{
+  "subsystem": "numeric-logbase",
+  "implementation": "Readable C99 composition of the verified decimal logarithm and division kernels; no CPU execution, ROM execution or host floating-point arithmetic",
+  "implemented_routines": [
+    {"address": "0x1c082", "name": "public arbitrary-base real logarithm", "scope": "Base in operand0 and argument in operand2; decimal/rational/marked records and compact two-surd conversion, F3 domain errors and native fifteen-digit result"},
+    {"address": "0x190ce", "name": "arbitrary-base logarithm kernel", "scope": "Save argument, compute log10(base) first, compute log10(argument) second, discard both guard words and divide in native order"},
+    {"address": "0x1c10c", "name": "scalar operation selector10", "scope": "Shared wrapper branch to arbitrary-base log kernel and result serialization"}
+  ],
+  "api": "fx_number_log_base(out, base, argument)",
+  "verification": "analysis/c-verification/numeric_logbase.json",
+  "test": "python3 tools/test_numeric_logbase_c.py --random-cases 5000",
+  "gaps": ["Expression comma/implicit-parenthesis dispatch and consumed-pointer behavior are tracked by parser integration", "Complex logarithms and unsupported/nonreal format tags", "Malformed native numeric inputs, global workspace RAM side effects and exhaustive state equivalence"],
+  "completion": "Prepared canonical real routine parity; complete firmware equivalence remains unproven"
+}

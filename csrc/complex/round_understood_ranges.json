@@ -1,0 +1,17 @@
+{
+  "basis": "Individually inspected half-open instruction spans, readable C and independent native routine-boundary comparisons. Canonical scalar records and prepared display settings only; scalar callees, scratch RAM and malformed BCD are not included implicitly.",
+  "ranges": [
+    {
+      "start": "0x15c82",
+      "end": "0x15c9e",
+      "scope": "Scalar output preprocessing: surd conversion before header guard, marked rational rejection, metadata clearing and ordinary rational conversion status",
+      "source": "csrc/complex/fx_complex_round.c"
+    },
+    {
+      "start": "0x15cbe",
+      "end": "0x15d4e",
+      "scope": "Prepared display-precision rounding: Norm ten digits, Sci zero-to-ten precision, Fix fractional-part short circuit then multiply/integral-round/divide order; imaginary-first CMPLX wrapper and early native error return",
+      "source": "csrc/complex/fx_complex_round.c"
+    }
+  ]
+}

@@ -5,6 +5,9 @@
 #include "../trig/fx_trig_inverse.h"
 #include "../trig/fx_trig_hyperbolic.h"
 #include "../numeric/fx_transcend.h"
+#include "../numeric/fx_root.h"
+#include "../numeric/fx_combinatorics.h"
+#include "../numeric/fx_logbase.h"
 #include <string.h>
 
 typedef struct {
@@ -54,7 +57,7 @@ static void expression(parser *p, fx_number *out, unsigned minimum);
 
 static int function_prefix(uint8_t token)
 {
-    return token == 0x98 || token == 0x68 || (token >= 0x70 && token <= 0x73) ||
+    return token == 0x98 || token == 0xa8 || token == 0x68 || (token >= 0x70 && token <= 0x73) ||
            (token >= 0x90 && token <= 0x93) || (token >= 0xa0 && token <= 0xa3) ||
            (token >= 0xb0 && token <= 0xb2);
 }
@@ -118,20 +121,27 @@ static void primary(parser *p, fx_number *out)
         memcpy(out->bytes, token == 0x81 ? e : pi, 10);
         ++p->position;
     } else if (function_prefix(token)) {
-        fx_number output;
+        fx_number output, second_argument;
         int closed = 0;
+        int has_base = 0;
         ++p->position;
         /* Function tokens include the opening parenthesis implicitly. */
         expression(p, out, 0);
+        if (p->status == FX_EVAL_OK && token == 0x68 && peek(p) == ',') {
+            ++p->position;
+            expression(p, &second_argument, 0);
+            has_base = 1;
+        }
         if (p->status == FX_EVAL_OK) {
             if (peek(p) == ')') { ++p->position; closed = 1; }
-            else if (token == 0x68 && peek(p) == ',') unsupported(p, ',');
             else if (peek(p) != 0) p->status = FX_EVAL_SYNTAX;
         }
         if (p->status == FX_EVAL_OK) {
             fx_numeric_status status;
             if (token == 0x98) status = fx_number_sqrt(&output, out, p->options.math_output);
-            else if (token == 0x68) status = fx_number_log10(&output, out);
+            else if (token == 0xa8) status = fx_number_cbrt(&output, out);
+            else if (token == 0x68) status = has_base ? fx_number_log_base(&output, out, &second_argument) :
+                                                     fx_number_log10(&output, out);
             else if (token == 0xa3) status = fx_number_ln(&output, out);
             else if (token == 0x73) status = fx_number_exp(&output, out);
             else if (token == 0x93) status = fx_number_exp10(&output, out);
@@ -161,7 +171,7 @@ static void primary(parser *p, fx_number *out)
             accept_operation(p, &output, status);
             if (p->status == FX_EVAL_OK) *out = output;
         }
-    } else if (token == 0 || token == ')') p->status = FX_EVAL_SYNTAX;
+    } else if (token == 0 || token == ')' || token == ',') p->status = FX_EVAL_SYNTAX;
     else unsupported(p, token);
     --p->depth;
 }
@@ -188,10 +198,11 @@ static void fraction(parser *p, fx_number *out, const fx_number *denominator)
     if (p->status == FX_EVAL_OK) *out = value;
 }
 
-static void real_power(parser *p, fx_number *out, const fx_number *exponent)
+static void power_or_root(parser *p, fx_number *out, const fx_number *argument, uint8_t token)
 {
     fx_number output;
-    fx_numeric_status status = fx_number_power(&output, out, exponent);
+    fx_numeric_status status = token == 0x5e ? fx_number_power(&output, out, argument) :
+                                             fx_number_nthroot(&output, argument, out);
     accept_operation(p, &output, status);
     if (p->status == FX_EVAL_OK) *out = output;
 }
@@ -205,12 +216,15 @@ static void expression(parser *p, fx_number *out, unsigned minimum)
         fx_binary_op op;
         fx_number right;
         int implicit = 0;
-        if ((token >= 0x75 && token <= 0x77) || (token >= 0x85 && token <= 0x87)) {
+        if (token == 0x57 || token == 0x25 || (token >= 0x75 && token <= 0x77) ||
+            (token >= 0x85 && token <= 0x87)) {
             if (70 < minimum) return;
             fx_number output;
             fx_numeric_status status;
             ++p->position;
-            if (token <= 0x77)
+            if (token == 0x57) status = fx_number_factorial(&output, out);
+            else if (token == 0x25) status = fx_number_percent(&output, out);
+            else if (token >= 0x75 && token <= 0x77)
                 status = fx_number_integer_power(&output, out, token == 0x75 ? 2 : token == 0x76 ? 3 : -1);
             else if (p->options.angle_unit >= 4 && p->options.angle_unit <= 6)
                 status = fx_angle_convert(&output, out, (fx_angle_unit)(token - 0x85),
@@ -225,21 +239,24 @@ static void expression(parser *p, fx_number *out, unsigned minimum)
             precedence = 10; op = token == '+' ? FX_ADD : FX_SUBTRACT;
         } else if (token == 0x4e || token == 0x4f) {
             precedence = 20; op = token == 0x4e ? FX_MULTIPLY : FX_DIVIDE;
+        } else if (token == 0xbe || token == 0xbf) {
+            precedence = 25; op = FX_MULTIPLY;
         } else if (implicit_start(token)) {
             precedence = 30; op = FX_MULTIPLY; implicit = 1;
         } else if (token == 0xae) {
             precedence = 60; op = FX_DIVIDE;
-        } else if (token == 0x5e) {
+        } else if (token == 0x5e || token == 0x9f) {
             precedence = 65; op = FX_MULTIPLY;
-        } else if (token == 0x25 || token == 0x97) {
+        } else if (token == 0x97) {
             unsupported(p, token); return;
         } else return;
         if (precedence < minimum) return;
         if (!implicit) ++p->position;
-        if (token == 0x5e) {
-            /* The input power token includes an implicit opening parenthesis.
-             * Its exponent is a full argument expression, as for a function;
-             * the closing parenthesis may be omitted at end of input. */
+        if (token == 0x5e || token == 0x9f) {
+            /* Power and nth-root include an implicit opening parenthesis.
+             * The right argument is a full expression. Nth-root takes its
+             * degree on the left and radicand on the right. A closing token
+             * may be omitted at end of input. */
             int closed = 0;
             expression(p, &right, 0);
             if (p->status == FX_EVAL_OK) {
@@ -247,7 +264,7 @@ static void expression(parser *p, fx_number *out, unsigned minimum)
                 else if (peek(p) != 0) p->status = FX_EVAL_SYNTAX;
             }
             if (p->status == FX_EVAL_OK) {
-                real_power(p, out, &right);
+                power_or_root(p, out, &right, token);
                 if (p->status == FX_EVAL_MATH && closed) --p->position;
             }
             continue;
@@ -261,6 +278,12 @@ static void expression(parser *p, fx_number *out, unsigned minimum)
                 if (p->status == FX_EVAL_OK) fraction(p, &right, &denominator);
                 if (p->status == FX_EVAL_OK) binary(p, out, &right, FX_ADD);
             } else fraction(p, out, &right);
+        } else if (p->status == FX_EVAL_OK && (token == 0xbe || token == 0xbf)) {
+            fx_number output;
+            fx_numeric_status status = token == 0xbe ? fx_number_permutation(&output, out, &right) :
+                                                       fx_number_combination(&output, out, &right);
+            accept_operation(p, &output, status);
+            if (p->status == FX_EVAL_OK) *out = output;
         } else if (p->status == FX_EVAL_OK) binary(p, out, &right, op);
     }
 }

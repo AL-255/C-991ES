@@ -11,19 +11,22 @@ routine addresses, the semantic API being compared, and remaining gaps.
 
 | Subsystem | Current implementation |
 | --- | --- |
-| Platform | Startup data copy and peripheral register controls, including key drive |
-| Keyboard/editor | Matrix scan, bounded debounce/held sampling, key tables, modifier dispatch, editor policies, cursor glyph/position, structured insertion, atom wrapping, deletion, field navigation and display-to-input conversion |
-| Parser | COMP decimal literals, scientific input, e/π, parentheses, signs, arithmetic precedence, compact fractions, square roots, general real powers, forward/inverse trigonometric and hyperbolic functions, logarithms and exponentials |
-| Numeric | Packed records, integer decimal arithmetic, rational/surd codecs and developing exact arithmetic |
-| Formatting | Decimal, exact rational/surd, approximate fraction/π recognition, alternate selections and BASE-N integer output |
+| Platform | Startup/reset, prepared retained-state initialization, power-off and emulator host packets; peripheral registers and key drive |
+| Keyboard/editor | Matrix scan, bounded debounce/held sampling, key tables, modifier dispatch, nonblocking host key wait, cursor, structured editing and display-to-input conversion |
+| Parser | COMP literals, e/π, parentheses/signs, arithmetic/fractions, square/cube/nth roots, powers, factorial/percent/nPr/nCr, trig/hyperbolic functions, single/two-argument logarithms and exponentials |
+| Numeric | Packed records, decimal and finite rational/surd arithmetic, roots and combinatorics with explicit remaining component precision gaps |
+| Complex | Prepared arithmetic, classification, native return statuses, conjugation, magnitude, restricted roots/powers, polar coordinates and rounding |
+| Statistics | Prepared moments, seven regression models/predictions, cache semantics, normal P/Q/R and standardization |
+| Formatting | Decimal, rational/surd, fraction/π recognition, tagged prime output, width budgets and BASE-N integer output |
 | Trigonometry | Decimal rotation kernel, angle reduction, forward/inverse sin/cos/tan and forward special-result tables |
-| Rendering | Fonts, pixel operations, recursive construct layout and developing viewport/result controller |
+| Rendering | Fonts/pixels, recursive construct layout, viewport/result controllers, equation/inequality captions and special error displays |
 | Integration | Expression-token probe and differential expression-to-LCD pipeline for supported grammar |
 
-Full keyboard integration, event scheduling, all numeric functions and calculation
-modes, complex results, error screens, history, and reset-to-key-sequence behavior
-still require implementation and verification. Passing a subset suite does not
-complete those requirements.
+Complete keyboard and mode UIs, complex expression/display composition, event
+scheduling, menus/history and reset-to-key-sequence behavior still require
+implementation and verification. Numerical integration, differentiation, sums,
+solving, matrix/vector/table calculations and other advanced functions remain
+pending. Passing a subset suite does not complete those requirements.
 
 Build from the repository root with CMake and GCC or Clang. Formatting currently
 uses the compiler's unsigned 128-bit integer extension for exact recognition

@@ -8,7 +8,7 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-SUITES = ('tokens', 'platform', 'keys', 'key_dispatch', 'cursor', 'editor', 'editor_construct', 'input_codec', 'numeric', 'numeric_transcend', 'numeric_power', 'trig', 'trig_math', 'trig_inverse', 'trig_hyperbolic', 'math_context', 'render', 'format', 'format_base', 'eval', 'cli', 'safety')
+SUITES = ('tokens', 'platform', 'boot', 'keys', 'key_dispatch', 'key_wait', 'cursor', 'editor', 'editor_construct', 'input_codec', 'numeric', 'numeric_transcend', 'numeric_power', 'numeric_root', 'numeric_logbase', 'combinatorics', 'complex', 'complex_angles', 'complex_round', 'stats', 'stats_cache', 'stats_normal', 'trig', 'trig_math', 'trig_inverse', 'trig_hyperbolic', 'math_context', 'render', 'format', 'format_base', 'format_budget', 'eval', 'cli', 'safety')
 
 
 def audit():

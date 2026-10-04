@@ -1,0 +1,23 @@
+{
+  "basis": "Inspected native assembly and exact original status/record comparisons for readable C normal probability and prepared t conversion; CPU scratch RAM, statistics lifecycle, malformed records and physical interrupt timing are outside these claims.",
+  "ranges": [
+    {
+      "start": "0x118f4", "end": "0x11a28",
+      "scope": "Absolute-input positive normal tail, zero/large-input special cases, six coefficient loads, ordered Horner/exponential/gaussian normalization",
+      "source": "csrc/stats/normal/fx_stats_normal.c",
+      "verification": "analysis/c-verification/stats_normal.json"
+    },
+    {
+      "start": "0x13662", "end": "0x13740",
+      "scope": "P/Q/R signed-tail selection, original early error preservation, five significant digit rounding and negative-result clamp",
+      "source": "csrc/stats/normal/fx_stats_normal.c",
+      "verification": "analysis/c-verification/stats_normal.json"
+    },
+    {
+      "start": "0x13740", "end": "0x13798",
+      "scope": "Prepared t conversion using x mean/population deviation, ordinary subtraction, division, cleanup and record/status return",
+      "source": "csrc/stats/normal/fx_stats_normal.c",
+      "verification": "analysis/c-verification/stats_normal.json"
+    }
+  ]
+}

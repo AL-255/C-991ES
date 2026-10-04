@@ -65,8 +65,25 @@ int fx_display_real_linear_result(fx_render *r, uint16_t address, fx_box *final_
         return -1;
     int natural = r->memory[0x8106] && (mode & 0xc0);
     if (natural && selection != 10) return -1;
-    /* B15E takes a separate cached viewport path before text formatting. */
-    if (natural && r->memory[0x8130]) return -1;
+    uint16_t persistent = mode == 136 || !(mode & 0x80) ? 0x8546 : 0x8398;
+    /* B15E skips numeric evaluation and formatting for a cached expression.
+     * Its history has an empty second line because selection10 does not
+     * flatten construct tokens. The existing display remains above row22. */
+    if (natural && r->memory[0x8130]) {
+        static const uint8_t empty[1] = {0};
+        history(r, empty, 0);
+        if (!fx_display_has_natural_input(r)) fx_clear_from_row(r, 22);
+        r->memory[0x8126] = 1;
+        uint16_t previous = (uint16_t)(r->memory[0x812c]
+                           | (uint16_t)r->memory[0x812d] << 8);
+        r->memory[0x812c] = (uint8_t)persistent;
+        r->memory[0x812d] = (uint8_t)(persistent >> 8);
+        int success = fx_render_viewport(r, final_box);
+        r->memory[0x812c] = (uint8_t)previous;
+        r->memory[0x812d] = (uint8_t)(previous >> 8);
+        r->memory[0x8127] = 0;
+        return success;
+    }
     fx_number value, imaginary, decimal_imaginary;
     fx_decimal decoded;
     memcpy(value.bytes, r->memory + address, 10);
@@ -76,7 +93,6 @@ int fx_display_real_linear_result(fx_render *r, uint16_t address, fx_box *final_
         || decoded.mantissa) return -1;
     if (!natural) memset(r->memory + FX_RAM_FRAMEBUFFER + 12 * 12, 0, 20 * 12);
     r->memory[0x8114] = 0;
-    uint16_t persistent = mode == 136 || !(mode & 0x80) ? 0x8546 : 0x8398;
     if (natural) r->memory[persistent] = 0;
     fx_format_options options = fx_format_default_options();
     options.selection = selection_byte;

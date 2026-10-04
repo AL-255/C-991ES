@@ -35,8 +35,8 @@ static fx_numeric_status small_argument(fx_number *out, const fx_number *x,
                                                             : (inverse ? 3 : -3));
     status = fx_decimal_binary(&second_term, &square, &divisor, FX_DIVIDE);
     (void)fx_decimal_from_integer(&one, 1);
-    if (status == FX_NUMERIC_OK) status = fx_decimal_binary(&sum, &second_term, &one, FX_ADD);
-    if (status == FX_NUMERIC_OK) status = fx_decimal_binary(&sum, &sum, &fourth_term, FX_ADD);
+    if (status == FX_NUMERIC_OK) status = fx_decimal_add_plain(&sum, &second_term, &one);
+    if (status == FX_NUMERIC_OK) status = fx_decimal_add_plain(&sum, &sum, &fourth_term);
     if (status == FX_NUMERIC_OK) status = fx_decimal_binary(out, &sum, x, FX_MULTIPLY);
     return status;
 }
@@ -57,11 +57,11 @@ static fx_numeric_status inverse_root(fx_number *root, const fx_number *x,
     if (function == FX_COSINE) {
         status = fx_decimal_binary(&low, &ratio, &one, FX_SUBTRACT);
         if (status == FX_NUMERIC_OK && reciprocal) status = fx_number_negate(&low, &low);
-        if (status == FX_NUMERIC_OK) status = fx_decimal_binary(&high, &ratio, &one, FX_ADD);
+        if (status == FX_NUMERIC_OK) status = fx_decimal_add_plain(&high, &ratio, &one);
         if (status == FX_NUMERIC_OK) status = fx_decimal_binary(root, &high, &low, FX_MULTIPLY);
     } else {
         status = fx_decimal_binary(&square, &ratio, &ratio, FX_MULTIPLY);
-        if (status == FX_NUMERIC_OK) status = fx_decimal_binary(root, &square, &one, FX_ADD);
+        if (status == FX_NUMERIC_OK) status = fx_decimal_add_plain(root, &square, &one);
     }
     if (status == FX_NUMERIC_OK) status = fx_decimal_sqrt(root, root);
     if (status == FX_NUMERIC_OK && reciprocal)
@@ -100,13 +100,14 @@ fx_numeric_status fx_hyperbolic_decimal(fx_number *out, const fx_number *in,
     if (inverse) {
         if (function == FX_TANGENT) {
             status = fx_decimal_binary(&low, &one, &original, FX_SUBTRACT);
-            if (status == FX_NUMERIC_OK) status = fx_decimal_binary(&high, &original, &one, FX_ADD);
+            /* Internal BC4E/BB6A additions preserve the near-zero residue. */
+            if (status == FX_NUMERIC_OK) status = fx_decimal_add_plain(&high, &original, &one);
             if (status == FX_NUMERIC_OK) status = fx_decimal_binary(&value, &high, &low, FX_DIVIDE);
             if (status == FX_NUMERIC_OK) status = fx_decimal_sqrt(&value, &value);
         } else {
             const fx_number *argument = function == FX_SINE ? &absolute : &original;
             status = inverse_root(&value, argument, function);
-            if (status == FX_NUMERIC_OK) status = fx_decimal_binary(&value, &value, argument, FX_ADD);
+            if (status == FX_NUMERIC_OK) status = fx_decimal_add_plain(&value, &value, argument);
         }
         if (status == FX_NUMERIC_OK) status = fx_number_ln(out, &value);
         if (status == FX_NUMERIC_OK && function == FX_SINE && negative)
@@ -128,11 +129,12 @@ fx_numeric_status fx_hyperbolic_decimal(fx_number *out, const fx_number *in,
     if (status != FX_NUMERIC_OK) return status;
     if (function == FX_TANGENT) {
         status = fx_decimal_binary(&low, &positive_exp, &reciprocal, FX_SUBTRACT);
-        if (status == FX_NUMERIC_OK) status = fx_decimal_binary(&high, &positive_exp, &reciprocal, FX_ADD);
+        if (status == FX_NUMERIC_OK) status = fx_decimal_add_plain(&high, &positive_exp, &reciprocal);
         if (status == FX_NUMERIC_OK) status = fx_decimal_binary(out, &low, &high, FX_DIVIDE);
     } else {
-        status = fx_decimal_binary(&value, &positive_exp, &reciprocal,
-                                   function == FX_SINE ? FX_SUBTRACT : FX_ADD);
+        status = function == FX_SINE
+            ? fx_decimal_binary(&value, &positive_exp, &reciprocal, FX_SUBTRACT)
+            : fx_decimal_add_plain(&value, &positive_exp, &reciprocal);
         if (status == FX_NUMERIC_OK) status = fx_decimal_binary(out, &value, &two, FX_DIVIDE);
     }
     if (status == FX_NUMERIC_OK && negative && function != FX_COSINE)

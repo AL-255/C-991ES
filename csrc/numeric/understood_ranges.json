@@ -150,6 +150,144 @@
       "end": "0x1b748",
       "scope": "Decimal digit-pair square-root remainder algorithm, negative input error and exponent-prefix bias",
       "source": "csrc/numeric/fx_numeric.c"
+    },
+    {
+      "start": "0x1122c",
+      "end": "0x11284",
+      "scope": "General root wrapper copies, radical conversion, scalar rejection and negative-radicand short rational degree recognition",
+      "source": "csrc/numeric/fx_root.c"
+    },
+    {
+      "start": "0x196ec",
+      "end": "0x196f6",
+      "scope": "Cube-root operation selector entry",
+      "source": "csrc/numeric/fx_root.c"
+    },
+    {
+      "start": "0x19728",
+      "end": "0x19738",
+      "scope": "Canonical degree3 construction and root-mode dispatch",
+      "source": "csrc/numeric/fx_root.c"
+    },
+    {
+      "start": "0x1c664",
+      "end": "0x1c690",
+      "scope": "General root public entry, operand swap, serialization and register restoration; shared power tail included",
+      "source": "csrc/numeric/fx_root.c"
+    },
+    {
+      "start": "0x1c878",
+      "end": "0x1c88c",
+      "scope": "Cube-root public selector and radical input decimal preparation",
+      "source": "csrc/numeric/fx_root.c"
+    },
+    {
+      "start": "0x1c8ba",
+      "end": "0x1c902",
+      "scope": "Shared unary scalar marker clearing, core selection, error coercion and result serialization",
+      "source": "csrc/numeric/fx_root.c"
+    },
+    {
+      "start": "0x17616",
+      "end": "0x17746",
+      "scope": "Compact radical packing, decimal component eligibility, direct two-slot fields, rational/error/zero collapse and fallback selection",
+      "source": "csrc/numeric/fx_numeric.c"
+    },
+    {
+      "start": "0x17b34",
+      "end": "0x17c4a",
+      "scope": "Radical workspace value tests/copy/negation; raw operand copies, rational recognition, per-format eligibility and original-operand decimal fallback",
+      "source": "csrc/numeric/fx_numeric.c"
+    },
+    {
+      "start": "0x17c70",
+      "end": "0x17d14",
+      "scope": "Radical triplet swap and stable four-term sorting, empty-slot canonical construction",
+      "source": "csrc/numeric/fx_numeric.c"
+    },
+    {
+      "start": "0x17d14",
+      "end": "0x17e1a",
+      "scope": "Triplet coefficient/denominator finite exponent checks, fraction addition/product/square-factor composition and integer-scalar multiplication",
+      "source": "csrc/numeric/fx_numeric.c"
+    },
+    {
+      "start": "0x17e1a",
+      "end": "0x18176",
+      "scope": "Four-product construction, conjugate scalar denominator, two-slot reduction, exact add/subtract/multiply/divide dispatch and original-operand fallback",
+      "source": "csrc/numeric/fx_numeric.c"
+    },
+    {
+      "start": "0x1bbd8",
+      "end": "0x1bc26",
+      "scope": "Cancellation-aware subtraction/addition core entry selectors",
+      "source": "csrc/numeric/fx_numeric.c"
+    },
+    {
+      "start": "0x1bd96",
+      "end": "0x1bdd0",
+      "scope": "Statistics cancellation suppression after thirteen leading aligned mantissa zero digits",
+      "source": "csrc/numeric/fx_numeric.c"
+    },
+    {
+      "start": "0x1bf90",
+      "end": "0x1bfa4",
+      "scope": "Public cancellation-aware subtraction mode9 entry",
+      "source": "csrc/numeric/fx_numeric.c"
+    },
+    {
+      "start": "0x1c690",
+      "end": "0x1c6e0",
+      "scope": "Real subtraction/addition/division/multiplication public selector entries",
+      "source": "csrc/numeric/fx_numeric.c"
+    },
+    {
+      "start": "0x1c748",
+      "end": "0x1c76a",
+      "scope": "Compact-radical operation dispatch",
+      "source": "csrc/numeric/fx_numeric.c"
+    },
+    {
+      "start": "0x1bc6c",
+      "end": "0x1bdd0",
+      "scope": "Finite aligned decimal add/subtract, sign and magnitude swap, sixteen-digit subtraction and optional relative cancellation suppression; called normalization body is independently inventoried",
+      "source": "csrc/numeric/fx_numeric.c"
+    },
+    {
+      "start": "0x1ab36",
+      "end": "0x1ab98",
+      "scope": "Scalar format predicates, unary marker clearing, two-operand marker capture and clearing, error return",
+      "source": "csrc/numeric/fx_numeric.c"
+    },
+    {
+      "start": "0x1c6e0",
+      "end": "0x1c748",
+      "scope": "Scalar/surd branch selection, exact arithmetic call, post-exact marked decimal conversion and operation-specific metadata restoration",
+      "source": "csrc/numeric/fx_numeric.c"
+    },
+    {
+      "start": "0x194ec",
+      "end": "0x1954c",
+      "scope": "Integral decimal eligibility by exponent0..14 and low-nibble zero count, canonical zero and sign/format rejection",
+      "source": "csrc/numeric/fx_numeric.c"
+    },
+    {
+      "start": "0x198d4",
+      "end": "0x19c76",
+      "scope": "Scalar rational versus ordinary decimal operation selection; finite cross-products, GCD reduction, quotient/remainder, mixed-record digit budget and fraction-plus-whole decimal fallback",
+      "source": "csrc/numeric/fx_numeric.c"
+    },
+    {
+      "start": "0x19d9a",
+      "end": "0x19e48",
+      "scope": "Finite rational add/subtract/multiply/divide numerator and denominator composition with original fifteen-digit decimal truncation order",
+      "source": "csrc/numeric/fx_numeric.c"
+    },
+    {
+      "start": "0x19e7a",
+      "end": "0x19f1a",
+      "scope": "Two-operand scalar rational/integral classification, component extraction order and saved numerator/denominator records",
+      "source": "csrc/numeric/fx_numeric.c"
     }
   ],
   "partial_blocks": [

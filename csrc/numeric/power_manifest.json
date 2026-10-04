@@ -2,17 +2,49 @@
   "subsystem": "numeric-power",
   "implementation": "Readable C99 real power dispatcher and decimal logarithm/exponent factor composition; no CPU interpreter, ROM execution or host floating-point arithmetic",
   "implemented_routines": [
-    {"address": "0x15f00", "name": "real evaluator power", "scope": "Canonical decimal, rational and compact two-surd operands in Math context; reciprocal/square/cube exact paths, marked-decimal normalization and F3 domain errors"},
-    {"address": "0x1118e", "name": "power format dispatcher", "scope": "Exact fast paths followed by radical decimal conversion, scalar header eligibility and negative-base short rational exponent recognition"},
-    {"address": "0x112b6", "name": "negative-base exponent recognition", "scope": "Short nonintegral rational recognition; integral recognitions are not substituted"},
-    {"address": "0x1954c", "name": "negative-base fractional exponent preparation", "scope": "Odd reduced denominator requirement, numerator parity and original raw fraction division order"},
-    {"address": "0x19782", "name": "rational power dispatch", "scope": "Independent integral component powers with cleanup, rational record retention and original-operand decimal fallback"},
-    {"address": "0x1a81c", "name": "guarded decimal real power", "scope": "Fifteen stored input digits, seventeen-digit logarithmic composition, reciprocal-integer root branch, native integer/parity classification, rounding and range/sign behavior"},
-    {"address": "0x1b542", "name": "power integer/parity classifier", "scope": "Original middle-exponent low-digit policy and large-exponent even classification"},
-    {"address": "0x1b332", "name": "power integer-result rounding", "scope": "Nearest integral rounding before reciprocal when both original operands classify integral"}
+    {
+      "address": "0x15f00",
+      "name": "real evaluator power",
+      "scope": "Canonical decimal, rational and compact two-surd operands in Math context; reciprocal/square/cube exact paths, marked-decimal normalization and F3 domain errors"
+    },
+    {
+      "address": "0x1118e",
+      "name": "power format dispatcher",
+      "scope": "Exact fast paths followed by radical decimal conversion, scalar header eligibility and negative-base short rational exponent recognition"
+    },
+    {
+      "address": "0x112b6",
+      "name": "negative-base exponent recognition",
+      "scope": "Short nonintegral rational recognition; integral recognitions are not substituted"
+    },
+    {
+      "address": "0x1954c",
+      "name": "negative-base fractional exponent preparation",
+      "scope": "Odd reduced denominator requirement, numerator parity and original raw fraction division order"
+    },
+    {
+      "address": "0x19782",
+      "name": "rational power dispatch",
+      "scope": "Independent integral component powers with cleanup, rational record retention and original-operand decimal fallback"
+    },
+    {
+      "address": "0x1a81c",
+      "name": "guarded decimal real power",
+      "scope": "Fifteen stored input digits, seventeen-digit logarithmic composition, reciprocal-integer root branch, native integer/parity classification, rounding and range/sign behavior"
+    },
+    {
+      "address": "0x1b542",
+      "name": "power integer/parity classifier",
+      "scope": "Original middle-exponent low-digit policy and large-exponent even classification"
+    },
+    {
+      "address": "0x1b332",
+      "name": "power integer-result rounding",
+      "scope": "Nearest integral rounding before reciprocal when both original operands classify integral"
+    }
   ],
   "gaps": [
-    "Public general nth-root evaluator dispatch (0x15f0c) is not exposed yet",
+    "General nth-root and cube-root dispatch is tracked separately by root_manifest.json",
     "Complex powers, malformed numeric records and routine-level global scratch RAM side effects",
     "Exhaustive operand-state equivalence outside the finite differential suite"
   ],

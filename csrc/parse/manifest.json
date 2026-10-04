@@ -21,7 +21,7 @@
     {
       "address": "0x171f4",
       "name": "evaluate expression",
-      "scope": "COMP tokens: literals, scientific input, e/pi, parentheses, unary signs, arithmetic, stronger implicit multiplication, compact/mixed fractions with native operand eligibility, square root and forward and inverse sin/cos/tan, ln/log10, exp/exp10 and all six hyperbolic functions Math on/off; general real powers with native implicit exponent parentheses, square/cube/reciprocal and angle-unit postfix; status, numeric records and consumed pointer; nested expression-to-LCD checks"
+      "scope": "COMP literals, scientific input, e/pi, parentheses, unary signs, arithmetic and stronger implicit multiplication, compact/mixed fractions, square/cube/nth roots, general real powers, factorial/percent/nPr/nCr, forward/inverse trigonometric and hyperbolic functions, ln/log10/arbitrary-base logarithm and exp/exp10; native status, both numeric records, consumed pointer, operation cleanup and nested expression-to-LCD checks"
     },
     {
       "address": "0x16562",
@@ -46,16 +46,26 @@
     {
       "address": "0x2976 / 0x2978 / 0x297a / 0x297c / 0x296c",
       "name": "inverse trigonometric and logarithmic function dispatch",
-      "scope": "rawB0/B1/B2 asin/acos/atan in all angle units; raw68 single-argument log10 and A3 ln; domain errors and nested expression-to-LCD checks"
+      "scope": "RawB0/B1/B2 asin/acos/atan in all angle units; raw68 single-argument log10 and two-argument base/argument logarithm, A3 ln; nested arguments, domain/syntax errors and native consumed cursor"
     },
     {
       "address": "0x2960..0x296a / 0x2972 / 0x2974",
       "name": "hyperbolic and exponential function dispatch",
       "scope": "Raw70/71/72 sinh/cosh/tanh,90/91/92 asinh/acosh/atanh,73 exp and93 exp10, operation cleanup and domain-error cursor semantics"
+    },
+    {
+      "address": "0x1c878 / 0x1122c",
+      "name": "cube-root and nth-root dispatch",
+      "scope": "RawA8 unary cube root; raw9F infix degree with implicit full radicand argument, optional closing token, negative-degree precedence and error cursor"
+    },
+    {
+      "address": "0x1c1a2 / 0x1c0aa / 0x1c096 / 0x16182",
+      "name": "factorial, permutation, combination and percent dispatch",
+      "scope": "Raw57/25 postfix and BE/BF binary operators; native precedence against fractions, implicit multiplication, powers and unary signs; operation cleanup and domain-error cursor"
     }
   ],
   "gaps": [
-    "other root types, remaining postfix operators, arbitrary-base logarithms and full function dispatch",
+    "remaining postfix operators and full function dispatch",
     "number literal parsing in all bases",
     "function dispatch and mode constraints",
     "variable and complex expression evaluation",

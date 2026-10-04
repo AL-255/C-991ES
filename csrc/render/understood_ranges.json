@@ -211,6 +211,30 @@
       "end": "0x11072",
       "scope": "Cursor overwrite-class check, blink glyph choice and overflow cursor marker",
       "source": "csrc/render/fx_layout.c"
+    },
+    {
+      "start": "0xb09c",
+      "end": "0xb0e0",
+      "scope": "Partial B070: mode69 empty-caption dispatch/history and mode75 inequality-result dispatch; numeric solving is outside this span",
+      "source": "csrc/render/fx_result_inequality.c"
+    },
+    {
+      "start": "0xb4b0",
+      "end": "0xb52a",
+      "scope": "Equation caption table, fixed-row padding and rendering, result-kind commit",
+      "source": "csrc/render/fx_result_inequality.c"
+    },
+    {
+      "start": "0xb5ce",
+      "end": "0xb942",
+      "scope": "All inequality relation dispatches and complete interval result controller flow, legacy root labels, combined format kinds, natural expression construction and cached viewport reuse; called numeric/formatter semantics separately documented",
+      "source": "csrc/render/fx_result_inequality.c"
+    },
+    {
+      "start": "0x10e34",
+      "end": "0x10e5c",
+      "scope": "Byte-valued component/result-kind combination including surd and absent-real exceptions",
+      "source": "csrc/render/fx_result_inequality.c"
     }
   ]
 }

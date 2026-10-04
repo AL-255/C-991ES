@@ -46,13 +46,13 @@
     {
       "routine": "0xb070 through0xc060 / numeric operand loaders",
       "locations": [
-        "0x8006 in the natural viewport branch",
-        "0x8000..0x8009 in the legacy/special branches",
+        "unused native numeric operand workspaces within0x8000..0x80DB",
+        "0x8006 even in the natural viewport branch",
         "inactive4-byte metric pool slots at0x8640..0x8707"
       ],
-      "evidence": "Originalengineeringdisplayof1/3 writes8006=0x33 atPC1BADA. Surddecimalfallback leaves unused component records in the metricpool.",
+      "evidence": "Original engineering display of1/3 writes8006=0x33 atPC1BADA. Boot1E55E action2 legacy zero formatting also leaves800A/B and8010..8019 operand records. Surd decimal fallback leaves unused component records in the metricpool.",
       "portable_outcome": "Formatter and numeric APIs compute external records and tokens; they do notcurrentlyexpose native operand-workspace writes.",
-      "test_handling": "Controller tests compare tokens,display globals excluding native numeric operand scratch,active metric cache slots,0x9800..0x98FF history, framebuffer and LCD. Unused workspaces remain an explicit completeness gap."
+      "test_handling": "Controller tests compare tokens,full selection/cache globals,active viewport state0x8000..0x8005/0x8007..0x800A,active metric cache slots,history where applicable,framebuffer,all512 LCD bytes and formatter MMIO. Other operand-workspace bytes within0x8000..0x80DB remain an explicit completeness gap."
     }
   ],
   "portable_limits": [
@@ -62,20 +62,22 @@
       "reason": "Native loops have no analogous explicit limit; the C API must remain bounded on malformed host-provided memory. Successful finite cases retain original byte-count/address wrap."
     }
   ],
-  "unsupported_controller_domains": [
+  "unsupported_controller_domains": [],
+  "implemented_controller_boundaries": [
     {
       "routine": "0xb070 legacy branch",
       "input": "natural input, selection10,8130 nonzero",
-      "native_outcome": "Skips formatter and dispatches the preexisting persistent expression to viewport8C56",
-      "portable_outcome": "Returns-1; separate cache-reuse path remains untranslated",
-      "test_handling": "Explicit API guard; cached natural Math result reuse remains supported by fx_display_real_math_result"
+      "portable_outcome": "Skips numeric formatting, creates the empty-text history, renders the persistent expression through viewport8C56, and restores812C."
     },
     {
       "routine": "0x37bc through0xc060 selection15",
       "input": "tagged rational/surd fixed numeric records and all sixteen previous selections",
-      "native_outcome": "Each original return/fault and framebuffer/LCD SHA256 is recorded in the canonical render report",
-      "portable_outcome": "Returns0 with explicit unsupported formatter status",
-      "test_handling": "All excluded tagged prime fixtures are executed by the oracle and recorded, rather than omitted. Marked decimal primes are implemented and compared."
+      "portable_outcome": "Uses the high-level packed-decimal prime formatter; all tested original returns match persistent state/framebuffer/LCD. Any new native fault or unsupported status is recorded explicitly by the test."
+    },
+    {
+      "routine": "0x37bc through0xc060 error branch",
+      "input": "all sixteen F0..FF headers",
+      "portable_outcome": "Emits ERROR except empty FD, returns kind0, and bypasses numeric recognition and sleep side effects before mode-specific serializers."
     }
   ]
 }

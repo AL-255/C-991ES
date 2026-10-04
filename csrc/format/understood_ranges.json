@@ -1,0 +1,53 @@
+{
+  "basis": "Conservative inspected half-open semantic spans. Shared helpers are understood for canonical numeric records and the actual table/inequality caller contracts. This does not claim CPU scratch-state, malformed native ABI input or full-firmware completeness.",
+  "ranges": [
+    {
+      "start": "0x7ee0",
+      "end": "0x7f92",
+      "scope": "Prime token serialization, multiplication separators, final-factor grouping, powers and return kind15",
+      "source": "csrc/format/fx_format.c"
+    },
+    {
+      "start": "0x10e14",
+      "end": "0x10e34",
+      "scope": "Error-token clearing, code13 empty exception, ordinary ERROR lookup and copy",
+      "source": "csrc/format/fx_format.c"
+    },
+    {
+      "start": "0x13c66",
+      "end": "0x13d74",
+      "scope": "Prime candidate sequence through997, finite packed quotient/remainder trials, factor-array exponent counts, stored-byte zero termination and unfactored remainder",
+      "source": "csrc/format/fx_format.c"
+    },
+    {
+      "start": "0x19b58",
+      "end": "0x19ba8",
+      "scope": "Packed-decimal quotient digit accumulation, repeated subtraction with decimal byte borrow, restoration and one-digit remainder shift",
+      "source": "csrc/format/fx_format.c"
+    },
+    {
+      "start": "0x1ba6c",
+      "end": "0x1babc",
+      "scope": "Eight-byte packed-decimal carry/borrow chains and initial-borrow subtraction variant; prime arithmetic supplies zero initial borrow",
+      "source": "csrc/format/fx_format.c"
+    },
+    {
+      "start": "0x32f8",
+      "end": "0x3374",
+      "scope": "Ordinary packed-decimal digit extraction, sign/exponent decode, zero clearing and rejection of nonzero format headers",
+      "source": "csrc/format/fx_format_budget.c"
+    },
+    {
+      "start": "0x3374",
+      "end": "0x33d6",
+      "scope": "Ordinary/small/table exponent font selection, sign, tens omission and terminator emission",
+      "source": "csrc/format/fx_format_budget.c"
+    },
+    {
+      "start": "0x3500",
+      "end": "0x3624",
+      "scope": "Complete budget6/table and budget12/inequality decimal conversion, ten-significant-digit rounding, ERROR/null paths, sign/point/exponent space deduction and 80FF20 low-cutoff selection",
+      "source": "csrc/format/fx_format_budget.c"
+    }
+  ]
+}

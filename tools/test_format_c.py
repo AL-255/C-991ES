@@ -295,6 +295,36 @@ def main():
                     n = Number(); assert lib.fx_decimal_parse(C.byref(n), value.encode()) == 0
                     cases.append((f'complex-context-{context}-{selection}-{mode}-{value}',bytes(n.bytes),
                                   Options(selection,1,0,mode,3,1,context,0)))
+    # Prime output consumes canonical tagged storage as raw packed decimal,
+    # including rational separators and the original sign fields. Numeric
+    # conversion before trial division would change these output tokens.
+    for index in range(400):
+        rational = Rational(randomizer.randrange(-99999999,100000000),
+                            randomizer.randrange(1,99999999), 0)
+        number = Number(); assert lib.fx_rational_encode(C.byref(number), C.byref(rational)) == 0
+        for marked in [0, 0x40]:
+            record = bytes([number.bytes[0] | marked]) + bytes(number.bytes[1:])
+            cases.append((f'tagged-prime-rational-{index}-{marked}',record,
+                          Options((index%16)*16+15,index%2,0,[0,4,8,9][index%4],index%10,index%2,index%7,0)))
+    for numerator, denominator in [(1,2),(1,3),(7,3),(-7,3),(25,7),(100,3),(717,3946),(-717,3946)]:
+        number = Number(); rational = Rational(numerator, denominator, 0)
+        assert lib.fx_rational_encode(C.byref(number), C.byref(rational)) == 0
+        cases.append((f'tagged-prime-boundary-{numerator}-{denominator}',bytes(number.bytes),
+                      Options(15,1,0,0,0,1,0,0)))
+    for index in range(150):
+        parts = (Number * 6)(); number = Number()
+        values = [randomizer.randrange(-99,100),randomizer.randrange(1,1000),randomizer.randrange(1,100),
+                  randomizer.randrange(-99,100),randomizer.randrange(1,1000),randomizer.randrange(1,100)]
+        for position, value in enumerate(values):
+            assert lib.fx_decimal_from_integer(C.byref(parts[position]), value) == 0
+        assert lib.fx_surd_pack(C.byref(number), parts) == 0
+        cases.append((f'tagged-prime-surd-{index}',bytes(number.bytes),
+                      Options(15,index%2,0,[0,4,8,9][index%4],index%10,index%2,index%7,0)))
+    for error in range(16):
+        for selection in range(16):
+            for math in [0, 1]:
+                cases.append((f'error-{error}-{selection}-{math}',bytes([0xf0 | error])+bytes(9),
+                              Options(selection,math,0,0,0,1,0,0)))
     failures = []
     for name, record, o in cases:
         number = Number.from_buffer_copy(record); buffer = (C.c_uint8 * 512)(); result = Result()
@@ -308,7 +338,9 @@ def main():
     # Canaries validate bounded writes and required length, rather than merely
     # checking that a sufficiently large output buffer happens to work.
     overflow_cases = 0
-    boundary_samples = cases[:12] + [case for case in cases if case[0].startswith('marked-prime-history-')][:2]
+    boundary_samples = (cases[:12] + [case for case in cases if case[0].startswith('marked-prime-history-')][:2]
+                        + [case for case in cases if case[0].startswith('tagged-prime-boundary-')]
+                        + [case for case in cases if case[0].startswith('error-13-')][:1])
     for name, record, o in boundary_samples:
         expected_kind, expected = oracle(machine, record, o)
         number = Number.from_buffer_copy(record)

@@ -410,6 +410,111 @@ static int emit_recurring(writer *w, fx_rational r, const fx_format_options *o,
     for (unsigned i = start; i < count; ++i) byte(w, '0' + digits[i]);
     byte(w, 0xb9); result->kind = 14; return 1;
 }
+/* Packed-decimal arithmetic is also needed for tagged records on the prime
+ * path. That path intentionally reads their storage as ordinary decimal
+ * bytes; converting the rational/surd value changes the firmware's result.
+ * Keep the packed digits until each quotient is stored: separator nibbles
+ * and a quotient's leading digit above9 participate in byte carry correction.
+ * These helpers perform decimal arithmetic, without a register/CPU model. */
+static uint64_t packed_subtract(uint64_t a, uint64_t b, int *negative) {
+    uint64_t result = 0;
+    int borrow = 0;
+    for (unsigned i = 0; i < 8; ++i) {
+        unsigned x = (unsigned)(a >> (8 * i)) & 255;
+        unsigned y = (unsigned)(b >> (8 * i)) & 255;
+        int difference = (int)x - (int)y - borrow;
+        int half_borrow = (int)(x & 15) < (int)(y & 15) + borrow;
+        int byte_borrow = difference < 0;
+        int corrected = difference & 255;
+        if ((corrected & 15) > 9 || half_borrow) corrected -= 6;
+        if ((corrected & 240) > 144 || byte_borrow) corrected -= 96;
+        borrow = byte_borrow || !!(corrected & 256);
+        result |= (uint64_t)(corrected & 255) << (8 * i);
+    }
+    *negative = borrow;
+    return result;
+}
+static uint64_t packed_add(uint64_t a, uint64_t b) {
+    uint64_t result = 0;
+    int carry = 0;
+    for (unsigned i = 0; i < 8; ++i) {
+        unsigned x = (unsigned)(a >> (8 * i)) & 255;
+        unsigned y = (unsigned)(b >> (8 * i)) & 255;
+        unsigned sum = x + y + (unsigned)carry;
+        int half_carry = (x & 15) + (y & 15) + (unsigned)carry > 15;
+        int byte_carry = sum > 255;
+        unsigned corrected = sum & 255;
+        if ((corrected & 15) > 9 || half_carry) corrected += 6;
+        if ((corrected & 240) > 144 || byte_carry || (corrected & 256)) corrected += 96;
+        carry = byte_carry || !!(corrected & 256);
+        result |= (uint64_t)(corrected & 255) << (8 * i);
+    }
+    return result;
+}
+static uint64_t packed_mantissa(const fx_number *number) {
+    uint64_t packed = 0;
+    for (unsigned i = 0; i < 8; ++i) packed = (packed << 8) | number->bytes[i];
+    return packed;
+}
+static int packed_exponent(const fx_number *number) {
+    int exponent = (number->bytes[8] >> 4) * 10 + (number->bytes[8] & 15);
+    return exponent - (number->bytes[9] == 0 || number->bytes[9] == 5 ? 100 : 0);
+}
+static void store_packed(fx_number *out, uint64_t mantissa, int exponent, int sign) {
+    fx_number_zero(out);
+    if (!mantissa) return;
+    /* The native normalizer shifts a nonzero high digit once. It preserves
+     * a low leading nibble10..15 rather than numerically renormalizing it. */
+    if (mantissa >> 60) { mantissa >>= 4; ++exponent; }
+    else if (!(mantissa >> 56)) {
+        do { mantissa <<= 4; --exponent; } while (!(mantissa >> 56));
+        /* BDD0's lookahead uses byte>=15, so a first nonzero byte0F is
+         * classified as having a high digit. It leaves one leading zero
+         * slot. The prime loop tests that stored slot, not numeric zero. */
+        if ((mantissa >> 56) == 15) { mantissa >>= 4; ++exponent; }
+    }
+    if (exponent < -99) return;
+    if (exponent > 99) {
+        fx_number_error(out, 3);
+        if (sign < 0) out->bytes[9] = 5;
+        return;
+    }
+    for (int i = 7; i >= 0; --i) { out->bytes[i] = (uint8_t)mantissa; mantissa >>= 8; }
+    unsigned encoded_exponent = (unsigned)(exponent < 0 ? exponent + 100 : exponent);
+    out->bytes[8] = (uint8_t)((encoded_exponent / 10) * 16 + encoded_exponent % 10);
+    out->bytes[9] = (uint8_t)((exponent >= 0) + (sign < 0 ? 5 : 0));
+}
+static fx_numeric_status prime_divmod(fx_number *remainder, fx_number *quotient,
+                                      const fx_number *dividend, const fx_number *divisor) {
+    fx_decimal ordinary;
+    if (fx_decimal_decode(&ordinary, dividend) == FX_NUMERIC_OK && !ordinary.flags)
+        return fx_number_divmod(remainder, quotient, dividend, divisor);
+    uint64_t remaining = packed_mantissa(dividend), denominator = packed_mantissa(divisor);
+    uint64_t integral = 0;
+    int exponent = packed_exponent(dividend), divisor_exponent = packed_exponent(divisor);
+    int sign = dividend->bytes[9] >= 5 ? -1 : 1, quotient_exponent = 14;
+    if (!denominator) return FX_NUMERIC_INVALID;
+    while (exponent >= divisor_exponent) {
+        int negative;
+        if (integral >> 56) { quotient_exponent = 15 + exponent - divisor_exponent; break; }
+        integral <<= 4;
+        unsigned digit = 0;
+        do {
+            remaining = packed_subtract(remaining, denominator, &negative);
+            if (negative) break;
+            ++integral;
+            /* All canonical rational/surd records stay below this bound.
+             * This also bounds malformed packed input supplied by a host. */
+            if (++digit > 128) return FX_NUMERIC_INVALID;
+        } while (1);
+        remaining = packed_add(remaining, denominator) << 4;
+        --exponent;
+    }
+    store_packed(remainder, remaining, exponent, sign);
+    store_packed(quotient, integral, quotient_exponent, sign);
+    return FX_NUMERIC_OK;
+}
+
 /* 13C66 tries the 168 primes through997 using finite decimal division. An
  * unfactored remainder is enclosed in parentheses by7EE0, even when prime.
  * The finite quotient is essential for large records: replacing it with
@@ -418,12 +523,10 @@ static fx_format_status emit_prime_factors(writer *w, const fx_number *number,
                                            const fx_format_options *o,
                                            fx_format_result *result) {
     fx_decimal value;
-    if (fx_decimal_decode(&value, number) != FX_NUMERIC_OK)
-        return FX_FORMAT_UNIMPLEMENTED;
     fx_number remaining = *number;
     /* Prime division consumes the ordinary magnitude. The decimal marker
      * affects DMS selection, but is ignored by the original prime path. */
-    remaining.bytes[0] &= (uint8_t)~0x40;
+    if ((remaining.bytes[0] & 0xf0) == 0x40) remaining.bytes[0] &= (uint8_t)~0x40;
     result->kind = 15;
     int emitted = 0;
     for (unsigned candidate = 2; candidate <= 997; ++candidate) {
@@ -435,7 +538,7 @@ static fx_format_status emit_prime_factors(writer *w, const fx_number *number,
         (void)fx_decimal_from_integer(&divisor, candidate);
         unsigned exponent = 0; int quotient_zero;
         do {
-            if (fx_number_divmod(&remainder, &quotient, &remaining, &divisor) != FX_NUMERIC_OK)
+            if (prime_divmod(&remainder, &quotient, &remaining, &divisor) != FX_NUMERIC_OK)
                 return FX_FORMAT_UNIMPLEMENTED;
             quotient_zero = !quotient.bytes[0];
             if (remainder.bytes[0]) break;
@@ -454,10 +557,11 @@ static fx_format_status emit_prime_factors(writer *w, const fx_number *number,
     }
     if (emitted) byte(w, '$');
     byte(w, '(');
-    if (fx_decimal_decode(&value, &remaining) != FX_NUMERIC_OK) return FX_FORMAT_INVALID;
     fx_format_options normal = fx_format_default_options();
     normal.selection = 10; normal.decimal_dot = o->decimal_dot;
-    emit_decimal(w, value, &normal); byte(w, ')');
+    if (fx_decimal_decode(&value, &remaining) == FX_NUMERIC_OK)
+        emit_decimal(w, value, &normal);
+    byte(w, ')');
     return FX_FORMAT_OK;
 }
 static void emit_surd_term(writer *w, int64_t coefficient, uint64_t radicand,
@@ -563,6 +667,13 @@ fx_format_status fx_format_number(const fx_number *number,
     if (!number || !options || !result || (!tokens && capacity)) return FX_FORMAT_INVALID;
     writer w = {tokens, capacity, 0}; memset(result, 0, sizeof(*result));
     unsigned selection = options->selection & 15, previous = options->selection >> 4;
+    if (fx_number_kind(number) == FX_NUMBER_ERROR) {
+        if ((number->bytes[0] & 15) != 13) {
+            static const uint8_t error[] = {'E', 'R', 'R', 'O', 'R'};
+            for (unsigned i = 0; i < sizeof(error); ++i) byte(&w, error[i]);
+        }
+        return result_status(&w, result, FX_FORMAT_OK);
+    }
     if (selection == 1 ||
         ((selection == 0 || (selection == 13 && !previous)) && (number->bytes[0] & 0xf0) == 0x40))
         return result_status(&w, result, emit_sexagesimal(&w, number, options, result));

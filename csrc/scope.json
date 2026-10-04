@@ -34,17 +34,19 @@
       "scope": "Trigonometry, inverse functions, exponentials, logarithms, roots, powers and angle-unit conversions",
       "status": "partial",
       "manifest": "trig/manifest.json",
-      "implemented_subset": "Numeric/exact square root; forward and inverse sin/cos/tan, angle conversion and forward special-result tables; ln/log10, exp/exp10, all six hyperbolic functions and general real powers. General nth-root and complex functions pending"
+      "implemented_subset": "Square/cube/nth roots, forward/inverse trigonometry and special-result tables, all six hyperbolic functions, ln/log10/arbitrary-base logarithms, exp/exp10, general real powers and prepared complex coordinates; complete mode UI remains pending"
     },
     {
       "id": "advanced_math",
       "scope": "Numerical integration/differentiation/sums, solving, combinatorics, random functions and complex arithmetic",
-      "status": "pending"
+      "status": "partial",
+      "implemented_subset": "Factorial, permutations, combinations and percent in COMP parser; prepared complex arithmetic, classification, native status, conjugation, magnitude, restricted roots/powers, polar coordinates and display rounding. Numerical integration/differentiation/sums, solving and random functions remain pending"
     },
     {
       "id": "calculation_modes",
       "scope": "Statistics, distributions, equation, matrix, vector, table and base-N modes, constants and unit conversions",
-      "status": "pending"
+      "status": "partial",
+      "implemented_subset": "Prepared statistics/regression kernels for seven models, cache semantics, normal P/Q/R and standardization; equation/inequality result-display controllers and BASE-N integer formatting. Complete mode input/UI, equation solving, matrix/vector/table calculations, constants and conversions remain pending"
     },
     {
       "id": "format",
@@ -62,7 +64,7 @@
       "id": "end_to_end",
       "scope": "Runnable calculator with original expression and key-sequence input/output behavior",
       "status": "partial",
-      "implemented_subset": "Supported COMP decimal/exact, forward/inverse trig and hyperbolic, logarithmic and exponential tokens through records, formatter tokens, mathematical layout and LCD; structured display-to-input conversion and error-cursor mapping; editor insertion/deletion/navigation and cursor ticks in prepared contexts; complete key UI pending"
+      "implemented_subset": "Supported COMP arithmetic, fractions, square/cube/nth roots, powers, factorial/percent/nPr/nCr, forward/inverse trig and hyperbolic, single/two-argument logarithms and exponentials through records, formatter tokens, layout and LCD; structured display-to-input conversion and error cursor mapping. Prepared editor, cursor and nonblocking host key-wait APIs; complete key UI and other mode pipelines remain pending"
     },
     {
       "id": "verification",

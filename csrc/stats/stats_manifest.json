@@ -1,0 +1,32 @@
+{
+  "implementation": "Readable C statistics numeric kernels using 15-digit integer decimal arithmetic",
+  "firmware_execution_in_implementation": false,
+  "original_rom_sha256": "28b5c3907a67426a1601dbf82ebf62b850333e889fcc958d698786d3e5f5fb7d",
+  "entry_points": {
+    "0x13150": "fx_stats_count",
+    "0x12ef4": "fx_stats_extreme",
+    "0x12fe2": "fx_stats_moments",
+    "0x12de6": "fx_stats_cross",
+    "0x12afc": "fx_stats_higher_moments",
+    "0x12a22": "fx_stats_square_cross",
+    "0x12d8e": "fx_stats_mean",
+    "0x12c2c": "fx_stats_deviations"
+  },
+  "regression_entries": {
+    "0x132ce": "coefficient B for all7 models",
+    "0x1330a": "coefficient A for all7 models",
+    "0x13350": "quadratic coefficient C",
+    "0x13290": "linearized correlation for all7 models",
+    "0x13266": "predict y from x",
+    "0x13218": "predict x from y for nonquadratic models",
+    "0x131ea": "quadratic inverse first root",
+    "0x131fc": "quadratic inverse second root",
+    "0x118b2": "persistent moment-cache load",
+    "0x118c4": "persistent moment-cache store"
+  },
+  "data_layout": "Original row-major table at 82ee; row count80de; 80fa==1 one variable, other statistics modes two variables; nonzero8109 adds frequency column",
+  "understood_ranges": "csrc/stats/understood_ranges.json",
+  "verification": ["tools/test_stats_c.py", "tools/test_stats_cache_c.py"],
+  "complete": false,
+  "remaining": ["statistics table editor and mode lifecycle", "connecting persistent accumulator cache to mode-controller queries", "interrupt polling and physical UI timing", "full numeric workspace RAM side effects"]
+}

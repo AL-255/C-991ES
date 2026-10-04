@@ -23,20 +23,21 @@ static uint64_t decimal_shift(uint64_t coordinate, unsigned positions)
     return coordinate;
 }
 
-fx_numeric_status fx_atan_quarter_fraction(fx_number *out, const fx_number *in)
+fx_numeric_status fx_atan_quarter_fraction_guarded(fx_number *out,
+                                                   uint64_t mantissa17,
+                                                   int exponent)
 {
-    fx_decimal argument, result;
+    fx_decimal result;
     uint64_t residual, horizontal = SAVED_ROTATION_LIMIT, rotations = 0;
     unsigned index, position, level;
     int passed_zero = 0;
-    if (!out || !in || fx_decimal_decode(&argument, in) != FX_NUMERIC_OK ||
-        argument.flags || argument.sign < 0 ||
-        (argument.mantissa && (argument.exponent > 0 ||
-         (argument.exponent == 0 && argument.mantissa > UINT64_C(100000000000000)))))
+    if (!out || exponent < -99 || exponent > 0 ||
+        (mantissa17 && (mantissa17 < UINT64_C(10000000000000000) ||
+                       mantissa17 >= UINT64_C(100000000000000000) ||
+                       (exponent == 0 && mantissa17 > UINT64_C(10000000000000099)))))
         return FX_NUMERIC_INVALID;
-    residual = argument.mantissa * 100 +
-               (argument.mantissa && argument.exponent == 0 ? 1 : 0);
-    index = (unsigned)((argument.exponent + 99) % 100);
+    residual = mantissa17;
+    index = (unsigned)((exponent + 99) % 100);
     if (residual) {
         do {
             unsigned displacement = 2 * inverse_position(index, passed_zero);
@@ -74,6 +75,19 @@ fx_numeric_status fx_atan_quarter_fraction(fx_number *out, const fx_number *in)
     }
     if (result.exponent < -99) { fx_number_zero(out); return FX_NUMERIC_OK; }
     return fx_decimal_encode(out, &result);
+}
+
+fx_numeric_status fx_atan_quarter_fraction(fx_number *out, const fx_number *in)
+{
+    fx_decimal argument;
+    if (!out || !in || fx_decimal_decode(&argument, in) != FX_NUMERIC_OK ||
+        argument.flags || argument.sign < 0 ||
+        (argument.mantissa && (argument.exponent > 0 ||
+         (argument.exponent == 0 && argument.mantissa > UINT64_C(100000000000000)))))
+        return FX_NUMERIC_INVALID;
+    uint64_t coordinate = argument.mantissa*100 +
+        (argument.mantissa && argument.exponent == 0 ? 1 : 0);
+    return fx_atan_quarter_fraction_guarded(out, coordinate, argument.mantissa ? argument.exponent : 0);
 }
 
 static int decimal_less(const fx_number *a, const fx_number *b)
@@ -115,7 +129,8 @@ fx_numeric_status fx_trig_inverse_decimal(fx_number *out, const fx_number *in,
          * rather than computing1-x*x at a different precision boundary. */
         status = fx_decimal_binary(&low, &one, &original, FX_SUBTRACT);
         if (status == FX_NUMERIC_OK)
-            status = fx_decimal_binary(&high, &one, &original, FX_ADD);
+            /* BB6A reaches BC66 with cancellation suppression disabled. */
+            status = fx_decimal_add_plain(&high, &one, &original);
         if (status == FX_NUMERIC_OK)
             status = fx_decimal_binary(&other, &high, &low, FX_MULTIPLY);
         if (status == FX_NUMERIC_OK) status = fx_decimal_sqrt(&other, &other);

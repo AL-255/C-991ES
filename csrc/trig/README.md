@@ -14,6 +14,12 @@ as inverse selectors. Its independent `fx_atan_quarter_fraction` boundary
 returns atan of an unsigned decimal argument in[0,1] as a quarter-turn
 fraction. Raw input tokensB0/B1/B2 dispatch to the original inverse entries;
 the ordinary forward tokens areA0/A1/A2.
+`fx_atan_quarter_fraction_guarded` also accepts a prepared seventeen-digit
+integer mantissa and exponent, retaining both guard digits at the kernel
+boundary. The ordinary record entry preserves its native metadata bias
+before entering that shared kernel. Complex atan2 must still retain the
+original y/x followed by reciprocal operation order; extra precision does
+not replace that sequence.
 
 `fx_trig_hyperbolic.c` implements sinh/cosh/tanh and their inverses through
 `fx_hyperbolic_decimal`, using the same three function identifiers and an
@@ -90,6 +96,9 @@ and complete inverse numeric core comparisons. It checks all output units,
 ordinary and marked decimals, rational/two-term surd inputs, domain endpoints
 and failures, tiny/huge arguments, aliases and source immutability. Its pinned
 report is `analysis/c-verification/trig_inverse.json`.
+The suite separately varies the prepared guard byte through all100 values
+at five exponent boundaries and compares random guarded mantissas directly
+with the native kernel.
 
 Run `python tools/test_trig_hyperbolic_c.py` for all six real hyperbolic
 wrappers, including threshold/domain/exp-range boundaries, tiny/huge inputs,

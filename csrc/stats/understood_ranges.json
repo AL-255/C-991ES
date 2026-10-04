@@ -1,0 +1,64 @@
+{
+  "basis": "Individually inspected half-open native assembly spans, represented by readable C and finite native differential fixtures. CPU scratch state, statistics UI lifecycle, malformed records and physical interrupt timing are outside these claims. Deduplicate with other module ledgers.",
+  "ranges": [
+    {
+      "start": "0x118b2",
+      "end": "0x118f4",
+      "scope": "Complete persistent80-byte cache load/store, first flag write and ten8-byte chunk alias order",
+      "source": "csrc/stats/fx_stats_cache.c",
+      "verification": "analysis/c-verification/stats_cache.json"
+    },
+    {
+      "start": "0x11aca", "end": "0x11e80",
+      "scope": "Quadratic centered normal equations, determinant, coefficient cleanup and coordinate restoration",
+      "source": "csrc/stats/fx_stats.c", "verification": "analysis/c-verification/stats.json"
+    },
+    {
+      "start": "0x11f1a", "end": "0x11f68",
+      "scope": "Quadratic forward prediction formula after coefficient preparation",
+      "source": "csrc/stats/fx_stats.c", "verification": "analysis/c-verification/stats.json"
+    },
+    {
+      "start": "0x11f7e", "end": "0x12010",
+      "scope": "Both quadratic inverse roots after coefficient preparation",
+      "source": "csrc/stats/fx_stats.c", "verification": "analysis/c-verification/stats.json"
+    },
+    {"start": "0x12022", "end": "0x1204c", "scope": "Inverse-model forward prediction arithmetic", "source": "csrc/stats/fx_stats.c", "verification": "analysis/c-verification/stats.json"},
+    {"start": "0x1205a", "end": "0x1208e", "scope": "Inverse-model inverse prediction arithmetic", "source": "csrc/stats/fx_stats.c", "verification": "analysis/c-verification/stats.json"},
+    {"start": "0x120a0", "end": "0x120c8", "scope": "Power-model forward prediction arithmetic", "source": "csrc/stats/fx_stats.c", "verification": "analysis/c-verification/stats.json"},
+    {"start": "0x120d6", "end": "0x12114", "scope": "Power-model inverse prediction arithmetic", "source": "csrc/stats/fx_stats.c", "verification": "analysis/c-verification/stats.json"},
+    {"start": "0x12126", "end": "0x12156", "scope": "Exponential-base forward prediction arithmetic", "source": "csrc/stats/fx_stats.c", "verification": "analysis/c-verification/stats.json"},
+    {"start": "0x12164", "end": "0x121a6", "scope": "Exponential-base inverse prediction with separate logarithms", "source": "csrc/stats/fx_stats.c", "verification": "analysis/c-verification/stats.json"},
+    {"start": "0x121b8", "end": "0x121e6", "scope": "Natural-exponential forward prediction arithmetic", "source": "csrc/stats/fx_stats.c", "verification": "analysis/c-verification/stats.json"},
+    {"start": "0x121f4", "end": "0x1222c", "scope": "Natural-exponential inverse prediction with separate logarithms", "source": "csrc/stats/fx_stats.c", "verification": "analysis/c-verification/stats.json"},
+    {"start": "0x1223c", "end": "0x1226a", "scope": "Logarithmic forward prediction arithmetic", "source": "csrc/stats/fx_stats.c", "verification": "analysis/c-verification/stats.json"},
+    {"start": "0x12278", "end": "0x122a6", "scope": "Logarithmic inverse prediction arithmetic", "source": "csrc/stats/fx_stats.c", "verification": "analysis/c-verification/stats.json"},
+    {"start": "0x122ba", "end": "0x122e2", "scope": "Linear forward prediction arithmetic", "source": "csrc/stats/fx_stats.c", "verification": "analysis/c-verification/stats.json"},
+    {"start": "0x122f4", "end": "0x1231c", "scope": "Linear inverse prediction arithmetic", "source": "csrc/stats/fx_stats.c", "verification": "analysis/c-verification/stats.json"},
+    {
+      "start": "0x12700", "end": "0x12992",
+      "scope": "Slope, centered/full intercept, correlation denominator and signed unit clamping",
+      "source": "csrc/stats/fx_stats.c", "verification": "analysis/c-verification/stats.json"
+    },
+    {
+      "start": "0x12a22", "end": "0x12de6",
+      "scope": "Weightedx²y, cubic/fourth moments, mean and population/sample deviations with original zero/negative/error status paths",
+      "source": "csrc/stats/fx_stats.c", "verification": "analysis/c-verification/stats.json"
+    },
+    {"start": "0x12de6", "end": "0x12eb6", "scope": "Transformed/centered weighted cross-product accumulation before interrupt polling", "source": "csrc/stats/fx_stats.c", "verification": "analysis/c-verification/stats.json"},
+    {"start": "0x12ec2", "end": "0x12ee8", "scope": "Cross-product row advance and final output/status", "source": "csrc/stats/fx_stats.c", "verification": "analysis/c-verification/stats.json"},
+    {"start": "0x12ef4", "end": "0x130d2", "scope": "Full extrema and transformed/centered sum/square accumulation before interrupt polling", "source": "csrc/stats/fx_stats.c", "verification": "analysis/c-verification/stats.json"},
+    {"start": "0x130da", "end": "0x1313a", "scope": "Moment row advance, both output records and nibble/error status composition", "source": "csrc/stats/fx_stats.c", "verification": "analysis/c-verification/stats.json"},
+    {
+      "start": "0x13150", "end": "0x131ea",
+      "scope": "Row/frequency count, original empty-table and error-record status behavior",
+      "source": "csrc/stats/fx_stats.c", "verification": "analysis/c-verification/stats.json"
+    }
+  ],
+  "partial_blocks": [
+    {"start": "0x118f4", "end": "0x11a28", "scope": "Normal-distribution probability routines not yet part of this statistics port"},
+    {"start": "0x11e80", "end": "0x11f0c", "scope": "Statistics preparation/cache/interrupt lifecycle not claimed complete"},
+    {"start": "0x1232c", "end": "0x12700", "scope": "Model dispatch, cached moment preparation and host interrupt policy not claimed complete"},
+    {"start": "0x131ea", "end": "0x13604", "scope": "Public scalar entry outputs are compared; full persistent mode/CPU scratch workspace and interrupt integration not claimed complete"}
+  ]
+}

@@ -263,7 +263,7 @@
     {
       "address": "0xb070",
       "name": "fx_display_real_math_result / fx_display_real_linear_result",
-      "scope": "ordinary real natural/legacy display, selected formatter branches, raw scientific suffixes in natural output, history, pointer restoration and viewport or fixed-row placement"
+      "scope": "ordinary real natural/legacy display, selected formatter branches, raw scientific suffixes in natural output, history, pointer restoration and viewport or fixed-row placement, including selection10 cached natural-input viewport reuse"
     },
     {
       "address": "0xaf5a",
@@ -348,7 +348,7 @@
     {
       "address": "0x37bc",
       "name": "fx_display_special_real_result",
-      "scope": "real special-view result and null-line clear, full selection/cache/LCD state, all three fonts and both maps; BASE-N branches1/7/9/15 via high-level formatter"
+      "scope": "real special-view result and null-line clear, full selection/cache/LCD state, all three fonts and both maps; BASE-N branches1/7/9/15 via high-level formatter; all sixteen error headers bypass numeric/mode serialization"
     },
     {
       "address": "0x368a",
@@ -364,13 +364,33 @@
       "address": "0x54e0",
       "name": "formatter_display_state",
       "scope": "real formatter-triggered sleep MMIO and LCD annunciator updates; native numeric operand scratch remains outside the API"
+    },
+    {
+      "address": "0xb4b0",
+      "name": "fx_display_equation_caption",
+      "scope": "all8135 byte selectors with actual startup pointer table, null source handling, padded destination text, both maps and full persistent/LCD state"
+    },
+    {
+      "address": "0xb60e",
+      "name": "fx_append_inequality_relation",
+      "scope": "all byte-valued part/class dispatches with comma/semicolon interval separator and wrapped destination writes"
+    },
+    {
+      "address": "0x10e34",
+      "name": "fx_combine_result_kinds",
+      "scope": "all65536 byte kind pairs"
+    },
+    {
+      "address": "0xb754",
+      "name": "fx_display_inequality_result",
+      "scope": "mode75/context1 standard status, all20 valid solution classes, legacy labels, natural token/layout output, previous DMS/ENG selection histories and cached viewport reuse"
     }
   ],
   "gaps": [
-    "B070 nonzero imaginary/complex/polar, mode137 and mode-specific equation/inequality hooks, special status/error contexts remain partial; unsupported contexts return-1. Special37BC and BASE-N fixed-row branches are translated. Natural-input selection10 with8130 nonzero takes an untranslated cached viewport path and is explicitly rejected.",
-    "B070/37BC numeric scratch RAM remains untranslated because numeric/formatter APIs expose records and tokens rather than native operand workspaces:0x8006 and inactive0x8640 metric slots for natural output,0x8000..0x8009 for legacy/special text. Intermediate complex-component C060 state is outside the complete real C060/3634 adapter.",
-    "Selection 15 tagged rational/surd formatting remains a formatter gap; the controller propagates explicit formatting failure.",
-    "Special BASE-N rejects invalid nonempty base masks and raw glyph8127 mode; C060 error records and mode137 serialization are untranslated. Null-value title lookup retains all80FA byte values.",
+    "B070 nonzero imaginary/complex/polar, mode137 and mode-specific equation history/status hooks remain partial; unsupported contexts return-1. Direct equationB4B0/inequalityB754 controllers, special37BC and BASE-N fixed-row branches are translated. Ordinary natural-input selection10 cached viewport reuse is translated.",
+    "B070/37BC/B754 unused numeric scratch RAM within0x8000..0x80DB remains untranslated because numeric/formatter APIs expose records and tokens rather than native operand workspaces. Active viewport state0x8000..0x8005 and0x8007..0x800A is compared;0x8006 and inactive0x8640 metric slots remain gaps. Intermediate inequality C060 selection state is modeled separately from the enclosing3634 result-kind commit; complex-component state remains pending.",
+    "Special BASE-N rejects invalid nonempty base masks and raw glyph8127 mode; Nonerror mode137 serialization remains untranslated. Null-value title lookup retains all80FA byte values.",
+    "Inequality B754 rejects special80FF bit4 status contexts for nonerror values; overlong C060 text>=36 bytes cannot be represented by the original local field without native stack aliasing and returns explicit formatting failure. Invalid/cyclic RAM strings are bounded; CPU stack aliases are not emulated. B070 equation caption history wrapper remains separate from directB4B0.",
     "Viewport fallback with a failed second measurement or a nonterminating overlapping copy is an explicit pending native-state audit; tested fallback replacements succeed.",
     "Cursor painting/blink scheduling is a separate UI routine; this subsystem translates cursor geometry and blink metadata.",
     "Physical CPU-stack-space check 0x52D6: portable semantic API has no native CPU stack;  recursion/count limits are modeled.",

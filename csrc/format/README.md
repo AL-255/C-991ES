@@ -30,8 +30,14 @@ rounding; Math, mixed and linear fractions; integral-component tagged surds;
 bounded ordinary-fraction recognition; the firmware's pi/25200 recognition
 test; recurring-decimal long division; degrees/minutes/seconds; engineering
 exponent placement for Norm, Fix and Sci; and prime
-factorization on canonical ordinary and marked decimal records. The marker
-is ignored locally on the prime path, preserving the original input. Prime factorization deliberately
+factorization on canonical ordinary, marked, rational and surd records. The
+ordinary decimal marker is ignored locally on the prime path, preserving the
+original input. Tagged records follow the original raw packed-decimal trial
+division rather than numerical rational/surd conversion. Separator nibbles
+and noncanonical quotient digits retain the native decimal byte carry rules.
+The normalizer's byte15 lookahead can leave a leading zero on a nonzero
+quotient, and the prime loop terminates by checking that stored leading byte.
+Prime factorization deliberately
 tries only the168 primes through997 and encloses a remaining factor in
 parentheses. The extra `format_context` parameter controls compact scientific
 precision and surd parentheses; it is not an engineering-mode switch.
@@ -42,6 +48,9 @@ Its trial division retains the original finite15-digit quotient behavior,
 including for magnitudes beyond the display's ten digits.
 Forced numeric output of rational and surd records uses the original decimal
 arithmetic order through `fx_number_to_decimal`.
+Error records bypass selection and produce kind0 with the `ERROR` token
+string; error code13 produces an empty string. Error-screen layout and UI
+actions belong to the display/controller subsystem.
 
 `fx_format_base.c` exposes `fx_format_base` for the original BASE-N formatter.
 It accepts the full80FA byte:1 binary,7 octal,9 decimal orF hexadecimal.
@@ -52,6 +61,18 @@ absolute-value plus10^10 extraction and modulo32-bit accumulation are kept,
 including their behavior for direct fractional/oversized decimal records.
 Out-of-range binary magnitudes and tagged/marked records produce empty output,
 as158B8 does. Other base settings return an explicit unsupported status.
+
+`fx_format_budget.c` exposes the separate3500 formatter used by table cells
+and inequality answers. Its firmware callers supply widths6 and12. Width6
+uses small digit glyphs; width12 uses ordinary result tokens. Both first round
+to ten significant digits (native precision byte11), then truncate the digits
+to fit the sign, punctuation and exponent budget. The routine ignores
+Norm/Fix/Sci, honors the punctuation setting, selects a small exponent font
+when8127 is1, and extends the normal-output low threshold from-2 to-3 when
+80FF is20. Ordinary rational and surd records use the original decimal conversion;
+marked rational headers6x follow the native header rejection and produce `ERROR`.
+error records produce the appropriate `ERROR` glyphs and a null input produces
+an empty output. Input records remain unchanged.
 
 Several details follow the original output rather than idealized arithmetic:
 Norm2 limits the number of fractional positions; Fix0 includes a decimal
@@ -73,3 +94,6 @@ peripherals, not boot/keyboard/LCD timing comparisons.
 
 Run `python tools/test_format_base_c.py` for the separate BASE-N token suite.
 Its source-pinned report is `analysis/c-verification/format_base.json`.
+
+Run `python tools/test_format_budget_c.py` for the separate table/inequality
+width suite. Its source-pinned report is `analysis/c-verification/format_budget.json`.

@@ -1,0 +1,8 @@
+{
+  "basis": "Individually inspected half-open scalar logbase instruction spans. Shared logarithm, division and operand preparation are separately inventoried; calls do not imply understanding of unlisted callees.",
+  "ranges": [
+    {"start": "0x190ce", "end": "0x190f6", "scope": "Complete arbitrary-base logarithm scalar kernel: argument/base-log save order, logarithm mode0 for both operands and argument-log/base-log division", "source": "csrc/numeric/fx_logbase.c"},
+    {"start": "0x1c082", "end": "0x1c096", "scope": "Public arbitrary-base logarithm entry, saved scalar operand pointers and selector10", "source": "csrc/numeric/fx_logbase.c"},
+    {"start": "0x1c10c", "end": "0x1c112", "scope": "Shared scalar wrapper branch to logbase kernel and common result serialization", "source": "csrc/numeric/fx_logbase.c"}
+  ]
+}

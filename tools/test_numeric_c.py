@@ -63,6 +63,8 @@ def main():
     lib.fx_decimal_parse.argtypes = [ptr, C.c_char_p]
     lib.fx_decimal_binary.argtypes = [ptr, ptr, ptr, C.c_int]
     lib.fx_decimal_sqrt.argtypes = [ptr, ptr]
+    lib.fx_decimal_subtract_cancel.argtypes = [ptr, ptr, ptr]
+    lib.fx_decimal_add_plain.argtypes = [ptr, ptr, ptr]
     lib.fx_number_to_decimal.argtypes = [ptr, ptr]
     lib.fx_number_sqrt.argtypes = [ptr, ptr, C.c_int]
     lib.fx_number_binary.argtypes = [ptr, ptr, ptr, C.c_int]
@@ -355,6 +357,137 @@ def main():
             m.er(0,0x8300);m.er(2,0x8320);m.er(12,0x8300);m.reg(6,193);m.reg(10,0);m.call(0x15f00)
             check('integer_power_fast_c_status',lib.fx_number_integer_power(C.byref(out),C.byref(a),exponent),0)
             check('integer_power_fast_15f00',out.raw(),bytes(m.ram[0x8300:0x830a]),f'{a_raw.hex()} exponent={exponent}')
+
+    # The statistics/regression subtraction entry uses its own relative
+    # cancellation policy. Check both sides of its leading-zero threshold.
+    extra_rng = random.Random(0x1bf9017f46)
+    cancellation_pairs = []
+    for exponent in [-99,-98,-10,-1,0,1,6,7,98,99]:
+        for mantissa in [10**14,896173312709749,10**15-1]:
+            for delta in [-101,-100,-99,-98,-11,-10,-9,-2,-1,0,1,2,9,10,11,98,99,100,101]:
+                if not 10**14 <= mantissa+delta < 10**15: continue
+                for flags in [0,0x40]:
+                    cancellation_pairs.append((raw_decimal(mantissa,exponent,1,flags),
+                                               raw_decimal(mantissa+delta,exponent,1,flags)))
+    for _ in range(args.random_cases):
+        mantissa = extra_rng.randrange(10**14+1001,10**15-1001)
+        exponent, sign, flags = extra_rng.randrange(-99,100), extra_rng.choice([-1,1]), extra_rng.choice([0,0x40])
+        delta = extra_rng.randrange(-1000,1001)
+        cancellation_pairs.append((raw_decimal(mantissa,exponent,sign,flags),
+                                   raw_decimal(mantissa+delta,exponent,sign,flags)))
+    for a_raw,b_raw in arithmetic+cancellation_pairs:
+        a,b,out = number(a_raw),number(b_raw),Number()
+        reset(); put(0x8300,a_raw); put(0x8320,b_raw); m.er(0,0x8300); m.er(2,0x8320); m.call(0x1bf90)
+        check('cancellation_subtract_status',lib.fx_decimal_subtract_cancel(C.byref(out),C.byref(a),C.byref(b)),0)
+        check('cancellation_subtract_1bf90',out.raw(),bytes(m.ram[0x8300:0x830a]),f'{a_raw.hex()} {b_raw.hex()}')
+        reset();put(0x8300,a_raw);put(0x8320,b_raw);m.er(0,0x8300);m.er(2,0x8320);m.call(0x1c690)
+        check('evaluator_cancellation_subtract_status',lib.fx_number_binary(C.byref(out),C.byref(a),C.byref(b),1),0)
+        check('evaluator_cancellation_subtract_1c690',out.raw(),bytes(m.ram[0x8300:0x830a]),f'{a_raw.hex()} {b_raw.hex()}')
+        negative_b=Number();lib.fx_number_negate(C.byref(negative_b),C.byref(b))
+        reset();put(0x8300,a_raw);put(0x8320,negative_b.raw());m.er(0,0x8300);m.er(2,0x8320);m.call(0x1bfa4)
+        check('cancellation_add_status',lib.fx_decimal_binary(C.byref(out),C.byref(a),C.byref(negative_b),0),0)
+        check('cancellation_add_1bfa4',out.raw(),bytes(m.ram[0x8300:0x830a]),f'{a_raw.hex()} {negative_b.raw().hex()}')
+        reset();put(0x8300,a_raw);put(0x8320,negative_b.raw());m.er(0,0x8300);m.er(2,0x8320);m.call(0x1bff4)
+        check('plain_add_status',lib.fx_decimal_add_plain(C.byref(out),C.byref(a),C.byref(negative_b)),0)
+        check('plain_add_1bff4',out.raw(),bytes(m.ram[0x8300:0x830a]),f'{a_raw.hex()} {negative_b.raw().hex()}')
+
+
+
+    # Expand beyond normalized exact-result records: the compact format itself
+    # allows square factors, equal radicands, and an inactive second coefficient.
+    # The firmware retains those slots during radical sorting and may therefore
+    # choose a different decimal fallback from simplified symbolic arithmetic.
+    scalar_records = []
+    for text in ['0','1','-1','2','-2','100','.5','-.25','1e7','1e8']:
+        n=Number(); lib.fx_decimal_parse(C.byref(n),text.encode()); scalar_records.append(n.raw())
+    def raw_surd(small=False):
+        raw=[]
+        for i in range(2):
+            rad = extra_rng.choice([1,2,3,4,5,8,9,12]) if small else extra_rng.randrange(1,1000)
+            coefficient = extra_rng.randrange(1 if i==0 else 0,4 if small else 100)
+            denominator = extra_rng.randrange(1,4 if small else 100)
+            raw.extend([rad//100,int(f'{rad%100:02d}',16),int(f'{coefficient:02d}',16),int(f'{denominator:02d}',16)])
+        raw[0] |= 0x80; raw.extend([extra_rng.choice([1,6]),extra_rng.choice([1,6])]); return bytes(raw)
+    raw_pairs = [(bytes.fromhex(a),bytes.fromhex(b)) for a,b in [
+        ('01000000000000000001','81621149065786170606'),
+        ('86772352028700540006','83288816017995820101'),
+        ('86292565038615340606','86772352028700540006'),
+        ('86772352028700540006','85617667001734510106'),
+        ('83638443036373810606','01000000000000000201'),
+        ('80416333004165600101','01000000000000000201')]]
+    for small in [False,True]:
+        for index in range(args.random_cases):
+            a_raw=raw_surd(small); b_raw=raw_surd(small) if index%3==0 else extra_rng.choice(scalar_records)
+            if index%2: a_raw,b_raw=b_raw,a_raw
+            raw_pairs.append((a_raw,b_raw))
+    for op,address in enumerate([0x1c6a4,0x1c690,0x1c6cc,0x1c6b8]):
+        for index,(a_raw,b_raw) in enumerate(raw_pairs):
+            a,b,out=number(a_raw),number(b_raw),Number()
+            reset();put(0x8300,a_raw);put(0x8320,b_raw);m.er(0,0x8300);m.er(2,0x8320);m.call(address)
+            expected=bytes(m.ram[0x8300:0x830a]);detail=f'{a_raw.hex()} {b_raw.hex()}'
+            check(f'raw_surd_binary_status_{address:x}',lib.fx_number_binary(C.byref(out),C.byref(a),C.byref(b),op),0)
+            check(f'raw_surd_binary_{address:x}',out.raw(),expected,detail)
+            if index%11==0:
+                check(f'raw_surd_binary_alias_status_{address:x}',lib.fx_number_binary(C.byref(a),C.byref(a),C.byref(b),op),0)
+                check(f'raw_surd_binary_alias_{address:x}',a.raw(),expected,detail)
+                check(f'raw_surd_binary_right_input_{address:x}',b.raw(),b_raw,detail)
+
+    for exponent in [2,3]:
+        exponent_record=Number();lib.fx_decimal_parse(C.byref(exponent_record),str(exponent).encode())
+        for a_raw,_ in raw_pairs:
+            if a_raw[0]&0xf0 != 0x80: continue
+            a,out=number(a_raw),Number();reset();put(0x8300,a_raw);put(0x8320,exponent_record.raw())
+            m.er(0,0x8300);m.er(2,0x8320);m.er(12,0x8300);m.reg(6,193);m.reg(10,0);m.call(0x15f00)
+            check('raw_surd_power_status',lib.fx_number_integer_power(C.byref(out),C.byref(a),exponent),0)
+            check('raw_surd_power_15f00',out.raw(),bytes(m.ram[0x8300:0x830a]),f'{a_raw.hex()} exponent={exponent}')
+
+    metadata_inputs = [bytes(10),bytes([0x40])+bytes(9)]
+    for exponent in [-99,-1,0,6,7,99]:
+        for sign in [-1,1]:
+            for flags in [0,0x40]: metadata_inputs.append(raw_decimal(10**14,exponent,sign,flags))
+    for numerator,denominator in [(1,3),(1,7),(2,3),(-1,3),(717,3946),(-717,3946)]:
+        for flags in [0,0x40]:
+            value=Number();rational=Rational(numerator,denominator,flags)
+            lib.fx_rational_encode(C.byref(value),C.byref(rational));metadata_inputs.append(value.raw())
+    metadata_inputs += [bytes.fromhex(raw) for raw in [
+        '80000001000201010100','80030201001201010106',
+        '81621149065786170606','83638443036373810606','86772352028700540006']]
+    metadata_pairs = [(a,b) for a in metadata_inputs for b in metadata_inputs]
+    for index in range(args.random_cases):
+        records=[]
+        for _ in range(2):
+            if extra_rng.randrange(2):
+                value=Number();fraction=Rational(extra_rng.randrange(-100000,100000),extra_rng.randrange(1,100000),0)
+                lib.fx_rational_encode(C.byref(value),C.byref(fraction));value.bytes[0] |= extra_rng.choice([0,0x40])
+                records.append(value.raw())
+            else: records.append(raw_decimal(extra_rng.randrange(10**14,10**15),extra_rng.randrange(-99,100),
+                                             extra_rng.choice([-1,1]),extra_rng.choice([0,0x40])))
+        if index%3==0: records[index%2] = extra_rng.choice(metadata_inputs[-5:])
+        metadata_pairs.append(records)
+    # Native scalar rational arithmetic truncates cross-products before GCD.
+    # These ordinary inputs exercise products above both 15 digits and int64,
+    # and decimals beyond the native exponent14 integral-operand limit.
+    for numerator,denominator in [(-4851,6821),(1,99999999),(-1,99999999),(-717,3946)]:
+        value=Number();fraction=Rational(numerator,denominator,0)
+        lib.fx_rational_encode(C.byref(value),C.byref(fraction))
+        for text in ['201075790269646','999999999999999','100000000000001',
+                     '123456789012345','1000000000000000','9000000000000000000']:
+            integer=Number();lib.fx_decimal_parse(C.byref(integer),text.encode())
+            for left_flags,right_flags in [(0,0),(0x40,0),(0,0x40),(0x40,0x40)]:
+                left=bytearray(value.raw());left[0]|=left_flags
+                right=bytearray(integer.raw());right[0]|=right_flags
+                metadata_pairs.extend([(bytes(left),bytes(right)),(bytes(right),bytes(left))])
+    for op,address in enumerate([0x1c6a4,0x1c690,0x1c6cc,0x1c6b8]):
+        for index,(a_raw,b_raw) in enumerate(metadata_pairs):
+            a,b,out=number(a_raw),number(b_raw),Number()
+            reset();put(0x8300,a_raw);put(0x8320,b_raw);m.er(0,0x8300);m.er(2,0x8320);m.call(address)
+            expected=bytes(m.ram[0x8300:0x830a]);detail=f'{a_raw.hex()} {b_raw.hex()}'
+            check(f'metadata_binary_status_{address:x}',lib.fx_number_binary(C.byref(out),C.byref(a),C.byref(b),op),0)
+            check(f'metadata_binary_{address:x}',out.raw(),expected,detail)
+            if index%11==0:
+                check(f'metadata_binary_alias_status_{address:x}',lib.fx_number_binary(C.byref(b),C.byref(a),C.byref(b),op),0)
+                check(f'metadata_binary_alias_{address:x}',b.raw(),expected,detail)
+                check(f'metadata_binary_left_input_{address:x}',a.raw(),a_raw,detail)
 
     manifest = {'rom_sha256': hashlib.sha256(rom).hexdigest(), 'seed': '0x991e5',
                 'random_cases_per_group': args.random_cases, 'checks': results,

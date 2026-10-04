@@ -1,0 +1,149 @@
+{
+  "subsystem": "boot, retained state and emulator host packets",
+  "ranges": [
+    {
+      "start": "0x792c",
+      "end": "0x796e",
+      "scope": "Ten native emulator descriptor pointers, little-endian writes and wrapping",
+      "source": "csrc/platform/fx_host_bridge.c"
+    },
+    {
+      "start": "0x796e",
+      "end": "0x7a5e",
+      "scope": "Complete48-byte host status packet, modifier/angle/cursor metadata and eligibility",
+      "source": "csrc/platform/fx_host_bridge.c"
+    },
+    {
+      "start": "0x742c",
+      "end": "0x747a",
+      "scope": "384 visible LCD bytes and80/01 host framebuffer header",
+      "source": "csrc/platform/fx_host_bridge.c"
+    },
+    {
+      "start": "0xaf5a",
+      "end": "0xafe2",
+      "scope": "Status/text headers and ASCII-hex packet length; unterminated strings bounded",
+      "source": "csrc/platform/fx_host_bridge.c"
+    },
+    {
+      "start": "0x52e2",
+      "end": "0x5338",
+      "scope": "Retained-state signature, contrast range, ten numeric-tag fields and port snapshot validity",
+      "source": "csrc/platform/fx_boot.c"
+    },
+    {
+      "start": "0x5192",
+      "end": "0x51aa",
+      "scope": "Transient evaluator/format reset flags",
+      "source": "csrc/platform/fx_boot.c"
+    },
+    {
+      "start": "0x1d636",
+      "end": "0x1d652",
+      "scope": "Reset layout row/font flags and transient formatter state",
+      "source": "csrc/platform/fx_boot.c"
+    },
+    {
+      "start": "0x1d6ec",
+      "end": "0x1d74a",
+      "scope": "Cold RAM initialization, contrast/port snapshot, default settings, workspace clearing and retained signature",
+      "source": "csrc/platform/fx_boot.c"
+    },
+    {
+      "start": "0x1d77e",
+      "end": "0x1d7c6",
+      "scope": "Display/exported input clearing and complete mode-dependent result workspace clearing",
+      "source": "csrc/platform/fx_boot.c"
+    },
+    {
+      "start": "0x11884",
+      "end": "0x118a0",
+      "scope": "Copy thirteen ROM defaults into settings8102..810e",
+      "source": "csrc/platform/fx_boot.c"
+    },
+    {
+      "start": "0x1e55e",
+      "end": "0x1e60e",
+      "scope": "Editor initialization actions, expression retention, special-screen label, cursor/viewport reset and default-line dispatch",
+      "source": "csrc/platform/fx_boot.c"
+    },
+    {
+      "start": "0x1e63e",
+      "end": "0x1e67c",
+      "scope": "Mode-specific default-line policy, BASE-N labels and zero-number legacy display through the supplied-record renderer",
+      "source": "csrc/platform/fx_boot.c"
+    },
+    {
+      "start": "0x802a",
+      "end": "0x8078",
+      "scope": "BASE-N label concatenation/right alignment from startup metadata; oversized native locals bounded",
+      "source": "csrc/platform/fx_boot.c"
+    },
+    {
+      "start": "0x40a2",
+      "end": "0x4106",
+      "scope": "Default screen flags, contrast, editor/result workspace, mode88 cache and framebuffer flush",
+      "source": "csrc/platform/fx_boot.c"
+    },
+    {
+      "start": "0x1f8a0",
+      "end": "0x1f8be",
+      "scope": "Mode88 line/cache reset",
+      "source": "csrc/platform/fx_boot.c"
+    },
+    {
+      "start": "0x6fe6",
+      "end": "0x7010",
+      "scope": "Five-read7b welcome key probe, boot-state pair and key-row deselection",
+      "source": "csrc/platform/fx_boot.c"
+    },
+    {
+      "start": "0xd6fe",
+      "end": "0xd730",
+      "scope": "Boot stack-guard data, peripheral/timer setup and conditional retained-state cold initialization",
+      "source": "csrc/platform/fx_boot.c"
+    },
+    {
+      "start": "0xd730",
+      "end": "0xd748",
+      "scope": "Boot default-screen setup, display gates, diagnostic branch and welcome-key decision up to event transfer",
+      "source": "csrc/platform/fx_boot.c"
+    },
+    {
+      "start": "0xd74c",
+      "end": "0xd7a6",
+      "scope": "Boot equation/inequality mode flags and LCD clearing; mode12 menu transfer remains external",
+      "source": "csrc/platform/fx_boot.c"
+    },
+    {
+      "start": "0xd7aa",
+      "end": "0xd7b4",
+      "scope": "No-op ROM hook and transfer to the main controller; the controller body is excluded",
+      "source": "csrc/platform/fx_boot.c"
+    },
+    {
+      "start": "0x73f8",
+      "end": "0x740c",
+      "scope": "Three passive reset-key samples and diagnostic entry decision only; diagnostic body excluded",
+      "source": "csrc/platform/fx_boot.c"
+    },
+    {
+      "start": "0x5338",
+      "end": "0x538a",
+      "scope": "Power-off bitmap, complete LCD flush, timer/port sleep writes and explicit reset-entry transfer; physical delay scheduling excluded",
+      "source": "csrc/platform/fx_boot.c"
+    },
+    {
+      "start": "0x6f82",
+      "end": "0x6f84",
+      "scope": "Reset entry transfers into startup data initialization",
+      "source": "csrc/platform/fx_boot.c"
+    },
+    {
+      "start": "0x6fd8",
+      "end": "0x6fe6",
+      "scope": "No-op startup hook, callback register initialization and boot transfer",
+      "source": "csrc/platform/fx_boot.c"
+    }
+  ]
+}

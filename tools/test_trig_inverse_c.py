@@ -49,6 +49,7 @@ def main():
     lib = C.CDLL(str(library))
     pointer = C.POINTER(Number)
     lib.fx_atan_quarter_fraction.argtypes = [pointer, pointer]
+    lib.fx_atan_quarter_fraction_guarded.argtypes = [pointer, C.c_uint64, C.c_int]
     lib.fx_trig_inverse_decimal.argtypes = [pointer, pointer, C.c_int, C.c_int]
     lib.fx_decimal_parse.argtypes = [pointer, C.c_char_p]
     lib.fx_decimal_from_integer.argtypes = [pointer, C.c_int64]
@@ -93,6 +94,28 @@ def main():
             alias_status = lib.fx_atan_quarter_fraction(C.byref(alias), C.byref(alias))
             check('kernel_alias', [alias_status, bytes(alias.bytes).hex()],
                   [status, bytes(output.bytes).hex()], record.hex())
+
+    # Independent prepared guard-byte cases match the native18-digit
+    # coordinate, rather than serialize the ratio to15 digits first.
+    guarded_cases = [(10**16+guard,0) for guard in range(100)]
+    guarded_cases += [(10**16+guard,exponent) for exponent in (-99,-50,-2,-1)
+                     for guard in range(100)]
+    for _ in range(args.random_cases):
+        guarded_cases.append((randomizer.randrange(10**16,10**17),randomizer.randrange(-99,0)))
+    for index,(mantissa17,exponent) in enumerate(guarded_cases):
+        output=Number()
+        status=lib.fx_atan_quarter_fraction_guarded(C.byref(output),mantissa17,exponent)
+        record=decimal_record(mantissa17//100,exponent)
+        machine.reset();settings(machine);put(record)
+        machine.er(0,0x8300);machine.call(0x1bac4)
+        guard=mantissa17%100
+        machine.ram[0x8001]=(guard//10)*16+guard%10
+        for position in range(10):machine.ram[0x8010+position]=0
+        machine.ram[0x8019]=1
+        machine.call(0x1aca2)
+        expected=bytes(machine.ram[0x8002:0x800a])[::-1]+bytes(machine.ram[0x8000:0x8002])
+        check('guarded_atan_fraction_1aca2',[status,bytes(output.bytes).hex()],
+              [0,expected.hex()],[mantissa17,exponent])
 
     named = ['0','1','-1','2','-2','.5','-.5','.707106781186547','-.707106781186547',
              '.999999999999999','-.999999999999999','1.00000000000001',

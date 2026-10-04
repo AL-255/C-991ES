@@ -45,6 +45,14 @@ void fx_decimal_from_u8(fx_number *out, uint8_t value);
 int fx_number_exponent(const fx_number *in);
 fx_numeric_status fx_decimal_binary(fx_number *out, const fx_number *a,
                                    const fx_number *b, fx_binary_op op);
+/* 0x1bff4 addition keeps a tiny cancellation residue, as used by
+ * radical conversion and other internal formula cores. */
+fx_numeric_status fx_decimal_add_plain(fx_number *out, const fx_number *a,
+                                     const fx_number *b);
+/* 0x1bf90 subtraction suppresses a residue after thirteen leading
+ * cancellation digits in the sixteen-digit aligned workspace. */
+fx_numeric_status fx_decimal_subtract_cancel(fx_number *out, const fx_number *a,
+                                            const fx_number *b);
 fx_numeric_status fx_decimal_sqrt(fx_number *out, const fx_number *in);
 fx_numeric_status fx_number_to_decimal(fx_number *out, const fx_number *in);
 /* 0x1cef0 removes tiny low-mantissa residue; this is not nearest-integer rounding. */

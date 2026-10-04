@@ -1,0 +1,13 @@
+{
+  "basis": "Individually inspected half-open instruction spans for the complete shared combinatorial loop and public selectors. Calls do not imply understanding of unlisted callees. Canonical scalar routine output parity is documented separately.",
+  "ranges": [
+    {"start": "0x16182", "end": "0x16194", "scope": "Evaluator percent leaf: clear metadata bit6 and divide the operand by packed decimal100", "source": "csrc/numeric/fx_combinatorics.c"},
+    {"start": "0x191be", "end": "0x191cc", "scope": "Packed BCD exponent comparison helper including implicit positive10^10 bound", "source": "csrc/numeric/fx_combinatorics.c"},
+    {"start": "0x191e8", "end": "0x19360", "scope": "Complete nPr/nCr/factorial loop: operand bound/integer/sign gates, min(r,n-r) bound selection, descending product, shared factorial divisor and F3 overflow/domain exits", "source": "csrc/numeric/fx_combinatorics.c"},
+    {"start": "0x1c096", "end": "0x1c0be", "scope": "Public combination and permutation entry wrappers, saved scalar pointers and selector9/8", "source": "csrc/numeric/fx_combinatorics.c"},
+    {"start": "0x1c1a2", "end": "0x1c1b6", "scope": "Public factorial scalar entry wrapper, saved pointer and selector4; common unary-function body excluded", "source": "csrc/numeric/fx_combinatorics.c"}
+  ],
+  "partial_blocks": [
+    {"start": "0x18118", "end": "0x18176", "scope": "Surd division branch for nonzero scalar100 used by percent; generalized surd denominator division is not inventoried here", "source": "csrc/numeric/fx_combinatorics.c"}
+  ]
+}

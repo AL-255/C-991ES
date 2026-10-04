@@ -43,8 +43,10 @@ def main():
                     str(ROOT / 'csrc/render/fx_result_linear.c'),
                     str(ROOT / 'csrc/render/fx_result_special.c'),
                     str(ROOT / 'csrc/render/fx_result_format_state.c'),
+                    str(ROOT / 'csrc/render/fx_result_inequality.c'),
                     str(ROOT / 'csrc/format/fx_format.c'),
                     str(ROOT / 'csrc/format/fx_format_base.c'),
+                    str(ROOT / 'csrc/format/fx_format_budget.c'),
                     str(ROOT / 'csrc/numeric/fx_numeric.c'),
                     '-o', str(library_path)], check=True)
     lib = C.CDLL(str(library_path))
@@ -97,6 +99,16 @@ def main():
     lib.fx_display_real_linear_result.restype = C.c_int
     lib.fx_display_special_real_result.argtypes = [ptr, word, C.POINTER(Box)]
     lib.fx_display_special_real_result.restype = C.c_int
+    lib.fx_display_special_real_number.argtypes = [ptr, C.POINTER(byte), C.POINTER(Box)]
+    lib.fx_display_special_real_number.restype = C.c_int
+    lib.fx_append_inequality_relation.argtypes = [ptr, word, byte, byte]
+    lib.fx_append_inequality_relation.restype = word
+    lib.fx_combine_result_kinds.argtypes = [byte, byte]
+    lib.fx_combine_result_kinds.restype = byte
+    lib.fx_display_equation_caption.argtypes = [ptr, word, C.POINTER(Box)]
+    lib.fx_display_equation_caption.restype = C.c_int
+    lib.fx_display_inequality_result.argtypes = [ptr, C.POINTER(Box)]
+    lib.fx_display_inequality_result.restype = C.c_int
     for name in ('fx_construct_length', 'fx_parenthesis_length', 'fx_field_length'):
         getattr(lib, name).argtypes = [ptr, word]
         getattr(lib, name).restype = byte
@@ -769,6 +781,30 @@ def main():
             same_region(0xf800,512,reason)
             linear_cases+=1
     counts['ordinary_real_legacy_result_controller_b070_and_lcd'] = linear_cases
+    linear_cache_cases=0
+    for previous_selection in range(16):
+      for mode in (65,129,193,136):
+        for font in (6,7,10):
+          for selected in (0,1):
+            for editing in (0,1):
+              for expression in (b'12\0',bytes.fromhex('98b832b92b98b833b900'),b'12345678901234567890\0'):
+                reset()
+                for address,value in [(0x80f9,mode),(0x80fc,1),(0x8100,previous_selection*16+10),
+                                      (0x8106,1),(0x811f,font),(0x8121,selected),(0x8130,1),
+                                      (0x8128,24),(0x80fe,editing)]: setting(address,value)
+                oracle.word(0x812c,0x8200); memory[0x812c]=0; memory[0x812d]=0x82
+                persistent=0x8546 if mode in (65,136) else 0x8398
+                for n,value in enumerate(expression): setting(persistent+n,value)
+                for n in range(384): setting(0x87d0+n,(n*17+3)&255)
+                for n in range(512): setting(0xf800+n,(n*7+17)&255)
+                oracle.er(0,0x8300); oracle.call(0xb070)
+                assert lib.fx_display_real_linear_result(r,0x8300,C.byref(Box()))==1
+                reason=('legacy cached natural expression',previous_selection,mode,font,selected,editing,expression.hex())
+                for start,length in [(0x8100,64),(persistent,len(expression)),(0x8000,6),(0x8007,4),
+                                     (0x8640,memory[0x8008]*4),(0x9800,256),(0x87d0,384),(0xf800,512)]: same_region(start,length,reason)
+                oracle.call(0x3cfc); lib.fx_flush_framebuffer(r); same_region(0xf800,512,reason)
+                linear_cache_cases+=1
+    counts['ordinary_real_legacy_cached_natural_viewport_reuse'] = linear_cache_cases
     # The special view bypasses layout and history. All selection bytes test
     # previous DMS/ENG state, and seeded LCD bytes expose formatter side effects
     # that would be hidden by the later framebuffer flush.
@@ -779,29 +815,6 @@ def main():
     unsupported_special = []
     for sample in special_fixtures:
       for selection in range(256):
-        # Prime formatting of tagged rational/surd records remains an explicit
-        # formatter gap. Characterize each original outcome instead of silently
-        # dropping these records from the documented input domain.
-        if selection & 15 == 15 and int(sample['numeric_record'][:2], 16) & 0xb0 in (0x20,0x80):
-            reset()
-            for address,value in [(0x80f9,193),(0x80fc,16),(0x8100,selection),
-                                  (0x811f,10),(0x8121,1),(0x8130,1),(0x8104,1)]: setting(address,value)
-            for n,b in enumerate(bytes.fromhex(sample['numeric_record'])): setting(0x8300+n,b)
-            for n in range(384): setting(0x87d0+n,(n*17+3)&255)
-            for n in range(512): setting(0xf800+n,(n*7+17)&255)
-            oracle.er(0,0x8300)
-            outcome=dict(sample=sample['name'],record=sample['numeric_record'],selection=selection,
-                         reason='tagged rational/surd prime formatter gap')
-            try:
-                oracle.call(0x37bc)
-                outcome['original_outcome']='returned'
-            except RuntimeError as fault:
-                outcome['original_outcome']=str(fault)
-            outcome['original_framebuffer_sha256']=hashlib.sha256(bytes(oracle.ram[0x87d0:0x8950])).hexdigest()
-            outcome['original_lcd_sha256']=hashlib.sha256(bytes(oracle.ram[0xf800:0xfa00])).hexdigest()
-            assert lib.fx_display_special_real_result(r,0x8300,C.byref(Box())) == 0
-            unsupported_special.append(outcome)
-            continue
         for font in (6, 7, 10):
           for selected in (0, 1):
             reset()
@@ -811,14 +824,50 @@ def main():
             for n,b in enumerate(bytes.fromhex(sample['numeric_record'])): setting(0x8300+n,b)
             for n in range(384): setting(0x87d0+n,(n*17+3)&255)
             for n in range(512): setting(0xf800+n,(n*7+17)&255)
-            oracle.er(0,0x8300); oracle.call(0x37bc)
-            assert lib.fx_display_special_real_result(r,0x8300,C.byref(Box())) == 1
+            oracle.er(0,0x8300)
+            native_outcome='returned'
+            try: oracle.call(0x37bc)
+            except RuntimeError as fault: native_outcome=str(fault)
+            if selected:
+                status=lib.fx_display_special_real_result(r,0x8300,C.byref(Box()))
+            else:
+                supplied=(byte*10).from_buffer_copy(bytes.fromhex(sample['numeric_record']))
+                status=lib.fx_display_special_real_number(r,supplied,C.byref(Box()))
+                assert bytes(supplied)==bytes.fromhex(sample['numeric_record'])
+            if status!=1 or native_outcome!='returned':
+                assert selection&15==15 and int(sample['numeric_record'][:2],16)&0xb0 in (0x20,0x80)
+                unsupported_special.append(dict(sample=sample['name'],record=sample['numeric_record'],
+                    selection=selection,font=font,selected_map=selected,
+                    reason='tagged prime formatter/API boundary',portable_status=status,
+                    original_outcome=native_outcome,
+                    original_framebuffer_sha256=hashlib.sha256(bytes(oracle.ram[0x87d0:0x8950])).hexdigest(),
+                    original_lcd_sha256=hashlib.sha256(bytes(oracle.ram[0xf800:0xfa00])).hexdigest()))
+                continue
             reason=('special real result',sample['name'],selection,font,selected)
             for start,length in [(0x8100,64),(0x8300,10),(0x87d0,384),(0xf800,512),
                                  (0x9800,256),(0xf030,4)]: same_region(start,length,reason)
             special_cases += 1
     counts['special_real_result_37bc_full_selection_state_and_lcd'] = special_cases
-    counts['documented_original_tagged_prime_outcomes_and_explicit_c_failures'] = len(unsupported_special)
+    counts['documented_original_tagged_prime_api_boundaries'] = len(unsupported_special)
+    special_error_cases=0
+    for code in range(16):
+      for selection in range(256):
+        for mode in (1,2,75,137,193):
+          for font in (6,7,10):
+            reset()
+            for address,value in [(0x80f9,mode),(0x80fa,15),(0x80fc,1),(0x80ff,(0,0x10,0x20)[code%3]),
+                                  (0x8100,selection),(0x811f,font),(0x8121,code&1),
+                                  (0x8127,code&1),(0x8130,1),(0xf031,0x5a)]: setting(address,value)
+            record=bytes([0xf0+code])+bytes.fromhex('123456789012345600')
+            for n,value in enumerate(record): setting(0x8300+n,value)
+            for n in range(384): setting(0x87d0+n,(n*17+3)&255)
+            for n in range(512): setting(0xf800+n,(n*7+17)&255)
+            oracle.er(0,0x8300); oracle.call(0x37bc)
+            assert lib.fx_display_special_real_result(r,0x8300,C.byref(Box()))==1
+            reason=('special error',code,selection,mode,font)
+            for start,length in [(0x8100,64),(0x8300,10),(0x87d0,384),(0xf800,512),(0xf030,4)]: same_region(start,length,reason)
+            special_error_cases+=1
+    counts['special_error_tokens_all_headers_selections_modes_fonts'] = special_error_cases
     special_clear_cases = 0
     for mode in (1,2,65,129,137,193):
       for font in (6,7,10):
@@ -862,11 +911,97 @@ def main():
                                  (0x9800,256),(0xf030,4)]: same_region(start,length,reason)
             base_cases += 1
     counts['base_n_special_result_37bc_full_persistent_state_and_lcd'] = base_cases
+
+    # B60E's complete byte-valued dispatch space. The decimal setting selects
+    # comma/semicolon between disconnected solution intervals.
+    reset()
+    for decimal_dot in (0,1):
+      setting(0x8104,decimal_dot)
+      for part in range(256):
+        for solution in range(256):
+          for n,value in enumerate(b'P\0'+bytes(30)): setting(0x8300+n,value)
+          oracle.er(0,0x8300); oracle.reg(2,part); oracle.reg(3,solution); oracle.call(0xb60e)
+          assert lib.fx_append_inequality_relation(r,0x8300,part,solution)==oracle.er(0)
+          same_region(0x8300,32,('inequality relation',decimal_dot,part,solution))
+    counts['inequality_relations_b60e_all_byte_arguments'] = 131072
+    reset()
+    for first in range(256):
+      for second in range(256):
+        oracle.reg(0,first); oracle.reg(1,second); oracle.call(0x10e34)
+        assert lib.fx_combine_result_kinds(first,second)==oracle.reg(0)
+    counts['combined_result_kinds_10e34_exhaustive'] = 65536
+
+    def startup_caption_table():
+        # Copy the actual startup initialized-data block,1F8BE→8DEE.
+        for n,value in enumerate(ROM[0x1f8be:0x1f8d0]): setting(0x8dee+n,value)
+
+    caption_cases=0
+    for solution in range(256):
+      for selected in (0,1):
+        reset(); startup_caption_table()
+        for address,value in [(0x8135,solution),(0x8100,0x65),(0x8130,1),(0x8121,selected)]: setting(address,value)
+        for n in range(384): setting(0x87d0+n,(n*17+3)&255)
+        for n in range(512): setting(0xf800+n,(n*7+17)&255)
+        oracle.er(0,0x8300); oracle.call(0xb4b0)
+        assert lib.fx_display_equation_caption(r,0x8300,C.byref(Box()))==1
+        reason=('equation caption',solution,selected)
+        for start,length in [(0x8300,40),(0x8100,64),(0x87d0,384),(0xf800,512)]: same_region(start,length,reason)
+        caption_cases+=1
+    counts['equation_captions_b4b0_all_selectors_both_maps'] = caption_cases
+
+    inequality_records=[bytes.fromhex(sample['numeric_record']) for sample in fixtures[:11]]
+    inequality_records += [raw_decimal(123456789012345,0,1),raw_decimal(123456789012345,-99,-1),
+                           raw_decimal(123456789012345,99,1),bytes.fromhex('f0123456789012345600'),
+                           bytes.fromhex('fd123456789012345600')]
+    inequality_cases=0
+    for solution in range(1,21):
+      for selection in (0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,0x1d,0x65,0x56,0x6d,0x6e,0x1e):
+        for enabled in (0,1):
+          for sample_index in range(len(inequality_records)):
+            reset(); startup_caption_table()
+            for address,value in [(0x80f9,75),(0x80fc,1),(0x8406,solution),(0x8100,selection),
+                                  (0x8106,enabled),(0x8104,1),(0x8121,1),(0xf031,0x5a)]: setting(address,value)
+            oracle.word(0x812c,0x8200); memory[0x812c]=0; memory[0x812d]=0x82
+            for root in range(3):
+                record=inequality_records[(sample_index+root)%len(inequality_records)]
+                for n,value in enumerate(record): setting(0x8410+10*root+n,value)
+            for n in range(384): setting(0x87d0+n,(n*17+3)&255)
+            for n in range(512): setting(0xf800+n,(n*7+17)&255)
+            natural=bool(lib.fx_display_has_natural_result(r))
+            oracle.call(0xb754)
+            assert lib.fx_display_inequality_result(r,C.byref(Box()))==1
+            reason=('inequality controller',solution,selection,enabled,sample_index)
+            for start,length in [(0x8100,64),(0x8410,30),(0x87d0,384),(0xf800,512),(0xf031,1),
+                                 (0x9800,256)]: same_region(start,length,reason)
+            if natural and solution>2:
+                length=len(bytes(oracle.ram[0x8546:0x8640]).split(b'\0')[0])+1
+                same_region(0x8546,length,reason)
+                if selection&15!=10:
+                    for start,length in [(0x8000,6),(0x8007,4),(0x8640,memory[0x8008]*4)]: same_region(start,length,reason)
+            oracle.call(0x3cfc); lib.fx_flush_framebuffer(r); same_region(0xf800,512,reason)
+            inequality_cases+=1
+    counts['inequality_controller_b754_all_twenty_classes_and_formatter_histories'] = inequality_cases
+    cache_cases=0
+    for selection in (0,10,11,13,14,15,0x65):
+      for expression in (b'12\0',bytes.fromhex('98b832b92b98b833b900'),b'12345678901234567890\0'):
+        reset(); startup_caption_table()
+        for address,value in [(0x80f9,75),(0x80fc,1),(0x8406,17),(0x8100,selection),
+                              (0x8106,1),(0x8121,1),(0x8130,1),(0x8128,24)]: setting(address,value)
+        oracle.word(0x812c,0x8200); memory[0x812c]=0; memory[0x812d]=0x82
+        for n,value in enumerate(expression): setting(0x8546+n,value)
+        for n in range(384): setting(0x87d0+n,(n*17+3)&255)
+        for n in range(512): setting(0xf800+n,(n*7+17)&255)
+        oracle.call(0xb754); assert lib.fx_display_inequality_result(r,C.byref(Box()))==1
+        reason=('inequality cached viewport',selection,expression.hex())
+        for start,length in [(0x8100,64),(0x8546,len(expression)),(0x8000,6),(0x8007,4),
+                             (0x8640,memory[0x8008]*4),(0x87d0,384),(0xf800,512)]: same_region(start,length,reason)
+        cache_cases+=1
+    counts['inequality_cached_natural_viewport_reuse'] = cache_cases
     result = {'status': 'passed', 'rom_sha256': hashlib.sha256(ROM).hexdigest(),
               'implementation': 'readable high-level C; ROM used only as constant data',
               'oracle': 'original ROM executed by separately implemented SimU8 CPU',
               'comparison_scope': 'semantic return values, unpacked glyph bytes, settings, and framebuffer/LCD bytes; CPU scratch registers and call-stack bytes excluded',
-              'controller_comparison_scope': 'tokens, full selection/cache state and viewport settings, active metric cache slots, history record0x9800..0x98ff, framebuffer, all512 LCD bytes and formatter-triggered MMIO sleep port; unused numeric workspaces remain documented gaps (0x8006/inactive0x8640slots in the viewport branch;0x8000..0x8009 in legacy/special branches)',
+              'controller_comparison_scope': 'tokens, full selection/cache state and viewport settings, active metric cache slots, history record0x9800..0x98ff, framebuffer, all512 LCD bytes and formatter-triggered MMIO sleep port; unused numeric workspaces remain documented gaps (0x8006/inactive0x8640slots in the viewport branch;unused numeric bytes within0x8000..0x80DB in legacy/special branches)',
               'tests': counts, 'total_cases': sum(counts.values()),
               'original_invalid_input_faults': native_faults,
               'original_invalid_row_faults': memory_faults,
@@ -877,8 +1012,10 @@ def main():
                'csrc/render/fx_result.c', 'csrc/render/fx_result_linear.c', 'csrc/render/fx_result_linear.h',
                'csrc/render/fx_result_special.c', 'csrc/render/fx_result_special.h',
                'csrc/render/fx_result_format_state.c', 'csrc/render/fx_result_format_state.h',
+               'csrc/render/fx_result_inequality.c', 'csrc/render/fx_result_inequality.h',
                'csrc/format/fx_format.c', 'csrc/format/fx_format.h',
                'csrc/format/fx_format_base.c', 'csrc/format/fx_format_base.h',
+               'csrc/format/fx_format_budget.c', 'csrc/format/fx_format_budget.h',
                'csrc/numeric/fx_numeric.c', 'csrc/numeric/fx_numeric.h',
                'analysis/verification/numeric-samples.json', 'tools/test_numeric_c.py', 'tools/c_verification.py']
     result = write_report(REPORT, result, sources, 'tools/test_render_c.py')
