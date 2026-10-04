@@ -293,6 +293,133 @@
         "analysis/understanding/ui-mid/prompt-tokens-proof.json"
       ],
       "audit": "Root read whole filtering ASM/notes/C and prompt mapping/controller model. Every declared original source/tool/artifact pin current. Filtering112640 true bounded DB00 entries/225280 O2/O3 comparisons with all otherRAM unchanged; explicit initialFP savedmode versus live guards, internal leaves unmodified. Prompt86 complete originaldialogs/172 O2/O3 action/token comparisons independently compose already understood dialog model. All116 newly claimed starts observed. Bounded filter block excludes surrounding INPUT; prompt renderer/device RAM excluded."
+    },
+    {
+      "start": "0xdca4",
+      "end": "0xdd84",
+      "source": "analysis/understanding/ui-mid/controller-assist/controller_model.c",
+      "scope": "CALC/SOLVE prompt delegation, preparation/scanner/status and list dispatch",
+      "evidence": [
+        "analysis/understanding/ui-mid/controller-assist/controller-notes.md",
+        "analysis/understanding/ui-mid/controller-assist/controllers.asm",
+        "analysis/understanding/ui-mid/controller-assist/controller-proof.json.gz",
+        "analysis/disassembly/complete.asm",
+        "firmware/fx-991es-plus-c-ver4.bin",
+        "analysis/understanding/ui-mid/controller-assist/independent-review/REVIEW.md"
+      ],
+      "audit": "Independent early-ROM reviewer read all319 original ASM starts and credited context tails; root read complete model/notes/audit and verified all live claim/proof/artifact/review pins.319 true nativecalls comprise200 fullreturns and119 deliberate namedcallee-entry boundaries. Only F02C has168 originalinputs/336 O2/O3 C state comparisons.316 starts witnessed;DD36/DD38/EF80 fully mapped static-only. Physical18-character caption terminatingzero overwrites savedFP lowbyte9234\u21929200, explicitly exposed; named32byte hosttext model excludes CPUframe/register parity. Numeric/keyboard/render/input callees delegated, no wholecontroller C/RAM claim."
+    },
+    {
+      "start": "0xde7e",
+      "end": "0xded4",
+      "source": "analysis/understanding/ui-mid/controller-assist/controller_model.c",
+      "scope": "Parameter/variable selected caption branch and physical value preparation",
+      "evidence": [
+        "analysis/understanding/ui-mid/controller-assist/controller-notes.md",
+        "analysis/understanding/ui-mid/controller-assist/controllers.asm",
+        "analysis/understanding/ui-mid/controller-assist/controller-proof.json.gz",
+        "analysis/disassembly/complete.asm",
+        "firmware/fx-991es-plus-c-ver4.bin",
+        "analysis/understanding/ui-mid/controller-assist/independent-review/REVIEW.md"
+      ],
+      "audit": "Independent early-ROM reviewer read all319 original ASM starts and credited context tails; root read complete model/notes/audit and verified all live claim/proof/artifact/review pins.319 true nativecalls comprise200 fullreturns and119 deliberate namedcallee-entry boundaries. Only F02C has168 originalinputs/336 O2/O3 C state comparisons.316 starts witnessed;DD36/DD38/EF80 fully mapped static-only. Physical18-character caption terminatingzero overwrites savedFP lowbyte9234\u21929200, explicitly exposed; named32byte hosttext model excludes CPUframe/register parity. Numeric/keyboard/render/input callees delegated, no wholecontroller C/RAM claim."
+    },
+    {
+      "start": "0xdf42",
+      "end": "0xdfde",
+      "source": "analysis/understanding/ui-mid/controller-assist/controller_model.c",
+      "scope": "Distribution parameter caption, numeric preparation and nested INPUT return",
+      "evidence": [
+        "analysis/understanding/ui-mid/controller-assist/controller-notes.md",
+        "analysis/understanding/ui-mid/controller-assist/controllers.asm",
+        "analysis/understanding/ui-mid/controller-assist/controller-proof.json.gz",
+        "analysis/disassembly/complete.asm",
+        "firmware/fx-991es-plus-c-ver4.bin",
+        "analysis/understanding/ui-mid/controller-assist/independent-review/REVIEW.md"
+      ],
+      "audit": "Independent early-ROM reviewer read all319 original ASM starts and credited context tails; root read complete model/notes/audit and verified all live claim/proof/artifact/review pins.319 true nativecalls comprise200 fullreturns and119 deliberate namedcallee-entry boundaries. Only F02C has168 originalinputs/336 O2/O3 C state comparisons.316 starts witnessed;DD36/DD38/EF80 fully mapped static-only. Physical18-character caption terminatingzero overwrites savedFP lowbyte9234\u21929200, explicitly exposed; named32byte hosttext model excludes CPUframe/register parity. Numeric/keyboard/render/input callees delegated, no wholecontroller C/RAM claim."
+    },
+    {
+      "start": "0xef18",
+      "end": "0xf084",
+      "source": "analysis/understanding/ui-mid/controller-assist/controller_model.c",
+      "scope": "Inequality result transition, scalar/list distribution workflow and STAT12 list admission",
+      "evidence": [
+        "analysis/understanding/ui-mid/controller-assist/controller-notes.md",
+        "analysis/understanding/ui-mid/controller-assist/controllers.asm",
+        "analysis/understanding/ui-mid/controller-assist/controller-proof.json.gz",
+        "analysis/disassembly/complete.asm",
+        "firmware/fx-991es-plus-c-ver4.bin",
+        "analysis/understanding/ui-mid/controller-assist/independent-review/REVIEW.md"
+      ],
+      "audit": "Independent early-ROM reviewer read all319 original ASM starts and credited context tails; root read complete model/notes/audit and verified all live claim/proof/artifact/review pins.319 true nativecalls comprise200 fullreturns and119 deliberate namedcallee-entry boundaries. Only F02C has168 originalinputs/336 O2/O3 C state comparisons.316 starts witnessed;DD36/DD38/EF80 fully mapped static-only. Physical18-character caption terminatingzero overwrites savedFP lowbyte9234\u21929200, explicitly exposed; named32byte hosttext model excludes CPUframe/register parity. Numeric/keyboard/render/input callees delegated, no wholecontroller C/RAM claim."
+    },
+    {
+      "start": "0xd426",
+      "end": "0xd55c",
+      "source": "analysis/understanding/ui-mid/fx_reset_dialog.c",
+      "scope": "Complete original RESET dialogues with real menu/confirmation/result-acknowledgment keys; ordered reset/presentation/AC publication and saved-device-word restoration contracts. Delegated reset and rendering RAM parity excluded.",
+      "evidence": [
+        "analysis/understanding/ui-mid/proposed-reset-dialog-understanding.json",
+        "analysis/understanding/ui-mid/RESET-DIALOG-HANDOFF.md",
+        "analysis/understanding/ui-mid/reset-dialog-proof.json",
+        "analysis/understanding/ui-mid/reset-menu-independent-review/REVIEW.md"
+      ],
+      "audit": "Independent early-ROM reviewer read all215 new originalASM starts, models/notes and verified all current declared pins. Root read complete models/handoffs/audits. Originalreset61/menu437/logical13/parameter336 calls yield122/874/26/672 O2/O3 bounded plan/action comparisons. Artifact hashes capturedafterrun and currentverified; scripts do NOT assert pre/postartifactguards. RESET secondack Boolean ignored and deviceBEEF preserved; logical D572/D574 statically unreachable by readonly contradictorymodeguard. Delegated reset/menu/render/input persistentRAM excluded; native outcomes neverfeed C."
+    },
+    {
+      "start": "0xe17e",
+      "end": "0xe1be",
+      "source": "analysis/understanding/ui-mid/fx_action_menu.c",
+      "scope": "Complete original mode-gated action-menu wrapper; independent ROM single-leaf selection contracts, genuine raw keys. Generic menu painting/timer/navigation persistent parity excluded.",
+      "evidence": [
+        "analysis/understanding/ui-mid/proposed-action-menu-understanding.json",
+        "analysis/understanding/ui-mid/ACTION-MENU-HANDOFF.md",
+        "analysis/understanding/ui-mid/action-menu-proof.json",
+        "analysis/understanding/ui-mid/reset-menu-independent-review/REVIEW.md"
+      ],
+      "audit": "Independent early-ROM reviewer read all215 new originalASM starts, models/notes and verified all current declared pins. Root read complete models/handoffs/audits. Originalreset61/menu437/logical13/parameter336 calls yield122/874/26/672 O2/O3 bounded plan/action comparisons. Artifact hashes capturedafterrun and currentverified; scripts do NOT assert pre/postartifactguards. RESET secondack Boolean ignored and deviceBEEF preserved; logical D572/D574 statically unreachable by readonly contradictorymodeguard. Delegated reset/menu/render/input persistentRAM excluded; native outcomes neverfeed C."
+    },
+    {
+      "start": "0xd55c",
+      "end": "0xd580",
+      "source": "analysis/understanding/ui-mid/fx_logical_menu.c",
+      "scope": "Complete original mode-gated logical-menu wrapper; independent ROM single-leaf selection contracts, genuine raw keys. Generic menu painting/timer/navigation persistent parity excluded.",
+      "evidence": [
+        "analysis/understanding/ui-mid/proposed-logical-menu-understanding.json",
+        "analysis/understanding/ui-mid/LOGICAL-MENU-HANDOFF.md",
+        "analysis/understanding/ui-mid/logical-menu-proof.json",
+        "analysis/understanding/ui-mid/reset-menu-independent-review/REVIEW.md"
+      ],
+      "audit": "Independent early-ROM reviewer read all215 new originalASM starts, models/notes and verified all current declared pins. Root read complete models/handoffs/audits. Originalreset61/menu437/logical13/parameter336 calls yield122/874/26/672 O2/O3 bounded plan/action comparisons. Artifact hashes capturedafterrun and currentverified; scripts do NOT assert pre/postartifactguards. RESET secondack Boolean ignored and deviceBEEF preserved; logical D572/D574 statically unreachable by readonly contradictorymodeguard. Delegated reset/menu/render/input persistentRAM excluded; native outcomes neverfeed C."
+    },
+    {
+      "start": "0xe1be",
+      "end": "0xe22a",
+      "source": "analysis/understanding/ui-mid/fx_parameter_workflow.c",
+      "scope": "Complete original parameter workflow; own handoff arguments, returned action, and submode, with delegated INPUT/value caption bodies executed. No delegated persistent RAM parity claim.",
+      "evidence": [
+        "analysis/understanding/ui-mid/proposed-parameter-workflow-understanding.json",
+        "analysis/understanding/ui-mid/PARAMETER-WORKFLOW-HANDOFF.md",
+        "analysis/understanding/ui-mid/parameter-workflow-proof.json",
+        "analysis/understanding/ui-mid/reset-menu-independent-review/REVIEW.md"
+      ],
+      "audit": "Independent early-ROM reviewer read all215 new originalASM starts, models/notes and verified all current declared pins. Root read complete models/handoffs/audits. Originalreset61/menu437/logical13/parameter336 calls yield122/874/26/672 O2/O3 bounded plan/action comparisons. Artifact hashes capturedafterrun and currentverified; scripts do NOT assert pre/postartifactguards. RESET secondack Boolean ignored and deviceBEEF preserved; logical D572/D574 statically unreachable by readonly contradictorymodeguard. Delegated reset/menu/render/input persistentRAM excluded; native outcomes neverfeed C."
+    },
+    {
+      "start": "0xe22a",
+      "end": "0xe450",
+      "scope": "Statistics/distribution/TABLE grid pointer construction, navigation/deletion delegation, menu admission, selected-record preparation, draw order and saved-count footer",
+      "source": "analysis/understanding/ui-mid/grid-controller/grid_model.c",
+      "evidence": [
+        "analysis/understanding/ui-mid/grid-controller/grid-notes.md",
+        "analysis/understanding/ui-mid/grid-controller/grid-controller.asm",
+        "analysis/understanding/ui-mid/grid-controller/grid-proof.json.gz",
+        "analysis/understanding/ui-mid/grid-controller/input-return-proof.json",
+        "analysis/understanding/ui-mid/grid-controller-independent-review/REVIEW.md",
+        "analysis/understanding/ui-mid/grid-controller-errata/GRID-BUSY-ERRATUM.md"
+      ],
+      "audit": "Root full C/model/notes read and independent complete211 ASM/helper/source/proof review. 64 current pin occurrences verified. 811 actual original calls:735 returns+76 INPUT boundaries;1614 O2/O3 named-service/state comparisons on original807 only; four genuine AC/native-only continuations add six PCs with fixed retained modes. All211 starts observed. Busy acquisition preserves prior bit7-set byte as separate immutable erratum. Prepared top1..252, valid three-row/column UI admission; raw byte-loop/frame overrun explained statically, named INPUT/raster/footer bodies and their opaque outputs delegated. No pixels, wholeRAM, mode-changing INPUT witness or production parity claim."
     }
   ]
 }

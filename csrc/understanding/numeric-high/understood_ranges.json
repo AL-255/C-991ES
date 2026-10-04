@@ -636,6 +636,381 @@
         "analysis/understanding/numeric-high/independent-review/eligible-spans.json"
       ],
       "audit": "Independent equation_canonical_driver reviewer inspected complete original ASM/models and verified268 source/artifact pins; root reviewed full notes and audit, reconfirmed current recorded report pins. Only12 small-transform rows pertain to40 credited starts; neighboring research excluded. Production C integration separate."
+    },
+    {
+      "start": "0x1bef6",
+      "end": "0x1bf7a",
+      "scope": "raw sign adjustment and magnitude order; Canonical sign/magnitude numerical meaning; malformed-BCD validation excluded.",
+      "source": "analysis/understanding/numeric-high/probe_order.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/order-v2.md",
+        "analysis/understanding/numeric-high/order-report.json",
+        "analysis/understanding/numeric-high/order-scaled-independent-review/REVIEW.md"
+      ],
+      "audit": "Independent complex reviewer read all232 original ASM instructions, exact inventory closure and current frozen finite models. Root read complete model/notes/audit and checked all declared livepins. Original188 ordercontrols and103 scaledv1 cases remain historical; correctedv2 only removes premature801A/B clears, with2fresh AD/AD header-gate calls.146order+12headercases compareRAM outside fixed14bytepreparedstack;30 arithmeticcomparators assertclass/retain rawdifference only. NaturalBCD numerical scope; malformed/rawexternalaliases/wholeRAM/allopt/productioncompletion not inferred."
+    },
+    {
+      "start": "0x18cb8",
+      "end": "0x18d14",
+      "scope": "raw ordinary and guarded comparison; Canonical scalar finite comparison plus explicit header gate; no public status facade.",
+      "source": "analysis/understanding/numeric-high/probe_order.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/order-v2.md",
+        "analysis/understanding/numeric-high/order-report.json",
+        "analysis/understanding/numeric-high/order-scaled-independent-review/REVIEW.md"
+      ],
+      "audit": "Independent complex reviewer read all232 original ASM instructions, exact inventory closure and current frozen finite models. Root read complete model/notes/audit and checked all declared livepins. Original188 ordercontrols and103 scaledv1 cases remain historical; correctedv2 only removes premature801A/B clears, with2fresh AD/AD header-gate calls.146order+12headercases compareRAM outside fixed14bytepreparedstack;30 arithmeticcomparators assertclass/retain rawdifference only. NaturalBCD numerical scope; malformed/rawexternalaliases/wholeRAM/allopt/productioncompletion not inferred."
+    },
+    {
+      "start": "0x18f56",
+      "end": "0x19006",
+      "scope": "fractional exponential factor and whole/sign preparation; Natural canonical scalar numerical model; early header gate and magnitude overflow marker mapped; malformed BCD excluded.",
+      "source": "analysis/understanding/numeric-high/models/scaled_kernels_v2.c",
+      "evidence": [
+        "analysis/understanding/numeric-high/scaled-kernels.md",
+        "analysis/understanding/numeric-high/scaled-kernel-report.json.gz",
+        "analysis/understanding/numeric-high/scaled-gate-v2-report.json",
+        "analysis/understanding/numeric-high/scaled-stage-trace.json",
+        "analysis/understanding/numeric-high/order-scaled-independent-review/REVIEW.md"
+      ],
+      "audit": "Independent complex reviewer read all232 original ASM instructions, exact inventory closure and current frozen finite models. Root read complete model/notes/audit and checked all declared livepins. Original188 ordercontrols and103 scaledv1 cases remain historical; correctedv2 only removes premature801A/B clears, with2fresh AD/AD header-gate calls.146order+12headercases compareRAM outside fixed14bytepreparedstack;30 arithmeticcomparators assertclass/retain rawdifference only. NaturalBCD numerical scope; malformed/rawexternalaliases/wholeRAM/allopt/productioncompletion not inferred."
+    },
+    {
+      "start": "0x19006",
+      "end": "0x190ce",
+      "scope": "cancellation-preserving small log10(1+x); Natural sign0/5 domain and explicit other-sign F3 gate; shared factor body excluded from this credit.",
+      "source": "analysis/understanding/numeric-high/models/scaled_kernels_v2.c",
+      "evidence": [
+        "analysis/understanding/numeric-high/scaled-kernels.md",
+        "analysis/understanding/numeric-high/scaled-kernel-report.json.gz",
+        "analysis/understanding/numeric-high/scaled-gate-v2-report.json",
+        "analysis/understanding/numeric-high/scaled-stage-trace.json",
+        "analysis/understanding/numeric-high/order-scaled-independent-review/REVIEW.md"
+      ],
+      "audit": "Independent complex reviewer read all232 original ASM instructions, exact inventory closure and current frozen finite models. Root read complete model/notes/audit and checked all declared livepins. Original188 ordercontrols and103 scaledv1 cases remain historical; correctedv2 only removes premature801A/B clears, with2fresh AD/AD header-gate calls.146order+12headercases compareRAM outside fixed14bytepreparedstack;30 arithmeticcomparators assertclass/retain rawdifference only. NaturalBCD numerical scope; malformed/rawexternalaliases/wholeRAM/allopt/productioncompletion not inferred."
+    },
+    {
+      "start": "0x1878a",
+      "end": "0x187c4",
+      "scope": "univariate frequency admission; Natural bounded univariate geometry\u2264400bytes, fixedfrequencyflag, disjointoutput8700, valid count/sorted cache; empirical average model is for supplied small integer values, not arbitrary decimal rounding/alias claims.",
+      "source": "analysis/understanding/numeric-high/final-entry-families/probe_quantiles.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/final-entry-families/quantiles.md",
+        "analysis/understanding/numeric-high/final-entry-families/probe_quantiles.py",
+        "analysis/understanding/numeric-high/final-entry-families/quantile-report.json.gz",
+        "analysis/understanding/numeric-high/final-entry-families/block-1878a.asm",
+        "analysis/understanding/numeric-high/final-entry-families/quantiles-v2.md",
+        "analysis/understanding/numeric-high/final-entry-families/quantiles-v2.md",
+        "analysis/understanding/numeric-high/final-entry-families/REMAINING-ENTRY-PREDICATE-ERRATUM.md"
+      ],
+      "audit": "Root read complete finite models, prepared recipe scopes and final independent all-ASM reviews; checked 395 declared live pins. 813 unique immutable-inventory instruction starts. Quantiles: 123 original-only model calls, small-integer average/disjoint <=400byte table recipes; post-N not differential, cache-after independently checked. Factor38: 39 original/O2 calls. Remaining281: 448 arithmetic/predicate O2 comparisons plus bounded reset; five gap999 starts static. Fields127: 78 field/eight cube comparisons plus six root checkpoints; historical selector-order successor is static, not new replay. Remaining101: 96 conversion/56 bounded unary O2/O3 final comparisons plus14 root checkpoints; two dead starts static. Raw10 historical labels corrected by separate addendum. No arbitrary raw domain, root-body parity, wholeRAM or production completion inferred."
+    },
+    {
+      "start": "0x187c4",
+      "end": "0x18874",
+      "scope": "prepared univariate insertion sort; Natural bounded univariate geometry\u2264400bytes, fixedfrequencyflag, disjointoutput8700, valid count/sorted cache; empirical average model is for supplied small integer values, not arbitrary decimal rounding/alias claims.",
+      "source": "analysis/understanding/numeric-high/final-entry-families/probe_quantiles.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/final-entry-families/quantiles.md",
+        "analysis/understanding/numeric-high/final-entry-families/probe_quantiles.py",
+        "analysis/understanding/numeric-high/final-entry-families/quantile-report.json.gz",
+        "analysis/understanding/numeric-high/final-entry-families/block-1878a.asm",
+        "analysis/understanding/numeric-high/final-entry-families/quantiles-v2.md",
+        "analysis/understanding/numeric-high/final-entry-families/quantiles-v2.md",
+        "analysis/understanding/numeric-high/final-entry-families/REMAINING-ENTRY-PREDICATE-ERRATUM.md"
+      ],
+      "audit": "Root read complete finite models, prepared recipe scopes and final independent all-ASM reviews; checked 395 declared live pins. 813 unique immutable-inventory instruction starts. Quantiles: 123 original-only model calls, small-integer average/disjoint <=400byte table recipes; post-N not differential, cache-after independently checked. Factor38: 39 original/O2 calls. Remaining281: 448 arithmetic/predicate O2 comparisons plus bounded reset; five gap999 starts static. Fields127: 78 field/eight cube comparisons plus six root checkpoints; historical selector-order successor is static, not new replay. Remaining101: 96 conversion/56 bounded unary O2/O3 final comparisons plus14 root checkpoints; two dead starts static. Raw10 historical labels corrected by separate addendum. No arbitrary raw domain, root-body parity, wholeRAM or production completion inferred."
+    },
+    {
+      "start": "0x18874",
+      "end": "0x18a02",
+      "scope": "shared Q1 Q3 and median selection; Natural bounded univariate geometry\u2264400bytes, fixedfrequencyflag, disjointoutput8700, valid count/sorted cache; empirical average model is for supplied small integer values, not arbitrary decimal rounding/alias claims.",
+      "source": "analysis/understanding/numeric-high/final-entry-families/probe_quantiles.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/final-entry-families/quantiles.md",
+        "analysis/understanding/numeric-high/final-entry-families/probe_quantiles.py",
+        "analysis/understanding/numeric-high/final-entry-families/quantile-report.json.gz",
+        "analysis/understanding/numeric-high/final-entry-families/block-1878a.asm",
+        "analysis/understanding/numeric-high/final-entry-families/quantiles-v2.md",
+        "analysis/understanding/numeric-high/final-entry-families/quantiles-v2.md",
+        "analysis/understanding/numeric-high/final-entry-families/REMAINING-ENTRY-PREDICATE-ERRATUM.md"
+      ],
+      "audit": "Root read complete finite models, prepared recipe scopes and final independent all-ASM reviews; checked 395 declared live pins. 813 unique immutable-inventory instruction starts. Quantiles: 123 original-only model calls, small-integer average/disjoint <=400byte table recipes; post-N not differential, cache-after independently checked. Factor38: 39 original/O2 calls. Remaining281: 448 arithmetic/predicate O2 comparisons plus bounded reset; five gap999 starts static. Fields127: 78 field/eight cube comparisons plus six root checkpoints; historical selector-order successor is static, not new replay. Remaining101: 96 conversion/56 bounded unary O2/O3 final comparisons plus14 root checkpoints; two dead starts static. Raw10 historical labels corrected by separate addendum. No arbitrary raw domain, root-body parity, wholeRAM or production completion inferred."
+    },
+    {
+      "start": "0x1aca2",
+      "end": "0x1afc6",
+      "scope": "shared forward/reverse logarithm and angular factor family; Natural prepared four-mode coordinate domain; malformed BCD/product/whole parameter admission excluded; only38 inventory holes credited.",
+      "source": "analysis/understanding/numeric-high/final-entry-families/models/rotation_factor_model.c",
+      "evidence": [
+        "analysis/understanding/numeric-high/final-entry-families/factor-family.md",
+        "analysis/understanding/numeric-high/final-entry-families/probe_factor_family.py",
+        "analysis/understanding/numeric-high/final-entry-families/factor-family-report.json",
+        "analysis/understanding/numeric-high/final-entry-families/models/inverse_factor_model.c",
+        "analysis/understanding/numeric-high/final-entry-families/models/rotation_factor_model.c"
+      ],
+      "audit": "Root read complete finite models, prepared recipe scopes and final independent all-ASM reviews; checked 395 declared live pins. 813 unique immutable-inventory instruction starts. Quantiles: 123 original-only model calls, small-integer average/disjoint <=400byte table recipes; post-N not differential, cache-after independently checked. Factor38: 39 original/O2 calls. Remaining281: 448 arithmetic/predicate O2 comparisons plus bounded reset; five gap999 starts static. Fields127: 78 field/eight cube comparisons plus six root checkpoints; historical selector-order successor is static, not new replay. Remaining101: 96 conversion/56 bounded unary O2/O3 final comparisons plus14 root checkpoints; two dead starts static. Raw10 historical labels corrected by separate addendum. No arbitrary raw domain, root-body parity, wholeRAM or production completion inferred."
+    },
+    {
+      "start": "0x1824e",
+      "end": "0x18252",
+      "scope": "fatal reset trampoline; Complete entry family with named already-understood shared tails; numerical evidence natural canonical prepared decimals and stated windows, not arbitrary malformed/rich/alias admission.",
+      "source": "analysis/understanding/numeric-high/final-entry-families/models/remaining_entries.c",
+      "evidence": [
+        "analysis/understanding/numeric-high/final-entry-families/remaining-entries.md",
+        "analysis/understanding/numeric-high/final-entry-families/models/remaining_entries.c",
+        "analysis/understanding/numeric-high/final-entry-families/probe_remaining_entries.py",
+        "analysis/understanding/numeric-high/final-entry-families/remaining-entry-report.json.gz",
+        "analysis/understanding/numeric-high/final-entry-families/REMAINING-ENTRY-PREDICATE-ERRATUM.md"
+      ],
+      "audit": "Root read complete finite models, prepared recipe scopes and final independent all-ASM reviews; checked 395 declared live pins. 813 unique immutable-inventory instruction starts. Quantiles: 123 original-only model calls, small-integer average/disjoint <=400byte table recipes; post-N not differential, cache-after independently checked. Factor38: 39 original/O2 calls. Remaining281: 448 arithmetic/predicate O2 comparisons plus bounded reset; five gap999 starts static. Fields127: 78 field/eight cube comparisons plus six root checkpoints; historical selector-order successor is static, not new replay. Remaining101: 96 conversion/56 bounded unary O2/O3 final comparisons plus14 root checkpoints; two dead starts static. Raw10 historical labels corrected by separate addendum. No arbitrary raw domain, root-body parity, wholeRAM or production completion inferred."
+    },
+    {
+      "start": "0x18b30",
+      "end": "0x18c14",
+      "scope": "extended finite guard-preserving magnitude sum; Complete entry family with named already-understood shared tails; numerical evidence natural canonical prepared decimals and stated windows, not arbitrary malformed/rich/alias admission.",
+      "source": "analysis/understanding/numeric-high/final-entry-families/models/remaining_entries.c",
+      "evidence": [
+        "analysis/understanding/numeric-high/final-entry-families/remaining-entries.md",
+        "analysis/understanding/numeric-high/final-entry-families/models/remaining_entries.c",
+        "analysis/understanding/numeric-high/final-entry-families/probe_remaining_entries.py",
+        "analysis/understanding/numeric-high/final-entry-families/remaining-entry-report.json.gz",
+        "analysis/understanding/numeric-high/final-entry-families/REMAINING-ENTRY-PREDICATE-ERRATUM.md"
+      ],
+      "audit": "Root read complete finite models, prepared recipe scopes and final independent all-ASM reviews; checked 395 declared live pins. 813 unique immutable-inventory instruction starts. Quantiles: 123 original-only model calls, small-integer average/disjoint <=400byte table recipes; post-N not differential, cache-after independently checked. Factor38: 39 original/O2 calls. Remaining281: 448 arithmetic/predicate O2 comparisons plus bounded reset; five gap999 starts static. Fields127: 78 field/eight cube comparisons plus six root checkpoints; historical selector-order successor is static, not new replay. Remaining101: 96 conversion/56 bounded unary O2/O3 final comparisons plus14 root checkpoints; two dead starts static. Raw10 historical labels corrected by separate addendum. No arbitrary raw domain, root-body parity, wholeRAM or production completion inferred."
+    },
+    {
+      "start": "0x18c14",
+      "end": "0x18c3c",
+      "scope": "absolute scale comparison gate; Complete entry family with named already-understood shared tails; numerical evidence natural canonical prepared decimals and stated windows, not arbitrary malformed/rich/alias admission.",
+      "source": "analysis/understanding/numeric-high/final-entry-families/models/remaining_entries.c",
+      "evidence": [
+        "analysis/understanding/numeric-high/final-entry-families/remaining-entries.md",
+        "analysis/understanding/numeric-high/final-entry-families/models/remaining_entries.c",
+        "analysis/understanding/numeric-high/final-entry-families/probe_remaining_entries.py",
+        "analysis/understanding/numeric-high/final-entry-families/remaining-entry-report.json.gz",
+        "analysis/understanding/numeric-high/final-entry-families/REMAINING-ENTRY-PREDICATE-ERRATUM.md"
+      ],
+      "audit": "Root read complete finite models, prepared recipe scopes and final independent all-ASM reviews; checked 395 declared live pins. 813 unique immutable-inventory instruction starts. Quantiles: 123 original-only model calls, small-integer average/disjoint <=400byte table recipes; post-N not differential, cache-after independently checked. Factor38: 39 original/O2 calls. Remaining281: 448 arithmetic/predicate O2 comparisons plus bounded reset; five gap999 starts static. Fields127: 78 field/eight cube comparisons plus six root checkpoints; historical selector-order successor is static, not new replay. Remaining101: 96 conversion/56 bounded unary O2/O3 final comparisons plus14 root checkpoints; two dead starts static. Raw10 historical labels corrected by separate addendum. No arbitrary raw domain, root-body parity, wholeRAM or production completion inferred."
+    },
+    {
+      "start": "0x18d60",
+      "end": "0x18d78",
+      "scope": "ordinary signed fractional part; Complete entry family with named already-understood shared tails; numerical evidence natural canonical prepared decimals and stated windows, not arbitrary malformed/rich/alias admission.",
+      "source": "analysis/understanding/numeric-high/final-entry-families/models/remaining_entries.c",
+      "evidence": [
+        "analysis/understanding/numeric-high/final-entry-families/remaining-entries.md",
+        "analysis/understanding/numeric-high/final-entry-families/models/remaining_entries.c",
+        "analysis/understanding/numeric-high/final-entry-families/probe_remaining_entries.py",
+        "analysis/understanding/numeric-high/final-entry-families/remaining-entry-report.json.gz",
+        "analysis/understanding/numeric-high/final-entry-families/REMAINING-ENTRY-PREDICATE-ERRATUM.md"
+      ],
+      "audit": "Root read complete finite models, prepared recipe scopes and final independent all-ASM reviews; checked 395 declared live pins. 813 unique immutable-inventory instruction starts. Quantiles: 123 original-only model calls, small-integer average/disjoint <=400byte table recipes; post-N not differential, cache-after independently checked. Factor38: 39 original/O2 calls. Remaining281: 448 arithmetic/predicate O2 comparisons plus bounded reset; five gap999 starts static. Fields127: 78 field/eight cube comparisons plus six root checkpoints; historical selector-order successor is static, not new replay. Remaining101: 96 conversion/56 bounded unary O2/O3 final comparisons plus14 root checkpoints; two dead starts static. Raw10 historical labels corrected by separate addendum. No arbitrary raw domain, root-body parity, wholeRAM or production completion inferred."
+    },
+    {
+      "start": "0x19480",
+      "end": "0x194c0",
+      "scope": "prepared scalar operation selectors; Complete entry family with named already-understood shared tails; numerical evidence natural canonical prepared decimals and stated windows, not arbitrary malformed/rich/alias admission.",
+      "source": "analysis/understanding/numeric-high/final-entry-families/models/remaining_entries.c",
+      "evidence": [
+        "analysis/understanding/numeric-high/final-entry-families/remaining-entries.md",
+        "analysis/understanding/numeric-high/final-entry-families/models/remaining_entries.c",
+        "analysis/understanding/numeric-high/final-entry-families/probe_remaining_entries.py",
+        "analysis/understanding/numeric-high/final-entry-families/remaining-entry-report.json.gz",
+        "analysis/understanding/numeric-high/final-entry-families/REMAINING-ENTRY-PREDICATE-ERRATUM.md"
+      ],
+      "audit": "Root read complete finite models, prepared recipe scopes and final independent all-ASM reviews; checked 395 declared live pins. 813 unique immutable-inventory instruction starts. Quantiles: 123 original-only model calls, small-integer average/disjoint <=400byte table recipes; post-N not differential, cache-after independently checked. Factor38: 39 original/O2 calls. Remaining281: 448 arithmetic/predicate O2 comparisons plus bounded reset; five gap999 starts static. Fields127: 78 field/eight cube comparisons plus six root checkpoints; historical selector-order successor is static, not new replay. Remaining101: 96 conversion/56 bounded unary O2/O3 final comparisons plus14 root checkpoints; two dead starts static. Raw10 historical labels corrected by separate addendum. No arbitrary raw domain, root-body parity, wholeRAM or production completion inferred."
+    },
+    {
+      "start": "0x194e4",
+      "end": "0x1954c",
+      "scope": "prepared ordinary integer predicate family; Complete entry family with named already-understood shared tails; numerical evidence natural canonical prepared decimals and stated windows, not arbitrary malformed/rich/alias admission.",
+      "source": "analysis/understanding/numeric-high/final-entry-families/models/remaining_entries.c",
+      "evidence": [
+        "analysis/understanding/numeric-high/final-entry-families/remaining-entries.md",
+        "analysis/understanding/numeric-high/final-entry-families/models/remaining_entries.c",
+        "analysis/understanding/numeric-high/final-entry-families/probe_remaining_entries.py",
+        "analysis/understanding/numeric-high/final-entry-families/remaining-entry-report.json.gz",
+        "analysis/understanding/numeric-high/final-entry-families/REMAINING-ENTRY-PREDICATE-ERRATUM.md"
+      ],
+      "audit": "Root read complete finite models, prepared recipe scopes and final independent all-ASM reviews; checked 395 declared live pins. 813 unique immutable-inventory instruction starts. Quantiles: 123 original-only model calls, small-integer average/disjoint <=400byte table recipes; post-N not differential, cache-after independently checked. Factor38: 39 original/O2 calls. Remaining281: 448 arithmetic/predicate O2 comparisons plus bounded reset; five gap999 starts static. Fields127: 78 field/eight cube comparisons plus six root checkpoints; historical selector-order successor is static, not new replay. Remaining101: 96 conversion/56 bounded unary O2/O3 final comparisons plus14 root checkpoints; two dead starts static. Raw10 historical labels corrected by separate addendum. No arbitrary raw domain, root-body parity, wholeRAM or production completion inferred."
+    },
+    {
+      "start": "0x1aac2",
+      "end": "0x1ab18",
+      "scope": "finite rounding window family; Complete entry family with named already-understood shared tails; numerical evidence natural canonical prepared decimals and stated windows, not arbitrary malformed/rich/alias admission.",
+      "source": "analysis/understanding/numeric-high/final-entry-families/models/remaining_entries.c",
+      "evidence": [
+        "analysis/understanding/numeric-high/final-entry-families/remaining-entries.md",
+        "analysis/understanding/numeric-high/final-entry-families/models/remaining_entries.c",
+        "analysis/understanding/numeric-high/final-entry-families/probe_remaining_entries.py",
+        "analysis/understanding/numeric-high/final-entry-families/remaining-entry-report.json.gz",
+        "analysis/understanding/numeric-high/final-entry-families/REMAINING-ENTRY-PREDICATE-ERRATUM.md"
+      ],
+      "audit": "Root read complete finite models, prepared recipe scopes and final independent all-ASM reviews; checked 395 declared live pins. 813 unique immutable-inventory instruction starts. Quantiles: 123 original-only model calls, small-integer average/disjoint <=400byte table recipes; post-N not differential, cache-after independently checked. Factor38: 39 original/O2 calls. Remaining281: 448 arithmetic/predicate O2 comparisons plus bounded reset; five gap999 starts static. Fields127: 78 field/eight cube comparisons plus six root checkpoints; historical selector-order successor is static, not new replay. Remaining101: 96 conversion/56 bounded unary O2/O3 final comparisons plus14 root checkpoints; two dead starts static. Raw10 historical labels corrected by separate addendum. No arbitrary raw domain, root-body parity, wholeRAM or production completion inferred."
+    },
+    {
+      "start": "0x1b76a",
+      "end": "0x1b788",
+      "scope": "reverse ordinary division prefix; Complete entry family with named already-understood shared tails; numerical evidence natural canonical prepared decimals and stated windows, not arbitrary malformed/rich/alias admission.",
+      "source": "analysis/understanding/numeric-high/final-entry-families/models/remaining_entries.c",
+      "evidence": [
+        "analysis/understanding/numeric-high/final-entry-families/remaining-entries.md",
+        "analysis/understanding/numeric-high/final-entry-families/models/remaining_entries.c",
+        "analysis/understanding/numeric-high/final-entry-families/probe_remaining_entries.py",
+        "analysis/understanding/numeric-high/final-entry-families/remaining-entry-report.json.gz",
+        "analysis/understanding/numeric-high/final-entry-families/REMAINING-ENTRY-PREDICATE-ERRATUM.md"
+      ],
+      "audit": "Root read complete finite models, prepared recipe scopes and final independent all-ASM reviews; checked 395 declared live pins. 813 unique immutable-inventory instruction starts. Quantiles: 123 original-only model calls, small-integer average/disjoint <=400byte table recipes; post-N not differential, cache-after independently checked. Factor38: 39 original/O2 calls. Remaining281: 448 arithmetic/predicate O2 comparisons plus bounded reset; five gap999 starts static. Fields127: 78 field/eight cube comparisons plus six root checkpoints; historical selector-order successor is static, not new replay. Remaining101: 96 conversion/56 bounded unary O2/O3 final comparisons plus14 root checkpoints; two dead starts static. Raw10 historical labels corrected by separate addendum. No arbitrary raw domain, root-body parity, wholeRAM or production completion inferred."
+    },
+    {
+      "start": "0x1b8b2",
+      "end": "0x1b8d0",
+      "scope": "raw ordinary square prefix; Complete entry family with named already-understood shared tails; numerical evidence natural canonical prepared decimals and stated windows, not arbitrary malformed/rich/alias admission.",
+      "source": "analysis/understanding/numeric-high/final-entry-families/models/remaining_entries.c",
+      "evidence": [
+        "analysis/understanding/numeric-high/final-entry-families/remaining-entries.md",
+        "analysis/understanding/numeric-high/final-entry-families/models/remaining_entries.c",
+        "analysis/understanding/numeric-high/final-entry-families/probe_remaining_entries.py",
+        "analysis/understanding/numeric-high/final-entry-families/remaining-entry-report.json.gz",
+        "analysis/understanding/numeric-high/final-entry-families/REMAINING-ENTRY-PREDICATE-ERRATUM.md"
+      ],
+      "audit": "Root read complete finite models, prepared recipe scopes and final independent all-ASM reviews; checked 395 declared live pins. 813 unique immutable-inventory instruction starts. Quantiles: 123 original-only model calls, small-integer average/disjoint <=400byte table recipes; post-N not differential, cache-after independently checked. Factor38: 39 original/O2 calls. Remaining281: 448 arithmetic/predicate O2 comparisons plus bounded reset; five gap999 starts static. Fields127: 78 field/eight cube comparisons plus six root checkpoints; historical selector-order successor is static, not new replay. Remaining101: 96 conversion/56 bounded unary O2/O3 final comparisons plus14 root checkpoints; two dead starts static. Raw10 historical labels corrected by separate addendum. No arbitrary raw domain, root-body parity, wholeRAM or production completion inferred."
+    },
+    {
+      "start": "0x1bb3a",
+      "end": "0x1bb6a",
+      "scope": "guarded reverse difference prefix; Complete entry family with named already-understood shared tails; numerical evidence natural canonical prepared decimals and stated windows, not arbitrary malformed/rich/alias admission.",
+      "source": "analysis/understanding/numeric-high/final-entry-families/models/remaining_entries.c",
+      "evidence": [
+        "analysis/understanding/numeric-high/final-entry-families/remaining-entries.md",
+        "analysis/understanding/numeric-high/final-entry-families/models/remaining_entries.c",
+        "analysis/understanding/numeric-high/final-entry-families/probe_remaining_entries.py",
+        "analysis/understanding/numeric-high/final-entry-families/remaining-entry-report.json.gz",
+        "analysis/understanding/numeric-high/final-entry-families/REMAINING-ENTRY-PREDICATE-ERRATUM.md"
+      ],
+      "audit": "Root read complete finite models, prepared recipe scopes and final independent all-ASM reviews; checked 395 declared live pins. 813 unique immutable-inventory instruction starts. Quantiles: 123 original-only model calls, small-integer average/disjoint <=400byte table recipes; post-N not differential, cache-after independently checked. Factor38: 39 original/O2 calls. Remaining281: 448 arithmetic/predicate O2 comparisons plus bounded reset; five gap999 starts static. Fields127: 78 field/eight cube comparisons plus six root checkpoints; historical selector-order successor is static, not new replay. Remaining101: 96 conversion/56 bounded unary O2/O3 final comparisons plus14 root checkpoints; two dead starts static. Raw10 historical labels corrected by separate addendum. No arbitrary raw domain, root-body parity, wholeRAM or production completion inferred."
+    },
+    {
+      "start": "0x1bb6a",
+      "end": "0x1bb8c",
+      "scope": "ordinary increment prefix; Complete entry family with named already-understood shared tails; numerical evidence natural canonical prepared decimals and stated windows, not arbitrary malformed/rich/alias admission.",
+      "source": "analysis/understanding/numeric-high/final-entry-families/models/remaining_entries.c",
+      "evidence": [
+        "analysis/understanding/numeric-high/final-entry-families/remaining-entries.md",
+        "analysis/understanding/numeric-high/final-entry-families/models/remaining_entries.c",
+        "analysis/understanding/numeric-high/final-entry-families/probe_remaining_entries.py",
+        "analysis/understanding/numeric-high/final-entry-families/remaining-entry-report.json.gz",
+        "analysis/understanding/numeric-high/final-entry-families/REMAINING-ENTRY-PREDICATE-ERRATUM.md"
+      ],
+      "audit": "Root read complete finite models, prepared recipe scopes and final independent all-ASM reviews; checked 395 declared live pins. 813 unique immutable-inventory instruction starts. Quantiles: 123 original-only model calls, small-integer average/disjoint <=400byte table recipes; post-N not differential, cache-after independently checked. Factor38: 39 original/O2 calls. Remaining281: 448 arithmetic/predicate O2 comparisons plus bounded reset; five gap999 starts static. Fields127: 78 field/eight cube comparisons plus six root checkpoints; historical selector-order successor is static, not new replay. Remaining101: 96 conversion/56 bounded unary O2/O3 final comparisons plus14 root checkpoints; two dead starts static. Raw10 historical labels corrected by separate addendum. No arbitrary raw domain, root-body parity, wholeRAM or production completion inferred."
+    },
+    {
+      "start": "0x1bb8c",
+      "end": "0x1bbb0",
+      "scope": "ordinary decrement prefix; Complete entry family with named already-understood shared tails; numerical evidence natural canonical prepared decimals and stated windows, not arbitrary malformed/rich/alias admission.",
+      "source": "analysis/understanding/numeric-high/final-entry-families/models/remaining_entries.c",
+      "evidence": [
+        "analysis/understanding/numeric-high/final-entry-families/remaining-entries.md",
+        "analysis/understanding/numeric-high/final-entry-families/models/remaining_entries.c",
+        "analysis/understanding/numeric-high/final-entry-families/probe_remaining_entries.py",
+        "analysis/understanding/numeric-high/final-entry-families/remaining-entry-report.json.gz",
+        "analysis/understanding/numeric-high/final-entry-families/REMAINING-ENTRY-PREDICATE-ERRATUM.md"
+      ],
+      "audit": "Root read complete finite models, prepared recipe scopes and final independent all-ASM reviews; checked 395 declared live pins. 813 unique immutable-inventory instruction starts. Quantiles: 123 original-only model calls, small-integer average/disjoint <=400byte table recipes; post-N not differential, cache-after independently checked. Factor38: 39 original/O2 calls. Remaining281: 448 arithmetic/predicate O2 comparisons plus bounded reset; five gap999 starts static. Fields127: 78 field/eight cube comparisons plus six root checkpoints; historical selector-order successor is static, not new replay. Remaining101: 96 conversion/56 bounded unary O2/O3 final comparisons plus14 root checkpoints; two dead starts static. Raw10 historical labels corrected by separate addendum. No arbitrary raw domain, root-body parity, wholeRAM or production completion inferred."
+    },
+    {
+      "start": "0x1bbb0",
+      "end": "0x1bbd8",
+      "scope": "ordinary reverse difference prefix; Complete entry family with named already-understood shared tails; numerical evidence natural canonical prepared decimals and stated windows, not arbitrary malformed/rich/alias admission.",
+      "source": "analysis/understanding/numeric-high/final-entry-families/models/remaining_entries.c",
+      "evidence": [
+        "analysis/understanding/numeric-high/final-entry-families/remaining-entries.md",
+        "analysis/understanding/numeric-high/final-entry-families/models/remaining_entries.c",
+        "analysis/understanding/numeric-high/final-entry-families/probe_remaining_entries.py",
+        "analysis/understanding/numeric-high/final-entry-families/remaining-entry-report.json.gz",
+        "analysis/understanding/numeric-high/final-entry-families/REMAINING-ENTRY-PREDICATE-ERRATUM.md"
+      ],
+      "audit": "Root read complete finite models, prepared recipe scopes and final independent all-ASM reviews; checked 395 declared live pins. 813 unique immutable-inventory instruction starts. Quantiles: 123 original-only model calls, small-integer average/disjoint <=400byte table recipes; post-N not differential, cache-after independently checked. Factor38: 39 original/O2 calls. Remaining281: 448 arithmetic/predicate O2 comparisons plus bounded reset; five gap999 starts static. Fields127: 78 field/eight cube comparisons plus six root checkpoints; historical selector-order successor is static, not new replay. Remaining101: 96 conversion/56 bounded unary O2/O3 final comparisons plus14 root checkpoints; two dead starts static. Raw10 historical labels corrected by separate addendum. No arbitrary raw domain, root-body parity, wholeRAM or production completion inferred."
+    },
+    {
+      "start": "0x1bc26",
+      "end": "0x1bc4e",
+      "scope": "ordinary difference prefix; Complete entry family with named already-understood shared tails; numerical evidence natural canonical prepared decimals and stated windows, not arbitrary malformed/rich/alias admission.",
+      "source": "analysis/understanding/numeric-high/final-entry-families/models/remaining_entries.c",
+      "evidence": [
+        "analysis/understanding/numeric-high/final-entry-families/remaining-entries.md",
+        "analysis/understanding/numeric-high/final-entry-families/models/remaining_entries.c",
+        "analysis/understanding/numeric-high/final-entry-families/probe_remaining_entries.py",
+        "analysis/understanding/numeric-high/final-entry-families/remaining-entry-report.json.gz",
+        "analysis/understanding/numeric-high/final-entry-families/REMAINING-ENTRY-PREDICATE-ERRATUM.md"
+      ],
+      "audit": "Root read complete finite models, prepared recipe scopes and final independent all-ASM reviews; checked 395 declared live pins. 813 unique immutable-inventory instruction starts. Quantiles: 123 original-only model calls, small-integer average/disjoint <=400byte table recipes; post-N not differential, cache-after independently checked. Factor38: 39 original/O2 calls. Remaining281: 448 arithmetic/predicate O2 comparisons plus bounded reset; five gap999 starts static. Fields127: 78 field/eight cube comparisons plus six root checkpoints; historical selector-order successor is static, not new replay. Remaining101: 96 conversion/56 bounded unary O2/O3 final comparisons plus14 root checkpoints; two dead starts static. Raw10 historical labels corrected by separate addendum. No arbitrary raw domain, root-body parity, wholeRAM or production completion inferred."
+    },
+    {
+      "start": "0x1bff4",
+      "end": "0x1c082",
+      "scope": "cross-boundary ordinary plain add facade; Complete entry family with named already-understood shared tails; numerical evidence natural canonical prepared decimals and stated windows, not arbitrary malformed/rich/alias admission.",
+      "source": "analysis/understanding/numeric-high/final-entry-families/models/remaining_entries.c",
+      "evidence": [
+        "analysis/understanding/numeric-high/final-entry-families/remaining-entries.md",
+        "analysis/understanding/numeric-high/final-entry-families/models/remaining_entries.c",
+        "analysis/understanding/numeric-high/final-entry-families/probe_remaining_entries.py",
+        "analysis/understanding/numeric-high/final-entry-families/remaining-entry-report.json.gz",
+        "analysis/understanding/numeric-high/final-entry-families/REMAINING-ENTRY-PREDICATE-ERRATUM.md"
+      ],
+      "audit": "Root read complete finite models, prepared recipe scopes and final independent all-ASM reviews; checked 395 declared live pins. 813 unique immutable-inventory instruction starts. Quantiles: 123 original-only model calls, small-integer average/disjoint <=400byte table recipes; post-N not differential, cache-after independently checked. Factor38: 39 original/O2 calls. Remaining281: 448 arithmetic/predicate O2 comparisons plus bounded reset; five gap999 starts static. Fields127: 78 field/eight cube comparisons plus six root checkpoints; historical selector-order successor is static, not new replay. Remaining101: 96 conversion/56 bounded unary O2/O3 final comparisons plus14 root checkpoints; two dead starts static. Raw10 historical labels corrected by separate addendum. No arbitrary raw domain, root-body parity, wholeRAM or production completion inferred."
+    },
+    {
+      "start": "0x19c76",
+      "end": "0x19d9a",
+      "scope": "Complete finite field/conversion and rich unary composition with named dependency contracts; prepared scalar/rational numerical witnesses and static dead/order paths as reviewed.",
+      "source": "analysis/understanding/numeric-high/rational-peer/fields-v2/fraction_fields.c",
+      "evidence": [
+        "analysis/understanding/numeric-high/rational-peer/field-proof.json",
+        "analysis/understanding/numeric-high/rational-peer/FIELDS-AND-CUBES.md",
+        "analysis/understanding/numeric-high/rational-peer/fields-v2/CORRECTION.md",
+        "analysis/understanding/numeric-high/rational-peer/fields-v2/FIELDS-AND-CUBES.md"
+      ],
+      "audit": "Root read complete finite models, prepared recipe scopes and final independent all-ASM reviews; checked 395 declared live pins. 813 unique immutable-inventory instruction starts. Quantiles: 123 original-only model calls, small-integer average/disjoint <=400byte table recipes; post-N not differential, cache-after independently checked. Factor38: 39 original/O2 calls. Remaining281: 448 arithmetic/predicate O2 comparisons plus bounded reset; five gap999 starts static. Fields127: 78 field/eight cube comparisons plus six root checkpoints; historical selector-order successor is static, not new replay. Remaining101: 96 conversion/56 bounded unary O2/O3 final comparisons plus14 root checkpoints; two dead starts static. Raw10 historical labels corrected by separate addendum. No arbitrary raw domain, root-body parity, wholeRAM or production completion inferred."
+    },
+    {
+      "start": "0x1a0d4",
+      "end": "0x1a10a",
+      "scope": "Complete finite field/conversion and rich unary composition with named dependency contracts; prepared scalar/rational numerical witnesses and static dead/order paths as reviewed.",
+      "source": "analysis/understanding/numeric-high/rational-peer/fields-v2/fraction_fields.c",
+      "evidence": [
+        "analysis/understanding/numeric-high/rational-peer/field-proof.json",
+        "analysis/understanding/numeric-high/rational-peer/FIELDS-AND-CUBES.md",
+        "analysis/understanding/numeric-high/rational-peer/fields-v2/CORRECTION.md",
+        "analysis/understanding/numeric-high/rational-peer/fields-v2/FIELDS-AND-CUBES.md"
+      ],
+      "audit": "Root read complete finite models, prepared recipe scopes and final independent all-ASM reviews; checked 395 declared live pins. 813 unique immutable-inventory instruction starts. Quantiles: 123 original-only model calls, small-integer average/disjoint <=400byte table recipes; post-N not differential, cache-after independently checked. Factor38: 39 original/O2 calls. Remaining281: 448 arithmetic/predicate O2 comparisons plus bounded reset; five gap999 starts static. Fields127: 78 field/eight cube comparisons plus six root checkpoints; historical selector-order successor is static, not new replay. Remaining101: 96 conversion/56 bounded unary O2/O3 final comparisons plus14 root checkpoints; two dead starts static. Raw10 historical labels corrected by separate addendum. No arbitrary raw domain, root-body parity, wholeRAM or production completion inferred."
+    },
+    {
+      "start": "0x19644",
+      "end": "0x19728",
+      "scope": "Complete finite field/conversion and rich unary composition with named dependency contracts; prepared scalar/rational numerical witnesses and static dead/order paths as reviewed.",
+      "source": "analysis/understanding/numeric-high/rational-peer/rich_power_policy.c",
+      "evidence": [
+        "analysis/understanding/numeric-high/rational-peer/conversion-power-proof.json.gz",
+        "analysis/understanding/numeric-high/rational-peer/CONVERSION-AND-RICH-POWER.md",
+        "analysis/understanding/numeric-high/rational-peer/fields-v2/CORRECTION.md"
+      ],
+      "audit": "Root read complete finite models, prepared recipe scopes and final independent all-ASM reviews; checked 395 declared live pins. 813 unique immutable-inventory instruction starts. Quantiles: 123 original-only model calls, small-integer average/disjoint <=400byte table recipes; post-N not differential, cache-after independently checked. Factor38: 39 original/O2 calls. Remaining281: 448 arithmetic/predicate O2 comparisons plus bounded reset; five gap999 starts static. Fields127: 78 field/eight cube comparisons plus six root checkpoints; historical selector-order successor is static, not new replay. Remaining101: 96 conversion/56 bounded unary O2/O3 final comparisons plus14 root checkpoints; two dead starts static. Raw10 historical labels corrected by separate addendum. No arbitrary raw domain, root-body parity, wholeRAM or production completion inferred."
+    },
+    {
+      "start": "0x19f1a",
+      "end": "0x1a0a0",
+      "scope": "Complete finite field/conversion and rich unary composition with named dependency contracts; prepared scalar/rational numerical witnesses and static dead/order paths as reviewed.",
+      "source": "analysis/understanding/numeric-high/rational-peer/fraction_conversion.c",
+      "evidence": [
+        "analysis/understanding/numeric-high/rational-peer/conversion-power-proof.json.gz",
+        "analysis/understanding/numeric-high/rational-peer/CONVERSION-AND-RICH-POWER.md",
+        "analysis/understanding/numeric-high/rational-peer/fields-v2/CORRECTION.md",
+        "analysis/understanding/numeric-high/rational-peer/fraction_conversion.c"
+      ],
+      "audit": "Root read complete finite models, prepared recipe scopes and final independent all-ASM reviews; checked 395 declared live pins. 813 unique immutable-inventory instruction starts. Quantiles: 123 original-only model calls, small-integer average/disjoint <=400byte table recipes; post-N not differential, cache-after independently checked. Factor38: 39 original/O2 calls. Remaining281: 448 arithmetic/predicate O2 comparisons plus bounded reset; five gap999 starts static. Fields127: 78 field/eight cube comparisons plus six root checkpoints; historical selector-order successor is static, not new replay. Remaining101: 96 conversion/56 bounded unary O2/O3 final comparisons plus14 root checkpoints; two dead starts static. Raw10 historical labels corrected by separate addendum. No arbitrary raw domain, root-body parity, wholeRAM or production completion inferred. Independent final closure corrected the converter range source binding to its actual fraction_conversion.c model; frozen evidence remains unchanged and metric count is unchanged."
     }
   ]
 }

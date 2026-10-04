@@ -184,7 +184,7 @@
       "scope": "Named initializer, variable-load records, zero-label/sign/layout gates; typed compact conversion reused; numerical8000..80DB/native expansion pools/CPUframes excluded from51CA value API. No complete arbitrary bus/stack alias claim.",
       "evidence": [
         "analysis/understanding/early-rom/RECORDS-HANDOFF.md",
-        "analysis/understanding/early-rom/record-proof.json.gz",
+        "analysis/understanding/early-rom/record-proof.json",
         "analysis/understanding/early-rom/revision/HANDOFF.md",
         "analysis/understanding/early-rom/revision/FREEZE.json"
       ],
@@ -197,7 +197,7 @@
       "scope": "Named initializer, variable-load records, zero-label/sign/layout gates; typed compact conversion reused; numerical8000..80DB/native expansion pools/CPUframes excluded from51CA value API. No complete arbitrary bus/stack alias claim.",
       "evidence": [
         "analysis/understanding/early-rom/RECORDS-HANDOFF.md",
-        "analysis/understanding/early-rom/record-proof.json.gz",
+        "analysis/understanding/early-rom/record-proof.json",
         "analysis/understanding/early-rom/revision/HANDOFF.md",
         "analysis/understanding/early-rom/revision/FREEZE.json"
       ],
@@ -210,7 +210,7 @@
       "scope": "Named initializer, variable-load records, zero-label/sign/layout gates; typed compact conversion reused; numerical8000..80DB/native expansion pools/CPUframes excluded from51CA value API. No complete arbitrary bus/stack alias claim.; unchecked native converter calls continue second copy/fill regardless of status; host unsupported-domain diagnostics distinct.",
       "evidence": [
         "analysis/understanding/early-rom/RECORDS-HANDOFF.md",
-        "analysis/understanding/early-rom/record-proof.json.gz",
+        "analysis/understanding/early-rom/record-proof.json",
         "analysis/understanding/early-rom/revision/HANDOFF.md",
         "analysis/understanding/early-rom/revision/FREEZE.json"
       ],
@@ -223,7 +223,7 @@
       "scope": "Named initializer, variable-load records, zero-label/sign/layout gates; typed compact conversion reused; numerical8000..80DB/native expansion pools/CPUframes excluded from51CA value API. No complete arbitrary bus/stack alias claim.",
       "evidence": [
         "analysis/understanding/early-rom/RECORDS-HANDOFF.md",
-        "analysis/understanding/early-rom/record-proof.json.gz",
+        "analysis/understanding/early-rom/record-proof.json",
         "analysis/understanding/early-rom/revision/HANDOFF.md",
         "analysis/understanding/early-rom/revision/FREEZE.json"
       ],
@@ -236,7 +236,7 @@
       "scope": "Named initializer, variable-load records, zero-label/sign/layout gates; typed compact conversion reused; numerical8000..80DB/native expansion pools/CPUframes excluded from51CA value API. No complete arbitrary bus/stack alias claim.",
       "evidence": [
         "analysis/understanding/early-rom/RECORDS-HANDOFF.md",
-        "analysis/understanding/early-rom/record-proof.json.gz",
+        "analysis/understanding/early-rom/record-proof.json",
         "analysis/understanding/early-rom/revision/HANDOFF.md",
         "analysis/understanding/early-rom/revision/FREEZE.json"
       ],
@@ -249,7 +249,7 @@
       "scope": "Named initializer, variable-load records, zero-label/sign/layout gates; typed compact conversion reused; numerical8000..80DB/native expansion pools/CPUframes excluded from51CA value API. No complete arbitrary bus/stack alias claim.",
       "evidence": [
         "analysis/understanding/early-rom/RECORDS-HANDOFF.md",
-        "analysis/understanding/early-rom/record-proof.json.gz",
+        "analysis/understanding/early-rom/record-proof.json",
         "analysis/understanding/early-rom/revision/HANDOFF.md",
         "analysis/understanding/early-rom/revision/FREEZE.json"
       ],
@@ -262,7 +262,7 @@
       "scope": "Named initializer, variable-load records, zero-label/sign/layout gates; typed compact conversion reused; numerical8000..80DB/native expansion pools/CPUframes excluded from51CA value API. No complete arbitrary bus/stack alias claim.",
       "evidence": [
         "analysis/understanding/early-rom/RECORDS-HANDOFF.md",
-        "analysis/understanding/early-rom/record-proof.json.gz",
+        "analysis/understanding/early-rom/record-proof.json",
         "analysis/understanding/early-rom/revision/HANDOFF.md",
         "analysis/understanding/early-rom/revision/FREEZE.json"
       ],
@@ -275,7 +275,7 @@
       "scope": "Named initializer, variable-load records, zero-label/sign/layout gates; typed compact conversion reused; numerical8000..80DB/native expansion pools/CPUframes excluded from51CA value API. No complete arbitrary bus/stack alias claim.",
       "evidence": [
         "analysis/understanding/early-rom/RECORDS-HANDOFF.md",
-        "analysis/understanding/early-rom/record-proof.json.gz",
+        "analysis/understanding/early-rom/record-proof.json",
         "analysis/understanding/early-rom/revision/HANDOFF.md",
         "analysis/understanding/early-rom/revision/FREEZE.json"
       ],

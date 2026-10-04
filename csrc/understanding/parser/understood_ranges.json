@@ -57,8 +57,8 @@
       "evidence": [
         "analysis/understanding/parser/CONVERSION-SELECTOR.md",
         "analysis/understanding/parser/conversion-selector-proof.json.gz",
-        "analysis/build/understanding-priority/numeric-high/bcd-report.json",
-        "analysis/build/understanding-priority/numeric-low/variant-getters-proof.json"
+        "analysis/understanding/numeric-high/bcd-report.json.gz",
+        "analysis/understanding/numeric-low/variant-getters-proof.json"
       ],
       "complete": true,
       "audit": "Independent root review of all claimed assembly instructions, meaningful semantic model, exact branch/record selection and matching recorded source pins. Production parity is separate."
@@ -375,7 +375,8 @@
       "evidence": [
         "analysis/understanding/parser-floor-gcd-lcm/corrected/FLOW.md",
         "analysis/understanding/parser-floor-gcd-lcm/corrected/assembly.txt",
-        "analysis/understanding/parser-floor-gcd-lcm/corrected/integer-proof.json.gz"
+        "analysis/understanding/parser-floor-gcd-lcm/corrected/integer-proof.json.gz",
+        "analysis/understanding/INTEGER-GATE-ERRATUM.md"
       ],
       "audit": "Root read full15740..15854 original ASM/high-level model/correctedFLOW. Separate parser reviewer confirmed all caller branches. Root verified26 freeze and19 proofpins. Source-current corrected546 nativeO2/O3 calls/1638 comparisons match bounded outputs/status/allRAM outside explicitly witnessedCPUframes and numeric8000..80DB scratch; componentbank/QR8 compared. All115 starts witnessed including finalLCM ten-digit gate failure. Predecessor514 proof retained privately historical; failed1e99pilot included only as diagnostic. Named numerical/copy callees exclude arbitrary rich/odd/alias/overflow intermediate parity."
     },
@@ -387,9 +388,162 @@
       "evidence": [
         "analysis/understanding/parser-floor-gcd-lcm/corrected/FLOW.md",
         "analysis/understanding/parser-floor-gcd-lcm/corrected/assembly.txt",
-        "analysis/understanding/parser-floor-gcd-lcm/corrected/integer-proof.json.gz"
+        "analysis/understanding/parser-floor-gcd-lcm/corrected/integer-proof.json.gz",
+        "analysis/understanding/INTEGER-GATE-ERRATUM.md"
       ],
       "audit": "Root read full15740..15854 original ASM/high-level model/correctedFLOW. Separate parser reviewer confirmed all caller branches. Root verified26 freeze and19 proofpins. Source-current corrected546 nativeO2/O3 calls/1638 comparisons match bounded outputs/status/allRAM outside explicitly witnessedCPUframes and numeric8000..80DB scratch; componentbank/QR8 compared. All115 starts witnessed including finalLCM ten-digit gate failure. Predecessor514 proof retained privately historical; failed1e99pilot included only as diagnostic. Named numerical/copy callees exclude arbitrary rich/odd/alias/overflow intermediate parity."
+    },
+    {
+      "start": "0x15e5a",
+      "end": "0x15e82",
+      "source": "analysis/understanding/parser/sources/semantic_adapters.c",
+      "scope": "Complete small adapter: temporary-copy raw BASE range boolean in scalar/BASE contexts (C4 frame-overwrite contract documented), explicit angle-unit suffix binding, unary first-record SURD decimalization with scratch/register contract",
+      "evidence": [
+        "analysis/understanding/parser/SMALL-ADAPTERS.md",
+        "analysis/understanding/parser/small-adapters-proof.json.gz",
+        "analysis/understanding/parser/base-probe-c4-overflow.json",
+        "analysis/understanding/parser/base-probe-c4-overflow.csv.gz",
+        "analysis/understanding/parser/SMALL-ADAPTER-HEADER-LIMIT.md"
+      ],
+      "audit": "Root read full original ASM and complete high-level models/notes for167 new parseradapter/infix/postfix instructions. Full declared source/tool/loadedbinary pins current. Proof observations/comparisons:small297/594,infix49692/99384,postfix4864/9728,final3921/7840; bounded full-entry and separately labeled continuation injections retained distinctly. Complete branch/state/depth/cursor/copy order modeled; named numerical callees delegated. InvalidC4BASE frame-overwrite diagnostic and earlier angle-status-only gaps preserved honestly, not wholeC4 parity claims."
+    },
+    {
+      "start": "0x16194",
+      "end": "0x161a6",
+      "source": "analysis/understanding/parser/sources/semantic_adapters.c",
+      "scope": "Complete small adapter: temporary-copy raw BASE range boolean in scalar/BASE contexts (C4 frame-overwrite contract documented), explicit angle-unit suffix binding, unary first-record SURD decimalization with scratch/register contract",
+      "evidence": [
+        "analysis/understanding/parser/SMALL-ADAPTERS.md",
+        "analysis/understanding/parser/small-adapters-proof.json.gz",
+        "analysis/understanding/parser/base-probe-c4-overflow.json",
+        "analysis/understanding/parser/base-probe-c4-overflow.csv.gz",
+        "analysis/understanding/parser/SMALL-ADAPTER-HEADER-LIMIT.md"
+      ],
+      "audit": "Root read full original ASM and complete high-level models/notes for167 new parseradapter/infix/postfix instructions. Full declared source/tool/loadedbinary pins current. Proof observations/comparisons:small297/594,infix49692/99384,postfix4864/9728,final3921/7840; bounded full-entry and separately labeled continuation injections retained distinctly. Complete branch/state/depth/cursor/copy order modeled; named numerical callees delegated. InvalidC4BASE frame-overwrite diagnostic and earlier angle-status-only gaps preserved honestly, not wholeC4 parity claims."
+    },
+    {
+      "start": "0x173fa",
+      "end": "0x1740a",
+      "source": "analysis/understanding/parser/sources/semantic_adapters.c",
+      "scope": "Complete small adapter: temporary-copy raw BASE range boolean in scalar/BASE contexts (C4 frame-overwrite contract documented), explicit angle-unit suffix binding, unary first-record SURD decimalization with scratch/register contract",
+      "evidence": [
+        "analysis/understanding/parser/SMALL-ADAPTERS.md",
+        "analysis/understanding/parser/small-adapters-proof.json.gz",
+        "analysis/understanding/parser/base-probe-c4-overflow.json",
+        "analysis/understanding/parser/base-probe-c4-overflow.csv.gz",
+        "analysis/understanding/parser/SMALL-ADAPTER-HEADER-LIMIT.md"
+      ],
+      "audit": "Root read full original ASM and complete high-level models/notes for167 new parseradapter/infix/postfix instructions. Full declared source/tool/loadedbinary pins current. Proof observations/comparisons:small297/594,infix49692/99384,postfix4864/9728,final3921/7840; bounded full-entry and separately labeled continuation injections retained distinctly. Complete branch/state/depth/cursor/copy order modeled; named numerical callees delegated. InvalidC4BASE frame-overwrite diagnostic and earlier angle-status-only gaps preserved honestly, not wholeC4 parity claims."
+    },
+    {
+      "start": "0x16bfe",
+      "end": "0x16c9c",
+      "source": "analysis/understanding/parser/sources/evaluator_flow.c",
+      "scope": "Complete infix parser control and ordered flag/operand/operator-stack effects, with numerical reductions and context89 separator delegated and verified prepared contexts",
+      "evidence": [
+        "analysis/understanding/parser/INFIX-FLOW.md",
+        "analysis/understanding/parser/sources/infix_fixture.c",
+        "analysis/understanding/parser/infix-flow-proof.json.gz",
+        "analysis/understanding/parser/REDUCTION-LOOPS.md"
+      ],
+      "audit": "Root read full original ASM and complete high-level models/notes for167 new parseradapter/infix/postfix instructions. Full declared source/tool/loadedbinary pins current. Proof observations/comparisons:small297/594,infix49692/99384,postfix4864/9728,final3921/7840; bounded full-entry and separately labeled continuation injections retained distinctly. Complete branch/state/depth/cursor/copy order modeled; named numerical callees delegated. InvalidC4BASE frame-overwrite diagnostic and earlier angle-status-only gaps preserved honestly, not wholeC4 parity claims."
+    },
+    {
+      "start": "0x16d3c",
+      "end": "0x16d72",
+      "source": "analysis/understanding/parser/sources/postfix_flow.c",
+      "scope": "Complete closing-parenthesis boundary scan/forced drain/result signaling and post-reduction literal/terminal-memory/ordinary-postfix routing with preserved token/cursor/state/error timing",
+      "evidence": [
+        "analysis/understanding/parser/POSTFIX-FLOW.md",
+        "analysis/understanding/parser/postfix-flow-proof.json.gz",
+        "analysis/understanding/parser/REDUCTION-LOOPS.md",
+        "analysis/understanding/parser/POSTFIX-STATE-ERRATUM.md"
+      ],
+      "audit": "Root read full original ASM and complete high-level models/notes for167 new parseradapter/infix/postfix instructions. Full declared source/tool/loadedbinary pins current. Proof observations/comparisons:small297/594,infix49692/99384,postfix4864/9728,final3921/7840; bounded full-entry and separately labeled continuation injections retained distinctly. Complete branch/state/depth/cursor/copy order modeled; named numerical callees delegated. InvalidC4BASE frame-overwrite diagnostic and earlier angle-status-only gaps preserved honestly, not wholeC4 parity claims."
+    },
+    {
+      "start": "0x16d7a",
+      "end": "0x16da6",
+      "source": "analysis/understanding/parser/sources/postfix_flow.c",
+      "scope": "Complete closing-parenthesis boundary scan/forced drain/result signaling and post-reduction literal/terminal-memory/ordinary-postfix routing with preserved token/cursor/state/error timing",
+      "evidence": [
+        "analysis/understanding/parser/POSTFIX-FLOW.md",
+        "analysis/understanding/parser/postfix-flow-proof.json.gz",
+        "analysis/understanding/parser/REDUCTION-LOOPS.md",
+        "analysis/understanding/parser/POSTFIX-STATE-ERRATUM.md"
+      ],
+      "audit": "Root read full original ASM and complete high-level models/notes for167 new parseradapter/infix/postfix instructions. Full declared source/tool/loadedbinary pins current. Proof observations/comparisons:small297/594,infix49692/99384,postfix4864/9728,final3921/7840; bounded full-entry and separately labeled continuation injections retained distinctly. Complete branch/state/depth/cursor/copy order modeled; named numerical callees delegated. InvalidC4BASE frame-overwrite diagnostic and earlier angle-status-only gaps preserved honestly, not wholeC4 parity claims."
+    },
+    {
+      "start": "0x15658",
+      "end": "0x15670",
+      "source": "analysis/understanding/parser/sources/final_adapters.c",
+      "scope": "Complete equation-result completion selector with semantic action/status contracts; final native R0 follows the live-mode distinction documented in FINAL-STATUS-ERRATUM.md.",
+      "evidence": [
+        "analysis/understanding/parser/FINAL-ADAPTERS.md",
+        "analysis/understanding/parser/final-adapters-proof.json.gz",
+        "analysis/understanding/parser/FINAL-STATUS-ERRATUM.md"
+      ],
+      "audit": "Root read full original ASM and complete high-level models/notes for167 new parseradapter/infix/postfix instructions. Full declared source/tool/loadedbinary pins current. Proof observations/comparisons:small297/594,infix49692/99384,postfix4864/9728,final3921/7840; bounded full-entry and separately labeled continuation injections retained distinctly. Complete branch/state/depth/cursor/copy order modeled; named numerical callees delegated. InvalidC4BASE frame-overwrite diagnostic and earlier angle-status-only gaps preserved honestly, not wholeC4 parity claims."
+    },
+    {
+      "start": "0x15854",
+      "end": "0x15856",
+      "source": "analysis/understanding/parser/sources/final_adapters.c",
+      "scope": "Complete equation-result completion selector, Rec infix second-record publication adapter and explicit syntax/identity/no-op numerical dispatch leaves with exact return-byte contracts",
+      "evidence": [
+        "analysis/understanding/parser/FINAL-ADAPTERS.md",
+        "analysis/understanding/parser/final-adapters-proof.json.gz"
+      ],
+      "audit": "Root read full original ASM and complete high-level models/notes for167 new parseradapter/infix/postfix instructions. Full declared source/tool/loadedbinary pins current. Proof observations/comparisons:small297/594,infix49692/99384,postfix4864/9728,final3921/7840; bounded full-entry and separately labeled continuation injections retained distinctly. Complete branch/state/depth/cursor/copy order modeled; named numerical callees delegated. InvalidC4BASE frame-overwrite diagnostic and earlier angle-status-only gaps preserved honestly, not wholeC4 parity claims."
+    },
+    {
+      "start": "0x15c14",
+      "end": "0x15c1c",
+      "source": "analysis/understanding/parser/sources/final_adapters.c",
+      "scope": "Complete equation-result completion selector, Rec infix second-record publication adapter and explicit syntax/identity/no-op numerical dispatch leaves with exact return-byte contracts",
+      "evidence": [
+        "analysis/understanding/parser/FINAL-ADAPTERS.md",
+        "analysis/understanding/parser/final-adapters-proof.json.gz"
+      ],
+      "audit": "Root read full original ASM and complete high-level models/notes for167 new parseradapter/infix/postfix instructions. Full declared source/tool/loadedbinary pins current. Proof observations/comparisons:small297/594,infix49692/99384,postfix4864/9728,final3921/7840; bounded full-entry and separately labeled continuation injections retained distinctly. Complete branch/state/depth/cursor/copy order modeled; named numerical callees delegated. InvalidC4BASE frame-overwrite diagnostic and earlier angle-status-only gaps preserved honestly, not wholeC4 parity claims."
+    },
+    {
+      "start": "0x1603e",
+      "end": "0x16058",
+      "source": "analysis/understanding/parser/sources/final_adapters.c",
+      "scope": "Complete equation-result completion selector, Rec infix second-record publication adapter and explicit syntax/identity/no-op numerical dispatch leaves with exact return-byte contracts",
+      "evidence": [
+        "analysis/understanding/parser/FINAL-ADAPTERS.md",
+        "analysis/understanding/parser/final-adapters-proof.json.gz"
+      ],
+      "audit": "Root read full original ASM and complete high-level models/notes for167 new parseradapter/infix/postfix instructions. Full declared source/tool/loadedbinary pins current. Proof observations/comparisons:small297/594,infix49692/99384,postfix4864/9728,final3921/7840; bounded full-entry and separately labeled continuation injections retained distinctly. Complete branch/state/depth/cursor/copy order modeled; named numerical callees delegated. InvalidC4BASE frame-overwrite diagnostic and earlier angle-status-only gaps preserved honestly, not wholeC4 parity claims."
+    },
+    {
+      "start": "0x16058",
+      "end": "0x1615A",
+      "source": "analysis/understanding/parser-fraction-coordinate/corrected-v4/fraction_coordinate.c",
+      "scope": "Compactfractionreal/complex/integer-preferred/scalardivision, orderedmarker/classifier/signmutations and mixedfraction copy/pop/whole-sign exactaddition",
+      "evidence": [
+        "analysis/understanding/parser-fraction-coordinate/corrected-v4/FLOW.md",
+        "analysis/understanding/parser-fraction-coordinate/historical-v2/assembly.txt",
+        "analysis/understanding/parser-fraction-coordinate/historical-v2/original-witnesses.json.gz",
+        "analysis/understanding/parser/FRACTION-V4-PEER-APPROVAL.md"
+      ],
+      "audit": "Root read complete fraction/coordinate C and detailed notes; independent parserreviewer read all113 caller ASM plus15F6E and1CABE/194EC and approved finalv4. Correct fixedworkspace companion binding and RAWBCD0x14=>exponent14/fifteen-digit admission. Original126 complete nativecalls/12fulltraces remain native-only evidence, not C numericcallback parity; no retag/replay. Ordered XthenliveY alias witness retained. StrictO2/O3 build evidence and all9 final publicationpins checked. Called numerical/physical kernels explicitly delegated, no currentproduction completion claim."
+    },
+    {
+      "start": "0x1615A",
+      "end": "0x16182",
+      "source": "analysis/understanding/parser-fraction-coordinate/corrected-v4/fraction_coordinate.c",
+      "scope": "Pol/Rec numericalcallerstatusgate and immediateorderedLIVE XthenYbankpublication; explicitzero successreturn",
+      "evidence": [
+        "analysis/understanding/parser-fraction-coordinate/corrected-v4/FLOW.md",
+        "analysis/understanding/parser-fraction-coordinate/historical-v2/assembly.txt",
+        "analysis/understanding/parser-fraction-coordinate/historical-v2/original-witnesses.json.gz",
+        "analysis/understanding/parser/FRACTION-V4-PEER-APPROVAL.md"
+      ],
+      "audit": "Root read complete fraction/coordinate C and detailed notes; independent parserreviewer read all113 caller ASM plus15F6E and1CABE/194EC and approved finalv4. Correct fixedworkspace companion binding and RAWBCD0x14=>exponent14/fifteen-digit admission. Original126 complete nativecalls/12fulltraces remain native-only evidence, not C numericcallback parity; no retag/replay. Ordered XthenliveY alias witness retained. StrictO2/O3 build evidence and all9 final publicationpins checked. Called numerical/physical kernels explicitly delegated, no currentproduction completion claim."
     }
   ]
 }

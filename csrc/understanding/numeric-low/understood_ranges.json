@@ -219,6 +219,23 @@
       ],
       "uncredited_instructions": 24,
       "audit": "Root reviewed complete original assembly, notes and semantic model; matching recorded source and scalar original artifact pins. Bounded witnesses and delegated implementation gaps retained."
+    },
+    {
+      "start": "0x13798",
+      "end": "0x13c66",
+      "source": "analysis/understanding/numeric-low/inequality_model.c",
+      "scope": "Complete vertex calculation/publication, finite relation-chain cursor/control, polynomial inequality descriptors and original-record sorting networks",
+      "evidence": [
+        "analysis/understanding/numeric-low/inequality-notes.md",
+        "analysis/understanding/numeric-low/inequality-proof.json.gz",
+        "analysis/understanding/numeric-low/relation-chain-proof.json",
+        "analysis/understanding/numeric-low/inequality-edges-proof.json.gz",
+        "analysis/understanding/numeric-low/inequality-micro-proof.json",
+        "analysis/disassembly/complete.asm",
+        "firmware/fx-991es-plus-c-ver4.bin",
+        "analysis/understanding/numeric-low/inequality-independent-review/REVIEW.md"
+      ],
+      "audit": "Independent early-ROM reviewer read all516 originalASM branches and complete model/notes/descriptorROM. Root reviewed complete current model/notes and verified current declared pins. Distinct173FAcompact-only and15C82comparison-preparation callbacks repaired; original draft/proofs preserved. Historical317 original calls/313 observationrows are native-only witnesses, not C differential parity; twoE862prefixes stop before errorUI. Fourfresh seamcalls demonstrate rational/marker distinction. Explicit historical timer-ready external acknowledgment and incomplete transitive compiler-header closure preserved; no unrestricted numeric/busalias/productioncompletion claim."
     }
   ]
 }
