@@ -1,3 +1,5 @@
 __pycache__/
 analysis/build/
 simulator/dist/
+eps-emu/.git/
+eps-emu/.venv/
