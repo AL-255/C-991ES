@@ -276,9 +276,12 @@ fx_runtime_status fx_runtime_step(fx_platform *p,fx_runtime *s,
             return FX_RUNTIME_INVALID;
         s->phase=FX_RUNTIME_MAIN; s->event=FX_RUNTIME_EVENT_CYCLE_RETURN;
         return FX_RUNTIME_ADVANCED;
-    case FX_RUNTIME_START_PARAMETER:
+    case FX_RUNTIME_START_PARAMETER: {
+        fx_parameter_menu_services services;
+        fx_distribution_menu_controller_services(&services,&s->distribution);
         s->phase=FX_RUNTIME_PARAMETER;
-        return parameter_status(p,s,fx_parameter_menu_controller_begin(p,&s->parameter,NULL),1);
+        return parameter_status(p,s,fx_parameter_menu_controller_begin(p,&s->parameter,&services),1);
+    }
     case FX_RUNTIME_PARAMETER:
         return parameter_status(p,s,fx_parameter_menu_controller_tick(p,&s->parameter),0);
     case FX_RUNTIME_RETURN_PARAMETER:

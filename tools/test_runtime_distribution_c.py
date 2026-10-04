@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Retained raw-key MAIN -> parameter-menu -> MAIN runtime differentials.
+"""Fresh integrated raw-key MAIN -> owned DIST -> MAIN differentials.
+
+The complete71 authored legacy inputs remain byte-for-byte in a separate
+fixture. Additional DIST input recipes enter by physical SHIFT/1. This
+does not re-label the prepared CFA8 child proof as runtime integration.
 
 Prepared entry is original D7B4 with authored R5=1/R4=0, not a boot claim.
 The matching C entry has named MAIN state only. Each native PC is set once;
@@ -18,12 +22,16 @@ import subprocess
 import sys
 import uuid
 import zlib
+SCRIPT_ROOT=Path(__file__).resolve().parents[1]
+ROOT=SCRIPT_ROOT if (SCRIPT_ROOT/"tools/nxu8/machine.py").is_file() else Path.cwd().resolve()
+sys.path.insert(0,str(ROOT/"tools"))
 from c_build_inputs import implementation_inputs
 from nxu8.machine import Machine
 
-ROOT=Path(__file__).resolve().parents[1]
-FIXTURE='analysis/native-fixtures/runtime-parameter/inputs.json'
-SUPPORT=['tools/runtime_parameter_support/adapter.c','tools/runtime_parameter_support/native.c']
+FIXTURE=SCRIPT_ROOT/'analysis/native-fixtures/runtime-distribution/inputs.json'
+LEGACY=SCRIPT_ROOT/'analysis/native-fixtures/runtime-distribution/legacy-inputs.json'
+SUPPORT=[Path(__file__).resolve().parent/'runtime_distribution_support/adapter.c',
+         Path(__file__).resolve().parent/'runtime_distribution_support/native.c']
 class Platform(C.Structure):
     _fields_=[('rom',C.POINTER(C.c_uint8)),('rom_size',C.c_size_t),
         ('ram',C.POINTER(C.c_uint8)),('callback_pending',C.c_uint8),('status',C.c_int)]
@@ -42,6 +50,15 @@ def initial(rom,row):
     for a,v in values.items():ram[a]=v
     ram[0x812c:0x8130]=bytes.fromhex('54815481')
     ram[0x8154]=0x31;ram[0x81b8]=0x32
+    if 'distribution_seed' in row:
+        d=row['distribution_seed']
+        values={0x80fb:3,0x80de:d.get('rows',3),0x80df:d.get('reserved',1),
+            0x811c:d.get('top',2),0x811d:d.get('part',1),0x811e:2,
+            0x8137:d['flag'],0x8109:d.get('frequency',0),0x812a:0xaa}
+        for a,v in values.items():ram[a]=v
+        ram[0x81b8:0x821c]=bytes([0xad])*100
+        ram[0x82ee:0x860e]=bytes((i*37+11)&255 for i in range(800))
+        ram[0x82ed]=0x69;ram[0x860e]=0x96
     return bytes(ram)
 
 def main():
@@ -53,26 +70,33 @@ def main():
     if sys.flags.optimize:ap.error('Optimized Python disables differential assertions')
     if (args.fixture or args.optimization) and not args.output_dir:
         ap.error('Custom inputs or single optimization require --output-dir')
-    out=(args.output_dir or ROOT/'analysis/build/runtime-parameter-review'/uuid.uuid4().hex).resolve()
+    out=(args.output_dir or ROOT/'analysis/build/distribution-runtime-review'/uuid.uuid4().hex).resolve()
     if out.is_relative_to(ROOT/'analysis/c-verification'):
         ap.error('Private proof cannot replace canonical reports')
-    fp=args.fixture.resolve() if args.fixture else ROOT/FIXTURE
+    fp=args.fixture.resolve() if args.fixture else FIXTURE
     fixture_bytes=fp.read_bytes();fixture=json.loads(fixture_bytes)
-    assert set(fixture)=={'schema','entry','rows'} and fixture['schema']==1
+    assert set(fixture)=={'schema','entry','legacy_sha256','legacy_recipes','rows'} and fixture['schema']==1
+    legacy_bytes=LEGACY.read_bytes();legacy=json.loads(legacy_bytes)
+    assert digest(legacy_bytes)==fixture['legacy_sha256']
+    assert legacy_bytes==(ROOT/'analysis/native-fixtures/runtime-parameter/inputs.json').read_bytes()
+    assert fixture['legacy_recipes']==71 and len(legacy['rows'])==71
+    additions=fixture['rows'];assert additions and all(r['mode']==12 and r['opening']==[233,49] for r in additions)
+    fixture['rows']=legacy['rows']+additions
     assert fixture['entry']=='prepared-MAIN-D7B4-wait1-last0'
     for row in fixture['rows']:
-        assert {'label','mode','opening','keys'}<=set(row)<={'label','mode','opening','keys','math','context','phase','column','submode'}
+        assert {'label','mode','opening','keys'}<=set(row)<={'label','mode','opening','keys','math','context','phase','column','submode','distribution_seed','control'}
         assert row['opening'] and all(type(x)is int and 0<x<256 for x in row['opening'])
         assert all(x is None or type(x)is int and 0<x<256 or isinstance(x,dict) and set(x)=={'pair'} and x['pair'][1]==128 and x['pair'][0] in (16,32,64,128) for x in row['keys'])
     cmake_bytes=(ROOT/'csrc/CMakeLists.txt').read_bytes()
     sources=['csrc/'+n for n in re.findall(r'(?<![\w/])([\w/]+\.c)(?!\w)',cmake_bytes.decode().split('target_include_directories')[0])]
     sources=list(dict.fromkeys(sources))
-    inputs=implementation_inputs(ROOT,sources)+SUPPORT+[
+    inputs=implementation_inputs(ROOT,sources)+[
         'tools/parameter_menu_oracle.c','tools/c_build_inputs.py',
         'tools/nxu8/machine.py','tools/nxu8/harness.c','tools/nxu8/isa.txt',
         'tools/nxu8/vendor/SimU8/core.c','csrc/CMakeLists.txt',
         'firmware/fx-991es-plus-c-ver4.bin','analysis/disassembly/complete.asm',
-        str(Path(__file__).resolve().relative_to(ROOT))]
+        str(Path(__file__).resolve()),str(LEGACY),str(ROOT/'analysis/native-fixtures/runtime-parameter/inputs.json'),
+        str(ROOT/'tools/test_runtime_parameter_c.py')] + [str(p) for p in SUPPORT]
     inputs += [str(p.relative_to(ROOT)) for p in (ROOT/'tools/nxu8/vendor/SimU8').glob('*.h')]
     pins={p:sha(ROOT/p) for p in sorted(set(inputs))};pins[str(fp)]=sha(fp)
     assert pins['csrc/CMakeLists.txt']==digest(cmake_bytes) and pins[str(fp)]==digest(fixture_bytes)
@@ -80,7 +104,7 @@ def main():
     (out/'inputs.json').write_bytes(fixture_bytes)
     report=dict(scope=__doc__,status='running',full_firmware_complete=False,
         source_sha256_pre=pins,rows=[],checkpoints=[],comparisons=0,guards=0,
-        completed_main=0,pending=0,owned_prefixes=0,resets=0,exports=0,timers=0,original_calls=0)
+        completed_main=0,pending=0,owned_prefixes=0,legacy_recipes=71,additional_recipes=len(additions),zero_returns=0,ff_returns=0,successful_body_replies=0,resets=0,exports=0,timers=0,original_calls=0)
     artifacts={}
     def stable():
         assert all(sha(ROOT/p if not Path(p).is_absolute() else p)==h for p,h in pins.items()),'Source attribution drift'
@@ -105,7 +129,7 @@ def main():
             assert abi==[lib.parameter_runtime_abi(i) for i in range(len(abi))];report['guards']+=len(abi)
             nd=out/('cpu-'+opt);m=Machine(rom,nd)
             ns=out/('original-'+opt+'.so')
-            subprocess.run(['gcc','-std=c99','-O2','-Wall','-Wextra','-Werror','-shared','-fPIC',str(ROOT/SUPPORT[1]),str(ROOT/'tools/nxu8/vendor/SimU8/core.c'),'-o',str(ns)],check=True)
+            subprocess.run(['gcc','-std=c99','-O2','-Wall','-Wextra','-Werror','-shared','-fPIC','-I',str(ROOT/'tools'),str(ROOT/SUPPORT[1]),str(ROOT/'tools/nxu8/vendor/SimU8/core.c'),'-o',str(ns)],check=True)
             n=C.CDLL(str(ns));artifacts[str(ns)]=sha(ns);artifacts[str(nd/'nxu8-harness.so')]=sha(nd/'nxu8-harness.so')
             for name in ('harness_init','harness_set_pc','harness_get_pc','harness_set_reg','harness_get_reg','harness_set_sp','harness_get_sp','harness_set_lr','harness_ram','harness_run'):
                 getattr(n,name).argtypes=getattr(m.lib,name).argtypes;getattr(n,name).restype=getattr(m.lib,name).restype
@@ -190,6 +214,9 @@ def main():
                     if status==1:
                         assert stop==250 and field(0)==constants[3]
                         assert field(16)==m.reg(0)
+                        if recipe['mode']==12:
+                            assert field(16) in (0,255)
+                            report['zero_returns' if field(16)==0 else 'ff_returns']+=1
                         status=lib.fx_runtime_step(C.byref(p),state,None,0);assert status==1 and field(0)==constants[0]
                         to(0xd980);compare('real-MAIN-return',status)
                         assert (field(4),field(3))==(m.reg(4),m.reg(5));report['completed_main']+=1
@@ -201,8 +228,21 @@ def main():
                         assert field(13)==2
                         report['owned_prefixes']+=1
                     else:assert status==5,(recipe['label'],'unfinished',status)
-                report['rows'].append(dict(input=recipe,optimization=opt,events=events,request=[field(i) for i in (9,10,11,12)],returned=field(8)))
+                report['rows'].append(dict(input=recipe,optimization=opt,events=events,request=[field(i) for i in (9,10,11,12)],returned=field(8),distribution=[field(i) for i in range(17,23)],
+                    live_kind=ram[0x80fa],live_flag=ram[0x8137],table_rows=ram[0x80de],
+                    table_sha256=digest(bytes(ram[0x82ee:0x860e])),seed_sha256=digest(seeded)))
             stable()
+        assert report['original_calls']==len(fixture['rows'])*(1 if args.optimization else 2)
+        if not args.optimization:
+            def without_optimization(value):
+                if isinstance(value,dict):
+                    return {key:without_optimization(item) for key,item in value.items() if key!='optimization'}
+                if isinstance(value,list):
+                    return [without_optimization(item) for item in value]
+                return value
+            arows=[without_optimization(r) for r in report['rows'] if r['optimization']=='O2']
+            brows=[without_optimization(r) for r in report['rows'] if r['optimization']=='O3']
+            assert arows==brows,'O2/O3 observations differ'
         report['status']='pass'
     except Exception as error:
         report['status']='failed';report['failure']=repr(error);raise
@@ -214,6 +254,6 @@ def main():
             artifact_drift=artifacts_post!=artifacts,completed_utc=datetime.now(timezone.utc).isoformat())
         if report['source_drift'] or report['artifact_drift']:report['status']='failed'
         (out/'report.json').write_text(json.dumps(report,indent=2)+'\n')
-    print(json.dumps({k:report[k] for k in ('status','original_calls','comparisons','guards','completed_main','pending','owned_prefixes','resets','exports','timers')}))
+    print(json.dumps({k:report[k] for k in ('status','original_calls','comparisons','guards','completed_main','pending','owned_prefixes','resets','exports','timers','legacy_recipes','additional_recipes','zero_returns','ff_returns')}))
     return 0 if report['status']=='pass' else 1
 if __name__=='__main__':raise SystemExit(main())

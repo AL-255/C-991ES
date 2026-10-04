@@ -55,6 +55,7 @@ add_library(fx991_firmware STATIC
     ui/fx_mode_setup.c
     ui/fx_mode_bank_menu.c
     ui/fx_parameter_menu_controller.c
+    ui/fx_distribution_menu_controller.c
     numeric/fx_transcend.c
     numeric/fx_power.c
     numeric/fx_root.c
@@ -145,7 +146,8 @@ target_link_libraries(fx991_simulator PRIVATE fx991_firmware)
 target_include_directories(fx991_simulator PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/app)
 add_executable(fx991sim app/fx991sim.c)
 target_link_libraries(fx991sim PRIVATE fx991_simulator)
-add_library(fx991_device SHARED app/fx_device_session.c app/fx_device_protocol.c)
+add_library(fx991_device SHARED app/fx_device_session.c app/fx_device_protocol.c
+    app/fx_device_browser.c)
 target_link_libraries(fx991_device PRIVATE fx991_firmware)
 target_include_directories(fx991_device PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/app)
 if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
@@ -167,7 +169,7 @@ if(BUILD_TESTING)
     set_tests_properties(public_api_bounds PROPERTIES
         ENVIRONMENT "ASAN_OPTIONS=detect_leaks=0:halt_on_error=1;UBSAN_OPTIONS=halt_on_error=1")
     find_package(Python3 REQUIRED COMPONENTS Interpreter)
-    foreach(subsystem device_session device_protocol parameter_menu_controller runtime_parameter render_mode137 diagnostic_rom_status diagnostic_screen tokens platform boot boot_events persistent diagnostic_contrast result_classify main_loop boot_main_ui runtime runtime_equation_canonical equation_workflow equation_commit coordinate_workspace coordinate_surd_workspace odd_result rich_ui eval_c4_integral eval_c4_derivative complex_surd_continuation complex_surd_binary_workspace numeric_c4_integral numeric_c4_derivative keys key_dispatch key_wait key_controller annunciator cursor editor editor_construct input_codec input_prepare input_recover input_controller ui_controller error_display error_event menu_navigator mode_setup mode_bank_menu numeric numeric_transcend numeric_power numeric_root numeric_logbase numeric_calculus numeric_integral numeric_integral_storage numeric_derivative numeric_derivative_storage numeric_surd_components numeric_base numeric_sexagesimal numeric_solver numeric_solver_stage numeric_solve numeric_random numeric_quotient raw_decimal raw_rational combinatorics complex complex_angles complex_round complex_dispatch linalg linalg_reduce linalg_store linalg_dispatch stats stats_value stats_cache stats_editor stats_normal trig trig_math trig_inverse trig_hyperbolic math_context render render_complex render_pair render_linalg format format_base format_budget eval eval_complex eval_variables eval_calculus eval_integral_physical eval_continuous eval_base eval_sexagesimal eval_coordinate eval_storage eval_finish eval_environment solve_controller calc_scan eval_random eval_rich eval_rich_unary eval_rich_reduce eval_rich_parser eval_stats solve_outer table table_controller table_composition table_ui base_word cli)
+    foreach(subsystem device_session device_protocol parameter_menu_controller distribution_menu_controller runtime_parameter runtime_distribution render_mode137 diagnostic_rom_status diagnostic_screen tokens platform boot boot_events persistent diagnostic_contrast result_classify main_loop boot_main_ui runtime runtime_equation_canonical equation_workflow equation_commit coordinate_workspace coordinate_surd_workspace odd_result rich_ui eval_c4_integral eval_c4_derivative complex_surd_continuation complex_surd_binary_workspace numeric_c4_integral numeric_c4_derivative keys key_dispatch key_wait key_controller annunciator cursor editor editor_construct input_codec input_prepare input_recover input_controller ui_controller error_display error_event menu_navigator mode_setup mode_bank_menu numeric numeric_transcend numeric_power numeric_root numeric_logbase numeric_calculus numeric_integral numeric_integral_storage numeric_derivative numeric_derivative_storage numeric_surd_components numeric_base numeric_sexagesimal numeric_solver numeric_solver_stage numeric_solve numeric_random numeric_quotient raw_decimal raw_rational combinatorics complex complex_angles complex_round complex_dispatch linalg linalg_reduce linalg_store linalg_dispatch stats stats_value stats_cache stats_editor stats_normal trig trig_math trig_inverse trig_hyperbolic math_context render render_complex render_pair render_linalg format format_base format_budget eval eval_complex eval_variables eval_calculus eval_integral_physical eval_continuous eval_base eval_sexagesimal eval_coordinate eval_storage eval_finish eval_environment solve_controller calc_scan eval_random eval_rich eval_rich_unary eval_rich_reduce eval_rich_parser eval_stats solve_outer table table_controller table_composition table_ui base_word cli)
         if(subsystem STREQUAL "numeric_base")
             add_test(NAME differential_${subsystem}
                      COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../tools/test_${subsystem}_c.py

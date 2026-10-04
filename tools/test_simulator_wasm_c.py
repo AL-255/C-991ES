@@ -336,6 +336,9 @@ def main():
     parser.add_argument("--disassembler", type=Path,
                         default=ROOT / "analysis/build/emsdk/upstream/bin/wasm-dis")
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--build-report", type=Path,
+                        default=ROOT / "analysis/build/simulator-wasm/build-report.json",
+                        help="Exact provenance report for the selected compiled module")
     args = parser.parse_args()
     fixture, reference = json.loads(FIXTURE.read_text()), json.loads(REFERENCE.read_text())
     validate_reference(fixture, reference)
@@ -351,7 +354,7 @@ def main():
     cmake = ROOT / "csrc/CMakeLists.txt"
     source_text = cmake.read_text()
     sources = []
-    for target in ("fx991_firmware", "fx991_simulator"):
+    for target in ("fx991_firmware", "fx991_simulator", "fx991_device"):
         match = re.search(r"add_library\(\s*" + target + r"\s+(?:STATIC|SHARED)\s+(.*?)\)", source_text, re.S)
         if not match:
             raise ValueError("Missing actual CMake source target " + target)
@@ -361,7 +364,7 @@ def main():
               ROOT / "tools/c_build_inputs.py", cmake, FIXTURE, REFERENCE,
               ROOT / "simulator/build_web.py", ROOT / "simulator/web/engine.js"]
     paths += [p for p in dist.rglob("*") if p.is_file()]
-    build_report_path = ROOT / "analysis/build/simulator-wasm/build-report.json"
+    build_report_path = args.build_report.resolve()
     browser_binary = Path(args.browser).resolve().with_name("chrome")
     paths += [args.disassembler.resolve(), Path(args.browser).resolve(), build_report_path]
     if browser_binary.is_file():

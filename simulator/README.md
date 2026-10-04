@@ -2,6 +2,8 @@
 
 Use the [hosted calculator](https://al-255.github.io/casio-explore/). Its arithmetic, exact-result formatting and LCD rendering run in the high-level C engine compiled to WebAssembly. No local server is required. Calculator memory lasts for the open page; reloading creates a fresh session.
 
+The [device preview](https://al-255.github.io/casio-explore/device/) retains the full C device state and displays its actual LCD through boot and raw-key steps. Press a key, advance one step, then release it. Acknowledge a requested timer explicitly. The preview exposes pending controllers so that unfinished screens remain visible. Its controls are intended for inspecting device execution; the expression calculator above provides ordinary calculations.
+
 Run from the repository root:
 
 ```sh

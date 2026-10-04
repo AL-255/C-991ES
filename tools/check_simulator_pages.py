@@ -25,6 +25,9 @@ RESOURCES = {
     "styles.css": {"text/css"},
     "fx991sim.js": {"application/javascript", "text/javascript"},
     "fx991sim.wasm": {"application/wasm"},
+    "device/index.html": {"text/html"},
+    "device/app.js": {"application/javascript", "text/javascript"},
+    "device/styles.css": {"text/css"},
 }
 MAX_BYTES = 16 * 1024 * 1024
 

@@ -42,7 +42,7 @@
       "scope": "Python transports requests to the compiled native C session; JavaScript draws returned pixels"
     },
     "static_webassembly": {
-      "status": "actual_ci_http_and_identical_artifact_browser_evidence_pass",
+      "status": "local_actual_browser_pass_deployment_pending",
       "builder": "simulator/build_web.py",
       "output_directory": "simulator/dist",
       "deployment_workflow": ".github/workflows/pages.yml",
@@ -53,13 +53,13 @@
       "emscripten_build_commit": "f6264d4a4dd9ba24a9f0a5702835a44d1463de13",
       "compiler_temporary_directory": "analysis/build/simulator-wasm/compiler-tmp",
       "builder_python_requirement": "Python3.9 or newer",
-      "build_report_sha256": "d862ea5de156e29862c4617b9795a5dab3fcf3a91f62da197b9577c821ae7093",
-      "javascript_artifact_sha256": "a2ef17728fad53fe2ae330849bade7eadd44dd1e4f33846e138cbcfae929bd77",
-      "wasm_artifact_sha256": "eb1833e9d339a114f79bae22b9eaa2fe4326227b325931095b6fe5b9141609ca",
+      "build_report_sha256": "e0bfeaff6604842be5b8b742a58ad5bb93019349e53ac7ab53f01cc84abd06c3",
+      "javascript_artifact_sha256": "231dfdf96c63a9c8c26d043c967318cd0dfab3fe06ddc6ba7bacc86435a816d6",
+      "wasm_artifact_sha256": "b752e39704060b3c9735ce0c07b99748cee63b685790d802a9826341bcb4097b",
       "session_lifetime": "Opaque C session in the page module; reload creates fresh memory",
       "filesystem_runtime": false,
       "native_proof_is_wasm_proof": false,
-      "deployment_verified": true,
+      "deployment_verified": false,
       "previous_deployment_verification": {
         "status": "pass",
         "release_commit": "bd216d3280f3ce5bdf44a0835bdb74ae67f4abda",
@@ -77,20 +77,8 @@
         "scope": "Actual public HTTP delivery and desktop/mobile C-WASM UI proof; full firmware completeness remains false"
       },
       "deployment_verification": {
-        "status": "pass",
-        "release_commit": "05dd32c2fa5369b9b28cf7de03d3e00906797f65",
-        "ci_run_id": 37241988546,
-        "ci_run_url": "https://github.com/AL-255/casio-explore/actions/runs/37241988546",
-        "ci_summary": "simulator/verification/deployment_ci_diagnostic.json",
-        "ci_summary_sha256": "fb923f8152e74f29eca06a10e0e236674b4c8f41b147d8297ba4856e6bdbaa17",
-        "ci_build_report_sha256": "4e69cec197e8b81d4aadc00e608c6892f610214d9d46f33f1ffcc83494b75e3b",
-        "public_summary": "simulator/verification/deployment_public_diagnostic.json",
-        "public_summary_sha256": "ccc22e1b896a452d6c7bca1fe9d5966de78715de947ab5693c326cf9bf5a0227",
-        "public_http_full_proof_sha256": "e853fed70b6308caf07351aa5394baf79943caad1c5bb3896f87e3c9ea5bcf7b",
-        "actual_browser_executed_this_release": false,
-        "prior_actual_browser_report_sha256": "0aa153197239c682b30bac39d10c0e48b8e4ce7af41a859d9a5c31e614fc40d7",
-        "browser_evidence_reused_by_identical_artifact_hashes": true,
-        "scope": "Fresh exact CI and public HTTP verification. Browser execution evidence is reused explicitly from the previous release because every compiled/site artifact is identical; no new browser or diagnostic-WASM execution is claimed. Full firmware completeness remains false."
+        "status": "pending",
+        "scope": "New combined source release is locally verified; exact CI/public delivery must be checked after push. Previous deployment evidence is retained in deployment_history."
       },
       "deployment_history": [
         {
@@ -107,8 +95,29 @@
           "public_browser_full_proof_sha256": "0aa153197239c682b30bac39d10c0e48b8e4ce7af41a859d9a5c31e614fc40d7",
           "public_browser_completed_utc": "2026-10-04T22:29:38.699034+00:00",
           "scope": "Actual public HTTP and desktop/mobile browser checks. Full firmware completeness remains false."
+        },
+        {
+          "status": "pass",
+          "release_commit": "05dd32c2fa5369b9b28cf7de03d3e00906797f65",
+          "ci_run_id": 37241988546,
+          "ci_run_url": "https://github.com/AL-255/casio-explore/actions/runs/37241988546",
+          "ci_summary": "simulator/verification/deployment_ci_diagnostic.json",
+          "ci_summary_sha256": "fb923f8152e74f29eca06a10e0e236674b4c8f41b147d8297ba4856e6bdbaa17",
+          "ci_build_report_sha256": "4e69cec197e8b81d4aadc00e608c6892f610214d9d46f33f1ffcc83494b75e3b",
+          "public_summary": "simulator/verification/deployment_public_diagnostic.json",
+          "public_summary_sha256": "ccc22e1b896a452d6c7bca1fe9d5966de78715de947ab5693c326cf9bf5a0227",
+          "public_http_full_proof_sha256": "e853fed70b6308caf07351aa5394baf79943caad1c5bb3896f87e3c9ea5bcf7b",
+          "actual_browser_executed_this_release": false,
+          "prior_actual_browser_report_sha256": "0aa153197239c682b30bac39d10c0e48b8e4ce7af41a859d9a5c31e614fc40d7",
+          "browser_evidence_reused_by_identical_artifact_hashes": true,
+          "scope": "Fresh exact CI and public HTTP verification. Browser execution evidence is reused explicitly from the previous release because every compiled/site artifact is identical; no new browser or diagnostic-WASM execution is claimed. Full firmware completeness remains false."
         }
-      ]
+      ],
+      "current_local_verification": {
+        "summary": "simulator/verification/distribution-device-release.json",
+        "sha256": "27983473d753ccab5318c94176865a5dd82bcb82cfe173e1bef58ee76f2f4186",
+        "scope": "Current combined C/WASM build, actual device and prepared-expression browser execution; full firmware completion remains false."
+      }
     }
   },
   "api": {
@@ -300,8 +309,33 @@
       "screenshots": 5,
       "native_calls": 0,
       "scope": "Actual public HTTP delivery and desktop/mobile browser UI; all six resources bind exact CI assets"
+    },
+    {
+      "report": "simulator/verification/distribution-device-release.json",
+      "report_sha256": "27983473d753ccab5318c94176865a5dd82bcb82cfe173e1bef58ee76f2f4186",
+      "status": "pass",
+      "scope": "Combined integer-only C/WASM prepared-expression and device-preview release, with independent original/native/WASM evidence boundaries."
     }
   ],
   "latest_release_verification": "simulator/verification/current-release.json",
-  "historical_verification_note": "Earlier verification summaries retain their actual frozen source/artifact versions. Current-release.json describes the latest local build; current public deployment is recorded separately after verification."
+  "historical_verification_note": "Earlier verification summaries retain their actual frozen source/artifact versions. Current-release.json describes the latest local build; current public deployment is recorded separately after verification.",
+  "device_preview": {
+    "url": "https://al-255.github.io/casio-explore/device/",
+    "manifest": "csrc/app/device_browser_manifest.json",
+    "sources": [
+      "csrc/app/fx_device_session.c",
+      "csrc/app/fx_device_protocol.c",
+      "csrc/app/fx_device_browser.c",
+      "csrc/app/fx_device_browser.h"
+    ],
+    "assets": [
+      "simulator/device/index.html",
+      "simulator/device/app.js",
+      "simulator/device/styles.css"
+    ],
+    "interface": "Explicit raw-key press/release, one public controller step, pending timer acknowledgment, callback drain and read-only JSON/LCD observation.",
+    "state": "Opaque persistent C device retains64KiB RAM/MMIO and owned controllers; unsupported requests remain visible.",
+    "transport_arithmetic": "Bounded integer-only C JSON writer; JavaScript validates transport widths and draws C pixels.",
+    "full_key_calculator_completion": false
+  }
 }

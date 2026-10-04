@@ -1,0 +1,44 @@
+{
+  "subsystem": "DISTRIBUTION parameter menu child and retained runtime provider",
+  "complete": false,
+  "implementation": "Handwritten high-level C",
+  "sources": [
+    "csrc/ui/fx_distribution_menu_controller.c",
+    "csrc/ui/fx_distribution_menu_controller.h"
+  ],
+  "implemented_routines": [
+    {
+      "address": "0xcfa8..0xd074",
+      "name": "fx_distribution_menu_controller",
+      "scope": "Whole asynchronous child lifecycle, initial-page/back navigation, retained kind/flag, row insertion, table clearing and real return0/FF"
+    },
+    {
+      "address": "0x1dfb0",
+      "name": "conditional mode12 table clear",
+      "scope": "Clears row counts and800 table bytes only in live mode12; preserves812A"
+    },
+    {
+      "address": "0x1df7e",
+      "name": "fx_boot_initialize_mode12",
+      "scope": "Observed ordered FC,FD,FE writes; FD precedesFE in both flag branches"
+    }
+  ],
+  "service_ownership": "Runtime-owned child state is separate from the parent parameter state; the service table is copied by begin and refers to persistent runtime storage.",
+  "verification": [
+    {
+      "tool": "tools/test_distribution_menu_controller_c.py",
+      "fixture": "analysis/native-fixtures/distribution-menu/inputs.json",
+      "summary": "analysis/verification/distribution-menu.json"
+    },
+    {
+      "tool": "tools/test_runtime_distribution_c.py",
+      "fixture": "analysis/native-fixtures/runtime-distribution/inputs.json",
+      "summary": "analysis/verification/distribution-runtime.json"
+    }
+  ],
+  "limits": [
+    "Following DISTRIBUTION screen/numerical bodies are separate typed MAIN requests.",
+    "Other typed parameter children remain unowned.",
+    "The child/provider and prepared raw-key MAIN proofs are distinct from full cold-boot and physical timing parity."
+  ]
+}

@@ -7,6 +7,7 @@ on:
       - 'csrc/**'
       - 'simulator/build_web.py'
       - 'simulator/web/**'
+      - 'simulator/device/**'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 

@@ -18,6 +18,9 @@ SDK_COMMIT = "dd8e25632640cfc1fb570c7fa4cc374e8a5e5a72"
 RELEASE_BUILD = "f6264d4a4dd9ba24a9f0a5702835a44d1463de13"
 SDK_ORIGIN = "https://github.com/emscripten-core/emsdk.git"
 EXPORTS = ["_fxsim_create", "_fxsim_destroy", "_fxsim_reset", "_fxsim_evaluate", "_malloc", "_free"]
+EXPORTS += ["_fx_device_browser_" + name for name in (
+    "create", "destroy", "reset", "submit_pair", "release", "step",
+    "ack_timer", "take_callback", "snapshot", "snapshot_free")]
 
 
 def sha256(path: Path) -> str:
@@ -39,7 +42,9 @@ def firmware_sources() -> list[Path]:
         if not word.endswith(".c") or not path.is_relative_to(ROOT / "csrc") or not path.is_file():
             raise ValueError(f"Unexpected firmware source: {word}")
         result.append(path)
-    return result + [ROOT / "csrc/app/fx_simulator_engine.c", ROOT / "csrc/app/fx_simulator_input.c"]
+    return result + [ROOT / "csrc/app/fx_simulator_engine.c", ROOT / "csrc/app/fx_simulator_input.c",
+                     ROOT / "csrc/app/fx_device_session.c", ROOT / "csrc/app/fx_device_protocol.c",
+                     ROOT / "csrc/app/fx_device_browser.c"]
 
 
 def implementation_closure(sources: list[Path]) -> set[Path]:
@@ -97,7 +102,8 @@ def main() -> None:
         raise ValueError(f"Compiler is not the pinned Emscripten {SDK_VERSION}: {version}")
     sources = firmware_sources()
     assets = [ROOT / "simulator/web" / name for name in ("index.html", "app.js", "styles.css", "engine.js")]
-    inputs = implementation_closure(sources) | set(assets) | {Path(__file__).resolve(), ROOT / "csrc/CMakeLists.txt"}
+    device_assets = [ROOT / "simulator/device" / name for name in ("index.html", "app.js", "styles.css")]
+    inputs = implementation_closure(sources) | set(assets) | set(device_assets) | {Path(__file__).resolve(), ROOT / "csrc/CMakeLists.txt"}
     input_pins = {str(path.relative_to(ROOT)): sha256(path) for path in sorted(inputs)}
     output.mkdir(parents=True, exist_ok=True)
     command = [str(emcc), "-std=c99", "-O3", "-Wall", "-Wextra", "-Werror", "-I", str(ROOT / "csrc"),
@@ -115,6 +121,9 @@ def main() -> None:
             (output / source.name).write_text(html.replace("<head>", '<head>\n  <meta name="fxsim-backend" content="wasm">', 1))
         else:
             shutil.copyfile(source, output / source.name)
+    (output / "device").mkdir(exist_ok=True)
+    for source in device_assets:
+        shutil.copyfile(source, output / "device" / source.name)
     (output / ".nojekyll").write_text("")
     # ES modules can also be consumed by the actual Node-based verification.
     (output / "package.json").write_text('{"type":"module"}\n')
@@ -122,7 +131,8 @@ def main() -> None:
     if changed:
         raise ValueError(f"Source changed during compilation: {changed}")
     artifacts = {name: {"sha256": sha256(output / name), "bytes": (output / name).stat().st_size}
-                 for name in ("fx991sim.js", "fx991sim.wasm", "index.html", "app.js", "styles.css", "engine.js", ".nojekyll", "package.json")}
+                 for name in ("fx991sim.js", "fx991sim.wasm", "index.html", "app.js", "styles.css", "engine.js", ".nojekyll", "package.json",
+                              "device/index.html", "device/app.js", "device/styles.css")}
     compiler_changes = {name: sha256(sdk / name) for name, digest in compiler_pins.items() if sha256(sdk / name) != digest}
     if compiler_changes:
         raise ValueError(f"Compiler input changed during invocation: {compiler_changes}")

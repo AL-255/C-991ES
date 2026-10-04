@@ -28,7 +28,17 @@
   "limits": [
     "Typed gaps do not complete missing handlers.",
     "Original numerical scratch residuals remain explicitly disclosed in the device proof.",
-    "The browser calculator uses the separate prepared-expression API.",
-    "Full firmware, advanced modes and diagnostic lifecycle remain incomplete."
-  ]
+    "The expression calculator and device preview expose separate C interfaces.",
+    "Full firmware and advanced mode interaction remain incomplete; the default diagnostic read/status calculation now has its own bounded composed original-ROM proof.",
+    "Physical interrupt/timer scheduling remains a host capability."
+  ],
+  "browser_transport": {
+    "manifest": "csrc/app/device_browser_manifest.json",
+    "preview": "https://al-255.github.io/casio-explore/device/",
+    "ownership": "The same persistent opaque C device, exposed through validated WASM-facing functions."
+  },
+  "distribution_runtime": {
+    "summary": "analysis/verification/distribution-runtime.json",
+    "scope": "Retained default parameter child with actual raw-key MAIN return; following numerical body remains incomplete."
+  }
 }

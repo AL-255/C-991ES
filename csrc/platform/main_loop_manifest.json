@@ -42,7 +42,7 @@
   ],
   "understanding_ranges": "csrc/platform/main_loop/understood_ranges.json",
   "gaps": [
-    "D9EE UI, mode/setup/parameter menus and specialized-screen request bodies require their real high-level controllers.",
+    "Dedicated screen and numerical bodies, remaining parameter-menu children and complete mode lifecycle composition still require their real high-level controllers; the default parameter wrapper now owns the DISTRIBUTION child.",
     "True ordinary reset to first key wait is verified with the actual linked bootE6 UI completion; the evaluation phase explicitly inventories incomplete numeric workspaces.",
     "Physical interrupt/timer scheduling remains a host capability; the default diagnostic lifecycle now executes the high-level ROM/status/retention routine against a software resource backend."
   ]

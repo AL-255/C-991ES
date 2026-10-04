@@ -1,6 +1,6 @@
 {
   "subsystem": "named high-level runtime scheduler",
-  "implementation": "Handwritten C composition of existing boot, main, whole INPUT, UI, MODE/SETUP and nested MATRIX/VECTOR bank controllers. No instruction execution or translated firmware.",
+  "implementation": "Handwritten C composition of boot, main, whole INPUT/UI, MODE/SETUP, retained MATRIX/VECTOR bank controllers, parameter wrapper and an owned DISTRIBUTION child. No instruction execution or translated firmware.",
   "complete": false,
   "proof": {
     "suite": "runtime",
@@ -19,10 +19,10 @@
     "original_body_controls": 6
   },
   "limits": [
-    "Numeric arena 0x8000..0x80db discrepancies remain explicitly archived at 34 witnessed checkpoints.",
-    "Dedicated MAIN screens and the parameter-menu wrapper remain typed requests. Whole INPUT/UI handles the verified rich back/AC and TABLE empty-function controls; wider TABLE key/range/grid interaction has its separate table_ui proof using actual C main-body providers.",
-    "Welcome/diagnostic/raw reset composition lacks new uninterrupted startup proof.",
-    "Timers use explicit host acknowledgement; ordinary key packets stay host owned; physical_input is sampled by boot events only.",
+    "Numeric arena0x8000..0x80db discrepancies in the older ordinary-evaluation and retained-device corpora remain explicitly archived; the menu-only proof does not erase them.",
+    "Dedicated MAIN screen/numerical bodies and unowned STAT/RECALL/STORE/CLEAR parameter children remain typed requests.",
+    "Boot/welcome/diagnostic behavior has separate bounded original proofs; complete startup and physical hardware certification remain incomplete.",
+    "Timers use explicit host acknowledgment; ordinary key packets stay host owned; physical_input is sampled by boot events only.",
     "Numerical evaluation remains a bounded semantic operation rather than a resumable algorithm."
   ],
   "sources": [
@@ -30,5 +30,18 @@
     "csrc/platform/fx_runtime.h"
   ],
   "fixture": "analysis/native-fixtures/runtime/inputs.json",
-  "verifier": "tools/test_runtime_c.py"
+  "verifier": "tools/test_runtime_c.py",
+  "historical_proof_scope": "The original16-sequence proof below remains historical; newer retained-device and parameter-runtime proofs are recorded separately.",
+  "owned_parameter_children": [
+    "Generic parameter navigation",
+    "MATRIX/VECTOR bank menus",
+    "DISTRIBUTION CFA8..D074"
+  ],
+  "current_parameter_verification": {
+    "tool": "tools/test_runtime_distribution_c.py",
+    "fixture": "analysis/native-fixtures/runtime-distribution/inputs.json",
+    "legacy_fixture": "analysis/native-fixtures/runtime-distribution/legacy-inputs.json",
+    "summary": "analysis/verification/distribution-runtime.json",
+    "scope": "Prepared actual D7B4 MAIN entry assigned once; raw SHIFT/1 and authored keys/timer readiness; real child return to D980. Separate from uninterrupted boot."
+  }
 }

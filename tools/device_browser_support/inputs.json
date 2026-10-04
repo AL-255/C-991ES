@@ -1,0 +1,915 @@
+{
+  "schema": 1,
+  "basis": "Authored raw-pair cold-boot recipes; token labels describe physical table entries, not engine tokens. No expected output.",
+  "rows": [
+    {
+      "id": "arithmetic-v0",
+      "variant": 0,
+      "keys": [
+        {
+          "token_label": 49,
+          "columns": 1,
+          "rows": 1
+        },
+        {
+          "token_label": 43,
+          "columns": 1,
+          "rows": 8
+        },
+        {
+          "token_label": 50,
+          "columns": 1,
+          "rows": 2
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        }
+      ]
+    },
+    {
+      "id": "explicit-Ans-v0",
+      "variant": 0,
+      "keys": [
+        {
+          "token_label": 49,
+          "columns": 1,
+          "rows": 1
+        },
+        {
+          "token_label": 43,
+          "columns": 1,
+          "rows": 8
+        },
+        {
+          "token_label": 50,
+          "columns": 1,
+          "rows": 2
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 139,
+          "columns": 2,
+          "rows": 64
+        },
+        {
+          "token_label": 43,
+          "columns": 1,
+          "rows": 8
+        },
+        {
+          "token_label": 52,
+          "columns": 2,
+          "rows": 1
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        }
+      ]
+    },
+    {
+      "id": "operator-Ans-v0",
+      "variant": 0,
+      "keys": [
+        {
+          "token_label": 49,
+          "columns": 1,
+          "rows": 1
+        },
+        {
+          "token_label": 43,
+          "columns": 1,
+          "rows": 8
+        },
+        {
+          "token_label": 50,
+          "columns": 1,
+          "rows": 2
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 43,
+          "columns": 1,
+          "rows": 8
+        },
+        {
+          "token_label": 52,
+          "columns": 2,
+          "rows": 1
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        }
+      ]
+    },
+    {
+      "id": "replay-v0",
+      "variant": 0,
+      "keys": [
+        {
+          "token_label": 49,
+          "columns": 1,
+          "rows": 1
+        },
+        {
+          "token_label": 43,
+          "columns": 1,
+          "rows": 8
+        },
+        {
+          "token_label": 50,
+          "columns": 1,
+          "rows": 2
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 52,
+          "columns": 2,
+          "rows": 1
+        },
+        {
+          "token_label": 43,
+          "columns": 1,
+          "rows": 8
+        },
+        {
+          "token_label": 53,
+          "columns": 2,
+          "rows": 2
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 224,
+          "columns": 128,
+          "rows": 4
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        }
+      ]
+    },
+    {
+      "id": "math-error-AC-v0",
+      "variant": 0,
+      "keys": [
+        {
+          "token_label": 49,
+          "columns": 1,
+          "rows": 1
+        },
+        {
+          "token_label": 79,
+          "columns": 2,
+          "rows": 16
+        },
+        {
+          "token_label": 48,
+          "columns": 16,
+          "rows": 64
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 230,
+          "columns": 4,
+          "rows": 16
+        },
+        {
+          "token_label": 50,
+          "columns": 1,
+          "rows": 2
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        }
+      ]
+    },
+    {
+      "id": "parameter-complex-cancel-v0",
+      "variant": 0,
+      "keys": [
+        {
+          "token_label": 228,
+          "columns": 128,
+          "rows": 16
+        },
+        {
+          "token_label": 50,
+          "columns": 1,
+          "rows": 2
+        },
+        {
+          "token_label": 233,
+          "columns": 128,
+          "rows": 1
+        },
+        {
+          "token_label": 50,
+          "columns": 1,
+          "rows": 2
+        },
+        {
+          "token_label": 230,
+          "columns": 4,
+          "rows": 16
+        }
+      ]
+    },
+    {
+      "id": "parameter-complex-polar-v0",
+      "variant": 0,
+      "keys": [
+        {
+          "token_label": 228,
+          "columns": 128,
+          "rows": 16
+        },
+        {
+          "token_label": 50,
+          "columns": 1,
+          "rows": 2
+        },
+        {
+          "token_label": 233,
+          "columns": 128,
+          "rows": 1
+        },
+        {
+          "token_label": 50,
+          "columns": 1,
+          "rows": 2
+        },
+        {
+          "token_label": 49,
+          "columns": 1,
+          "rows": 1
+        }
+      ]
+    },
+    {
+      "id": "parameter-table-cancel-v0",
+      "variant": 0,
+      "keys": [
+        {
+          "token_label": 228,
+          "columns": 128,
+          "rows": 16
+        },
+        {
+          "token_label": 55,
+          "columns": 4,
+          "rows": 1
+        },
+        {
+          "token_label": 233,
+          "columns": 128,
+          "rows": 1
+        },
+        {
+          "token_label": 139,
+          "columns": 2,
+          "rows": 64
+        },
+        {
+          "token_label": 230,
+          "columns": 4,
+          "rows": 16
+        }
+      ]
+    },
+    {
+      "id": "arithmetic-v3",
+      "variant": 3,
+      "keys": [
+        {
+          "token_label": 49,
+          "columns": 1,
+          "rows": 1
+        },
+        {
+          "token_label": 43,
+          "columns": 1,
+          "rows": 8
+        },
+        {
+          "token_label": 50,
+          "columns": 1,
+          "rows": 2
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        }
+      ]
+    },
+    {
+      "id": "explicit-Ans-v3",
+      "variant": 3,
+      "keys": [
+        {
+          "token_label": 49,
+          "columns": 1,
+          "rows": 1
+        },
+        {
+          "token_label": 43,
+          "columns": 1,
+          "rows": 8
+        },
+        {
+          "token_label": 50,
+          "columns": 1,
+          "rows": 2
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 139,
+          "columns": 2,
+          "rows": 64
+        },
+        {
+          "token_label": 43,
+          "columns": 1,
+          "rows": 8
+        },
+        {
+          "token_label": 52,
+          "columns": 2,
+          "rows": 1
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        }
+      ]
+    },
+    {
+      "id": "operator-Ans-v3",
+      "variant": 3,
+      "keys": [
+        {
+          "token_label": 49,
+          "columns": 1,
+          "rows": 1
+        },
+        {
+          "token_label": 43,
+          "columns": 1,
+          "rows": 8
+        },
+        {
+          "token_label": 50,
+          "columns": 1,
+          "rows": 2
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 43,
+          "columns": 1,
+          "rows": 8
+        },
+        {
+          "token_label": 52,
+          "columns": 2,
+          "rows": 1
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        }
+      ]
+    },
+    {
+      "id": "replay-v3",
+      "variant": 3,
+      "keys": [
+        {
+          "token_label": 49,
+          "columns": 1,
+          "rows": 1
+        },
+        {
+          "token_label": 43,
+          "columns": 1,
+          "rows": 8
+        },
+        {
+          "token_label": 50,
+          "columns": 1,
+          "rows": 2
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 52,
+          "columns": 2,
+          "rows": 1
+        },
+        {
+          "token_label": 43,
+          "columns": 1,
+          "rows": 8
+        },
+        {
+          "token_label": 53,
+          "columns": 2,
+          "rows": 2
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 224,
+          "columns": 128,
+          "rows": 4
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        }
+      ]
+    },
+    {
+      "id": "math-error-AC-v3",
+      "variant": 3,
+      "keys": [
+        {
+          "token_label": 49,
+          "columns": 1,
+          "rows": 1
+        },
+        {
+          "token_label": 79,
+          "columns": 2,
+          "rows": 16
+        },
+        {
+          "token_label": 48,
+          "columns": 16,
+          "rows": 64
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 230,
+          "columns": 4,
+          "rows": 16
+        },
+        {
+          "token_label": 50,
+          "columns": 1,
+          "rows": 2
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        }
+      ]
+    },
+    {
+      "id": "parameter-complex-cancel-v3",
+      "variant": 3,
+      "keys": [
+        {
+          "token_label": 228,
+          "columns": 128,
+          "rows": 16
+        },
+        {
+          "token_label": 50,
+          "columns": 1,
+          "rows": 2
+        },
+        {
+          "token_label": 233,
+          "columns": 128,
+          "rows": 1
+        },
+        {
+          "token_label": 50,
+          "columns": 1,
+          "rows": 2
+        },
+        {
+          "token_label": 230,
+          "columns": 4,
+          "rows": 16
+        }
+      ]
+    },
+    {
+      "id": "parameter-complex-polar-v3",
+      "variant": 3,
+      "keys": [
+        {
+          "token_label": 228,
+          "columns": 128,
+          "rows": 16
+        },
+        {
+          "token_label": 50,
+          "columns": 1,
+          "rows": 2
+        },
+        {
+          "token_label": 233,
+          "columns": 128,
+          "rows": 1
+        },
+        {
+          "token_label": 50,
+          "columns": 1,
+          "rows": 2
+        },
+        {
+          "token_label": 49,
+          "columns": 1,
+          "rows": 1
+        }
+      ]
+    },
+    {
+      "id": "parameter-table-cancel-v3",
+      "variant": 3,
+      "keys": [
+        {
+          "token_label": 228,
+          "columns": 128,
+          "rows": 16
+        },
+        {
+          "token_label": 55,
+          "columns": 4,
+          "rows": 1
+        },
+        {
+          "token_label": 233,
+          "columns": 128,
+          "rows": 1
+        },
+        {
+          "token_label": 139,
+          "columns": 2,
+          "rows": 64
+        },
+        {
+          "token_label": 230,
+          "columns": 4,
+          "rows": 16
+        }
+      ]
+    },
+    {
+      "id": "arithmetic-v7",
+      "variant": 7,
+      "keys": [
+        {
+          "token_label": 49,
+          "columns": 1,
+          "rows": 1
+        },
+        {
+          "token_label": 43,
+          "columns": 1,
+          "rows": 8
+        },
+        {
+          "token_label": 50,
+          "columns": 1,
+          "rows": 2
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        }
+      ]
+    },
+    {
+      "id": "explicit-Ans-v7",
+      "variant": 7,
+      "keys": [
+        {
+          "token_label": 49,
+          "columns": 1,
+          "rows": 1
+        },
+        {
+          "token_label": 43,
+          "columns": 1,
+          "rows": 8
+        },
+        {
+          "token_label": 50,
+          "columns": 1,
+          "rows": 2
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 139,
+          "columns": 2,
+          "rows": 64
+        },
+        {
+          "token_label": 43,
+          "columns": 1,
+          "rows": 8
+        },
+        {
+          "token_label": 52,
+          "columns": 2,
+          "rows": 1
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        }
+      ]
+    },
+    {
+      "id": "operator-Ans-v7",
+      "variant": 7,
+      "keys": [
+        {
+          "token_label": 49,
+          "columns": 1,
+          "rows": 1
+        },
+        {
+          "token_label": 43,
+          "columns": 1,
+          "rows": 8
+        },
+        {
+          "token_label": 50,
+          "columns": 1,
+          "rows": 2
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 43,
+          "columns": 1,
+          "rows": 8
+        },
+        {
+          "token_label": 52,
+          "columns": 2,
+          "rows": 1
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        }
+      ]
+    },
+    {
+      "id": "replay-v7",
+      "variant": 7,
+      "keys": [
+        {
+          "token_label": 49,
+          "columns": 1,
+          "rows": 1
+        },
+        {
+          "token_label": 43,
+          "columns": 1,
+          "rows": 8
+        },
+        {
+          "token_label": 50,
+          "columns": 1,
+          "rows": 2
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 52,
+          "columns": 2,
+          "rows": 1
+        },
+        {
+          "token_label": 43,
+          "columns": 1,
+          "rows": 8
+        },
+        {
+          "token_label": 53,
+          "columns": 2,
+          "rows": 2
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 224,
+          "columns": 128,
+          "rows": 4
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        }
+      ]
+    },
+    {
+      "id": "math-error-AC-v7",
+      "variant": 7,
+      "keys": [
+        {
+          "token_label": 49,
+          "columns": 1,
+          "rows": 1
+        },
+        {
+          "token_label": 79,
+          "columns": 2,
+          "rows": 16
+        },
+        {
+          "token_label": 48,
+          "columns": 16,
+          "rows": 64
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 230,
+          "columns": 4,
+          "rows": 16
+        },
+        {
+          "token_label": 50,
+          "columns": 1,
+          "rows": 2
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        }
+      ]
+    },
+    {
+      "id": "parameter-complex-cancel-v7",
+      "variant": 7,
+      "keys": [
+        {
+          "token_label": 228,
+          "columns": 128,
+          "rows": 16
+        },
+        {
+          "token_label": 50,
+          "columns": 1,
+          "rows": 2
+        },
+        {
+          "token_label": 233,
+          "columns": 128,
+          "rows": 1
+        },
+        {
+          "token_label": 50,
+          "columns": 1,
+          "rows": 2
+        },
+        {
+          "token_label": 230,
+          "columns": 4,
+          "rows": 16
+        }
+      ]
+    },
+    {
+      "id": "parameter-complex-polar-v7",
+      "variant": 7,
+      "keys": [
+        {
+          "token_label": 228,
+          "columns": 128,
+          "rows": 16
+        },
+        {
+          "token_label": 50,
+          "columns": 1,
+          "rows": 2
+        },
+        {
+          "token_label": 233,
+          "columns": 128,
+          "rows": 1
+        },
+        {
+          "token_label": 50,
+          "columns": 1,
+          "rows": 2
+        },
+        {
+          "token_label": 49,
+          "columns": 1,
+          "rows": 1
+        }
+      ]
+    },
+    {
+      "id": "parameter-table-cancel-v7",
+      "variant": 7,
+      "keys": [
+        {
+          "token_label": 228,
+          "columns": 128,
+          "rows": 16
+        },
+        {
+          "token_label": 55,
+          "columns": 4,
+          "rows": 1
+        },
+        {
+          "token_label": 233,
+          "columns": 128,
+          "rows": 1
+        },
+        {
+          "token_label": 139,
+          "columns": 2,
+          "rows": 64
+        },
+        {
+          "token_label": 230,
+          "columns": 4,
+          "rows": 16
+        }
+      ]
+    }
+  ]
+}

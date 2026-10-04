@@ -1,8 +1,78 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 #include "fx_device_protocol.h"
-#include <inttypes.h>
-#include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
+
+/* The schema contains only fixed names, status literals, integers and hex.
+ * Keep its transport independent of libc's general floating-point formatter. */
+typedef struct {
+    char *data;
+    size_t used, capacity;
+    unsigned fields, failed;
+} json_writer;
+
+static void character(json_writer *writer, char value)
+{
+    if (writer->used + 1u >= writer->capacity) {
+        writer->failed = 1;
+        return;
+    }
+    writer->data[writer->used++] = value;
+}
+
+static void text(json_writer *writer, const char *value)
+{
+    while (*value) character(writer, *value++);
+}
+
+static void unsigned_integer(json_writer *writer, uint32_t value)
+{
+    char digits[10];
+    size_t count = 0;
+    do {
+        digits[count++] = (char)('0' + value % 10u);
+        value /= 10u;
+    } while (value);
+    while (count) character(writer, digits[--count]);
+}
+
+static void signed_integer(json_writer *writer, int32_t value)
+{
+    uint32_t magnitude = (uint32_t)value;
+    if (value < 0) {
+        character(writer, '-');
+        magnitude = 0u - magnitude;
+    }
+    unsigned_integer(writer, magnitude);
+}
+
+static void field(json_writer *writer, const char *name)
+{
+    if (writer->fields++) character(writer, ',');
+    character(writer, '"');
+    text(writer, name);
+    text(writer, "\":");
+}
+
+static void unsigned_field(json_writer *writer, const char *name, uint32_t value)
+{
+    field(writer, name);
+    unsigned_integer(writer, value);
+}
+
+static void signed_field(json_writer *writer, const char *name, int32_t value)
+{
+    field(writer, name);
+    signed_integer(writer, value);
+}
+
+static void text_field(json_writer *writer, const char *name, const char *value)
+{
+    field(writer, name);
+    character(writer, '"');
+    text(writer, value);
+    character(writer, '"');
+}
 
 static const char *status_name(fx_runtime_status status)
 {
@@ -34,51 +104,62 @@ char *fx_device_session_json(const fx_device_session *session)
     const size_t capacity = 4096u;
     char *json = malloc(capacity);
     if (!json) return NULL;
-    int length = snprintf(json, capacity,
-        "{\"status\":\"%s\",\"runtime_status\":%d,"
-        "\"phase\":%d,\"event\":%d,\"memory_status\":%d,"
-        "\"steps\":%" PRIu32 ",\"active\":%u,"
-        "\"timer_pending\":%u,\"timer_period\":%u,"
-        "\"export_mask\":%u,\"callback_pending\":%u,"
-        "\"returned\":%u,\"host_wait\":%u,"
-        "\"key_columns\":%u,\"key_rows\":%u,"
-        "\"mode\":%u,\"submode\":%u,\"screen\":%u,"
-        "\"main_request\":%u,\"wait_required\":%u,"
-        "\"last_menu_result\":%u,\"input_action\":%u,"
-        "\"input_context_return\":%u,\"mode_result\":%u,"
-        "\"bank_result\":%u,\"mode_request\":%u,"
-        "\"mode_page\":%u,\"bank_page\":%u,"
-        "\"unsupported_token\":%u,"
-        "\"request\":{\"kind\":%d,\"operation\":%u,\"page\":%u,"
-        "\"argument\":%u,\"context_return\":%u,\"action\":%u,"
-        "\"status\":%d,\"expression_address\":%u,"
-        "\"result_address\":%u,\"prepared_source\":%u,"
-        "\"current_source\":%u},"
-        "\"width\":96,\"height\":32,\"framebuffer\":\"%s\"}",
-        status_name(state.last_status), (int)state.last_status,
-        (int)state.phase, (int)state.event, (int)state.memory_status,
-        state.steps, (unsigned)state.active,
-        (unsigned)state.timer_pending, (unsigned)state.timer_period,
-        (unsigned)state.export_mask, (unsigned)state.callback_pending,
-        (unsigned)state.returned, (unsigned)state.host_wait,
-        (unsigned)state.key_columns, (unsigned)state.key_rows,
-        (unsigned)settings[0], (unsigned)settings[1], (unsigned)settings[3],
-        (unsigned)state.main_request, (unsigned)state.wait_required,
-        (unsigned)state.last_menu_result, (unsigned)state.input_action,
-        (unsigned)state.input_context_return, (unsigned)state.mode_result,
-        (unsigned)state.bank_result, (unsigned)state.mode_request,
-        (unsigned)state.mode_page, (unsigned)state.bank_page,
-        (unsigned)state.unsupported_token,
-        (int)state.request.kind, state.request.operation, (unsigned)state.request.page,
-        (unsigned)state.request.argument, (unsigned)state.request.context_return,
-        (unsigned)state.request.action, state.request.status,
-        (unsigned)state.request.expression_address,
-        (unsigned)state.request.result_address,
-        (unsigned)state.request.prepared_source,
-        (unsigned)state.request.current_source, pixels);
-    if (length < 0 || (size_t)length >= capacity) {
+    json_writer writer = {json, 0, capacity, 0, 0};
+    character(&writer, '{');
+    text_field(&writer, "status", status_name(state.last_status));
+    signed_field(&writer, "runtime_status", (int32_t)state.last_status);
+    signed_field(&writer, "phase", (int32_t)state.phase);
+    signed_field(&writer, "event", (int32_t)state.event);
+    signed_field(&writer, "memory_status", (int32_t)state.memory_status);
+    unsigned_field(&writer, "steps", state.steps);
+    unsigned_field(&writer, "active", state.active);
+    unsigned_field(&writer, "timer_pending", state.timer_pending);
+    unsigned_field(&writer, "timer_period", state.timer_period);
+    unsigned_field(&writer, "export_mask", state.export_mask);
+    unsigned_field(&writer, "callback_pending", state.callback_pending);
+    unsigned_field(&writer, "returned", state.returned);
+    unsigned_field(&writer, "host_wait", state.host_wait);
+    unsigned_field(&writer, "key_columns", state.key_columns);
+    unsigned_field(&writer, "key_rows", state.key_rows);
+    unsigned_field(&writer, "mode", settings[0]);
+    unsigned_field(&writer, "submode", settings[1]);
+    unsigned_field(&writer, "screen", settings[3]);
+    unsigned_field(&writer, "main_request", state.main_request);
+    unsigned_field(&writer, "wait_required", state.wait_required);
+    unsigned_field(&writer, "last_menu_result", state.last_menu_result);
+    unsigned_field(&writer, "input_action", state.input_action);
+    unsigned_field(&writer, "input_context_return", state.input_context_return);
+    unsigned_field(&writer, "mode_result", state.mode_result);
+    unsigned_field(&writer, "bank_result", state.bank_result);
+    unsigned_field(&writer, "mode_request", state.mode_request);
+    unsigned_field(&writer, "mode_page", state.mode_page);
+    unsigned_field(&writer, "bank_page", state.bank_page);
+    unsigned_field(&writer, "unsupported_token", state.unsupported_token);
+    field(&writer, "request");
+    character(&writer, '{');
+    writer.fields = 0;
+    signed_field(&writer, "kind", (int32_t)state.request.kind);
+    unsigned_field(&writer, "operation", state.request.operation);
+    unsigned_field(&writer, "page", state.request.page);
+    unsigned_field(&writer, "argument", state.request.argument);
+    unsigned_field(&writer, "context_return", state.request.context_return);
+    unsigned_field(&writer, "action", state.request.action);
+    signed_field(&writer, "status", (int32_t)state.request.status);
+    unsigned_field(&writer, "expression_address", state.request.expression_address);
+    unsigned_field(&writer, "result_address", state.request.result_address);
+    unsigned_field(&writer, "prepared_source", state.request.prepared_source);
+    unsigned_field(&writer, "current_source", state.request.current_source);
+    character(&writer, '}');
+    /* The parent already contains fields; only comma presence is needed. */
+    writer.fields = 1;
+    unsigned_field(&writer, "width", 96);
+    unsigned_field(&writer, "height", 32);
+    text_field(&writer, "framebuffer", pixels);
+    character(&writer, '}');
+    if (writer.failed) {
         free(json);
         return NULL;
     }
+    json[writer.used] = '\0';
     return json;
 }

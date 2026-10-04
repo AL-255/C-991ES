@@ -237,12 +237,13 @@ void fx_boot_initialize_mode12(fx_platform *p)
     if (byte_at(p, 0x8137)) {
         reset_layout_dimensions(p);
         put_byte(p, 0x80fc, 18);
+        put_byte(p, 0x80fd, 0);
         put_byte(p, 0x80fe, 0);
     } else {
         put_byte(p, 0x80fc, 9);
+        put_byte(p, 0x80fd, 0);
         put_byte(p, 0x80fe, 4);
     }
-    put_byte(p, 0x80fd, 0);
 }
 
 fx_boot_status fx_boot_resume(fx_platform *p)
