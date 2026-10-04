@@ -344,12 +344,33 @@
       "address": "0xc35e",
       "name": "fx_display_has_natural_result",
       "scope": "formula permission, selections 14/15 and Math result mode bit 6"
+    },
+    {
+      "address": "0x37bc",
+      "name": "fx_display_special_real_result",
+      "scope": "real special-view result and null-line clear, full selection/cache/LCD state, all three fonts and both maps; BASE-N branches1/7/9/15 via high-level formatter"
+    },
+    {
+      "address": "0x368a",
+      "name": "base_indicator",
+      "scope": "all80FA byte title lookups with original ROM/RAM text bounds"
+    },
+    {
+      "address": "0x3634 / 0x3644 / 0x3658",
+      "name": "fx_apply_result_format_state",
+      "scope": "complete real C060/3634 pair: full previous/current selection byte and cache invalidation, DMS/ENG/recurring fallback events"
+    },
+    {
+      "address": "0x54e0",
+      "name": "formatter_display_state",
+      "scope": "real formatter-triggered sleep MMIO and LCD annunciator updates; native numeric operand scratch remains outside the API"
     }
   ],
   "gaps": [
-    "B070 complex/polar, BaseN, mode137 and mode-specific hooks, special status/error contexts remain partial; unsupported contexts return-1. Ordinary real legacy text and natural-input selection10 are translated.",
-    "B070 numeric scratch RAM remains untranslated because numeric/formatter APIs expose records and tokens rather than native operand workspaces:0x8006 and inactive0x8640 metric slots for natural output,0x8000..0x8009 for legacy text.",
+    "B070 nonzero imaginary/complex/polar, mode137 and mode-specific equation/inequality hooks, special status/error contexts remain partial; unsupported contexts return-1. Special37BC and BASE-N fixed-row branches are translated. Natural-input selection10 with8130 nonzero takes an untranslated cached viewport path and is explicitly rejected.",
+    "B070/37BC numeric scratch RAM remains untranslated because numeric/formatter APIs expose records and tokens rather than native operand workspaces:0x8006 and inactive0x8640 metric slots for natural output,0x8000..0x8009 for legacy/special text. Intermediate complex-component C060 state is outside the complete real C060/3634 adapter.",
     "Selection 15 tagged rational/surd formatting remains a formatter gap; the controller propagates explicit formatting failure.",
+    "Special BASE-N rejects invalid nonempty base masks and raw glyph8127 mode; C060 error records and mode137 serialization are untranslated. Null-value title lookup retains all80FA byte values.",
     "Viewport fallback with a failed second measurement or a nonterminating overlapping copy is an explicit pending native-state audit; tested fallback replacements succeed.",
     "Cursor painting/blink scheduling is a separate UI routine; this subsystem translates cursor geometry and blink metadata.",
     "Physical CPU-stack-space check 0x52D6: portable semantic API has no native CPU stack;  recursion/count limits are modeled.",
@@ -362,5 +383,6 @@
   "verification_command": "python3 tools/test_render_c.py",
   "parity_ledger": "csrc/render/parity-ledger.json",
   "complete": false,
-  "secondary_verification": "csrc/render/differential-results.json"
+  "secondary_verification": "csrc/render/differential-results.json",
+  "understanding_ranges": "csrc/render/understood_ranges.json"
 }

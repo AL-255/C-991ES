@@ -22,7 +22,7 @@ def main():
     sources = [str(p.relative_to(ROOT)) for p in (ROOT / 'csrc').rglob('*')
                if p.suffix in ('.c', '.h') or p.name == 'CMakeLists.txt']
     report = write_report('analysis/c-verification/safety.json', {
-        'cases': 100000, 'domain': 'Deterministic parser/formatter/glyph-line/ordinary-and-structured-editor bounds fuzzing plus long-literal and recursion boundaries',
+        'cases': 140000, 'domain': 'Deterministic parser/formatter/glyph-line/ordinary-and-structured-editor/input-conversion/cursor-and-key bounds fuzzing plus long-literal and recursion boundaries',
         'comparison': 'API contracts and canaries under address/undefined-behavior instrumentation; no original firmware execution',
         'sanitizers': ['AddressSanitizer', 'UndefinedBehaviorSanitizer'],
         'leak_sanitizer': 'Disabled because host ptrace is incompatible; tested code uses caller-owned fixed buffers',

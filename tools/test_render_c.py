@@ -41,7 +41,10 @@ def main():
                     str(ROOT / 'csrc/render/fx_viewport.c'),
                     str(ROOT / 'csrc/render/fx_result.c'),
                     str(ROOT / 'csrc/render/fx_result_linear.c'),
+                    str(ROOT / 'csrc/render/fx_result_special.c'),
+                    str(ROOT / 'csrc/render/fx_result_format_state.c'),
                     str(ROOT / 'csrc/format/fx_format.c'),
+                    str(ROOT / 'csrc/format/fx_format_base.c'),
                     str(ROOT / 'csrc/numeric/fx_numeric.c'),
                     '-o', str(library_path)], check=True)
     lib = C.CDLL(str(library_path))
@@ -92,6 +95,8 @@ def main():
     lib.fx_display_real_math_result.restype = C.c_int
     lib.fx_display_real_linear_result.argtypes = [ptr, word, C.POINTER(Box)]
     lib.fx_display_real_linear_result.restype = C.c_int
+    lib.fx_display_special_real_result.argtypes = [ptr, word, C.POINTER(Box)]
+    lib.fx_display_special_real_result.restype = C.c_int
     for name in ('fx_construct_length', 'fx_parenthesis_length', 'fx_field_length'):
         getattr(lib, name).argtypes = [ptr, word]
         getattr(lib, name).restype = byte
@@ -680,7 +685,8 @@ def main():
 
     fixtures = json.loads((ROOT / 'analysis/verification/numeric-samples.json').read_text())
     fixtures += [{'name': 'original-two-surds', 'numeric_record': '89970199099801990106'},
-                 {'name': 'zero', 'numeric_record': '00000000000000000000'}]
+                 {'name': 'zero', 'numeric_record': '00000000000000000000'},
+                 {'name': 'decimal-1.2345', 'numeric_record': '01234500000000000001'}]
     for n in range(80):
         mantissa = rng.randrange(10**14, 10**15)
         exponent = rng.choice((-95, -12, -10, -9, -5, -3, -2, -1, 0, 3, 9, 10, 12, 94))
@@ -709,6 +715,8 @@ def main():
                 oracle.word(0x812c, 0x8200); memory[0x812c] = 0; memory[0x812d] = 0x82
                 for n, value in enumerate(bytes.fromhex(sample['numeric_record'])): setting(0x8300 + n, value)
                 for n in range(384): setting(0x87d0 + n, (n * 17 + 3) & 255)
+                for n in range(512): setting(0xf800 + n, (n * 7 + 17) & 255)
+                setting(0xf031, 0x5a)
                 oracle.er(0, 0x8300); oracle.call(0xb070)
                 box = Box()
                 assert lib.fx_display_real_math_result(r, 0x8300, C.byref(box)) == 1
@@ -720,7 +728,8 @@ def main():
                 for start, length in [(0x8100, 1), (0x8126, 2), (0x812c, 2), (0x8130, 1),
                                       (0x8000, 6), (0x8007, 4), (0x8114, 18),
                                       (address, len(original) + 1), (0x87d0, 384),
-                                      (0x8640, memory[0x8008] * 4), (0x9800, 256)]:
+                                      (0x8640, memory[0x8008] * 4), (0x9800, 256),
+                                      (0xf800, 512), (0xf031, 1)]:
                     same_region(start, length, reason)
                 oracle.call(0x3cfc); lib.fx_flush_framebuffer(r)
                 same_region(0xf800, 512, reason)
@@ -744,11 +753,14 @@ def main():
             oracle.word(0x812c,0x8200); memory[0x812c]=0;memory[0x812d]=0x82
             for n,b in enumerate(bytes.fromhex(sample['numeric_record'])): setting(0x8300+n,b)
             for n in range(384):setting(0x87d0+n,(n*17+3)&255)
+            for n in range(512):setting(0xf800+n,(n*7+17)&255)
+            setting(0xf031,0x5a)
+            setting(0x8130,int(not(enabled and mode != 1)))
             oracle.er(0,0x8300);oracle.call(0xb070)
             box=Box()
             assert lib.fx_display_real_linear_result(r,0x8300,C.byref(box)) == 1
             reason=('legacy real result',sample['name'],selection,mode,enabled,font,editing)
-            for start,length in [(0x8100,1),(0x8114,1),(0x8115,18),(0x9800,256),(0x87d0,384),(0x812c,2)]:same_region(start,length,reason)
+            for start,length in [(0x8100,1),(0x8114,1),(0x8115,18),(0x8130,1),(0x9800,256),(0x87d0,384),(0x812c,2),(0xf031,1)]:same_region(start,length,reason)
             if enabled and mode != 1:
                 address=0x8546 if mode in (65,136) else 0x8398
                 same_region(address,256,reason)
@@ -757,21 +769,118 @@ def main():
             same_region(0xf800,512,reason)
             linear_cases+=1
     counts['ordinary_real_legacy_result_controller_b070_and_lcd'] = linear_cases
+    # The special view bypasses layout and history. All selection bytes test
+    # previous DMS/ENG state, and seeded LCD bytes expose formatter side effects
+    # that would be hidden by the later framebuffer flush.
+    special_fixtures = fixtures[:11] + [
+        {'name': 'huge-DMS', 'numeric_record': '41234500000000000701'},
+        {'name': 'marked-decimal', 'numeric_record': '41234500000000000001'}]
+    special_cases = 0
+    unsupported_special = []
+    for sample in special_fixtures:
+      for selection in range(256):
+        # Prime formatting of tagged rational/surd records remains an explicit
+        # formatter gap. Characterize each original outcome instead of silently
+        # dropping these records from the documented input domain.
+        if selection & 15 == 15 and int(sample['numeric_record'][:2], 16) & 0xb0 in (0x20,0x80):
+            reset()
+            for address,value in [(0x80f9,193),(0x80fc,16),(0x8100,selection),
+                                  (0x811f,10),(0x8121,1),(0x8130,1),(0x8104,1)]: setting(address,value)
+            for n,b in enumerate(bytes.fromhex(sample['numeric_record'])): setting(0x8300+n,b)
+            for n in range(384): setting(0x87d0+n,(n*17+3)&255)
+            for n in range(512): setting(0xf800+n,(n*7+17)&255)
+            oracle.er(0,0x8300)
+            outcome=dict(sample=sample['name'],record=sample['numeric_record'],selection=selection,
+                         reason='tagged rational/surd prime formatter gap')
+            try:
+                oracle.call(0x37bc)
+                outcome['original_outcome']='returned'
+            except RuntimeError as fault:
+                outcome['original_outcome']=str(fault)
+            outcome['original_framebuffer_sha256']=hashlib.sha256(bytes(oracle.ram[0x87d0:0x8950])).hexdigest()
+            outcome['original_lcd_sha256']=hashlib.sha256(bytes(oracle.ram[0xf800:0xfa00])).hexdigest()
+            assert lib.fx_display_special_real_result(r,0x8300,C.byref(Box())) == 0
+            unsupported_special.append(outcome)
+            continue
+        for font in (6, 7, 10):
+          for selected in (0, 1):
+            reset()
+            for address, value in [(0x80f9,193),(0x80fc,16),(0x80fe,0),(0x8106,1),
+                                   (0x8104,1),(0x8100,selection),(0x811f,font),
+                                   (0x8121,selected),(0x8130,1),(0xf031,0x5a)]: setting(address,value)
+            for n,b in enumerate(bytes.fromhex(sample['numeric_record'])): setting(0x8300+n,b)
+            for n in range(384): setting(0x87d0+n,(n*17+3)&255)
+            for n in range(512): setting(0xf800+n,(n*7+17)&255)
+            oracle.er(0,0x8300); oracle.call(0x37bc)
+            assert lib.fx_display_special_real_result(r,0x8300,C.byref(Box())) == 1
+            reason=('special real result',sample['name'],selection,font,selected)
+            for start,length in [(0x8100,64),(0x8300,10),(0x87d0,384),(0xf800,512),
+                                 (0x9800,256),(0xf030,4)]: same_region(start,length,reason)
+            special_cases += 1
+    counts['special_real_result_37bc_full_selection_state_and_lcd'] = special_cases
+    counts['documented_original_tagged_prime_outcomes_and_explicit_c_failures'] = len(unsupported_special)
+    special_clear_cases = 0
+    for mode in (1,2,65,129,137,193):
+      for font in (6,7,10):
+        for setup in range(256) if mode == 2 else (0,):
+          for selected in (0,1):
+            reset()
+            for address,value in [(0x80f9,mode),(0x80fa,setup),(0x8100,0xab),
+                                  (0x811f,font),(0x8121,selected),(0x8130,1)]: setting(address,value)
+            for n in range(384): setting(0x87d0+n,(n*17+3)&255)
+            for n in range(512): setting(0xf800+n,(n*7+17)&255)
+            oracle.er(0,0); oracle.call(0x37bc)
+            assert lib.fx_display_special_real_result(r,0,C.byref(Box())) == 1
+            reason=('special clear and BASE-N title',mode,font,setup,selected)
+            for start,length in [(0x8100,64),(0x87d0,384),(0xf800,512)]: same_region(start,length,reason)
+            special_clear_cases += 1
+    counts['special_clear_all_base_title_settings'] = special_clear_cases
+    from test_numeric_c import raw_decimal
+    def integer_record(value):
+        if not value: return bytes(10)
+        exponent = len(str(abs(value))) - 1
+        return raw_decimal(abs(value) * 10**(14-exponent), exponent, -1 if value < 0 else 1)
+    base_fixtures = [dict(name='base-'+str(value),numeric_record=integer_record(value).hex())
+                     for value in (-2147483648,-32768,-1,0,1,32767,32768,2147483647)]
+    base_fixtures += special_fixtures
+    base_cases = 0
+    for sample in base_fixtures:
+      for base in (1,7,9,15):
+        for selection in (0,1,10,13,14,15,0x1d,0x65,0xab,0xff):
+          for font in (6,7,10):
+            reset()
+            for address,value in [(0x80f9,2),(0x80fa,base),(0x80fc,16),(0x8100,selection),
+                                  (0x811f,font),(0x8121,int(font != 6)),(0x8130,1),
+                                  (0xf031,0x5a),(0x80ff,0x10)]: setting(address,value)
+            for n,b in enumerate(bytes.fromhex(sample['numeric_record'])): setting(0x8300+n,b)
+            for n in range(384): setting(0x87d0+n,(n*17+3)&255)
+            for n in range(512): setting(0xf800+n,(n*7+17)&255)
+            oracle.er(0,0x8300); oracle.call(0x37bc)
+            assert lib.fx_display_special_real_result(r,0x8300,C.byref(Box())) == 1
+            reason=('BASE-N special result',sample['name'],base,selection,font)
+            for start,length in [(0x8100,64),(0x8300,10),(0x87d0,384),(0xf800,512),
+                                 (0x9800,256),(0xf030,4)]: same_region(start,length,reason)
+            base_cases += 1
+    counts['base_n_special_result_37bc_full_persistent_state_and_lcd'] = base_cases
     result = {'status': 'passed', 'rom_sha256': hashlib.sha256(ROM).hexdigest(),
               'implementation': 'readable high-level C; ROM used only as constant data',
               'oracle': 'original ROM executed by separately implemented SimU8 CPU',
               'comparison_scope': 'semantic return values, unpacked glyph bytes, settings, and framebuffer/LCD bytes; CPU scratch registers and call-stack bytes excluded',
-              'controller_comparison_scope': 'tokens, selection and viewport settings, active metric cache slots, history record0x9800..0x98ff, framebuffer and LCD; unused numeric workspaces remain documented gaps (0x8006/inactive0x8640slots in the viewport branch;0x8000..0x8009 in the legacy branch)',
+              'controller_comparison_scope': 'tokens, full selection/cache state and viewport settings, active metric cache slots, history record0x9800..0x98ff, framebuffer, all512 LCD bytes and formatter-triggered MMIO sleep port; unused numeric workspaces remain documented gaps (0x8006/inactive0x8640slots in the viewport branch;0x8000..0x8009 in legacy/special branches)',
               'tests': counts, 'total_cases': sum(counts.values()),
               'original_invalid_input_faults': native_faults,
               'original_invalid_row_faults': memory_faults,
+              'unsupported_special_controller_inputs': unsupported_special,
               'full_firmware_complete': False}
     sources = ['csrc/render/fx_render.c', 'csrc/render/fx_render.h', 'csrc/render/fx_render_memory.c', 'csrc/render/fx_render_memory.h', 'csrc/render/fx_render_context.c', 'csrc/render/fx_render_context.h', 'csrc/render/fx_layout.c', 'csrc/render/fx_layout_validate.c', 'csrc/render/fx_layout_validate.h',
                'csrc/render/fx_viewport.c',
                'csrc/render/fx_result.c', 'csrc/render/fx_result_linear.c', 'csrc/render/fx_result_linear.h',
+               'csrc/render/fx_result_special.c', 'csrc/render/fx_result_special.h',
+               'csrc/render/fx_result_format_state.c', 'csrc/render/fx_result_format_state.h',
                'csrc/format/fx_format.c', 'csrc/format/fx_format.h',
+               'csrc/format/fx_format_base.c', 'csrc/format/fx_format_base.h',
                'csrc/numeric/fx_numeric.c', 'csrc/numeric/fx_numeric.h',
-               'analysis/verification/numeric-samples.json', 'tools/c_verification.py']
+               'analysis/verification/numeric-samples.json', 'tools/test_numeric_c.py', 'tools/c_verification.py']
     result = write_report(REPORT, result, sources, 'tools/test_render_c.py')
     write_report('analysis/c-verification/render.json', result, sources, 'tools/test_render_c.py')
     print(json.dumps(result, indent=2))

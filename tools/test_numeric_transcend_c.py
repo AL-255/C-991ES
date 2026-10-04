@@ -46,7 +46,7 @@ def main():
                     '-fPIC', '-shared', *(str(ROOT / p) for p in sources), '-o', str(library)], check=True)
     lib = C.CDLL(str(library))
     ptr = C.POINTER(Number)
-    for name in ('fx_number_ln', 'fx_number_log10', 'fx_number_negate'):
+    for name in ('fx_number_ln', 'fx_number_log10', 'fx_number_exp', 'fx_number_exp10', 'fx_number_negate'):
         getattr(lib, name).argtypes = [ptr, ptr]
     lib.fx_decimal_parse.argtypes = [ptr, C.c_char_p]
     lib.fx_rational_encode.argtypes = [ptr, C.POINTER(Rational)]
@@ -66,14 +66,17 @@ def main():
     for raw in [bytes.fromhex('00000000000000010001'),
                 bytes.fromhex('00999999999999990001')]:
         source, out = number(raw), Number()
-        for name in ['ln', 'log10']:
+        for name in ['ln', 'log10', 'exp', 'exp10']:
             check(name + '_noncanonical_guard',
                   getattr(lib, 'fx_number_' + name)(C.byref(out), C.byref(source)), -1, raw.hex())
 
     inputs = [bytes(10), bytes.fromhex('f2000000000000000000'),
               bytes.fromhex('2717a394600000000806'), bytes.fromhex('2717a394600000000801')]
     for literal in ['1', '-1', '1e-99', '1e99', '1.00000000000001', '.999999999999999',
-                    '2', '10', '.1', '3.14159265358979', '2.71828182845904']:
+                    '2', '10', '.1', '3.14159265358979', '2.71828182845904',
+                    '.5', '-.5', '.00000000000001', '-.00000000000001',
+                    '99', '-99', '99.9999999999999', '-99.9999999999999',
+                    '100', '-100', '101', '-101', '230', '-230', '1000', '-1000', '-1e99']:
         out = Number(); lib.fx_decimal_parse(C.byref(out), literal.encode()); inputs.append(out.raw())
     for exponent in range(-99, 100):
         for mantissa in [10**14, 10**14+1, 10**14+2, 10**14+9, 10**14+100,
@@ -92,7 +95,7 @@ def main():
         out = Number(); lib.fx_surd_pack(C.byref(out), components); inputs.append(out.raw())
 
     for index, raw in enumerate(inputs):
-        for name, address in [('ln', 0x1c242), ('log10', 0x1c256)]:
+        for name, address in [('ln', 0x1c242), ('log10', 0x1c256), ('exp', 0x1c22e), ('exp10', 0x1c21a)]:
             m.reset(); settings(m)
             for i, byte in enumerate(raw): m.ram[0x8300 + i] = byte
             m.er(0, 0x8300); m.call(address)
@@ -109,9 +112,10 @@ def main():
     report = {'rom_sha256': hashlib.sha256(rom).hexdigest(), 'seed': '0x1acb6',
               'random_cases_per_group': args.random_cases, 'inputs': len(inputs),
               'checks': checks, 'checks_total': sum(checks.values()),
-              'scope': 'Real ln/log10 external numeric records; finite differential coverage.'}
+              'scope': 'Real ln/log10/exp/exp10 external numeric records; finite differential coverage.'}
     write_report('analysis/c-verification/numeric_transcend.json', report,
                  sources + ['csrc/numeric/fx_numeric.h', 'csrc/numeric/fx_transcend.h',
+                            'csrc/numeric/fx_transcend_internal.h',
                             'csrc/numeric/transcend_manifest.json', 'tools/trace_natural_result.py',
                             'tools/c_verification.py'], 'tools/test_numeric_transcend_c.py')
     print(json.dumps(report, indent=2))

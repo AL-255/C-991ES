@@ -8,6 +8,9 @@
 #include "render/fx_render.h"
 #include "data/fx_rom_data.h"
 #include "ui/fx_editor.h"
+#include "ui/fx_input_codec.h"
+#include "ui/fx_cursor.h"
+#include "ui/fx_key_dispatch.h"
 
 static uint32_t random_state = 0x991ec001;
 static uint32_t random_word(void)
@@ -20,7 +23,7 @@ static uint32_t random_word(void)
 
 static void parser_bounds(void)
 {
-    static const uint8_t alphabet[] = "0123456789.+-()\x4e\x4f\x60\x68\x74\x75\x76\x77\x81\x82\x85\x86\x87\x98\x5e\xae\xa0\xa1\xa2\xa3\xb0\xb1\xb2";
+    static const uint8_t alphabet[] = "0123456789.+-()\x4e\x4f\x60\x68\x70\x71\x72\x73\x74\x75\x76\x77\x81\x82\x85\x86\x87\x90\x91\x92\x93\x98\x5e\xae\xa0\xa1\xa2\xa3\xb0\xb1\xb2";
     uint8_t input[1024];
     fx_eval_result result;
     for (unsigned n = 0; n < 20000; ++n) {
@@ -66,12 +69,68 @@ static void formatter_bounds(void)
         options.math_output = (uint8_t)(random_word() % 2);
         options.mixed_fraction = (uint8_t)(random_word() % 2);
         options.digits = (uint8_t)(random_word() % 10);
-        options.format_context = (uint8_t)(random_word() % 4);
+        options.format_context = (uint8_t)(random_word() % 7);
         memset(storage, 0xa5, sizeof(storage));
         fx_format_status status = fx_format_number(&number, &options, storage+1, capacity, &result);
         assert(storage[0] == 0xa5 && storage[capacity+1] == 0xa5);
         if (status == FX_FORMAT_OK) assert(capacity > result.length && storage[result.length+1] == 0);
         if (status == FX_FORMAT_BUFFER_TOO_SMALL && capacity) assert(storage[capacity] == 0);
+    }
+}
+
+static void input_codec_bounds(void)
+{
+    static uint8_t storage[65538];
+    fx_platform platform = {fx_rom_data, 0x30000, storage+1, 0, FX_MEMORY_OK};
+    uint8_t *memory = storage+1;
+    static const uint8_t constructs[] = {0x5e, 0x68, 0x75, 0x76, 0x77, 0x7c,
+                                        0x98, 0x9f, 0xa0, 0xa8, 0xae, 0xb0};
+    storage[0] = storage[65537] = 0xa5;
+    for (unsigned n = 0; n < 20000; ++n) {
+        unsigned length = random_word() % 90;
+        memset(memory, 0, 65536);
+        for (unsigned i = 0; i < length; ++i)
+            memory[0x8154+i] = (uint8_t)('0' + random_word() % 10);
+        memory[0x8114] = (uint8_t)(random_word() % (length+1));
+        memory[0x80f9] = 0xc1; memory[0x80fc] = 1; memory[0x8106] = 1;
+        memory[0x812c] = 0x54; memory[0x812d] = 0x81;
+        assert(fx_editor_insert_construct(&platform,
+            constructs[random_word() % sizeof(constructs)]) >= 0);
+        int status = fx_editor_input_boundaries(&platform, 0x8154);
+        assert(status == 0 || status == 1 || status == -1);
+        status = fx_editor_export_input(&platform, 0x8154, 0x8400,
+                                       (uint8_t)random_word(), 1);
+        assert(status == 0 || status == -1);
+        assert(memory[0x83ff] == 0 && memory[0x8500] == 0);
+        status = fx_editor_export_input(&platform, 0x8154, 0x8600,
+                                       (uint8_t)random_word(), 0);
+        assert(status == 0 || status == -1);
+        assert(memory[0x85ff] == 0 && memory[0x8700] == 0);
+        assert(storage[0] == 0xa5 && storage[65537] == 0xa5);
+    }
+}
+
+static void cursor_key_bounds(void)
+{
+    static uint8_t storage[65538];
+    fx_platform p = {fx_rom_data, 0x30000, storage+1, 0, FX_MEMORY_OK};
+    uint8_t *memory = storage+1;
+    storage[0] = storage[65537] = 0xa5;
+    for (unsigned n = 0; n < 20000; ++n) {
+        uint16_t source = (uint16_t)random_word(), destination = (uint16_t)random_word();
+        memory[0x811b] = (uint8_t)random_word();
+        fx_cursor_capture(&p, destination, source);
+        fx_cursor_restore(&p, source, destination);
+        fx_cursor_tick(&p, (uint16_t)random_word());
+        assert(fx_cursor_is_visible(&p) <= 1);
+        /* Valid finite expression for EC's glyph refresh; other state bytes
+         * retain the deterministic mutations from the cursor operations. */
+        memcpy(memory+0x8154, "123", 4);
+        uint8_t output;
+        int status = fx_key_process_token(&p, (uint8_t)random_word(),
+                                           (uint16_t)random_word(), &output);
+        assert(status == 0 || status == 1);
+        assert(storage[0] == 0xa5 && storage[65537] == 0xa5);
     }
 }
 
@@ -147,7 +206,7 @@ static void editor_bounds(void)
 
 int main(void)
 {
-    parser_bounds(); formatter_bounds(); render_bounds(); editor_bounds();
-    puts("Public API bounds checks passed (100000 deterministic fuzz cases plus boundaries).");
+    parser_bounds(); formatter_bounds(); render_bounds(); editor_bounds(); input_codec_bounds(); cursor_key_bounds();
+    puts("Public API bounds checks passed (140000 deterministic fuzz cases plus boundaries).");
     return 0;
 }

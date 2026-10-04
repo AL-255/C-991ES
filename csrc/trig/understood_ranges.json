@@ -1,0 +1,283 @@
+{
+  "basis": "Conservative individually inspected half-open assembly spans. Count decoded instruction addresses only; exclude data/padding and partial_blocks. Canonical numeric domains are explicit. This does not claim malformed-input, CPU scratch-state or whole-firmware completeness. Deduplicate overlaps with other module ledgers.",
+  "ranges": [
+    {
+      "start": "0x18212",
+      "end": "0x1824e",
+      "scope": "Complete exact-output state permission predicate for fixed zero capability byte",
+      "source": "csrc/trig/fx_math_context.c"
+    },
+    {
+      "start": "0x16268",
+      "end": "0x16336",
+      "scope": "Complete forward wrappers and special-result table scan/replacement",
+      "source": "csrc/trig/fx_trig.c"
+    },
+    {
+      "start": "0x1c340",
+      "end": "0x1c3fa",
+      "scope": "Explicit degree/radian/grad conversion wrapper and all9 operation orders",
+      "source": "csrc/trig/fx_trig_math.c"
+    },
+    {
+      "start": "0x1c4d8",
+      "end": "0x1c604",
+      "scope": "Hyperbolic/inverse/angular wrappers and shared canonical input/error/unit dispatch",
+      "source": "csrc/trig/fx_trig_hyperbolic.c"
+    },
+    {
+      "start": "0x1a10a",
+      "end": "0x1a2d4",
+      "scope": "All six small/general hyperbolic formulas, reciprocal roots, exp/ln composition and signs",
+      "source": "csrc/trig/fx_trig_hyperbolic.c"
+    },
+    {
+      "start": "0x1a2d4",
+      "end": "0x1a3ac",
+      "scope": "Forward quarter-turn reduction, reconstruction and range/pole behavior",
+      "source": "csrc/trig/fx_trig_math.c"
+    },
+    {
+      "start": "0x1a3ac",
+      "end": "0x1a484",
+      "scope": "Inverse angular quotient/kernel/cleanup/complements and sign control",
+      "source": "csrc/trig/fx_trig_inverse.c"
+    },
+    {
+      "start": "0x1a484",
+      "end": "0x1a5be",
+      "scope": "Root and sum/difference coordinate reconstruction for angular/hyperbolic callers",
+      "source": "csrc/trig/fx_trig_hyperbolic.c"
+    },
+    {
+      "start": "0x1a5be",
+      "end": "0x1a642",
+      "scope": "Complete forward quadrant and function sign folding",
+      "source": "csrc/trig/fx_trig_math.c"
+    },
+    {
+      "start": "0x1a642",
+      "end": "0x1a6da",
+      "scope": "All quarter-angle/reciprocal numeric constant construction branches",
+      "source": "csrc/trig/fx_trig_math.c"
+    },
+    {
+      "start": "0x1aca2",
+      "end": "0x1acb6",
+      "scope": "Inverse angular kernel mode-selection entry",
+      "source": "csrc/trig/fx_trig_inverse.c"
+    },
+    {
+      "start": "0x1acec",
+      "end": "0x1ad50",
+      "scope": "Forward angular entry and shared eighteen-digit saved-count initialization",
+      "source": "csrc/trig/fx_trig_math.c"
+    },
+    {
+      "start": "0x1ad54",
+      "end": "0x1ada0",
+      "scope": "Residual subtraction/count increment and scaled rotation update",
+      "source": "csrc/trig/fx_trig_math.c"
+    },
+    {
+      "start": "0x1adb2",
+      "end": "0x1ae78",
+      "scope": "Inverse backup and common residual/count shifts and reconstruction count loop",
+      "source": "csrc/trig/fx_trig_inverse.c"
+    },
+    {
+      "start": "0x1ae96",
+      "end": "0x1af68",
+      "scope": "Inverse coordinate correction/backup and final normalization/guard rounding",
+      "source": "csrc/trig/fx_trig_inverse.c"
+    },
+    {
+      "start": "0x1af9a",
+      "end": "0x1b0ba",
+      "scope": "Angular coordinate finalization and exact shifts/add/subtract coordinate helpers",
+      "source": "csrc/trig/fx_trig_math.c"
+    },
+    {
+      "start": "0x1b0ba",
+      "end": "0x1b0d2",
+      "scope": "Shared decimal index/position decoding",
+      "source": "csrc/trig/fx_trig_math.c"
+    },
+    {
+      "start": "0x1b0e6",
+      "end": "0x1b104",
+      "scope": "Angular displacement selector and angular-step load dispatch",
+      "source": "csrc/trig/fx_trig_math.c"
+    },
+    {
+      "start": "0x1b108",
+      "end": "0x1b11a",
+      "scope": "Precision-index output and angular negative-index selection",
+      "source": "csrc/trig/fx_trig_math.c"
+    },
+    {
+      "start": "0x1b150",
+      "end": "0x1b17c",
+      "scope": "Complete bounded angular coefficient-table loader",
+      "source": "csrc/trig/fx_trig_math.c"
+    },
+    {
+      "start": "0x1b17c",
+      "end": "0x1b206",
+      "scope": "Bounded eighteen-digit coordinate right-shift; shared frame epilogue excluded",
+      "source": "csrc/trig/fx_trig_math.c"
+    },
+    {
+      "start": "0x158b8",
+      "end": "0x15960",
+      "scope": "Complete BASE-N output with valid1/7/9/F masks and canonical numeric records",
+      "source": "csrc/format/fx_format_base.c"
+    },
+    {
+      "start": "0x15a0e",
+      "end": "0x15a64",
+      "scope": "Two-complement primitive and biased ten-decimal-digit extraction",
+      "source": "csrc/format/fx_format_base.c"
+    },
+    {
+      "start": "0x15a94",
+      "end": "0x15b00",
+      "scope": "Decimal accumulation modulo32bits, binary range and negative conversion",
+      "source": "csrc/format/fx_format_base.c"
+    },
+    {
+      "start": "0x7c46",
+      "end": "0x7e84",
+      "scope": "Complete recurring long division, remainder cycle search, tokens and fallback control",
+      "source": "csrc/format/fx_format.c"
+    },
+    {
+      "start": "0x7e84",
+      "end": "0x7f92",
+      "scope": "Prime exponent literal and prime-factor serializer for canonical decimal records",
+      "source": "csrc/format/fx_format.c"
+    },
+    {
+      "start": "0x13c66",
+      "end": "0x13d74",
+      "scope": "Complete bounded finite-decimal prime trial division and remaining-factor recording",
+      "source": "csrc/format/fx_format.c"
+    },
+    {
+      "start": "0xab8e",
+      "end": "0xabc8",
+      "scope": "Exact serializer frame/type/current-selection setup",
+      "source": "csrc/format/fx_format.c"
+    },
+    {
+      "start": "0xabcc",
+      "end": "0xada8",
+      "scope": "Prime dispatch and canonical rational/mixed/surd serialization preprocessing",
+      "source": "csrc/format/fx_format.c"
+    },
+    {
+      "start": "0xade4",
+      "end": "0xaf5a",
+      "scope": "Surd sign/grouping/unit-coefficient output and rational/pi recognition dispatch",
+      "source": "csrc/format/fx_format.c"
+    },
+    {
+      "start": "0xb99c",
+      "end": "0xbd32",
+      "scope": "Complete Norm/Fix/Sci decimal precision and width output algorithms",
+      "source": "csrc/format/fx_format.c"
+    },
+    {
+      "start": "0xbd78",
+      "end": "0xc034",
+      "scope": "Complete DMS construction/rounding/width and decimal fallback",
+      "source": "csrc/format/fx_format.c"
+    },
+    {
+      "start": "0xc0b4",
+      "end": "0xc136",
+      "scope": "Real formatting preprocessing and current/previous selection restoration",
+      "source": "csrc/format/fx_format.c"
+    },
+    {
+      "start": "0xc154",
+      "end": "0xc1f0",
+      "scope": "Real exact/decimal dispatch, context reset and fallback return control",
+      "source": "csrc/format/fx_format.c"
+    },
+    {
+      "start": "0xc4be",
+      "end": "0xc514",
+      "scope": "Integer and radical token appenders",
+      "source": "csrc/format/fx_format.c"
+    },
+    {
+      "start": "0x10b60",
+      "end": "0x10cc2",
+      "scope": "Integer cleanup probe, fraction recognizer wrapper and pi/25200 coefficient recognition",
+      "source": "csrc/format/fx_format.c"
+    },
+    {
+      "start": "0x10cc2",
+      "end": "0x10e14",
+      "scope": "Complete ENG cycling and Norm/Fix/Sci position budgets",
+      "source": "csrc/format/fx_format.c"
+    }
+  ],
+  "partial_blocks": [
+    {
+      "start": "0xc060",
+      "end": "0xc0b4",
+      "scope": "Entry/error/modal BASE-N/vector dispatch structural only; error-screen/vector callees excluded",
+      "source": "csrc/format/fx_format.c"
+    },
+    {
+      "start": "0xc136",
+      "end": "0xc154",
+      "scope": "Forced-linear/global modal bypass only partly modeled by explicit formatter options",
+      "source": "csrc/format/fx_format.c"
+    },
+    {
+      "start": "0xada8",
+      "end": "0xade4",
+      "scope": "Surd grouping eligibility depends on predicates outside formatter state API",
+      "source": "csrc/format/fx_format.c"
+    },
+    {
+      "start": "0x1ad50",
+      "end": "0x1ad54",
+      "scope": "Shared log/angular mode branch; non-angular side delegated to numeric transcendental module",
+      "source": "csrc/trig/fx_trig_math.c"
+    },
+    {
+      "start": "0x1ada0",
+      "end": "0x1adb2",
+      "scope": "Non-angular coordinate backup; owned by numeric transcendental module",
+      "source": "csrc/trig/fx_trig_math.c"
+    },
+    {
+      "start": "0x1ae78",
+      "end": "0x1ae96",
+      "scope": "Mixed angular/log reconstruction selector and non-angular backup; excluded here",
+      "source": "csrc/trig/fx_trig_math.c"
+    },
+    {
+      "start": "0x1af68",
+      "end": "0x1af9a",
+      "scope": "Exponential reconstruction output; owned by numeric transcendental module",
+      "source": "csrc/trig/fx_trig_math.c"
+    },
+    {
+      "start": "0x1b0d2",
+      "end": "0x1b0e6",
+      "scope": "Non-angular position thresholds; owned by numeric transcendental module",
+      "source": "csrc/trig/fx_trig_math.c"
+    },
+    {
+      "start": "0x1b104",
+      "end": "0x1b108",
+      "scope": "Non-angular logarithm coefficient load; owned by numeric transcendental module",
+      "source": "csrc/trig/fx_trig_math.c"
+    }
+  ]
+}

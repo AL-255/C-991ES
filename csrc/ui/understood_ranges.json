@@ -1,0 +1,143 @@
+{
+  "subsystem": "platform, token decoding and editor",
+  "ranges": [
+    {
+      "start": "0x4062",
+      "end": "0x4074",
+      "scope": "Port pull-up configuration",
+      "source": "csrc/platform/fx_platform.c"
+    },
+    {
+      "start": "0x538a",
+      "end": "0x5492",
+      "scope": "Timer, busy flags and peripheral configuration",
+      "source": "csrc/platform/fx_platform.c"
+    },
+    {
+      "start": "0x54aa",
+      "end": "0x5550",
+      "scope": "Display controls, LCD flags and key drive",
+      "source": "csrc/platform/fx_platform.c"
+    },
+    {
+      "start": "0x6f86",
+      "end": "0x6fd8",
+      "scope": "Startup copy table loop only; later boot excluded",
+      "source": "csrc/platform/fx_platform.c"
+    },
+    {
+      "start": "0x31e2",
+      "end": "0x31fa",
+      "scope": "Display token nibble classifier",
+      "source": "csrc/parse/fx_tokens.c"
+    },
+    {
+      "start": "0x327a",
+      "end": "0x32ca",
+      "scope": "Construct token classifier",
+      "source": "csrc/parse/fx_tokens.c"
+    },
+    {
+      "start": "0x159d0",
+      "end": "0x15a0e",
+      "scope": "Evaluator token decoding and cursor advancement",
+      "source": "csrc/parse/fx_tokens.c"
+    },
+    {
+      "start": "0x4106",
+      "end": "0x413a",
+      "scope": "Data and menu token predicates",
+      "source": "csrc/ui/fx_keys.c"
+    },
+    {
+      "start": "0x41d0",
+      "end": "0x41e6",
+      "scope": "Direction token predicate including shared returns",
+      "source": "csrc/ui/fx_keys.c"
+    },
+    {
+      "start": "0x8182",
+      "end": "0x819a",
+      "scope": "Cursor glyph and coordinate capture",
+      "source": "csrc/ui/fx_editor.c"
+    },
+    {
+      "start": "0x89cc",
+      "end": "0x8a6c",
+      "scope": "Display category, navigation and construct-type helpers",
+      "source": "csrc/ui/fx_editor.c"
+    },
+    {
+      "start": "0x9ee4",
+      "end": "0xa14e",
+      "scope": "Natural field-boundary checking and display-to-input conversion",
+      "source": "csrc/ui/fx_input_codec.c"
+    },
+    {
+      "start": "0xa38c",
+      "end": "0xab86",
+      "scope": "Structured/ordinary insertion, movement and deletion including helper predicates",
+      "source": "csrc/ui/fx_construct_editor.c"
+    },
+    {
+      "start": "0xc5a2",
+      "end": "0xc634",
+      "scope": "Cursor insertion and deletion attachment predicates",
+      "source": "csrc/ui/fx_editor.c"
+    },
+    {
+      "start": "0x11002",
+      "end": "0x11072",
+      "scope": "Insert-mode normalization and cursor glyph selection",
+      "source": "csrc/ui/fx_editor.c"
+    },
+    {
+      "start": "0x1d958",
+      "end": "0x1da46",
+      "scope": "Held-key sampling, matrix scan and debounce; physical timing excluded",
+      "source": "csrc/ui/fx_keys.c"
+    },
+    {
+      "start": "0x1dae6",
+      "end": "0x1db34",
+      "scope": "Highest-bit key-table lookup",
+      "source": "csrc/ui/fx_keys.c"
+    },
+    {
+      "start": "0x1dbc2",
+      "end": "0x1dc3e",
+      "scope": "Modifier/context table selection block only",
+      "source": "csrc/ui/fx_keys.c"
+    },
+    {
+      "start": "0x1dcb6",
+      "end": "0x1dd62",
+      "scope": "Natural-input gate, modifiers and modifier predicate",
+      "source": "csrc/ui/fx_editor.c"
+    },
+    {
+      "start": "0x1ddac",
+      "end": "0x1dde4",
+      "scope": "Result-state action normalization",
+      "source": "csrc/ui/fx_keys.c"
+    },
+    {
+      "start": "0x1d902",
+      "end": "0x1d958",
+      "scope": "Prepared cursor blink tick; physical scheduling excluded",
+      "source": "csrc/ui/fx_cursor.c"
+    },
+    {
+      "start": "0x1da46",
+      "end": "0x1dae6",
+      "scope": "Cursor bitmap capture/restore and eligibility",
+      "source": "csrc/ui/fx_cursor.c"
+    },
+    {
+      "start": "0x1dc3e",
+      "end": "0x1dcb6",
+      "scope": "Key-token remapping, modifier consumption and input permission normalization; blocking wait excluded",
+      "source": "csrc/ui/fx_key_dispatch.c"
+    }
+  ]
+}

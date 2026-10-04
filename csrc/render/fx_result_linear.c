@@ -1,6 +1,7 @@
 #include "fx_result_linear.h"
 #include "fx_render_memory.h"
 #include "fx_render_context.h"
+#include "fx_result_format_state.h"
 #include "../format/fx_format.h"
 
 #include <string.h>
@@ -64,6 +65,8 @@ int fx_display_real_linear_result(fx_render *r, uint16_t address, fx_box *final_
         return -1;
     int natural = r->memory[0x8106] && (mode & 0xc0);
     if (natural && selection != 10) return -1;
+    /* B15E takes a separate cached viewport path before text formatting. */
+    if (natural && r->memory[0x8130]) return -1;
     fx_number value, imaginary, decimal_imaginary;
     fx_decimal decoded;
     memcpy(value.bytes, r->memory + address, 10);
@@ -93,11 +96,7 @@ int fx_display_real_linear_result(fx_render *r, uint16_t address, fx_box *final_
         if ((uint8_t)(r->memory[0x8115] + (uint8_t)(result.length * 6)) > 90)
             fx_make_result_space(r, 10);
     }
-    uint8_t current = selection >= 2 && selection <= 9
-        && result.kind >= 2 && result.kind <= 9 ? result.kind : selection;
-    if (result.kind == 10 && (selection == 1 || (selection == 13 && (selection_byte >> 4) == 1)))
-        current = 10;
-    r->memory[0x8100] = (uint8_t)(current | (result.kind << 4));
+    fx_apply_result_format_state(r, &value, selection_byte, result.kind);
     right_aligned_text(r, text, result.length);
     history(r, text, result.length);
     if (final_box) {

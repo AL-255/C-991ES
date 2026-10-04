@@ -1,10 +1,11 @@
 {
-  "subsystem": "high_level_forward_trigonometry_and_special_result_recognition",
+  "subsystem": "high_level_real_trigonometry_and_special_result_recognition",
   "semantic_complete": false,
   "implementation_language": "C99",
   "implementation_executes_firmware": false,
   "implementation_uses_host_floating_point": false,
   "implemented_routines": [
+    {"address": "0x18212", "name": "exact_output_permission", "scope": "all six application-state eligibility gates, immutable64KiB memory context, and fixed zero ROM capability byte1FFE1 for this firmware variant"},
     {"address": "0x1627a", "name": "replace_special_sine_cosine_result", "scope": "numeric-result magnitude matching, native decimal subtraction threshold, exact/decimal table selection and sign restoration"},
     {"address": "0x16318", "name": "replace_special_tangent_result", "scope": "four-value numeric-result table and relaxed thresholds for its two larger magnitudes"},
     {"address": "0x16298", "name": "match_special_trigonometric_magnitude", "scope": "descending table search with original15-digit subtraction; thresholds5e-13 or5e-12"},
@@ -26,8 +27,16 @@
     {"address": "0x1c556", "name": "inverse_cosine", "scope": "same inverse angular core with native sign/complement order and positive reciprocal fast return"},
     {"address": "0x1c544", "name": "inverse_tangent", "scope": "same inverse angular core with reciprocal reduction for arguments of magnitude1 onward"},
     {"address": "0x1a3ac", "name": "evaluate_inverse_angle", "scope": "inverse mode9 only; original domain construction, min/max quotient, quarter-angle multiplication, cleanup, complements and sign restoration"},
-    {"address": "0x1a5a2", "name": "prepare_inverse_sine_cosine_coordinates", "scope": "inverse angular branch using sqrt((1+x)*(1-x)); shared hyperbolic branches excluded"},
-    {"address": "0x1aca2", "name": "inverse_decimal_angular_rotations", "scope": "inverse angular mode2 followed by angle reconstruction mode10, eighteen-digit coordinates and original guard/index handling"}
+    {"address": "0x1a5a2", "name": "prepare_sum_difference_coordinates", "scope": "inverse angular sqrt((1+x)*(1-x)), inverse hyperbolic tangent(1+x)/(1-x), and forward hyperbolic tangent exponential sum/difference"},
+    {"address": "0x1aca2", "name": "inverse_decimal_angular_rotations", "scope": "inverse angular mode2 followed by angle reconstruction mode10, eighteen-digit coordinates and original guard/index handling"},
+    {"address": "0x1c532", "name": "hyperbolic_sine", "scope": "canonical decimal/rational/surd inputs, small-argument fourth-order correction, natural exponential sum/difference, native errors and signs"},
+    {"address": "0x1c520", "name": "hyperbolic_cosine", "scope": "natural exponential/reciprocal sum and divide2, independent of argument sign"},
+    {"address": "0x1c50e", "name": "hyperbolic_tangent", "scope": "small-argument correction or exponential sum/difference quotient, including saturation after exponential range failure"},
+    {"address": "0x1c4fc", "name": "inverse_hyperbolic_sine", "scope": "small-argument correction or reciprocal-safe root reconstruction followed by natural logarithm and sign restoration"},
+    {"address": "0x1c4ea", "name": "inverse_hyperbolic_cosine", "scope": "stable(1+x)*(x-1) or reciprocal reconstruction, original root and logarithm boundaries and domain errors"},
+    {"address": "0x1c4d8", "name": "inverse_hyperbolic_tangent", "scope": "small-argument correction or native sqrt((1+x)/(1-x)) followed by logarithm, retaining signed input arithmetic"},
+    {"address": "0x1a10a", "name": "evaluate_hyperbolic_function", "scope": "all six real hyperbolic mode10/11 branches, magnitude threshold.013, fourth-order corrections, general exponential/logarithm formulas and canonical error records"},
+    {"address": "0x1a492", "name": "reconstruct_hyperbolic_root", "scope": "hyperbolic inverse sine/cosine branches, reciprocal reduction at magnitude1, stable sum/product construction, original square-root precision and large-input rescaling"}
   ],
   "data": [
     {"address": "0x29f6..0x2aa9", "scope": "five sine/cosine and four tangent decimal/exact numeric record pairs"},
@@ -35,8 +44,7 @@
     {"address": "0x18c52/0x18c6c/0x18ec0", "scope": "stored10/9,.9 andpi=3.14159265358980 numeric constants"}
   ],
   "gaps": [
-    "Hyperbolic and inverse-hyperbolic functions and shared kernel modes outside forward/inverse angular modes10/2",
-    "Global exact-output eligibility18212; API accepts its resolved permission",
+    "Shared decimal kernel modes unrelated to angular rotations are owned by the numeric transcendental subsystem",
     "Noncanonical/malformed numeric BCD records beyond tested canonical decimal/rational/surd and error inputs",
     "Native scratchRAM/register side effects and peripheral/UI control; APIs expose numeric values and resolved configuration",
     "Full parser dispatch and original reset-to-keypress I/O equivalence"
@@ -64,5 +72,21 @@
     "input": "identical decimal/rational/two-term-surd/error numeric records, function and resolved output unit",
     "output": "all10 kernel/core result bytes, source immutability, aliases and explicit-vs-global angle unit resolution",
     "limitation": "Prepared numeric routine contexts; malformedBCD, hyperbolic and reset-to-keypress I/O coverage excluded"
+  },
+  "hyperbolic_verification": {
+    "tool": "tools/test_trig_hyperbolic_c.py",
+    "report": "analysis/c-verification/trig_hyperbolic.json",
+    "oracle": "original extracted ROM complete1C532/1C520/1C50E/1C4FC/1C4EA/1C4D8 entries",
+    "input": "identical decimal/rational/two-term-surd/error records, function and inverse flag",
+    "output": "all10 result bytes including signed range errors, source immutability and aliases",
+    "limitation": "Prepared numeric routine contexts; malformedBCD, scratchRAM writes and reset-to-keypress I/O coverage excluded"
+  },
+  "context_verification": {
+    "tool": "tools/test_math_context_c.py",
+    "report": "analysis/c-verification/math_context.json",
+    "oracle": "original extracted ROM18212",
+    "input": "all256 values of each of six state bytes plus729 gate combinations; zero ROM capability byte1FFE1 pinned",
+    "output": "exact permission byte and immutable source state",
+    "limitation": "fixed firmware variant; native call-stack writes and full evaluator/UI I/O excluded"
   }
 }

@@ -14,7 +14,7 @@
     {"address": "0xbc4a", "name": "format_scientific_decimal", "scope": "Sci 1..10 with packed superscript exponent tokens"},
     {"address": "0xbd78", "name": "format_sexagesimal", "scope": "selection1 and marked decimals at selection0/13; decimal minute/second arithmetic, cleanup, centisecond rounding, width limits and numeric fallback"},
     {"address": "0x7c46", "name": "format_recurring_decimal", "scope": "bounded integer long division and remainder-cycle detection, exact and recognized rationals, terminating/oversized-period numeric fallback"},
-    {"address": "0x7ee0", "name": "format_prime_factors", "scope": "canonical unmarked decimal records with exponent-99..99, prime powers, fractional quotient termination and signed parenthesized remaining factor"},
+    {"address": "0x7ee0", "name": "format_prime_factors", "scope": "canonical ordinary and marked decimal records with exponent-99..99, prime powers, fractional quotient termination and signed parenthesized remaining factor"},
     {"address": "0x13c66", "name": "bounded_prime_factorization", "scope": "trial division by the 168 primes through997 using the original finite-decimal quotient/remainder behavior"},
     {"address": "0x10b7e", "name": "recognize_ordinary_fraction", "scope": "bounded continued-fraction interval recognition, decimal exponent -8..6 and original display digit budget; finite differential verification"},
     {"address": "0x10b60", "name": "cleanup_and_test_integer", "scope": "last-BCD-pair probe for rational and pi recognition; exponent-dependent mantissa boundaries"},
@@ -22,12 +22,16 @@
     {"address": "0x10cc2", "name": "adjust_engineering_exponent", "scope": "selections2..9, current/previous selection cycling, zero handling and single-step exponent bounds"},
     {"address": "0x10da6", "name": "engineering_normal_width", "scope": "Norm1/Norm2 significant-position budget after engineering exponent placement"},
     {"address": "0x10dca", "name": "engineering_fix_scientific_width", "scope": "Fix/Sci rounding, digit budgets and zero trimming including compact contexts1..3 and restored full width for contexts4..6"},
-    {"address": "0x3374", "name": "append_exponent_tokens", "scope": "engineering quotient/remainder superscript tokens, including boundary exponents above99"}
+    {"address": "0x3374", "name": "append_exponent_tokens", "scope": "engineering quotient/remainder superscript tokens, including boundary exponents above99"},
+    {"address": "0x158b8", "name": "format_base_n_result", "scope": "full80FA masks1/7/9/F, fixed-width binary/octal/hex and unpadded decimal, negative two's complement, native radix rejection and empty tagged-record outputs"},
+    {"address": "0x15a1e", "name": "extract_base_decimal_digits", "scope": "original absolute-value plus10^10 operation, ten packed digit extraction and original15-digit arithmetic behavior for fractional/large records"},
+    {"address": "0x15a94", "name": "convert_base_decimal_digits", "scope": "ten-digit decimal accumulation modulo32bits, binary signed16-bit range check and negative two's-complement conversion"}
   ],
   "gaps": [
     "Malformed or noncanonical surd BCD records outside the verified codec domain",
-    "Prime-factorization of tagged rational/surd and marked decimal records; native raw interpretation differs from canonical numeric conversion",
-    "Error screens and modal BASE-N/vector/matrix formatting",
+    "Prime-factorization of tagged rational/surd records; native raw interpretation differs from canonical numeric conversion",
+    "Error screens and modal vector/matrix formatting",
+    "BASE-N settings other than80FA1/7/9/F and malformed decimal BCD records",
     "Complex-result composition and UI controller state side effects",
     "Alternate global modal settings outside the options API and their UI state side effects",
     "Complete-domain equivalence of continued-fraction boundary selection remains unproved"
@@ -39,5 +43,13 @@
     "input": "identical numeric records and formatting options",
     "output": "exact tokens, result kind and unchanged input record",
     "limitation": "Prepared routine contexts with passive peripherals; not reset-to-keypress execution or whole-device I/O equivalence"
+  },
+  "base_verification": {
+    "tool": "tools/test_format_base_c.py",
+    "report": "analysis/c-verification/format_base.json",
+    "oracle": "original extracted ROM158B8 in independent SimU8 core",
+    "input": "canonical decimal records across exponents-99..99, signs, radix range/wrap boundaries, fractional and tagged/error controls, complete valid80FA masks",
+    "output": "exact tokens, source immutability, empty rejection outputs, required length and bounded NUL writes",
+    "limitation": "Numeric scratch/call-stack writes and LCD mode header belong to controller integration; invalid base settings and malformedBCD are explicit unsupported paths"
   }
 }

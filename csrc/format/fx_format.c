@@ -418,9 +418,12 @@ static fx_format_status emit_prime_factors(writer *w, const fx_number *number,
                                            const fx_format_options *o,
                                            fx_format_result *result) {
     fx_decimal value;
-    if (fx_decimal_decode(&value, number) != FX_NUMERIC_OK || value.flags)
+    if (fx_decimal_decode(&value, number) != FX_NUMERIC_OK)
         return FX_FORMAT_UNIMPLEMENTED;
     fx_number remaining = *number;
+    /* Prime division consumes the ordinary magnitude. The decimal marker
+     * affects DMS selection, but is ignored by the original prime path. */
+    remaining.bytes[0] &= (uint8_t)~0x40;
     result->kind = 15;
     int emitted = 0;
     for (unsigned candidate = 2; candidate <= 997; ++candidate) {

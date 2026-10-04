@@ -1,0 +1,216 @@
+{
+  "subsystem": "display, recursive layout and real result controllers",
+  "policy": "Half-open instruction-boundary semantic spans; partial B070 blocks are explicitly scoped. Understanding does not imply complete implementation or whole-RAM parity. ROM tables between functions are excluded.",
+  "ranges": [
+    {
+      "start": "0x31e2",
+      "end": "0x31fa",
+      "scope": "Packed token display class, all byte tokens; following bytes are a ROM lookup table",
+      "source": "csrc/render/fx_render.c"
+    },
+    {
+      "start": "0x327a",
+      "end": "0x32ca",
+      "scope": "Construct index classifier; following string-length helper is outside this span",
+      "source": "csrc/render/fx_render.c"
+    },
+    {
+      "start": "0x362c",
+      "end": "0x3664",
+      "scope": "Selection low/high nibble reads, updates and cache invalidation; independent of numeric recognition",
+      "source": "csrc/render/fx_result_format_state.c"
+    },
+    {
+      "start": "0x3664",
+      "end": "0x368a",
+      "scope": "Legacy right-aligned text width and selected result row",
+      "source": "csrc/render/fx_result_linear.c"
+    },
+    {
+      "start": "0x368a",
+      "end": "0x36a8",
+      "scope": "BASE-N title lookup and rendering; following sixteen bytes are strings",
+      "source": "csrc/render/fx_result_special.c"
+    },
+    {
+      "start": "0x36f0",
+      "end": "0x378c",
+      "scope": "Token spelling expansion and token spelling length, including mode193 alternate table and zero length byte wrap",
+      "source": "csrc/render/fx_layout.c"
+    },
+    {
+      "start": "0x37bc",
+      "end": "0x382e",
+      "scope": "Special real-result controller: optional BASE-N title, formatter call, selection kind update, row clear and right-aligned rasterization; called formatter numeric semantics are separately documented",
+      "source": "csrc/render/fx_result_special.c"
+    },
+    {
+      "start": "0x3876",
+      "end": "0x38b0",
+      "scope": "Display exclusion predicate, including ROM setup item9",
+      "source": "csrc/render/fx_render_context.c"
+    },
+    {
+      "start": "0x38b0",
+      "end": "0x3960",
+      "scope": "RAM row clearing, selected RAM/LCD filling and framebuffer row scrolling; byte and pointer wrap understood, native CPU stack alias faults separately recorded",
+      "source": "csrc/render/fx_render_memory.c"
+    },
+    {
+      "start": "0x3960",
+      "end": "0x3d62",
+      "scope": "Vertical and Bresenham line primitives, text, glyph clipping, font decoding, compositing, pixel addressing and framebuffer flush; CPU callee-saved registers excluded from portable semantic API",
+      "source": "csrc/render/fx_render.c"
+    },
+    {
+      "start": "0x5264",
+      "end": "0x528e",
+      "scope": "ROM setup selector used by display context predicates",
+      "source": "csrc/render/fx_render_context.c"
+    },
+    {
+      "start": "0x54e0",
+      "end": "0x550a",
+      "scope": "Formatter-triggered display sleep port and LCD annunciator updates",
+      "source": "csrc/render/fx_result_format_state.c"
+    },
+    {
+      "start": "0x7af4",
+      "end": "0x7c46",
+      "scope": "Repetend validation, recursion and all four ROM-selected underline/dot/parenthesis styles",
+      "source": "csrc/render/fx_layout.c"
+    },
+    {
+      "start": "0x8182",
+      "end": "0x819a",
+      "scope": "Cursor position and font metadata update, invoking cursor glyph policy",
+      "source": "csrc/render/fx_layout.c"
+    },
+    {
+      "start": "0x819a",
+      "end": "0x81b0",
+      "scope": "NUL/colon expression terminator predicate",
+      "source": "csrc/render/fx_layout_validate.c"
+    },
+    {
+      "start": "0x838a",
+      "end": "0x89cc",
+      "scope": "World-coordinate clipped drawing, root/absolute enclosure, integral/sigma/product ornaments, tall parentheses and cursor geometry",
+      "source": "csrc/render/fx_layout.c"
+    },
+    {
+      "start": "0x89cc",
+      "end": "0x8c56",
+      "scope": "Layout token/construct type classification, parenthesis backscan and all forward field/parameter/construct/parenthesis byte-length scans",
+      "source": "csrc/render/fx_layout_validate.c"
+    },
+    {
+      "start": "0x8c56",
+      "end": "0x8ea6",
+      "scope": "Viewport two-pass measurement, result/editor placement, both scroll axes, indicators and fallback selection; failed second measurement and nonterminating copy native outcomes are explicit implementation gaps",
+      "source": "csrc/render/fx_viewport.c"
+    },
+    {
+      "start": "0x8ea6",
+      "end": "0x9ee4",
+      "scope": "All recursive mathematical construct handlers and sequence dispatch, weighted recursion limit, metrics pool, cursor transforms and measurement/draw passes; subsequent input span validator starts at9EE4",
+      "source": "csrc/render/fx_layout.c"
+    },
+    {
+      "start": "0xa14e",
+      "end": "0xa38c",
+      "scope": "Owning construct, forward atom span and preceding atom start, including malformed token termination and address/count wrap",
+      "source": "csrc/render/fx_layout_validate.c"
+    },
+    {
+      "start": "0xaf5a",
+      "end": "0xb070",
+      "scope": "Result history record header/length serialization and natural token flattening; descriptor construction is outside this span",
+      "source": "csrc/render/fx_result.c"
+    },
+    {
+      "start": "0xb070",
+      "end": "0xb09c",
+      "scope": "Partial B070: controller prologue, descriptor construction and special-result dispatch; equation and inequality branches excluded",
+      "source": "csrc/render/fx_result_special.c"
+    },
+    {
+      "start": "0xb0e0",
+      "end": "0xb19e",
+      "scope": "Partial B070: result scratch selection, format mode, status/cache gates and component sign classification; polar conversion branch excluded",
+      "source": "csrc/render/fx_result.c"
+    },
+    {
+      "start": "0xb20a",
+      "end": "0xb2b8",
+      "scope": "Partial B070: real-component formatting, status suffix copying, real-only kind update and legacy transfer; subsequent nonzero imaginary composition excluded",
+      "source": "csrc/render/fx_result.c"
+    },
+    {
+      "start": "0xb388",
+      "end": "0xb41a",
+      "scope": "Partial B070: legacy row space, right-aligned component rows and history construction; prior component numeric formatting excluded",
+      "source": "csrc/render/fx_result_linear.c"
+    },
+    {
+      "start": "0xb42e",
+      "end": "0xb4b0",
+      "scope": "Partial B070: natural history flattening, viewport invocation, expression-pointer restoration and common epilogue; prior complex/status concatenation excluded",
+      "source": "csrc/render/fx_result.c"
+    },
+    {
+      "start": "0xc328",
+      "end": "0xc38e",
+      "scope": "Formula, natural input and natural result context predicates; subsequent signed maximum helper excluded",
+      "source": "csrc/render/fx_render_context.c"
+    },
+    {
+      "start": "0xc38e",
+      "end": "0xc398",
+      "scope": "Signed maximum used by box merge and legacy result space",
+      "source": "csrc/render/fx_render.c"
+    },
+    {
+      "start": "0xc3f4",
+      "end": "0xc450",
+      "scope": "Root stem integer interpolation and world left clipping margin; prior general interpolation helper excluded",
+      "source": "csrc/render/fx_layout.c"
+    },
+    {
+      "start": "0xc514",
+      "end": "0xc5a2",
+      "scope": "Font height/depth/ascent and vertical box merge",
+      "source": "csrc/render/fx_render.c"
+    },
+    {
+      "start": "0xc5a2",
+      "end": "0xc5e0",
+      "scope": "Token-class atom stop and preceding atom boundary predicates",
+      "source": "csrc/render/fx_layout_validate.c"
+    },
+    {
+      "start": "0xc634",
+      "end": "0xc674",
+      "scope": "Layout pass initialization, result width-fit predicate and temporary small-font selection",
+      "source": "csrc/render/fx_render.c"
+    },
+    {
+      "start": "0xc674",
+      "end": "0xc68c",
+      "scope": "Model136 prefix predicate",
+      "source": "csrc/render/fx_viewport.c"
+    },
+    {
+      "start": "0x10e5c",
+      "end": "0x10e7a",
+      "scope": "Make result space by row scroll and expression-height reset",
+      "source": "csrc/render/fx_render_memory.c"
+    },
+    {
+      "start": "0x11014",
+      "end": "0x11072",
+      "scope": "Cursor overwrite-class check, blink glyph choice and overflow cursor marker",
+      "source": "csrc/render/fx_layout.c"
+    }
+  ]
+}

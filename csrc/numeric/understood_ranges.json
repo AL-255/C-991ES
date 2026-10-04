@@ -1,0 +1,169 @@
+{
+  "basis": "Individually inspected half-open instruction spans; canonical real records and finite numeric precision. Calls do not imply understanding of unlisted callees. Scratch RAM equivalence and malformed-input behavior are not claimed. Deduplicate overlaps with other agents.",
+  "ranges": [
+    {
+      "start": "0x11110",
+      "end": "0x1118e",
+      "scope": "Canonical real operand rational preprocessor; all format/exponent/result eligibility branches",
+      "source": "csrc/numeric/fx_numeric.c"
+    },
+    {
+      "start": "0x1118e",
+      "end": "0x1122c",
+      "scope": "Real evaluator power dispatch including reciprocal/square/cube, decimal surd conversion and negative-base fraction recognition",
+      "source": "csrc/numeric/fx_power.c"
+    },
+    {
+      "start": "0x11284",
+      "end": "0x112f6",
+      "scope": "Power operand copies, header40 normalization, continued-fraction recognition acceptance; excludes root wrapper1122c",
+      "source": "csrc/numeric/fx_power.c"
+    },
+    {
+      "start": "0x1740a",
+      "end": "0x174a0",
+      "scope": "Scalar operand preparation and radical-to-decimal fallback for unary/binary wrappers",
+      "source": "csrc/numeric/fx_power.c"
+    },
+    {
+      "start": "0x18ae6",
+      "end": "0x18b30",
+      "scope": "Power fast exponent classifier and exact positive2/3 or negative1 classification",
+      "source": "csrc/numeric/fx_power.c"
+    },
+    {
+      "start": "0x1954c",
+      "end": "0x19644",
+      "scope": "Negative-base rational-exponent odd-denominator validation, numerator parity and sign restoration",
+      "source": "csrc/numeric/fx_power.c"
+    },
+    {
+      "start": "0x19738",
+      "end": "0x198d4",
+      "scope": "Exact rational integer-power component eligibility, independent component powers, construction and original-operand fallback",
+      "source": "csrc/numeric/fx_power.c"
+    },
+    {
+      "start": "0x1a81c",
+      "end": "0x1aac2",
+      "scope": "Real guarded decimal power/root classification and log/exp composition; exp/exp10 integer/fraction splitting, saved sign, finite range",
+      "source": "csrc/numeric/fx_transcend.c"
+    },
+    {
+      "start": "0x1ab98",
+      "end": "0x1aca2",
+      "scope": "Logarithm sign/domain validation, direct negative-exponent mantissa algorithm, whole-exponent combination and guarded ln conversion",
+      "source": "csrc/numeric/fx_transcend.c"
+    },
+    {
+      "start": "0x1acb6",
+      "end": "0x1acec",
+      "scope": "Logarithm and exponential factor-kernel entry modes; excludes other shared mode bodies",
+      "source": "csrc/numeric/fx_transcend.c"
+    },
+    {
+      "start": "0x1b328",
+      "end": "0x1b3e4",
+      "scope": "Integral nearest/truncation rounding and finite decimal scale policy",
+      "source": "csrc/numeric/fx_transcend.c"
+    },
+    {
+      "start": "0x1b488",
+      "end": "0x1b5a6",
+      "scope": "Native power integer/parity classification including middle-exponent low-digit policy",
+      "source": "csrc/numeric/fx_transcend.c"
+    },
+    {
+      "start": "0x1b788",
+      "end": "0x1b8b2",
+      "scope": "Guard-preserving decimal division, long quotient construction and leading-zero guard-nibble normalization",
+      "source": "csrc/numeric/fx_transcend.c"
+    },
+    {
+      "start": "0x1bfa4",
+      "end": "0x1bff4",
+      "scope": "Ordinary decimal add/subtract/multiply/divide public entry wrappers; shared operator body not implied by these spans",
+      "source": "csrc/numeric/fx_numeric.c"
+    },
+    {
+      "start": "0x1c21a",
+      "end": "0x1c268",
+      "scope": "Public exp10/exp/ln/log10 entry wrappers; common other-function dispatch excluded",
+      "source": "csrc/numeric/fx_transcend.c"
+    },
+    {
+      "start": "0x1c648",
+      "end": "0x1c664",
+      "scope": "Public power operand loading and exact/decimal dispatch entry",
+      "source": "csrc/numeric/fx_power.c"
+    },
+    {
+      "start": "0x1c902",
+      "end": "0x1c916",
+      "scope": "Rational-to-decimal conversion public selector; shared selector body excluded",
+      "source": "csrc/numeric/fx_numeric.c"
+    },
+    {
+      "start": "0x1cabe",
+      "end": "0x1cade",
+      "scope": "Fractional-digit status wrapper and return-status normalization",
+      "source": "csrc/numeric/fx_numeric.c"
+    },
+    {
+      "start": "0x1cdae",
+      "end": "0x1ce0a",
+      "scope": "Digit/zero/error record construction",
+      "source": "csrc/numeric/fx_numeric.c"
+    },
+    {
+      "start": "0x1ce70",
+      "end": "0x1cf40",
+      "scope": "Scalar/radical negation, exact header40 clearing and low-mantissa cleanup wrappers",
+      "source": "csrc/numeric/fx_numeric.c"
+    },
+    {
+      "start": "0x1cfde",
+      "end": "0x1d030",
+      "scope": "External decimal exponent extraction and error sentinel",
+      "source": "csrc/numeric/fx_numeric.c"
+    },
+    {
+      "start": "0x1d08c",
+      "end": "0x1d0e8",
+      "scope": "Complete unsigned-byte numeric constructor including canonical zero",
+      "source": "csrc/numeric/fx_numeric.c"
+    },
+    {
+      "start": "0x1d12c",
+      "end": "0x1d158",
+      "scope": "Twenty-byte and ten-byte numeric copies, register preservation and record byte order",
+      "source": "csrc/numeric/fx_numeric.c"
+    },
+    {
+      "start": "0x1d1a2",
+      "end": "0x1d1ba",
+      "scope": "Exact malformed-first-digit and high-sign-field special-marker predicate",
+      "source": "csrc/numeric/fx_numeric.c"
+    },
+    {
+      "start": "0x1b5a6",
+      "end": "0x1b748",
+      "scope": "Decimal digit-pair square-root remainder algorithm, negative input error and exponent-prefix bias",
+      "source": "csrc/numeric/fx_numeric.c"
+    }
+  ],
+  "partial_blocks": [
+    {
+      "start": "0x1acc8",
+      "end": "0x1af62",
+      "scope": "Shared factor algorithm understood and implemented for logarithm/exponential modes0/8; other trig modes owned by trig agent and excluded from this numeric ledger.",
+      "source": "csrc/numeric/fx_transcend.c"
+    },
+    {
+      "start": "0x10962",
+      "end": "0x10b7e",
+      "scope": "Continued-fraction interval mathematics translated; full assembly scratch-state correspondence not individually inventoried here.",
+      "source": "csrc/numeric/fx_numeric.c"
+    }
+  ]
+}

@@ -219,6 +219,19 @@ def main():
     for value in ['0.5','1.5','12345.678','-12345.678','1e10','1e15','1e99','1e-99']:
         n = Number(); assert lib.fx_decimal_parse(C.byref(n), value.encode()) == 0
         cases.append((f'prime-factor-boundary-{value}', bytes(n.bytes),Options(15,1,0,0,0,1,0,0)))
+    # Marker40 belongs to decimal metadata, not the prime-factor magnitude.
+    # Include the special-view regressions and the full prime decimal sample
+    # domain, while keeping the input record immutable.
+    prime_cases = [case for case in cases if case[0].startswith('prime-factor-')]
+    for name, record, options in prime_cases:
+        marked = bytes([record[0] | 0x40]) + record[1:]
+        cases.append(('marked-' + name, marked,
+                      Options(15, len(cases)%2, 0, options.display_mode,
+                              options.digits, options.decimal_dot, len(cases)%7, 0)))
+    for previous in range(16):
+        for record in ['41234500000000000701', '41234500000000000001']:
+            cases.append((f'marked-prime-history-{previous}-{record}', bytes.fromhex(record),
+                          Options(previous*16+15,1,0,0,0,0,0,0)))
     for i in range(400):
         record = bytearray(decimal_record(randomizer.randrange(100000000000000, 1000000000000000),
                                           randomizer.randrange(-10, 9), 1 if i % 2 else -1))
@@ -295,7 +308,8 @@ def main():
     # Canaries validate bounded writes and required length, rather than merely
     # checking that a sufficiently large output buffer happens to work.
     overflow_cases = 0
-    for name, record, o in cases[:12]:
+    boundary_samples = cases[:12] + [case for case in cases if case[0].startswith('marked-prime-history-')][:2]
+    for name, record, o in boundary_samples:
         expected_kind, expected = oracle(machine, record, o)
         number = Number.from_buffer_copy(record)
         for capacity in range(len(expected) + 2):

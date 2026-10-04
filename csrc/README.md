@@ -12,10 +12,10 @@ routine addresses, the semantic API being compared, and remaining gaps.
 | Subsystem | Current implementation |
 | --- | --- |
 | Platform | Startup data copy and peripheral register controls, including key drive |
-| Keyboard/editor | Matrix scan, bounded debounce/held sampling, key tables, modifier dispatch, editor policies, cursor glyph/position, structured insertion, atom wrapping, deletion and field navigation |
-| Parser | COMP decimal literals, scientific input, e/π, parentheses, signs, arithmetic precedence, compact fractions, square roots, forward/inverse trigonometry and logarithms |
+| Keyboard/editor | Matrix scan, bounded debounce/held sampling, key tables, modifier dispatch, editor policies, cursor glyph/position, structured insertion, atom wrapping, deletion, field navigation and display-to-input conversion |
+| Parser | COMP decimal literals, scientific input, e/π, parentheses, signs, arithmetic precedence, compact fractions, square roots, general real powers, forward/inverse trigonometric and hyperbolic functions, logarithms and exponentials |
 | Numeric | Packed records, integer decimal arithmetic, rational/surd codecs and developing exact arithmetic |
-| Formatting | Decimal, exact rational/surd, approximate fraction/π recognition and developing alternate selections |
+| Formatting | Decimal, exact rational/surd, approximate fraction/π recognition, alternate selections and BASE-N integer output |
 | Trigonometry | Decimal rotation kernel, angle reduction, forward/inverse sin/cos/tan and forward special-result tables |
 | Rendering | Fonts, pixel operations, recursive construct layout and developing viewport/result controller |
 | Integration | Expression-token probe and differential expression-to-LCD pipeline for supported grammar |
@@ -41,6 +41,19 @@ firmware evaluates as `1` because implicit multiplication binds more tightly
 than division. Input to `--eval` is hex-encoded calculator input tokens, not
 an ASCII expression. The CLI reports numeric records and display tokens; it is
 a subsystem probe while the full key UI is being written.
+
+`--display` accepts the natural editor's structured tokens. It checks field
+boundaries, converts the expression to evaluator tokens and maps evaluation
+errors back to the display cursor. For example, the display-token fraction
+`1/2` has numerator and denominator field markers:
+
+```sh
+analysis/build/c-port/fx991c --display aebbb831b9b832b9bc
+```
+
+Raw powers include an implicit opening parenthesis after the caret. Thus
+`2^3+1)` means `2^(3+1)` and `2^3)+1` means `(2^3)+1`. The natural editor
+conversion emits the closing marker for the exponent field.
 
 The original two-root example can also be rendered to a standalone 96×32 PBM
 image by the C result controller:

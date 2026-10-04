@@ -9,6 +9,7 @@
 #include "format/fx_format.h"
 #include "render/fx_render.h"
 #include "data/fx_rom_data.h"
+#include "ui/fx_input_codec.h"
 
 static int digit(char c)
 {
@@ -59,7 +60,9 @@ static void usage(void)
           "  fx991c --token HEX_BYTE [HEX_CONTEXT]\n"
           "  fx991c --format HEX_10_BYTE_RECORD [--linear] [--mixed] [--decimal]\n"
           "  fx991c --eval HEX_INPUT_TOKENS [--pbm OUTPUT_FILE]\n"
-          "Evaluation supports COMP arithmetic, compact fractions and square root; other functions report unsupported.\n", stderr);
+          "  fx991c --display HEX_DISPLAY_TOKENS [--pbm OUTPUT_FILE]\n"
+          "Display input uses the natural editor's99-byte expression limit.\n"
+          "Supported COMP arithmetic and functions are listed in csrc/parse/manifest.json.\n", stderr);
 }
 
 static int write_result_bitmap(const char *path, const uint8_t *input, size_t length,
@@ -91,8 +94,12 @@ static int write_result_bitmap(const char *path, const uint8_t *input, size_t le
 
 int main(int argc, char **argv)
 {
-    if ((argc == 3 || (argc == 5 && !strcmp(argv[3], "--pbm"))) && !strcmp(argv[1], "--eval")) {
+    if ((argc == 3 || (argc == 5 && !strcmp(argv[3], "--pbm"))) &&
+        (!strcmp(argv[1], "--eval") || !strcmp(argv[1], "--display"))) {
         uint8_t input[1024], output[512];
+        static uint8_t editor_memory[65536];
+        fx_platform editor = {fx_rom_data, 0x30000, editor_memory, 0, FX_MEMORY_OK};
+        int display_input = !strcmp(argv[1], "--display");
         size_t length, n;
         fx_eval_result evaluated;
         fx_eval_status status;
@@ -101,12 +108,38 @@ int main(int argc, char **argv)
         fx_format_result result = {0, 0, 0};
         int bitmap_status = 0;
         if (input_from_hex(input, sizeof(input), argv[2], &length)) { usage(); return 2; }
+        if (display_input) {
+            if (length > 100) { usage(); return 2; }
+            memset(editor_memory, 0, sizeof(editor_memory));
+            editor_memory[0x80f9] = 0xc1; editor_memory[0x80fc] = 1; editor_memory[0x8106] = 1;
+            editor_memory[0x812c] = 0x54; editor_memory[0x812d] = 0x81;
+            memcpy(editor_memory+0x8154, input, length);
+            int allowed = fx_editor_input_boundaries(&editor, 0x8154);
+            if (allowed != 1 || fx_editor_export_input(&editor, 0x8154, 0x8200, 0, 1)) {
+                printf("{\"conversion_status\":%d,\"display_cursor\":%u}\n",
+                       allowed == 0 ? FX_EVAL_SYNTAX : FX_EVAL_RESOURCE_LIMIT, editor_memory[0x8114]);
+                return 1;
+            }
+            for (length = 0; length + 1 < sizeof(input); ++length) {
+                input[length] = editor_memory[0x8200+length];
+                if (!input[length]) break;
+            }
+            ++length;
+        }
         status = fx_evaluate(input, length, NULL, &evaluated);
+        if (display_input && (status == FX_EVAL_SYNTAX || status == FX_EVAL_MATH))
+            (void)fx_editor_export_input(&editor, 0x8154, 0x8400, (uint8_t)evaluated.consumed, 0);
         if (status == FX_EVAL_OK)
             formatted = fx_format_number(&evaluated.value[0], &options, output, sizeof(output), &result);
         if (argc == 5 && status == FX_EVAL_OK)
             bitmap_status = write_result_bitmap(argv[4], input, length, &evaluated);
-        printf("{\"eval_status\":%d,\"consumed\":%zu,\"unsupported_token\":%u,\"record\":\"",
+        putchar('{');
+        if (display_input) {
+            printf("\"conversion_status\":0,\"display_cursor\":%u,\"input_tokens\":\"", editor_memory[0x8114]);
+            for (n = 0; n + 1 < length; ++n) printf("%02x", input[n]);
+            fputs("\",", stdout);
+        }
+        printf("\"eval_status\":%d,\"consumed\":%zu,\"unsupported_token\":%u,\"record\":\"",
                status, evaluated.consumed, evaluated.unsupported_token);
         for (n = 0; n < sizeof(evaluated.value); ++n)
             printf("%02x", ((const uint8_t *)evaluated.value)[n]);

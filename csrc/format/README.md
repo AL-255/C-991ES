@@ -30,7 +30,8 @@ rounding; Math, mixed and linear fractions; integral-component tagged surds;
 bounded ordinary-fraction recognition; the firmware's pi/25200 recognition
 test; recurring-decimal long division; degrees/minutes/seconds; engineering
 exponent placement for Norm, Fix and Sci; and prime
-factorization on canonical decimal records. Prime factorization deliberately
+factorization on canonical ordinary and marked decimal records. The marker
+is ignored locally on the prime path, preserving the original input. Prime factorization deliberately
 tries only the168 primes through997 and encloses a remaining factor in
 parentheses. The extra `format_context` parameter controls compact scientific
 precision and surd parentheses; it is not an engineering-mode switch.
@@ -41,6 +42,16 @@ Its trial division retains the original finite15-digit quotient behavior,
 including for magnitudes beyond the display's ten digits.
 Forced numeric output of rational and surd records uses the original decimal
 arithmetic order through `fx_number_to_decimal`.
+
+`fx_format_base.c` exposes `fx_format_base` for the original BASE-N formatter.
+It accepts the full80FA byte:1 binary,7 octal,9 decimal orF hexadecimal.
+Binary output is16 digits; octal is11 and hexadecimal8, including leading
+zeros. Decimal output has no padding. Hexadecimal letters use glyph tokens
+B8..BD. Negative nondecimal output uses two's complement. The original
+absolute-value plus10^10 extraction and modulo32-bit accumulation are kept,
+including their behavior for direct fractional/oversized decimal records.
+Out-of-range binary magnitudes and tagged/marked records produce empty output,
+as158B8 does. Other base settings return an explicit unsupported status.
 
 Several details follow the original output rather than idealized arithmetic:
 Norm2 limits the number of fractional positions; Fix0 includes a decimal
@@ -59,3 +70,6 @@ immutability, and tests output-buffer boundaries with canaries. Its report is
 `analysis/c-verification/format.json` and pins the tested source, fixtures and
 oracle inputs by SHA256. These are routine-boundary tests with passive
 peripherals, not boot/keyboard/LCD timing comparisons.
+
+Run `python tools/test_format_base_c.py` for the separate BASE-N token suite.
+Its source-pinned report is `analysis/c-verification/format_base.json`.

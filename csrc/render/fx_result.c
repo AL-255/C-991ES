@@ -1,5 +1,6 @@
 #include "fx_render.h"
 #include "fx_render_context.h"
+#include "fx_result_format_state.h"
 #include "../format/fx_format.h"
 
 #include <string.h>
@@ -173,12 +174,7 @@ int fx_display_real_math_result(fx_render *r, uint16_t value_address, fx_box *fi
         }
         raw_scientific_suffixes(formatted, result.length);
         memcpy(r->memory + tokens, formatted, result.length + 1);
-        uint8_t current_selection = selection >= 2 && selection <= 9
-            && result.kind >= 2 && result.kind <= 9 ? result.kind : (uint8_t)selection;
-        if (result.kind == 10 && (selection == 1
-            || (selection == 13 && (r->memory[0x8100] >> 4) == 1)))
-            current_selection = 10; /* DMS falls back by calling 3658 */
-        r->memory[0x8100] = (uint8_t)(current_selection | (result.kind << 4));
+        fx_apply_result_format_state(r, &value, options.selection, result.kind);
     }
 
     result_history(r, tokens, selection);

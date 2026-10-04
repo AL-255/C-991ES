@@ -47,7 +47,7 @@
       "routine": "0xb070 through0xc060 / numeric operand loaders",
       "locations": [
         "0x8006 in the natural viewport branch",
-        "0x8000..0x8009 in the legacy branch",
+        "0x8000..0x8009 in the legacy/special branches",
         "inactive4-byte metric pool slots at0x8640..0x8707"
       ],
       "evidence": "Originalengineeringdisplayof1/3 writes8006=0x33 atPC1BADA. Surddecimalfallback leaves unused component records in the metricpool.",
@@ -60,6 +60,22 @@
       "scope": "display-token spans and viewport fallback copy",
       "limit": "one16-bitaddress-space traversal for a nonterminating scan/copy",
       "reason": "Native loops have no analogous explicit limit; the C API must remain bounded on malformed host-provided memory. Successful finite cases retain original byte-count/address wrap."
+    }
+  ],
+  "unsupported_controller_domains": [
+    {
+      "routine": "0xb070 legacy branch",
+      "input": "natural input, selection10,8130 nonzero",
+      "native_outcome": "Skips formatter and dispatches the preexisting persistent expression to viewport8C56",
+      "portable_outcome": "Returns-1; separate cache-reuse path remains untranslated",
+      "test_handling": "Explicit API guard; cached natural Math result reuse remains supported by fx_display_real_math_result"
+    },
+    {
+      "routine": "0x37bc through0xc060 selection15",
+      "input": "tagged rational/surd fixed numeric records and all sixteen previous selections",
+      "native_outcome": "Each original return/fault and framebuffer/LCD SHA256 is recorded in the canonical render report",
+      "portable_outcome": "Returns0 with explicit unsupported formatter status",
+      "test_handling": "All excluded tagged prime fixtures are executed by the oracle and recorded, rather than omitted. Marked decimal primes are implemented and compared."
     }
   ]
 }

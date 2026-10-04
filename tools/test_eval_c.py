@@ -57,7 +57,7 @@ def main():
     build.mkdir(parents=True, exist_ok=True)
     output = build / 'eval.so'
     sources = ['parse/fx_eval.c', 'parse/fx_tokens.c', 'data/fx_rom_data.c',
-               'numeric/fx_numeric.c', 'numeric/fx_transcend.c', 'trig/fx_trig.c', 'trig/fx_trig_math.c', 'trig/fx_trig_inverse.c',
+               'numeric/fx_numeric.c', 'numeric/fx_transcend.c', 'numeric/fx_power.c', 'trig/fx_trig.c', 'trig/fx_trig_math.c', 'trig/fx_trig_inverse.c', 'trig/fx_trig_hyperbolic.c',
                'format/fx_format.c', 'render/fx_render.c', 'render/fx_render_context.c', 'render/fx_layout.c', 'render/fx_layout_validate.c']
     subprocess.run(['gcc', '-std=c99', '-O2', '-Wall', '-Wextra', '-Werror', '-shared', '-fPIC',
                     *[str(ROOT / 'csrc' / f) for f in sources], '-o', str(output)], check=True)
@@ -191,6 +191,15 @@ def main():
     for t in (b'\x6810', b'2\x6810)', b'\xa3\x682))', b'\x68\xa310))',
               b'\x68)', b'\xa3+)', b'\xa3\x81)'):
         check(t, 'logarithmic_grammar')
+    for function in (0x73, 0x93, 0x70, 0x71, 0x72, 0x90, 0x91, 0x92):
+        for argument in (b'0', b'1', b'\x601', b'.013', b'.0129999999999999', b'\x60.013',
+                         b'.5', b'2', b'\x602', b'1\xae3', b'\x982)',
+                         b'1\x74\x6099', b'1\x7499'):
+            for math_output in (0, 1):
+                check(bytes([function]) + argument + b')', 'exponential_and_hyperbolic', math_output=math_output)
+    for t in (b'\x731', b'2\x731)', b'\x70\x901))', b'\xa3\x731))',
+              b'\x73\xa31))', b'\x71)', b'\x92+)'):
+        check(t, 'exponential_hyperbolic_grammar')
     for angle in (b'0', b'30', b'\x6030', b'\x82', b'1\xae3', b'\x982)', b'1\x74\x6099', b'1\x7499'):
         for unit_token in (0x85, 0x86, 0x87):
             for angle_unit in (4, 5, 6):
@@ -203,6 +212,19 @@ def main():
     for t in (b'\x602\x76', b'\x602\x5e2', b'3\xae2\x76', b'3\xae2\x5e2',
               b'2\x5e\x601\x5e2', b'2\x76\x76', b'2\x76\xa030)', b'\xa030)\x76'):
         check(t, 'power_precedence')
+    for t in (b'2^3)', b'2^2+1)', b'2^2+1', b'2^(2)+1)', b'2^2)+1', b'2^3)^2)',
+              b'3\xae2^2+1)', b'0^\x601)', b'2^)', b'2^2)+'):
+        check(t, 'power_implicit_parenthesis')
+    power_bases = (b'0', b'1', b'2', b'9', b'.01', b'9999', b'1\x7490',
+                   b'1\x74\x6090', b'\x602', b'\x608', b'1\xae3',
+                   b'\x601\xae2', b'\x982)', b'\x98998)-\x98997)')
+    power_exponents = (b'0', b'1', b'2', b'3', b'4', b'5', b'\x601', b'\x602',
+                       b'\x603', b'\x604', b'.5', b'.333333333333333',
+                       b'.666666666666667', b'2\xae3', b'\x602\xae3', b'\x982)')
+    for base in power_bases:
+        for exponent in power_exponents:
+            for math_output in (0, 1):
+                check(b'(' + base + b')^' + exponent + b')', 'general_real_power', math_output=math_output)
     regression_file = ROOT / 'analysis/c-verification/fixtures/exact-division-regressions.json'
     for row in json.loads(regression_file.read_text())['original_failure_cases']:
         check(bytes.fromhex(row['input']), 'historical_exact_division_regressions')
@@ -251,8 +273,14 @@ def main():
     for case in range(args.random_cases):
         check(bytes([rng.choice([0x68, 0xa3])]) + mixed_expression(rng.randrange(2)) + b')',
               'random_logarithmic_expressions', math_output=case % 2)
+    for case in range(args.random_cases):
+        check(bytes([rng.choice([0x73, 0x93, 0x70, 0x71, 0x72, 0x90, 0x91, 0x92])]) +
+              mixed_expression(rng.randrange(2)) + b')', 'random_exponential_hyperbolic_expressions', math_output=case % 2)
     # This subset advertises gaps rather than accidentally accepting them.
-    for tokens in [b'2\x5e4', b'\x9330', b'1\x25', b'\x682,8)']:
+    for case in range(args.random_cases):
+        check(b'(' + mixed_expression(rng.randrange(2)) + b')^' +
+              rng.choice(power_exponents) + b')', 'random_general_real_power_expressions', math_output=case % 2)
+    for tokens in [b'\xa830', b'1\x25', b'\x682,8)']:
         tokens += b'\0'; buf = (C.c_uint8 * len(tokens)).from_buffer_copy(tokens); result = EvalResult()
         assert lib.fx_evaluate(buf, len(buf), C.byref(EvalOptions(0xc1, 1, 4)), C.byref(result)) == -1
         domains['explicit_unsupported_contract'] = domains.get('explicit_unsupported_contract', 0) + 1
@@ -265,15 +293,15 @@ def main():
     report = {'status': 'pass', 'cases': sum(domains.values()), 'domains': domains,
               'rom_sha256': hashlib.sha256(rom).hexdigest(),
               'comparison': 'Native status, both 10-byte numeric records, consumed input pointer, result tokens/kind, measure/draw metrics/cache/framebuffer and LCD transfer.',
-              'scope': 'Supported COMP grammar: decimals, e/pi, parentheses, unary signs, arithmetic, implicit multiplication, compact/mixed fractions, square root, verified fast powers−1/0/2/3, forward and inverse sin/cos/tan, single-argument log10/ln with Math on/off, angle-unit postfix and degrees/radians/gradians. No key UI or unsupported functions.'}
+              'scope': 'Supported COMP grammar: decimals, e/pi, parentheses, unary signs, arithmetic, implicit multiplication, compact/mixed fractions, square root, general real powers with native implicit exponent parentheses, forward and inverse sin/cos/tan, single-argument log10/ln, exp/exp10 and forward/inverse hyperbolic functions with Math on/off, angle-unit postfix and degrees/radians/gradians. No key UI or unsupported functions.'}
     out = ROOT / 'analysis/c-verification'; out.mkdir(parents=True, exist_ok=True)
     if args.records_only:
         report['comparison'] = 'Native evaluator status, both 10-byte numeric records and consumed input pointer only.'
     report = write_report(out / ('eval-records.json' if args.records_only else 'eval.json'), report,
             [str(Path('csrc') / f) for f in sources] +
-            ['csrc/parse/fx_eval.h', 'csrc/numeric/fx_numeric.h', 'csrc/numeric/fx_transcend.h', 'csrc/format/fx_format.h',
+            ['csrc/parse/fx_eval.h', 'csrc/numeric/fx_numeric.h', 'csrc/numeric/fx_transcend.h', 'csrc/numeric/fx_transcend_internal.h', 'csrc/format/fx_format.h',
              'csrc/render/fx_render.h', 'csrc/render/fx_layout_validate.h', 'csrc/render/fx_render_context.h',
-             'csrc/trig/fx_trig.h', 'csrc/trig/fx_trig_math.h', 'csrc/trig/fx_trig_inverse.h',
+             'csrc/trig/fx_trig.h', 'csrc/trig/fx_trig_math.h', 'csrc/trig/fx_trig_inverse.h', 'csrc/trig/fx_trig_hyperbolic.h',
              'tools/c_verification.py', 'tools/trace_natural_result.py',
              str(regression_file.relative_to(ROOT))], 'tools/test_eval_c.py')
     print(json.dumps(report, indent=2))

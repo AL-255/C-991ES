@@ -107,19 +107,42 @@
       "address": "0xa846..0xab82",
       "name": "natural editor actions",
       "scope": "left/right wrapping and busy state, vertical field navigation, deletion with construct shell removal, selected argument preservation and placeholder restoration"
+    },
+    {
+      "address": "0x9ee4",
+      "name": "natural field-boundary validation",
+      "scope": "Parentheses, commas and separators must remain inside their display fields; invalid index8114 and bounded malformed scan"
+    },
+    {
+      "address": "0x9ff2 / 0x9fa4",
+      "name": "natural display-to-input conversion",
+      "scope": "Full recursive-token export, tracked root metadata and evaluator input-index to display-cursor mapping"
+    },
+    {
+      "address": "0x1da46 / 0x1da88 / 0x1d902 / 0x1dac2",
+      "name": "cursor bitmaps and blink tick",
+      "scope": "Two-byte row capture/restore with dynamic font height, overlap and wrapping; prepared countdown/phase/remaining transitions and visibility gate. Physical key wait is pending"
+    },
+    {
+      "address": "0x1dc3e..0x1dcb6",
+      "name": "complete token processing after key-table lookup",
+      "scope": "C4 remapping, E7 caller action/timer writes, all modifiers includingEC cursor refresh, ordinary modifier clearing, F0 natural-input permission and C8 context constraint. Modifier retry is an explicit return to the host"
     }
   ],
   "gaps": [
     "physical timing and interrupt scheduling",
-    "blocking key event loop and cursor blink",
-    "modifier integration with complete key-event dispatch",
+    "blocking key event loop and physical cursor scheduling",
+    "modifier integration with blocking key-event/menu controller",
     "complete key-to-editor integration and malformed-state recovery",
     "menus, mode setup and expression history"
   ],
   "verification": [
     "tools/test_keys_c.py",
     "tools/test_editor_c.py",
-    "tools/test_editor_construct_c.py"
+    "tools/test_editor_construct_c.py",
+    "tools/test_input_codec_c.py",
+    "tools/test_cursor_c.py",
+    "tools/test_key_dispatch_c.py"
   ],
   "oracle_scope": "passive F040 register, prepared native routine or bounded-block contexts; dynamic host row-sampling contract checked separately"
 }
