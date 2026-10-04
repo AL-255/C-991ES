@@ -55,6 +55,127 @@
         "analysis/understanding/early-rom/policy-proof.json"
       ],
       "audit": "Independent root review of all claimed assembly instructions, meaningful semantic model, exact branch/record selection and matching recorded source pins. Production parity is separate."
+    },
+    {
+      "start": "0x32e8",
+      "end": "0x32f8",
+      "scope": "Complete compiler/runtime/workspace leaves: guarded string append, key port, record copy, modifier clearing, metadata reset, stack cursor, unsigned fill/multiply/divide; exact per-entry contracts in handoff. Native cyclic append nonreturn preserved as a named host boundary.",
+      "source": "analysis/understanding/early-rom/fx_early_helpers.c",
+      "evidence": [
+        "analysis/understanding/early-rom/HELPERS-HANDOFF.md",
+        "analysis/understanding/early-rom/helper-proof.json"
+      ],
+      "audit": "Root reviewed all claimed assembly instructions, model branches and effects, successor alias fixes and available original proof pins. Production integration is separate."
+    },
+    {
+      "start": "0x4056",
+      "end": "0x4062",
+      "scope": "Complete compiler/runtime/workspace leaves: guarded string append, key port, record copy, modifier clearing, metadata reset, stack cursor, unsigned fill/multiply/divide; exact per-entry contracts in handoff. Native cyclic append nonreturn preserved as a named host boundary.",
+      "source": "analysis/understanding/early-rom/fx_early_helpers.c",
+      "evidence": [
+        "analysis/understanding/early-rom/HELPERS-HANDOFF.md",
+        "analysis/understanding/early-rom/helper-proof.json"
+      ],
+      "audit": "Root reviewed all claimed assembly instructions, model branches and effects, successor alias fixes and available original proof pins. Production integration is separate."
+    },
+    {
+      "start": "0x5166",
+      "end": "0x5176",
+      "scope": "Complete compiler/runtime/workspace leaves: guarded string append, key port, record copy, modifier clearing, metadata reset, stack cursor, unsigned fill/multiply/divide; exact per-entry contracts in handoff. Native cyclic append nonreturn preserved as a named host boundary.",
+      "source": "analysis/understanding/early-rom/fx_early_helpers.c",
+      "evidence": [
+        "analysis/understanding/early-rom/HELPERS-HANDOFF.md",
+        "analysis/understanding/early-rom/helper-proof.json"
+      ],
+      "audit": "Root reviewed all claimed assembly instructions, model branches and effects, successor alias fixes and available original proof pins. Production integration is separate."
+    },
+    {
+      "start": "0x51be",
+      "end": "0x51ca",
+      "scope": "Complete compiler/runtime/workspace leaves: guarded string append, key port, record copy, modifier clearing, metadata reset, stack cursor, unsigned fill/multiply/divide; exact per-entry contracts in handoff. Native cyclic append nonreturn preserved as a named host boundary.",
+      "source": "analysis/understanding/early-rom/fx_early_helpers.c",
+      "evidence": [
+        "analysis/understanding/early-rom/HELPERS-HANDOFF.md",
+        "analysis/understanding/early-rom/helper-proof.json"
+      ],
+      "audit": "Root reviewed all claimed assembly instructions, model branches and effects, successor alias fixes and available original proof pins. Production integration is separate."
+    },
+    {
+      "start": "0x52ac",
+      "end": "0x52e2",
+      "scope": "Complete compiler/runtime/workspace leaves: guarded string append, key port, record copy, modifier clearing, metadata reset, stack cursor, unsigned fill/multiply/divide; exact per-entry contracts in handoff. Native cyclic append nonreturn preserved as a named host boundary.",
+      "source": "analysis/understanding/early-rom/fx_early_helpers.c",
+      "evidence": [
+        "analysis/understanding/early-rom/HELPERS-HANDOFF.md",
+        "analysis/understanding/early-rom/helper-proof.json"
+      ],
+      "audit": "Root reviewed all claimed assembly instructions, model branches and effects, successor alias fixes and available original proof pins. Production integration is separate."
+    },
+    {
+      "start": "0xb52a",
+      "end": "0xb5ce",
+      "scope": "Complete compiler/runtime/workspace leaves: guarded string append, key port, record copy, modifier clearing, metadata reset, stack cursor, unsigned fill/multiply/divide; exact per-entry contracts in handoff. Native cyclic append nonreturn preserved as a named host boundary.",
+      "source": "analysis/understanding/early-rom/fx_early_helpers.c",
+      "evidence": [
+        "analysis/understanding/early-rom/HELPERS-HANDOFF.md",
+        "analysis/understanding/early-rom/helper-proof.json"
+      ],
+      "audit": "Root reviewed all claimed assembly instructions, model branches and effects, successor alias fixes and available original proof pins. Production integration is separate."
+    },
+    {
+      "start": "0xb97c",
+      "end": "0xb99c",
+      "scope": "Complete compiler/runtime/workspace leaves: guarded string append, key port, record copy, modifier clearing, metadata reset, stack cursor, unsigned fill/multiply/divide; exact per-entry contracts in handoff. Native cyclic append nonreturn preserved as a named host boundary.",
+      "source": "analysis/understanding/early-rom/fx_early_helpers.c",
+      "evidence": [
+        "analysis/understanding/early-rom/HELPERS-HANDOFF.md",
+        "analysis/understanding/early-rom/helper-proof.json"
+      ],
+      "audit": "Root reviewed all claimed assembly instructions, model branches and effects, successor alias fixes and available original proof pins. Production integration is separate."
+    },
+    {
+      "start": "0x33d6",
+      "end": "0x3500",
+      "scope": "Complete prepared digit serializer: zero, sign, decimal position, styles, trailing zeros, two alphabets and finite byte narrowing; separate source/output buffers and no upstream rounding or recognizer claim.",
+      "source": "analysis/understanding/early-rom/fx_digit_string.c",
+      "evidence": [
+        "analysis/understanding/early-rom/DIGITS-HANDOFF.md",
+        "analysis/understanding/early-rom/digit-proof.json"
+      ],
+      "audit": "Root reviewed all claimed assembly instructions, model branches and effects, successor alias fixes and available original proof pins. Production integration is separate."
+    },
+    {
+      "start": "0x378c",
+      "end": "0x37a0",
+      "source": "analysis/understanding/early-rom/fx_early_display.c",
+      "scope": "Framebuffer/RAM display wrappers and signed-byte labels with nativefont6/7/9; all8 rawfont255 controls retained as inherited callee gaps.82A2 prefix stops at82BA, not fullTABLE expression rendering. Only individually observed stack writes excluded.",
+      "evidence": [
+        "analysis/understanding/early-rom/DISPLAY-HANDOFF.md",
+        "analysis/understanding/early-rom/display-proof.json.gz"
+      ],
+      "audit": "Root reviewed all claimed assembly/model instructions; recorded source/artifact and observation pins matched. Eight unsupported font255 callee controls explicitly retained."
+    },
+    {
+      "start": "0x3f3a",
+      "end": "0x3fba",
+      "source": "analysis/understanding/early-rom/fx_early_display.c",
+      "scope": "Framebuffer/RAM display wrappers and signed-byte labels with nativefont6/7/9; all8 rawfont255 controls retained as inherited callee gaps.82A2 prefix stops at82BA, not fullTABLE expression rendering. Only individually observed stack writes excluded.",
+      "evidence": [
+        "analysis/understanding/early-rom/DISPLAY-HANDOFF.md",
+        "analysis/understanding/early-rom/display-proof.json.gz"
+      ],
+      "audit": "Root reviewed all claimed assembly/model instructions; recorded source/artifact and observation pins matched. Eight unsupported font255 callee controls explicitly retained."
+    },
+    {
+      "start": "0x82a2",
+      "end": "0x82ba",
+      "source": "analysis/understanding/early-rom/fx_early_display.c",
+      "scope": "Framebuffer/RAM display wrappers and signed-byte labels with nativefont6/7/9; all8 rawfont255 controls retained as inherited callee gaps.82A2 prefix stops at82BA, not fullTABLE expression rendering. Only individually observed stack writes excluded.",
+      "evidence": [
+        "analysis/understanding/early-rom/DISPLAY-HANDOFF.md",
+        "analysis/understanding/early-rom/display-proof.json.gz"
+      ],
+      "audit": "Root reviewed all claimed assembly/model instructions; recorded source/artifact and observation pins matched. Eight unsupported font255 callee controls explicitly retained."
     }
   ]
 }

@@ -13,6 +13,17 @@
         "analysis/understanding/protocol-high/test_copy_leaf.py"
       ],
       "audit": "Independent root static assembly/model review and matching recorded source/artifact pins; callable semantic scope only."
+    },
+    {
+      "start": "0x620e",
+      "end": "0x62a2",
+      "scope": "Complete successive-power finite rational approximation helper; exact coefficient advancement, polled do-while byte countdown, checked additions/error exits and final division. Includes literal zero-degree wrap.",
+      "source": "analysis/understanding/protocol-high/rational_model.c",
+      "evidence": [
+        "analysis/understanding/protocol-high/RATIONAL-HELPER.md",
+        "analysis/understanding/protocol-high/rational-proof.json"
+      ],
+      "audit": "Root reviewed all claimed assembly instructions, model branches and effects, successor alias fixes and available original proof pins. Production integration is separate."
     }
   ]
 }

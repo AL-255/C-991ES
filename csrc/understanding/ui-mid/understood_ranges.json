@@ -26,6 +26,118 @@
         "analysis/understanding/ui-mid/grid-decoration-proof.json.gz"
       ],
       "audit": "Independent root static assembly/model review and matching recorded source/artifact pins; callable semantic scope only."
+    },
+    {
+      "start": "0xc398",
+      "end": "0xc3f4",
+      "source": "analysis/understanding/ui-mid/fx_ui_leaf_models.c",
+      "scope": "Complete clipping interpolation, eager marker publication, token/flag and display predicates, finite division/sign policies and statistics label/border selectors; native overflow and ROM reads preserved.",
+      "evidence": [
+        "analysis/understanding/ui-mid/ui-leaf-proof-v4.json.gz",
+        "analysis/understanding/ui-mid/LEAF-HANDOFF.md"
+      ],
+      "audit": "Root reviewed every instruction and corrected v4 model; source/oracle artifact pins matched. Production integration separate."
+    },
+    {
+      "start": "0xc450",
+      "end": "0xc4be",
+      "source": "analysis/understanding/ui-mid/fx_ui_leaf_models.c",
+      "scope": "Complete clipping interpolation, eager marker publication, token/flag and display predicates, finite division/sign policies and statistics label/border selectors; native overflow and ROM reads preserved.",
+      "evidence": [
+        "analysis/understanding/ui-mid/ui-leaf-proof-v4.json.gz",
+        "analysis/understanding/ui-mid/LEAF-HANDOFF.md"
+      ],
+      "audit": "Root reviewed every instruction and corrected v4 model; source/oracle artifact pins matched. Production integration separate."
+    },
+    {
+      "start": "0xc68c",
+      "end": "0xc73a",
+      "source": "analysis/understanding/ui-mid/fx_ui_leaf_models.c",
+      "scope": "Complete clipping interpolation, eager marker publication, token/flag and display predicates, finite division/sign policies and statistics label/border selectors; native overflow and ROM reads preserved.",
+      "evidence": [
+        "analysis/understanding/ui-mid/ui-leaf-proof-v4.json.gz",
+        "analysis/understanding/ui-mid/LEAF-HANDOFF.md"
+      ],
+      "audit": "Root reviewed every instruction and corrected v4 model; source/oracle artifact pins matched. Production integration separate."
+    },
+    {
+      "start": "0xc758",
+      "end": "0xc77c",
+      "source": "analysis/understanding/ui-mid/fx_ui_leaf_models.c",
+      "scope": "Complete clipping interpolation, eager marker publication, token/flag and display predicates, finite division/sign policies and statistics label/border selectors; native overflow and ROM reads preserved.",
+      "evidence": [
+        "analysis/understanding/ui-mid/ui-leaf-proof-v4.json.gz",
+        "analysis/understanding/ui-mid/LEAF-HANDOFF.md"
+      ],
+      "audit": "Root reviewed every instruction and corrected v4 model; source/oracle artifact pins matched. Production integration separate."
+    },
+    {
+      "start": "0xe5a6",
+      "end": "0xe680",
+      "source": "analysis/understanding/ui-mid/fx_ui_leaf_models.c",
+      "scope": "Complete clipping interpolation, eager marker publication, token/flag and display predicates, finite division/sign policies and statistics label/border selectors; native overflow and ROM reads preserved.",
+      "evidence": [
+        "analysis/understanding/ui-mid/ui-leaf-proof-v4.json.gz",
+        "analysis/understanding/ui-mid/LEAF-HANDOFF.md"
+      ],
+      "audit": "Root reviewed every instruction and corrected v4 model; source/oracle artifact pins matched. Production integration separate."
+    },
+    {
+      "start": "0xd6a6",
+      "end": "0xd6fe",
+      "source": "analysis/understanding/ui-mid/fx_math_strings.c",
+      "scope": "Complete far-call adapter, unsigned32 restoring division, and forward NUL append; callable semantic model with explicit RAM string API.",
+      "evidence": [
+        "analysis/understanding/ui-mid/math-strings-proof.json.gz",
+        "analysis/understanding/ui-mid/MATH-STRINGS-HANDOFF.md"
+      ],
+      "audit": "Root reviewed every instruction and corrected v4 model; source/oracle artifact pins matched. Production integration separate."
+    },
+    {
+      "start": "0xd312",
+      "end": "0xd3b6",
+      "instruction_count": 75,
+      "scope": "Complete high-level dialog semantic model, original actual raw-key full calls; delegated renderer/keywait/timer persistent parity not claimed",
+      "source": "analysis/understanding/ui-mid/fx_number_dialog.c",
+      "evidence": [
+        "analysis/understanding/ui-mid/NUMBER-DIALOG-HANDOFF.md",
+        "analysis/understanding/ui-mid/number-dialog-proof.json"
+      ],
+      "audit": "Root reviewed complete source and assembly and matched all recorded source/oracle artifact pins; delegated callee and production parity limits retained."
+    },
+    {
+      "start": "0xc236",
+      "end": "0xc328",
+      "instruction_count": 105,
+      "scope": "C236 caller caption/sign/count logic and both framebuffer maps; separately understood numeric classifier scratch parity not claimed. C2AA/C2E2 full persistent RAM parity outside actual CPU frame. C sign/count inputs derive from immutable input recipe, not native outputs.",
+      "source": "analysis/understanding/ui-mid/fx_result_captions.c",
+      "evidence": [
+        "analysis/understanding/ui-mid/RESULT-CAPTIONS-HANDOFF.md",
+        "analysis/understanding/ui-mid/result-captions-proof.json.gz"
+      ],
+      "audit": "Root reviewed complete source and assembly and matched all recorded source/oracle artifact pins; delegated callee and production parity limits retained."
+    },
+    {
+      "start": "0xc046",
+      "end": "0xc0b4",
+      "source": "analysis/understanding/ui-mid/fx_format_policy.c",
+      "scope": "C046 full persistent RAM parity; C060 front-door and C136 fixed-width decision semantics only, with delegated formatter bodies excluded. Original complete formatter executes as oracle; passive route observer never changes instructions or values.",
+      "evidence": [
+        "analysis/understanding/ui-mid/FORMAT-POLICY-HANDOFF.md",
+        "analysis/understanding/ui-mid/format-policy-proof.json.gz"
+      ],
+      "audit": "Root complete static assembly/model review and matching recorded source/oracle artifact pins; formatter delegates not recredited."
+    },
+    {
+      "start": "0xc136",
+      "end": "0xc154",
+      "source": "analysis/understanding/ui-mid/fx_format_policy.c",
+      "scope": "C046 full persistent RAM parity; C060 front-door and C136 fixed-width decision semantics only, with delegated formatter bodies excluded. Original complete formatter executes as oracle; passive route observer never changes instructions or values.",
+      "evidence": [
+        "analysis/understanding/ui-mid/FORMAT-POLICY-HANDOFF.md",
+        "analysis/understanding/ui-mid/format-policy-proof.json.gz"
+      ],
+      "audit": "Root complete static assembly/model review and matching recorded source/oracle artifact pins; formatter delegates not recredited."
     }
   ]
 }

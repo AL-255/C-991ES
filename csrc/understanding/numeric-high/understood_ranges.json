@@ -106,6 +106,366 @@
       "scope": "two packed-BCD pairs to binary byte; complete leaf control and dataflow. Canonical packed-BCD numerical meaning; no malformed-BCD admission or parser remapping credit.",
       "source": "analysis/understanding/numeric-high/bcd-contract.md",
       "audit": "Independent root static assembly/model review and matching recorded source/artifact pins; callable semantic scope only."
+    },
+    {
+      "start": "0x19360",
+      "end": "0x19372",
+      "scope": "raw ten-byte capture and copy; Shared loader/export tails fully described; no numerical normalization or CPU frame publication claim.",
+      "source": "analysis/understanding/numeric-high/probe_transfers.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/transfers.md",
+        "analysis/understanding/numeric-high/probe_transfers.py",
+        "analysis/understanding/numeric-high/transfer-report.json"
+      ],
+      "audit": "Root reviewed all claimed original assembly, semantic notes and independent byte/window model; matching complete recorded source and original compiled artifact pins. CPU frame bands excluded by bounded proof; production C integration separate."
+    },
+    {
+      "start": "0x19372",
+      "end": "0x19384",
+      "scope": "raw ten-byte capture and copy; Shared loader/export tails fully described; no numerical normalization or CPU frame publication claim.",
+      "source": "analysis/understanding/numeric-high/probe_transfers.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/transfers.md",
+        "analysis/understanding/numeric-high/probe_transfers.py",
+        "analysis/understanding/numeric-high/transfer-report.json"
+      ],
+      "audit": "Root reviewed all claimed original assembly, semantic notes and independent byte/window model; matching complete recorded source and original compiled artifact pins. CPU frame bands excluded by bounded proof; production C integration separate."
+    },
+    {
+      "start": "0x19384",
+      "end": "0x19396",
+      "scope": "raw ten-byte capture and copy; Shared loader/export tails fully described; no numerical normalization or CPU frame publication claim.",
+      "source": "analysis/understanding/numeric-high/probe_transfers.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/transfers.md",
+        "analysis/understanding/numeric-high/probe_transfers.py",
+        "analysis/understanding/numeric-high/transfer-report.json"
+      ],
+      "audit": "Root reviewed all claimed original assembly, semantic notes and independent byte/window model; matching complete recorded source and original compiled artifact pins. CPU frame bands excluded by bounded proof; production C integration separate."
+    },
+    {
+      "start": "0x19396",
+      "end": "0x193a8",
+      "scope": "raw ten-byte capture and copy; Shared loader/export tails fully described; no numerical normalization or CPU frame publication claim.",
+      "source": "analysis/understanding/numeric-high/probe_transfers.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/transfers.md",
+        "analysis/understanding/numeric-high/probe_transfers.py",
+        "analysis/understanding/numeric-high/transfer-report.json"
+      ],
+      "audit": "Root reviewed all claimed original assembly, semantic notes and independent byte/window model; matching complete recorded source and original compiled artifact pins. CPU frame bands excluded by bounded proof; production C integration separate."
+    },
+    {
+      "start": "0x193a8",
+      "end": "0x193ba",
+      "scope": "raw ten-byte capture and copy; Shared loader/export tails fully described; no numerical normalization or CPU frame publication claim.",
+      "source": "analysis/understanding/numeric-high/probe_transfers.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/transfers.md",
+        "analysis/understanding/numeric-high/probe_transfers.py",
+        "analysis/understanding/numeric-high/transfer-report.json"
+      ],
+      "audit": "Root reviewed all claimed original assembly, semantic notes and independent byte/window model; matching complete recorded source and original compiled artifact pins. CPU frame bands excluded by bounded proof; production C integration separate."
+    },
+    {
+      "start": "0x193ba",
+      "end": "0x193cc",
+      "scope": "raw ten-byte capture and copy; Shared loader/export tails fully described; no numerical normalization or CPU frame publication claim.",
+      "source": "analysis/understanding/numeric-high/probe_transfers.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/transfers.md",
+        "analysis/understanding/numeric-high/probe_transfers.py",
+        "analysis/understanding/numeric-high/transfer-report.json"
+      ],
+      "audit": "Root reviewed all claimed original assembly, semantic notes and independent byte/window model; matching complete recorded source and original compiled artifact pins. CPU frame bands excluded by bounded proof; production C integration separate."
+    },
+    {
+      "start": "0x193cc",
+      "end": "0x193de",
+      "scope": "raw ten-byte capture and copy; Shared loader/export tails fully described; no numerical normalization or CPU frame publication claim.",
+      "source": "analysis/understanding/numeric-high/probe_transfers.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/transfers.md",
+        "analysis/understanding/numeric-high/probe_transfers.py",
+        "analysis/understanding/numeric-high/transfer-report.json"
+      ],
+      "audit": "Root reviewed all claimed original assembly, semantic notes and independent byte/window model; matching complete recorded source and original compiled artifact pins. CPU frame bands excluded by bounded proof; production C integration separate."
+    },
+    {
+      "start": "0x193de",
+      "end": "0x193f0",
+      "scope": "raw ten-byte capture and copy; Shared loader/export tails fully described; no numerical normalization or CPU frame publication claim.",
+      "source": "analysis/understanding/numeric-high/probe_transfers.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/transfers.md",
+        "analysis/understanding/numeric-high/probe_transfers.py",
+        "analysis/understanding/numeric-high/transfer-report.json"
+      ],
+      "audit": "Root reviewed all claimed original assembly, semantic notes and independent byte/window model; matching complete recorded source and original compiled artifact pins. CPU frame bands excluded by bounded proof; production C integration separate."
+    },
+    {
+      "start": "0x193f0",
+      "end": "0x19402",
+      "scope": "raw ten-byte capture and copy; Shared loader/export tails fully described; no numerical normalization or CPU frame publication claim.",
+      "source": "analysis/understanding/numeric-high/probe_transfers.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/transfers.md",
+        "analysis/understanding/numeric-high/probe_transfers.py",
+        "analysis/understanding/numeric-high/transfer-report.json"
+      ],
+      "audit": "Root reviewed all claimed original assembly, semantic notes and independent byte/window model; matching complete recorded source and original compiled artifact pins. CPU frame bands excluded by bounded proof; production C integration separate."
+    },
+    {
+      "start": "0x19402",
+      "end": "0x19414",
+      "scope": "raw ten-byte capture and copy; Shared loader/export tails fully described; no numerical normalization or CPU frame publication claim.",
+      "source": "analysis/understanding/numeric-high/probe_transfers.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/transfers.md",
+        "analysis/understanding/numeric-high/probe_transfers.py",
+        "analysis/understanding/numeric-high/transfer-report.json"
+      ],
+      "audit": "Root reviewed all claimed original assembly, semantic notes and independent byte/window model; matching complete recorded source and original compiled artifact pins. CPU frame bands excluded by bounded proof; production C integration separate."
+    },
+    {
+      "start": "0x19414",
+      "end": "0x19426",
+      "scope": "raw ten-byte capture and copy; Shared loader/export tails fully described; no numerical normalization or CPU frame publication claim.",
+      "source": "analysis/understanding/numeric-high/probe_transfers.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/transfers.md",
+        "analysis/understanding/numeric-high/probe_transfers.py",
+        "analysis/understanding/numeric-high/transfer-report.json"
+      ],
+      "audit": "Root reviewed all claimed original assembly, semantic notes and independent byte/window model; matching complete recorded source and original compiled artifact pins. CPU frame bands excluded by bounded proof; production C integration separate."
+    },
+    {
+      "start": "0x19426",
+      "end": "0x19438",
+      "scope": "raw ten-byte capture and copy; Shared loader/export tails fully described; no numerical normalization or CPU frame publication claim.",
+      "source": "analysis/understanding/numeric-high/probe_transfers.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/transfers.md",
+        "analysis/understanding/numeric-high/probe_transfers.py",
+        "analysis/understanding/numeric-high/transfer-report.json"
+      ],
+      "audit": "Root reviewed all claimed original assembly, semantic notes and independent byte/window model; matching complete recorded source and original compiled artifact pins. CPU frame bands excluded by bounded proof; production C integration separate."
+    },
+    {
+      "start": "0x19438",
+      "end": "0x1944a",
+      "scope": "raw ten-byte capture and copy; Shared loader/export tails fully described; no numerical normalization or CPU frame publication claim.",
+      "source": "analysis/understanding/numeric-high/probe_transfers.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/transfers.md",
+        "analysis/understanding/numeric-high/probe_transfers.py",
+        "analysis/understanding/numeric-high/transfer-report.json"
+      ],
+      "audit": "Root reviewed all claimed original assembly, semantic notes and independent byte/window model; matching complete recorded source and original compiled artifact pins. CPU frame bands excluded by bounded proof; production C integration separate."
+    },
+    {
+      "start": "0x1944a",
+      "end": "0x1945c",
+      "scope": "raw ten-byte capture and copy; Shared loader/export tails fully described; no numerical normalization or CPU frame publication claim.",
+      "source": "analysis/understanding/numeric-high/probe_transfers.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/transfers.md",
+        "analysis/understanding/numeric-high/probe_transfers.py",
+        "analysis/understanding/numeric-high/transfer-report.json"
+      ],
+      "audit": "Root reviewed all claimed original assembly, semantic notes and independent byte/window model; matching complete recorded source and original compiled artifact pins. CPU frame bands excluded by bounded proof; production C integration separate."
+    },
+    {
+      "start": "0x1945c",
+      "end": "0x1946e",
+      "scope": "raw ten-byte capture and copy; Shared loader/export tails fully described; no numerical normalization or CPU frame publication claim.",
+      "source": "analysis/understanding/numeric-high/probe_transfers.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/transfers.md",
+        "analysis/understanding/numeric-high/probe_transfers.py",
+        "analysis/understanding/numeric-high/transfer-report.json"
+      ],
+      "audit": "Root reviewed all claimed original assembly, semantic notes and independent byte/window model; matching complete recorded source and original compiled artifact pins. CPU frame bands excluded by bounded proof; production C integration separate."
+    },
+    {
+      "start": "0x1946e",
+      "end": "0x19480",
+      "scope": "raw ten-byte capture and copy; Shared loader/export tails fully described; no numerical normalization or CPU frame publication claim.",
+      "source": "analysis/understanding/numeric-high/probe_transfers.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/transfers.md",
+        "analysis/understanding/numeric-high/probe_transfers.py",
+        "analysis/understanding/numeric-high/transfer-report.json"
+      ],
+      "audit": "Root reviewed all claimed original assembly, semantic notes and independent byte/window model; matching complete recorded source and original compiled artifact pins. CPU frame bands excluded by bounded proof; production C integration separate."
+    },
+    {
+      "start": "0x1babc",
+      "end": "0x1bac4",
+      "scope": "ordered paired external-to-raw loader; Shared loader/export tails fully described; no numerical normalization or CPU frame publication claim.",
+      "source": "analysis/understanding/numeric-high/probe_transfers.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/transfers.md",
+        "analysis/understanding/numeric-high/probe_transfers.py",
+        "analysis/understanding/numeric-high/transfer-report.json"
+      ],
+      "audit": "Root reviewed all claimed original assembly, semantic notes and independent byte/window model; matching complete recorded source and original compiled artifact pins. CPU frame bands excluded by bounded proof; production C integration separate."
+    },
+    {
+      "start": "0x1bae4",
+      "end": "0x1baf2",
+      "scope": "single external-to-raw operand1 loader; Shared loader/export tails fully described; no numerical normalization or CPU frame publication claim.",
+      "source": "analysis/understanding/numeric-high/probe_transfers.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/transfers.md",
+        "analysis/understanding/numeric-high/probe_transfers.py",
+        "analysis/understanding/numeric-high/transfer-report.json"
+      ],
+      "audit": "Root reviewed all claimed original assembly, semantic notes and independent byte/window model; matching complete recorded source and original compiled artifact pins. CPU frame bands excluded by bounded proof; production C integration separate."
+    },
+    {
+      "start": "0x1baf2",
+      "end": "0x1bb18",
+      "scope": "raw-to-external operand0 exporter; Shared loader/export tails fully described; no numerical normalization or CPU frame publication claim.",
+      "source": "analysis/understanding/numeric-high/probe_transfers.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/transfers.md",
+        "analysis/understanding/numeric-high/probe_transfers.py",
+        "analysis/understanding/numeric-high/transfer-report.json"
+      ],
+      "audit": "Root reviewed all claimed original assembly, semantic notes and independent byte/window model; matching complete recorded source and original compiled artifact pins. CPU frame bands excluded by bounded proof; production C integration separate."
+    },
+    {
+      "start": "0x1bb18",
+      "end": "0x1bb28",
+      "scope": "raw-to-external operand1 exporter; Shared loader/export tails fully described; no numerical normalization or CPU frame publication claim.",
+      "source": "analysis/understanding/numeric-high/probe_transfers.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/transfers.md",
+        "analysis/understanding/numeric-high/probe_transfers.py",
+        "analysis/understanding/numeric-high/transfer-report.json"
+      ],
+      "audit": "Root reviewed all claimed original assembly, semantic notes and independent byte/window model; matching complete recorded source and original compiled artifact pins. CPU frame bands excluded by bounded proof; production C integration separate."
+    },
+    {
+      "start": "0x194c0",
+      "end": "0x194e4",
+      "scope": "raw mantissa low-order zero-digit counter; Shared loader/export tails fully described; no numerical normalization or CPU frame publication claim.",
+      "source": "analysis/understanding/numeric-high/probe_transfers.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/transfers.md",
+        "analysis/understanding/numeric-high/probe_transfers.py",
+        "analysis/understanding/numeric-high/transfer-report.json"
+      ],
+      "audit": "Root reviewed all claimed original assembly, semantic notes and independent byte/window model; matching complete recorded source and original compiled artifact pins. CPU frame bands excluded by bounded proof; production C integration separate."
+    },
+    {
+      "start": "0x1a724",
+      "end": "0x1a738",
+      "scope": "raw absolute-value sign leaf; Packed-prefix arithmetic stated directly; natural sign numerical meaning; no discarded-digit rounding or CPU-frame publication claim.",
+      "source": "analysis/understanding/numeric-high/probe_windows.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/windows.md",
+        "analysis/understanding/numeric-high/probe_windows.py",
+        "analysis/understanding/numeric-high/window-report.json.gz"
+      ],
+      "audit": "Root reviewed all claimed original assembly, semantic notes and independent byte/window model; matching complete recorded source and original compiled artifact pins. CPU frame bands excluded by bounded proof; production C integration separate."
+    },
+    {
+      "start": "0x1a738",
+      "end": "0x1a75e",
+      "scope": "raw operand0/1 swap; Packed-prefix arithmetic stated directly; natural sign numerical meaning; no discarded-digit rounding or CPU-frame publication claim.",
+      "source": "analysis/understanding/numeric-high/probe_windows.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/windows.md",
+        "analysis/understanding/numeric-high/probe_windows.py",
+        "analysis/understanding/numeric-high/window-report.json.gz"
+      ],
+      "audit": "Root reviewed all claimed original assembly, semantic notes and independent byte/window model; matching complete recorded source and original compiled artifact pins. CPU frame bands excluded by bounded proof; production C integration separate."
+    },
+    {
+      "start": "0x1a75e",
+      "end": "0x1a784",
+      "scope": "raw operand0/saved30 swap; Packed-prefix arithmetic stated directly; natural sign numerical meaning; no discarded-digit rounding or CPU-frame publication claim.",
+      "source": "analysis/understanding/numeric-high/probe_windows.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/windows.md",
+        "analysis/understanding/numeric-high/probe_windows.py",
+        "analysis/understanding/numeric-high/window-report.json.gz"
+      ],
+      "audit": "Root reviewed all claimed original assembly, semantic notes and independent byte/window model; matching complete recorded source and original compiled artifact pins. CPU frame bands excluded by bounded proof; production C integration separate."
+    },
+    {
+      "start": "0x1a784",
+      "end": "0x1a7aa",
+      "scope": "raw operand0/saved50 swap; Packed-prefix arithmetic stated directly; natural sign numerical meaning; no discarded-digit rounding or CPU-frame publication claim.",
+      "source": "analysis/understanding/numeric-high/probe_windows.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/windows.md",
+        "analysis/understanding/numeric-high/probe_windows.py",
+        "analysis/understanding/numeric-high/window-report.json.gz"
+      ],
+      "audit": "Root reviewed all claimed original assembly, semantic notes and independent byte/window model; matching complete recorded source and original compiled artifact pins. CPU frame bands excluded by bounded proof; production C integration separate."
+    },
+    {
+      "start": "0x1a7aa",
+      "end": "0x1a7d0",
+      "scope": "raw operand0/product20 swap; Packed-prefix arithmetic stated directly; natural sign numerical meaning; no discarded-digit rounding or CPU-frame publication claim.",
+      "source": "analysis/understanding/numeric-high/probe_windows.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/windows.md",
+        "analysis/understanding/numeric-high/probe_windows.py",
+        "analysis/understanding/numeric-high/window-report.json.gz"
+      ],
+      "audit": "Root reviewed all claimed original assembly, semantic notes and independent byte/window model; matching complete recorded source and original compiled artifact pins. CPU frame bands excluded by bounded proof; production C integration separate."
+    },
+    {
+      "start": "0x1a7d0",
+      "end": "0x1a7f6",
+      "scope": "raw saved30/operand1 swap; Packed-prefix arithmetic stated directly; natural sign numerical meaning; no discarded-digit rounding or CPU-frame publication claim.",
+      "source": "analysis/understanding/numeric-high/probe_windows.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/windows.md",
+        "analysis/understanding/numeric-high/probe_windows.py",
+        "analysis/understanding/numeric-high/window-report.json.gz"
+      ],
+      "audit": "Root reviewed all claimed original assembly, semantic notes and independent byte/window model; matching complete recorded source and original compiled artifact pins. CPU frame bands excluded by bounded proof; production C integration separate."
+    },
+    {
+      "start": "0x1a7f6",
+      "end": "0x1a81c",
+      "scope": "raw saved50/operand1 swap; Packed-prefix arithmetic stated directly; natural sign numerical meaning; no discarded-digit rounding or CPU-frame publication claim.",
+      "source": "analysis/understanding/numeric-high/probe_windows.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/windows.md",
+        "analysis/understanding/numeric-high/probe_windows.py",
+        "analysis/understanding/numeric-high/window-report.json.gz"
+      ],
+      "audit": "Root reviewed all claimed original assembly, semantic notes and independent byte/window model; matching complete recorded source and original compiled artifact pins. CPU frame bands excluded by bounded proof; production C integration separate."
+    },
+    {
+      "start": "0x1b29e",
+      "end": "0x1b328",
+      "scope": "18-position operand1 decimal right shift; Packed-prefix arithmetic stated directly; natural sign numerical meaning; no discarded-digit rounding or CPU-frame publication claim.",
+      "source": "analysis/understanding/numeric-high/probe_windows.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/windows.md",
+        "analysis/understanding/numeric-high/probe_windows.py",
+        "analysis/understanding/numeric-high/window-report.json.gz"
+      ],
+      "audit": "Root reviewed all claimed original assembly, semantic notes and independent byte/window model; matching complete recorded source and original compiled artifact pins. CPU frame bands excluded by bounded proof; production C integration separate."
+    },
+    {
+      "start": "0x1b3e4",
+      "end": "0x1b488",
+      "scope": "16-position operand0 decimal shift with exponent compensation; Packed-prefix arithmetic stated directly; natural sign numerical meaning; no discarded-digit rounding or CPU-frame publication claim.",
+      "source": "analysis/understanding/numeric-high/probe_windows.py",
+      "evidence": [
+        "analysis/understanding/numeric-high/windows.md",
+        "analysis/understanding/numeric-high/probe_windows.py",
+        "analysis/understanding/numeric-high/window-report.json.gz"
+      ],
+      "audit": "Root reviewed all claimed original assembly, semantic notes and independent byte/window model; matching complete recorded source and original compiled artifact pins. CPU frame bands excluded by bounded proof; production C integration separate."
     }
   ]
 }

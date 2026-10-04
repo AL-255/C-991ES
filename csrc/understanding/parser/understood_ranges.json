@@ -62,6 +62,108 @@
       ],
       "complete": true,
       "audit": "Independent root review of all claimed assembly instructions, meaningful semantic model, exact branch/record selection and matching recorded source pins. Production parity is separate."
+    },
+    {
+      "start": "0x15856",
+      "end": "0x1589c",
+      "scope": "Numeric-field byte predicate and complete menu-selector translation/bias encoders",
+      "source": "analysis/understanding/parser/sources/lexer_and_transfers_live.c",
+      "evidence": [
+        "analysis/understanding/parser/LEXER-TRANSFERS.md",
+        "analysis/understanding/parser/LIVE-MODE-SUCCESSOR.md",
+        "analysis/understanding/parser/lexer-transfers-live-proof.json.gz"
+      ],
+      "complete": true,
+      "audit": "Root reviewed all claimed assembly instructions, model branches and effects, successor alias fixes and available original proof pins. Production integration is separate."
+    },
+    {
+      "start": "0x15b90",
+      "end": "0x15ba8",
+      "scope": "Variable/fixed-capacity lexer digit append, wrapped remaining/count bytes, equality-only stop",
+      "source": "analysis/understanding/parser/sources/lexer_and_transfers_live.c",
+      "evidence": [
+        "analysis/understanding/parser/LEXER-TRANSFERS.md",
+        "analysis/understanding/parser/LIVE-MODE-SUCCESSOR.md",
+        "analysis/understanding/parser/lexer-transfers-live-proof.json.gz"
+      ],
+      "complete": true,
+      "audit": "Root reviewed all claimed assembly instructions, model branches and effects, successor alias fixes and available original proof pins. Production integration is separate."
+    },
+    {
+      "start": "0x1699c",
+      "end": "0x16a12",
+      "scope": "All three scalar and four live-mode pair transfers; exact chunk alignment, saved registers, overlap and pair sequencing",
+      "source": "analysis/understanding/parser/sources/lexer_and_transfers_live.c",
+      "evidence": [
+        "analysis/understanding/parser/LEXER-TRANSFERS.md",
+        "analysis/understanding/parser/LIVE-MODE-SUCCESSOR.md",
+        "analysis/understanding/parser/lexer-transfers-live-proof.json.gz"
+      ],
+      "complete": true,
+      "audit": "Root reviewed all claimed assembly instructions, model branches and effects, successor alias fixes and available original proof pins. Production integration is separate."
+    },
+    {
+      "start": "0x1669a",
+      "end": "0x16714",
+      "scope": "Complete physical operand push/pop and operator peek/push; exact slot/count limits, live C4 stride, wrapped corrupt depths, native transfer direction and sentinel storage",
+      "source": "analysis/understanding/parser/sources/evaluator_stacks.c",
+      "evidence": [
+        "analysis/understanding/parser/EVALUATOR-STACKS.md",
+        "analysis/understanding/parser/LIVE-MODE-SUCCESSOR.md",
+        "analysis/understanding/parser/evaluator-stacks-live-proof.json.gz",
+        "analysis/understanding/parser/lexer-transfers-live-proof.json.gz"
+      ],
+      "complete": true,
+      "audit": "Root reviewed all claimed assembly instructions, model branches and effects, successor alias fixes and available original proof pins. Production integration is separate."
+    },
+    {
+      "start": "0x174a0",
+      "end": "0x17576",
+      "scope": "Complete three interleaved coefficient common-factor reduction: raw zero/unit shortcuts, represented-integer GCD and ordered guarded decimal division, pool alias sequencing",
+      "source": "analysis/understanding/parser/sources/semantic_adapters.c",
+      "evidence": [
+        "analysis/understanding/parser/SURD-ADAPTERS.md",
+        "analysis/understanding/parser/surd-adapters-proof.json.gz"
+      ],
+      "complete": true,
+      "audit": "Root reviewed complete original assembly, notes and readable model; recorded model/ROM/listing pins matched. Bounded dynamic witnesses; original reports do not claim full oracle artifact guard closure."
+    },
+    {
+      "start": "0x17c4a",
+      "end": "0x17c70",
+      "scope": "Complete pooled contiguous triplet30-byte forward-copy adapter including saved registers and overlapping byte propagation",
+      "source": "analysis/understanding/parser/sources/semantic_adapters.c",
+      "evidence": [
+        "analysis/understanding/parser/SURD-ADAPTERS.md",
+        "analysis/understanding/parser/surd-adapters-proof.json.gz"
+      ],
+      "complete": true,
+      "audit": "Root reviewed complete original assembly, notes and readable model; recorded model/ROM/listing pins matched. Bounded dynamic witnesses; original reports do not claim full oracle artifact guard closure."
+    },
+    {
+      "start": "0x17a46",
+      "end": "0x17b34",
+      "scope": "Complete bounded square-factor extraction: raw exponent-zero shortcuts, exact28-candidate decimal wheel, repeated finite divmod/product order and source/output alias initialization",
+      "source": "analysis/understanding/parser/sources/square_factor_extraction.c",
+      "evidence": [
+        "analysis/understanding/parser/SQUARE-FACTOR-EXTRACTION.md",
+        "analysis/understanding/parser/square-factor-proof.json.gz"
+      ],
+      "complete": true,
+      "audit": "Root reviewed complete original assembly, notes and readable model; recorded model/ROM/listing pins matched. Bounded dynamic witnesses; original reports do not claim full oracle artifact guard closure."
+    },
+    {
+      "start": "0x16598",
+      "end": "0x1660e",
+      "scope": "Complete unary operation routing: unit conversion indices, wrapped unary table indices, live C4 alias classes, special extended operations and captured-mode post-converter cleanup tail",
+      "source": "analysis/understanding/parser/sources/unary_dispatch.c",
+      "evidence": [
+        "analysis/understanding/parser/UNARY-DISPATCH.md",
+        "analysis/understanding/parser/unary-dispatch-proof.json.gz",
+        "analysis/understanding/parser/CONVERSION-SELECTOR.md"
+      ],
+      "complete": true,
+      "audit": "Root reviewed complete original assembly, notes and readable model; recorded model/ROM/listing pins matched. Bounded dynamic witnesses; original reports do not claim full oracle artifact guard closure."
     }
   ]
 }

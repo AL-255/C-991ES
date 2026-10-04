@@ -25,6 +25,200 @@
       ],
       "uncredited_instructions": 506,
       "audit": "Independent root review of all claimed assembly instructions, meaningful semantic model, exact branch/record selection and matching recorded source pins. Production parity is separate."
+    },
+    {
+      "start": "0x118a0",
+      "end": "0x118b2",
+      "scope": "No-op hooks and A coefficient cleanup",
+      "source": "analysis/understanding/numeric-low/stats_preparation_model.c",
+      "evidence": [
+        "analysis/understanding/numeric-low/stats-preparation-notes.md",
+        "analysis/understanding/numeric-low/stats-branch-proof.json.gz",
+        "csrc/stats/fx_stats.c",
+        "csrc/stats/fx_stats_cache.c"
+      ],
+      "uncredited_instructions": 8,
+      "audit": "Root inspected all newly claimed assembly instructions; existing formulas remain independently credited dependencies. Prepared cache/error/mask ordering reviewed and source/proof pins matched."
+    },
+    {
+      "start": "0x11a28",
+      "end": "0x11aca",
+      "scope": "Complete quadratic preparation/count/stage/error orchestration",
+      "source": "analysis/understanding/numeric-low/stats_preparation_model.c",
+      "evidence": [
+        "analysis/understanding/numeric-low/stats-preparation-notes.md",
+        "analysis/understanding/numeric-low/stats-branch-proof.json.gz",
+        "csrc/stats/fx_stats.c",
+        "csrc/stats/fx_stats_cache.c"
+      ],
+      "uncredited_instructions": 67,
+      "audit": "Root inspected all newly claimed assembly instructions; existing formulas remain independently credited dependencies. Prepared cache/error/mask ordering reviewed and source/proof pins matched."
+    },
+    {
+      "start": "0x11e80",
+      "end": "0x11f0c",
+      "scope": "Complete quadratic moment/cache/interrupt preparation",
+      "source": "analysis/understanding/numeric-low/stats_preparation_model.c",
+      "evidence": [
+        "analysis/understanding/numeric-low/stats-preparation-notes.md",
+        "analysis/understanding/numeric-low/stats-branch-proof.json.gz",
+        "csrc/stats/fx_stats.c",
+        "csrc/stats/fx_stats_cache.c"
+      ],
+      "uncredited_instructions": 56,
+      "audit": "Root inspected all newly claimed assembly instructions; existing formulas remain independently credited dependencies. Prepared cache/error/mask ordering reviewed and source/proof pins matched."
+    },
+    {
+      "start": "0x11f0c",
+      "end": "0x1232c",
+      "scope": "Complete prediction fronts/error tails together with already credited formulas; only uncredited front/tail addresses request newcredit",
+      "source": "analysis/understanding/numeric-low/stats_preparation_model.c",
+      "evidence": [
+        "analysis/understanding/numeric-low/stats-preparation-notes.md",
+        "analysis/understanding/numeric-low/stats-branch-proof.json.gz",
+        "csrc/stats/fx_stats.c",
+        "csrc/stats/fx_stats_cache.c"
+      ],
+      "uncredited_instructions": 102,
+      "audit": "Root inspected all newly claimed assembly instructions; existing formulas remain independently credited dependencies. Prepared cache/error/mask ordering reviewed and source/proof pins matched."
+    },
+    {
+      "start": "0x1232c",
+      "end": "0x12700",
+      "scope": "Complete regression model dispatch, transformed cache preparation, coefficient/correlation reconstruction and allstatusbranches",
+      "source": "analysis/understanding/numeric-low/stats_preparation_model.c",
+      "evidence": [
+        "analysis/understanding/numeric-low/stats-preparation-notes.md",
+        "analysis/understanding/numeric-low/stats-branch-proof.json.gz",
+        "csrc/stats/fx_stats.c",
+        "csrc/stats/fx_stats_cache.c"
+      ],
+      "uncredited_instructions": 391,
+      "audit": "Root inspected all newly claimed assembly instructions; existing formulas remain independently credited dependencies. Prepared cache/error/mask ordering reviewed and source/proof pins matched."
+    },
+    {
+      "start": "0x12992",
+      "end": "0x12a22",
+      "scope": "Complete single/paired row pointer,frequency and raw byte-stride plans",
+      "source": "analysis/understanding/numeric-low/stats_preparation_model.c",
+      "evidence": [
+        "analysis/understanding/numeric-low/stats-preparation-notes.md",
+        "analysis/understanding/numeric-low/stats-branch-proof.json.gz",
+        "csrc/stats/fx_stats.c",
+        "csrc/stats/fx_stats_cache.c"
+      ],
+      "uncredited_instructions": 61,
+      "audit": "Root inspected all newly claimed assembly instructions; existing formulas remain independently credited dependencies. Prepared cache/error/mask ordering reviewed and source/proof pins matched."
+    },
+    {
+      "start": "0x12eb6",
+      "end": "0x12ec2",
+      "scope": "Cross-row optional cancellation poll",
+      "source": "analysis/understanding/numeric-low/stats_preparation_model.c",
+      "evidence": [
+        "analysis/understanding/numeric-low/stats-preparation-notes.md",
+        "analysis/understanding/numeric-low/stats-branch-proof.json.gz",
+        "csrc/stats/fx_stats.c",
+        "csrc/stats/fx_stats_cache.c"
+      ],
+      "uncredited_instructions": 5,
+      "audit": "Root inspected all newly claimed assembly instructions; existing formulas remain independently credited dependencies. Prepared cache/error/mask ordering reviewed and source/proof pins matched."
+    },
+    {
+      "start": "0x12ee8",
+      "end": "0x12ef4",
+      "scope": "Cross cancellationF1 publication",
+      "source": "analysis/understanding/numeric-low/stats_preparation_model.c",
+      "evidence": [
+        "analysis/understanding/numeric-low/stats-preparation-notes.md",
+        "analysis/understanding/numeric-low/stats-branch-proof.json.gz",
+        "csrc/stats/fx_stats.c",
+        "csrc/stats/fx_stats_cache.c"
+      ],
+      "uncredited_instructions": 5,
+      "audit": "Root inspected all newly claimed assembly instructions; existing formulas remain independently credited dependencies. Prepared cache/error/mask ordering reviewed and source/proof pins matched."
+    },
+    {
+      "start": "0x130d2",
+      "end": "0x130da",
+      "scope": "Moments optional cancellation poll",
+      "source": "analysis/understanding/numeric-low/stats_preparation_model.c",
+      "evidence": [
+        "analysis/understanding/numeric-low/stats-preparation-notes.md",
+        "analysis/understanding/numeric-low/stats-branch-proof.json.gz",
+        "csrc/stats/fx_stats.c",
+        "csrc/stats/fx_stats_cache.c"
+      ],
+      "uncredited_instructions": 3,
+      "audit": "Root inspected all newly claimed assembly instructions; existing formulas remain independently credited dependencies. Prepared cache/error/mask ordering reviewed and source/proof pins matched."
+    },
+    {
+      "start": "0x1313a",
+      "end": "0x13150",
+      "scope": "Both momentsF1 cancellation publication",
+      "source": "analysis/understanding/numeric-low/stats_preparation_model.c",
+      "evidence": [
+        "analysis/understanding/numeric-low/stats-preparation-notes.md",
+        "analysis/understanding/numeric-low/stats-branch-proof.json.gz",
+        "csrc/stats/fx_stats.c",
+        "csrc/stats/fx_stats_cache.c"
+      ],
+      "uncredited_instructions": 9,
+      "audit": "Root inspected all newly claimed assembly instructions; existing formulas remain independently credited dependencies. Prepared cache/error/mask ordering reviewed and source/proof pins matched."
+    },
+    {
+      "start": "0x10962",
+      "end": "0x10b60",
+      "scope": "Complete finite decimal interval and bounded continued-fraction recognition: tolerance, endpoint/wrap gates, lower21rounds, matched-prefix/parity/termination, reverse recurrence, digit budget and returns. Caller admission/pi division separate.",
+      "source": "analysis/understanding/numeric-low/continued_fraction_model.c",
+      "evidence": [
+        "analysis/understanding/numeric-low/continued-fraction-notes.md",
+        "analysis/understanding/numeric-low/cf-branch-proof.json.gz"
+      ],
+      "uncredited_instructions": 216,
+      "audit": "Root reviewed complete original assembly, notes and semantic model; matching recorded source and scalar original artifact pins. Bounded witnesses and delegated implementation gaps retained."
+    },
+    {
+      "start": "0x10f10",
+      "end": "0x10f80",
+      "scope": "Complete equation caption selection and six-byte temporary/display restoration",
+      "source": "analysis/understanding/numeric-low/display_label_model.c",
+      "evidence": [
+        "analysis/understanding/numeric-low/display-label-notes.md",
+        "analysis/disassembly/complete.asm",
+        "firmware/fx-991es-plus-c-ver4.bin",
+        "analysis/understanding/numeric-low/display-label-proof.json"
+      ],
+      "uncredited_instructions": 21,
+      "audit": "Root reviewed complete original assembly, notes and semantic model; matching recorded source and scalar original artifact pins. Bounded witnesses and delegated implementation gaps retained."
+    },
+    {
+      "start": "0x10f80",
+      "end": "0x11002",
+      "scope": "Complete fixed glyph/position and f/g(X) display request family",
+      "source": "analysis/understanding/numeric-low/display_label_model.c",
+      "evidence": [
+        "analysis/understanding/numeric-low/display-label-notes.md",
+        "analysis/disassembly/complete.asm",
+        "firmware/fx-991es-plus-c-ver4.bin",
+        "analysis/understanding/numeric-low/display-label-proof.json"
+      ],
+      "uncredited_instructions": 59,
+      "audit": "Root reviewed complete original assembly, notes and semantic model; matching recorded source and scalar original artifact pins. Bounded witnesses and delegated implementation gaps retained."
+    },
+    {
+      "start": "0x110cc",
+      "end": "0x110fe",
+      "scope": "Complete eight fixed syntax append entries and common tail dispatch",
+      "source": "analysis/understanding/numeric-low/display_label_model.c",
+      "evidence": [
+        "analysis/understanding/numeric-low/display-label-notes.md",
+        "analysis/disassembly/complete.asm",
+        "firmware/fx-991es-plus-c-ver4.bin",
+        "analysis/understanding/numeric-low/display-label-proof.json"
+      ],
+      "uncredited_instructions": 24,
+      "audit": "Root reviewed complete original assembly, notes and semantic model; matching recorded source and scalar original artifact pins. Bounded witnesses and delegated implementation gaps retained."
     }
   ]
 }

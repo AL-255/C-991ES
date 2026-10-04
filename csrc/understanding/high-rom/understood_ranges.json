@@ -79,6 +79,202 @@
         "analysis/disassembly/complete.asm"
       ],
       "audit": "Independent root review of all claimed assembly instructions, meaningful semantic model, exact branch/record selection and matching recorded source pins. Production parity is separate."
+    },
+    {
+      "start": "0x1c000",
+      "end": "0x1c082",
+      "scope": "Ordinary binary finite arithmetic, marker restoration and common commit",
+      "source": "analysis/understanding/high-rom/model-numeric-adapters.c",
+      "evidence": [
+        "analysis/understanding/high-rom/numeric-adapters.md",
+        "analysis/understanding/high-rom/numeric-wrapper-proof.json.gz",
+        "analysis/disassembly/complete.asm",
+        "analysis/understanding/high-rom/exponent-byte-proof.json",
+        "analysis/understanding/high-rom/numeric-freeze.json"
+      ],
+      "audit": "Root reviewed every newly claimed assembly instruction and final model; corrected selector4, prepared selector classes, opcode/source order and exponent low-byte contract. Matching final freeze pins; native controls are witnesses, no production C parity claim."
+    },
+    {
+      "start": "0x1c082",
+      "end": "0x1c138",
+      "scope": "Power/nth-root/logbase/combinatoric adapter and admission",
+      "source": "analysis/understanding/high-rom/model-numeric-adapters.c",
+      "evidence": [
+        "analysis/understanding/high-rom/numeric-adapters.md",
+        "analysis/understanding/high-rom/numeric-wrapper-proof.json.gz",
+        "analysis/disassembly/complete.asm",
+        "analysis/understanding/high-rom/exponent-byte-proof.json",
+        "analysis/understanding/high-rom/numeric-freeze.json"
+      ],
+      "audit": "Root reviewed every newly claimed assembly instruction and final model; corrected selector4, prepared selector classes, opcode/source order and exponent low-byte contract. Matching final freeze pins; native controls are witnesses, no production C parity claim."
+    },
+    {
+      "start": "0x1c1a2",
+      "end": "0x1c312",
+      "scope": "Decimal unary family dispatch, conversion and error serialization",
+      "source": "analysis/understanding/high-rom/model-numeric-adapters.c",
+      "evidence": [
+        "analysis/understanding/high-rom/numeric-adapters.md",
+        "analysis/understanding/high-rom/numeric-wrapper-proof.json.gz",
+        "analysis/disassembly/complete.asm",
+        "analysis/understanding/high-rom/exponent-byte-proof.json",
+        "analysis/understanding/high-rom/numeric-freeze.json"
+      ],
+      "audit": "Root reviewed every newly claimed assembly instruction and final model; corrected selector4, prepared selector classes, opcode/source order and exponent low-byte contract. Matching final freeze pins; native controls are witnesses, no production C parity claim."
+    },
+    {
+      "start": "0x1c604",
+      "end": "0x1c648",
+      "scope": "Prepared angle argument transport and angleunit snapshot",
+      "source": "analysis/understanding/high-rom/model-numeric-adapters.c",
+      "evidence": [
+        "analysis/understanding/high-rom/numeric-adapters.md",
+        "analysis/understanding/high-rom/numeric-wrapper-proof.json.gz",
+        "analysis/disassembly/complete.asm",
+        "analysis/understanding/high-rom/exponent-byte-proof.json",
+        "analysis/understanding/high-rom/numeric-freeze.json"
+      ],
+      "audit": "Root reviewed every newly claimed assembly instruction and final model; corrected selector4, prepared selector classes, opcode/source order and exponent low-byte contract. Matching final freeze pins; native controls are witnesses, no production C parity claim. Root corrected proposed mid-instruction start1C5F6 to complete actual ARG entry1C604; preceding already-understood epilogue excluded."
+    },
+    {
+      "start": "0x1c878",
+      "end": "0x1c902",
+      "scope": "Exact rational unary operation prologues and common driver",
+      "source": "analysis/understanding/high-rom/model-numeric-adapters.c",
+      "evidence": [
+        "analysis/understanding/high-rom/numeric-adapters.md",
+        "analysis/understanding/high-rom/numeric-wrapper-proof.json.gz",
+        "analysis/disassembly/complete.asm",
+        "analysis/understanding/high-rom/exponent-byte-proof.json",
+        "analysis/understanding/high-rom/numeric-freeze.json"
+      ],
+      "audit": "Root reviewed every newly claimed assembly instruction and final model; corrected selector4, prepared selector classes, opcode/source order and exponent low-byte contract. Matching final freeze pins; native controls are witnesses, no production C parity claim."
+    },
+    {
+      "start": "0x1c902",
+      "end": "0x1ca4a",
+      "scope": "Rational format conversion, reduced/mixed fraction and integer gcd admission",
+      "source": "analysis/understanding/high-rom/model-numeric-adapters.c",
+      "evidence": [
+        "analysis/understanding/high-rom/numeric-adapters.md",
+        "analysis/understanding/high-rom/numeric-wrapper-proof.json.gz",
+        "analysis/disassembly/complete.asm",
+        "analysis/understanding/high-rom/exponent-byte-proof.json",
+        "analysis/understanding/high-rom/numeric-freeze.json"
+      ],
+      "audit": "Root reviewed every newly claimed assembly instruction and final model; corrected selector4, prepared selector classes, opcode/source order and exponent low-byte contract. Matching final freeze pins; native controls are witnesses, no production C parity claim."
+    },
+    {
+      "start": "0x1ca6e",
+      "end": "0x1cabe",
+      "scope": "Private marker-cleared integer-atleasttwo gate and strict integer status",
+      "source": "analysis/understanding/high-rom/model-numeric-adapters.c",
+      "evidence": [
+        "analysis/understanding/high-rom/numeric-adapters.md",
+        "analysis/understanding/high-rom/numeric-wrapper-proof.json.gz",
+        "analysis/disassembly/complete.asm",
+        "analysis/understanding/high-rom/exponent-byte-proof.json",
+        "analysis/understanding/high-rom/numeric-freeze.json"
+      ],
+      "audit": "Root reviewed every newly claimed assembly instruction and final model; corrected selector4, prepared selector classes, opcode/source order and exponent low-byte contract. Matching final freeze pins; native controls are witnesses, no production C parity claim."
+    },
+    {
+      "start": "0x1cc70",
+      "end": "0x1ccf6",
+      "scope": "Precision rounding guard policies and overflow source reread",
+      "source": "analysis/understanding/high-rom/model-numeric-adapters.c",
+      "evidence": [
+        "analysis/understanding/high-rom/numeric-adapters.md",
+        "analysis/understanding/high-rom/numeric-wrapper-proof.json.gz",
+        "analysis/disassembly/complete.asm",
+        "analysis/understanding/high-rom/exponent-byte-proof.json",
+        "analysis/understanding/high-rom/numeric-freeze.json"
+      ],
+      "audit": "Root reviewed every newly claimed assembly instruction and final model; corrected selector4, prepared selector classes, opcode/source order and exponent low-byte contract. Matching final freeze pins; native controls are witnesses, no production C parity claim."
+    },
+    {
+      "start": "0x1cd60",
+      "end": "0x1cda8",
+      "scope": "Ordinary signed/magnitude comparison and invalid status",
+      "source": "analysis/understanding/high-rom/model-numeric-adapters.c",
+      "evidence": [
+        "analysis/understanding/high-rom/numeric-adapters.md",
+        "analysis/understanding/high-rom/numeric-wrapper-proof.json.gz",
+        "analysis/disassembly/complete.asm",
+        "analysis/understanding/high-rom/exponent-byte-proof.json",
+        "analysis/understanding/high-rom/numeric-freeze.json"
+      ],
+      "audit": "Root reviewed every newly claimed assembly instruction and final model; corrected selector4, prepared selector classes, opcode/source order and exponent low-byte contract. Matching final freeze pins; native controls are witnesses, no production C parity claim."
+    },
+    {
+      "start": "0x1ce0a",
+      "end": "0x1ce70",
+      "scope": "Sign multiplication/zeroing and early error-source preservation",
+      "source": "analysis/understanding/high-rom/model-numeric-adapters.c",
+      "evidence": [
+        "analysis/understanding/high-rom/numeric-adapters.md",
+        "analysis/understanding/high-rom/numeric-wrapper-proof.json.gz",
+        "analysis/disassembly/complete.asm",
+        "analysis/understanding/high-rom/exponent-byte-proof.json",
+        "analysis/understanding/high-rom/numeric-freeze.json"
+      ],
+      "audit": "Root reviewed every newly claimed assembly instruction and final model; corrected selector4, prepared selector classes, opcode/source order and exponent low-byte contract. Matching final freeze pins; native controls are witnesses, no production C parity claim."
+    },
+    {
+      "start": "0x1cf40",
+      "end": "0x1cfde",
+      "scope": "Error nibble and asymmetric decimal exponent adjust overflow/underflow",
+      "source": "analysis/understanding/high-rom/model-numeric-adapters.c",
+      "evidence": [
+        "analysis/understanding/high-rom/numeric-adapters.md",
+        "analysis/understanding/high-rom/numeric-wrapper-proof.json.gz",
+        "analysis/disassembly/complete.asm",
+        "analysis/understanding/high-rom/exponent-byte-proof.json",
+        "analysis/understanding/high-rom/numeric-freeze.json"
+      ],
+      "audit": "Root reviewed every newly claimed assembly instruction and final model; corrected selector4, prepared selector classes, opcode/source order and exponent low-byte contract. Matching final freeze pins; native controls are witnesses, no production C parity claim."
+    },
+    {
+      "start": "0x1d030",
+      "end": "0x1d08c",
+      "scope": "Fractional-part/truncation adapters and ordered scalar conversion",
+      "source": "analysis/understanding/high-rom/model-numeric-adapters.c",
+      "evidence": [
+        "analysis/understanding/high-rom/numeric-adapters.md",
+        "analysis/understanding/high-rom/numeric-wrapper-proof.json.gz",
+        "analysis/disassembly/complete.asm",
+        "analysis/understanding/high-rom/exponent-byte-proof.json",
+        "analysis/understanding/high-rom/numeric-freeze.json"
+      ],
+      "audit": "Root reviewed every newly claimed assembly instruction and final model; corrected selector4, prepared selector classes, opcode/source order and exponent low-byte contract. Matching final freeze pins; native controls are witnesses, no production C parity claim."
+    },
+    {
+      "start": "0x1d0e8",
+      "end": "0x1d12c",
+      "scope": "Nonmutating prepared positive ordinary byte extraction",
+      "source": "analysis/understanding/high-rom/model-numeric-adapters.c",
+      "evidence": [
+        "analysis/understanding/high-rom/numeric-adapters.md",
+        "analysis/understanding/high-rom/numeric-wrapper-proof.json.gz",
+        "analysis/disassembly/complete.asm",
+        "analysis/understanding/high-rom/exponent-byte-proof.json",
+        "analysis/understanding/high-rom/numeric-freeze.json"
+      ],
+      "audit": "Root reviewed every newly claimed assembly instruction and final model; corrected selector4, prepared selector classes, opcode/source order and exponent low-byte contract. Matching final freeze pins; native controls are witnesses, no production C parity claim."
+    },
+    {
+      "start": "0x1d158",
+      "end": "0x1d1a2",
+      "scope": "e/pi literals and integer-unit parity working transport",
+      "source": "analysis/understanding/high-rom/model-numeric-adapters.c",
+      "evidence": [
+        "analysis/understanding/high-rom/numeric-adapters.md",
+        "analysis/understanding/high-rom/numeric-wrapper-proof.json.gz",
+        "analysis/disassembly/complete.asm",
+        "analysis/understanding/high-rom/exponent-byte-proof.json",
+        "analysis/understanding/high-rom/numeric-freeze.json"
+      ],
+      "audit": "Root reviewed every newly claimed assembly instruction and final model; corrected selector4, prepared selector classes, opcode/source order and exponent low-byte contract. Matching final freeze pins; native controls are witnesses, no production C parity claim."
     }
   ]
 }
