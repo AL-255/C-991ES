@@ -24,6 +24,119 @@
         "analysis/understanding/protocol-high/rational-proof.json"
       ],
       "audit": "Root reviewed all claimed assembly instructions, model branches and effects, successor alias fixes and available original proof pins. Production integration is separate."
+    },
+    {
+      "start": "0x62a2",
+      "end": "0x6f80",
+      "source": "analysis/understanding/protocol-high/gamma-corrected/distribution_math.c",
+      "scope": "Complete finite upper probability branches, original rounding/status/poll/iteration/publication order with named scalar dependencies",
+      "evidence": [
+        "analysis/understanding/protocol-high/gamma-corrected/HANDOFF.md",
+        "analysis/understanding/protocol-high/gamma-corrected/distribution-proof.json",
+        "analysis/understanding/protocol-high/gamma-corrected/successor-validation.json",
+        "analysis/understanding/protocol-high/independent-review/REVIEW.md",
+        "analysis/understanding/protocol-high/independent-review/checkpoint-proof.json"
+      ],
+      "audit": "Complete1400-start ASM independently reviewed; root reviewed full handwritten models/notes and confirmed original75 and successor68 current pin checks. Only corrected gamma function uses fresh41 affected calls;125 unaffected calls remain historical. Independent4 O2/O3 prepared checkpoints verify finite reciprocal/multiply/add order with3 direct-division counterexamples. Platform595 original calls; ten unreached numerical tails and hardware failure branches fully mapped statically. Semantic understanding, not production integration or unrestricted full-RAM/all-tag parity."
+    },
+    {
+      "start": "0x6f80",
+      "end": "0x6f82",
+      "source": "analysis/understanding/protocol-high/final-parent/platform_leaves.c",
+      "scope": "Complete sparse platform diagnostic/exception/width/ROM-read/ASCII/remainder/predicate contracts",
+      "evidence": [
+        "analysis/understanding/protocol-high/final-parent/PLATFORM-LEAVES.md",
+        "analysis/understanding/protocol-high/final-parent/platform-proof.json"
+      ],
+      "audit": "Complete1400-start ASM independently reviewed; root reviewed full handwritten models/notes and confirmed original75 and successor68 current pin checks. Only corrected gamma function uses fresh41 affected calls;125 unaffected calls remain historical. Independent4 O2/O3 prepared checkpoints verify finite reciprocal/multiply/add order with3 direct-division counterexamples. Platform595 original calls; ten unreached numerical tails and hardware failure branches fully mapped statically. Semantic understanding, not production integration or unrestricted full-RAM/all-tag parity."
+    },
+    {
+      "start": "0x6f84",
+      "end": "0x6f86",
+      "source": "analysis/understanding/protocol-high/final-parent/platform_leaves.c",
+      "scope": "Complete sparse platform diagnostic/exception/width/ROM-read/ASCII/remainder/predicate contracts",
+      "evidence": [
+        "analysis/understanding/protocol-high/final-parent/PLATFORM-LEAVES.md",
+        "analysis/understanding/protocol-high/final-parent/platform-proof.json"
+      ],
+      "audit": "Complete1400-start ASM independently reviewed; root reviewed full handwritten models/notes and confirmed original75 and successor68 current pin checks. Only corrected gamma function uses fresh41 affected calls;125 unaffected calls remain historical. Independent4 O2/O3 prepared checkpoints verify finite reciprocal/multiply/add order with3 direct-division counterexamples. Platform595 original calls; ten unreached numerical tails and hardware failure branches fully mapped statically. Semantic understanding, not production integration or unrestricted full-RAM/all-tag parity."
+    },
+    {
+      "start": "0x7282",
+      "end": "0x7286",
+      "source": "analysis/understanding/protocol-high/final-parent/platform_leaves.c",
+      "scope": "Complete sparse platform diagnostic/exception/width/ROM-read/ASCII/remainder/predicate contracts",
+      "evidence": [
+        "analysis/understanding/protocol-high/final-parent/PLATFORM-LEAVES.md",
+        "analysis/understanding/protocol-high/final-parent/platform-proof.json"
+      ],
+      "audit": "Complete1400-start ASM independently reviewed; root reviewed full handwritten models/notes and confirmed original75 and successor68 current pin checks. Only corrected gamma function uses fresh41 affected calls;125 unaffected calls remain historical. Independent4 O2/O3 prepared checkpoints verify finite reciprocal/multiply/add order with3 direct-division counterexamples. Platform595 original calls; ten unreached numerical tails and hardware failure branches fully mapped statically. Semantic understanding, not production integration or unrestricted full-RAM/all-tag parity."
+    },
+    {
+      "start": "0x72de",
+      "end": "0x72ee",
+      "source": "analysis/understanding/protocol-high/final-parent/platform_leaves.c",
+      "scope": "Complete sparse platform diagnostic/exception/width/ROM-read/ASCII/remainder/predicate contracts",
+      "evidence": [
+        "analysis/understanding/protocol-high/final-parent/PLATFORM-LEAVES.md",
+        "analysis/understanding/protocol-high/final-parent/platform-proof.json"
+      ],
+      "audit": "Complete1400-start ASM independently reviewed; root reviewed full handwritten models/notes and confirmed original75 and successor68 current pin checks. Only corrected gamma function uses fresh41 affected calls;125 unaffected calls remain historical. Independent4 O2/O3 prepared checkpoints verify finite reciprocal/multiply/add order with3 direct-division counterexamples. Platform595 original calls; ten unreached numerical tails and hardware failure branches fully mapped statically. Semantic understanding, not production integration or unrestricted full-RAM/all-tag parity."
+    },
+    {
+      "start": "0x7334",
+      "end": "0x739e",
+      "source": "analysis/understanding/protocol-high/final-parent/platform_leaves.c",
+      "scope": "Complete sparse platform diagnostic/exception/width/ROM-read/ASCII/remainder/predicate contracts",
+      "evidence": [
+        "analysis/understanding/protocol-high/final-parent/PLATFORM-LEAVES.md",
+        "analysis/understanding/protocol-high/final-parent/platform-proof.json"
+      ],
+      "audit": "Complete1400-start ASM independently reviewed; root reviewed full handwritten models/notes and confirmed original75 and successor68 current pin checks. Only corrected gamma function uses fresh41 affected calls;125 unaffected calls remain historical. Independent4 O2/O3 prepared checkpoints verify finite reciprocal/multiply/add order with3 direct-division counterexamples. Platform595 original calls; ten unreached numerical tails and hardware failure branches fully mapped statically. Semantic understanding, not production integration or unrestricted full-RAM/all-tag parity."
+    },
+    {
+      "start": "0x742a",
+      "end": "0x742c",
+      "source": "analysis/understanding/protocol-high/final-parent/platform_leaves.c",
+      "scope": "Complete sparse platform diagnostic/exception/width/ROM-read/ASCII/remainder/predicate contracts",
+      "evidence": [
+        "analysis/understanding/protocol-high/final-parent/PLATFORM-LEAVES.md",
+        "analysis/understanding/protocol-high/final-parent/platform-proof.json"
+      ],
+      "audit": "Complete1400-start ASM independently reviewed; root reviewed full handwritten models/notes and confirmed original75 and successor68 current pin checks. Only corrected gamma function uses fresh41 affected calls;125 unaffected calls remain historical. Independent4 O2/O3 prepared checkpoints verify finite reciprocal/multiply/add order with3 direct-division counterexamples. Platform595 original calls; ten unreached numerical tails and hardware failure branches fully mapped statically. Semantic understanding, not production integration or unrestricted full-RAM/all-tag parity."
+    },
+    {
+      "start": "0x7916",
+      "end": "0x792c",
+      "source": "analysis/understanding/protocol-high/final-parent/platform_leaves.c",
+      "scope": "Complete sparse platform diagnostic/exception/width/ROM-read/ASCII/remainder/predicate contracts",
+      "evidence": [
+        "analysis/understanding/protocol-high/final-parent/PLATFORM-LEAVES.md",
+        "analysis/understanding/protocol-high/final-parent/platform-proof.json"
+      ],
+      "audit": "Complete1400-start ASM independently reviewed; root reviewed full handwritten models/notes and confirmed original75 and successor68 current pin checks. Only corrected gamma function uses fresh41 affected calls;125 unaffected calls remain historical. Independent4 O2/O3 prepared checkpoints verify finite reciprocal/multiply/add order with3 direct-division counterexamples. Platform595 original calls; ten unreached numerical tails and hardware failure branches fully mapped statically. Semantic understanding, not production integration or unrestricted full-RAM/all-tag parity."
+    },
+    {
+      "start": "0x7a5e",
+      "end": "0x7a60",
+      "source": "analysis/understanding/protocol-high/final-parent/platform_leaves.c",
+      "scope": "Complete sparse platform diagnostic/exception/width/ROM-read/ASCII/remainder/predicate contracts",
+      "evidence": [
+        "analysis/understanding/protocol-high/final-parent/PLATFORM-LEAVES.md",
+        "analysis/understanding/protocol-high/final-parent/platform-proof.json"
+      ],
+      "audit": "Complete1400-start ASM independently reviewed; root reviewed full handwritten models/notes and confirmed original75 and successor68 current pin checks. Only corrected gamma function uses fresh41 affected calls;125 unaffected calls remain historical. Independent4 O2/O3 prepared checkpoints verify finite reciprocal/multiply/add order with3 direct-division counterexamples. Platform595 original calls; ten unreached numerical tails and hardware failure branches fully mapped statically. Semantic understanding, not production integration or unrestricted full-RAM/all-tag parity."
+    },
+    {
+      "start": "0x7acc",
+      "end": "0x7af4",
+      "source": "analysis/understanding/protocol-high/final-parent/platform_leaves.c",
+      "scope": "Complete sparse platform diagnostic/exception/width/ROM-read/ASCII/remainder/predicate contracts",
+      "evidence": [
+        "analysis/understanding/protocol-high/final-parent/PLATFORM-LEAVES.md",
+        "analysis/understanding/protocol-high/final-parent/platform-proof.json"
+      ],
+      "audit": "Complete1400-start ASM independently reviewed; root reviewed full handwritten models/notes and confirmed original75 and successor68 current pin checks. Only corrected gamma function uses fresh41 affected calls;125 unaffected calls remain historical. Independent4 O2/O3 prepared checkpoints verify finite reciprocal/multiply/add order with3 direct-division counterexamples. Platform595 original calls; ten unreached numerical tails and hardware failure branches fully mapped statically. Semantic understanding, not production integration or unrestricted full-RAM/all-tag parity."
     }
   ]
 }

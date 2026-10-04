@@ -149,6 +149,150 @@
         "analysis/understanding/ui-mid/grid-phase-proof.json.gz"
       ],
       "audit": "Root reviewed all22 instructions and complete model/notes; all20 recorded source/artifact pins match."
+    },
+    {
+      "start": "0xe906",
+      "end": "0xea4a",
+      "source": "analysis/understanding/ui-mid/fx_equation_refresh.c",
+      "scope": "Controller call order and exact selected scalar/grid/caption/input arguments; delegated CPU bodies execute unchanged, INPUT observations stop at real entry. No complete delegated persistent RAM parity claim.",
+      "evidence": [
+        "analysis/understanding/ui-mid/proposed-equation-refresh-understanding.json",
+        "analysis/understanding/ui-mid/EQUATION-REFRESH-HANDOFF.md",
+        "analysis/understanding/ui-mid/equation-refresh-proof.json.gz"
+      ],
+      "audit": "Root read complete controller ASM, high-level models and handoffs; recovery native observer/test also inspected. All declared current pins independently verified: refresh20, commit21, recovery20. Original350/628/75 calls and700/1256/150 O2/O3 controller comparisons. Full new224 starts reached. Delegated callee instructions and unrestricted full persistent RAM/numeric result parity excluded; explicit external MMIO acknowledgment and bounded coefficient contracts preserved."
+    },
+    {
+      "start": "0xe694",
+      "end": "0xe6a2",
+      "source": "analysis/understanding/ui-mid/fx_value_commit.c",
+      "scope": "Prepared value dispatcher branches and exact cleanup/copy/advance arguments and owned phase/key write values; all native callee bodies execute, no delegated persistent RAM parity claim.",
+      "evidence": [
+        "analysis/understanding/ui-mid/proposed-value-commit-understanding.json",
+        "analysis/understanding/ui-mid/VALUE-COMMIT-HANDOFF.md",
+        "analysis/understanding/ui-mid/value-commit-proof.json.gz"
+      ],
+      "audit": "Root read complete controller ASM, high-level models and handoffs; recovery native observer/test also inspected. All declared current pins independently verified: refresh20, commit21, recovery20. Original350/628/75 calls and700/1256/150 O2/O3 controller comparisons. Full new224 starts reached. Delegated callee instructions and unrestricted full persistent RAM/numeric result parity excluded; explicit external MMIO acknowledgment and bounded coefficient contracts preserved."
+    },
+    {
+      "start": "0xe6a6",
+      "end": "0xe6de",
+      "source": "analysis/understanding/ui-mid/fx_value_commit.c",
+      "scope": "Prepared value dispatcher branches and exact cleanup/copy/advance arguments and owned phase/key write values; all native callee bodies execute, no delegated persistent RAM parity claim.",
+      "evidence": [
+        "analysis/understanding/ui-mid/proposed-value-commit-understanding.json",
+        "analysis/understanding/ui-mid/VALUE-COMMIT-HANDOFF.md",
+        "analysis/understanding/ui-mid/value-commit-proof.json.gz"
+      ],
+      "audit": "Root read complete controller ASM, high-level models and handoffs; recovery native observer/test also inspected. All declared current pins independently verified: refresh20, commit21, recovery20. Original350/628/75 calls and700/1256/150 O2/O3 controller comparisons. Full new224 starts reached. Delegated callee instructions and unrestricted full persistent RAM/numeric result parity excluded; explicit external MMIO acknowledgment and bounded coefficient contracts preserved."
+    },
+    {
+      "start": "0xe724",
+      "end": "0xe732",
+      "source": "analysis/understanding/ui-mid/fx_value_commit.c",
+      "scope": "Prepared value dispatcher branches and exact cleanup/copy/advance arguments and owned phase/key write values; all native callee bodies execute, no delegated persistent RAM parity claim.",
+      "evidence": [
+        "analysis/understanding/ui-mid/proposed-value-commit-understanding.json",
+        "analysis/understanding/ui-mid/VALUE-COMMIT-HANDOFF.md",
+        "analysis/understanding/ui-mid/value-commit-proof.json.gz"
+      ],
+      "audit": "Root read complete controller ASM, high-level models and handoffs; recovery native observer/test also inspected. All declared current pins independently verified: refresh20, commit21, recovery20. Original350/628/75 calls and700/1256/150 O2/O3 controller comparisons. Full new224 starts reached. Delegated callee instructions and unrestricted full persistent RAM/numeric result parity excluded; explicit external MMIO acknowledgment and bounded coefficient contracts preserved."
+    },
+    {
+      "start": "0xe756",
+      "end": "0xe782",
+      "source": "analysis/understanding/ui-mid/fx_value_commit.c",
+      "scope": "Prepared value dispatcher branches and exact cleanup/copy/advance arguments and owned phase/key write values; all native callee bodies execute, no delegated persistent RAM parity claim.",
+      "evidence": [
+        "analysis/understanding/ui-mid/proposed-value-commit-understanding.json",
+        "analysis/understanding/ui-mid/VALUE-COMMIT-HANDOFF.md",
+        "analysis/understanding/ui-mid/value-commit-proof.json.gz"
+      ],
+      "audit": "Root read complete controller ASM, high-level models and handoffs; recovery native observer/test also inspected. All declared current pins independently verified: refresh20, commit21, recovery20. Original350/628/75 calls and700/1256/150 O2/O3 controller comparisons. Full new224 starts reached. Delegated callee instructions and unrestricted full persistent RAM/numeric result parity excluded; explicit external MMIO acknowledgment and bounded coefficient contracts preserved."
+    },
+    {
+      "start": "0xe7e0",
+      "end": "0xe82e",
+      "source": "analysis/understanding/ui-mid/fx_value_commit.c",
+      "scope": "Prepared value dispatcher branches and exact cleanup/copy/advance arguments and owned phase/key write values; all native callee bodies execute, no delegated persistent RAM parity claim.",
+      "evidence": [
+        "analysis/understanding/ui-mid/proposed-value-commit-understanding.json",
+        "analysis/understanding/ui-mid/VALUE-COMMIT-HANDOFF.md",
+        "analysis/understanding/ui-mid/value-commit-proof.json.gz"
+      ],
+      "audit": "Root read complete controller ASM, high-level models and handoffs; recovery native observer/test also inspected. All declared current pins independently verified: refresh20, commit21, recovery20. Original350/628/75 calls and700/1256/150 O2/O3 controller comparisons. Full new224 starts reached. Delegated callee instructions and unrestricted full persistent RAM/numeric result parity excluded; explicit external MMIO acknowledgment and bounded coefficient contracts preserved."
+    },
+    {
+      "start": "0xe88a",
+      "end": "0xe8cc",
+      "source": "analysis/understanding/ui-mid/fx_equation_recovery.c",
+      "scope": "Complete original E862 calls and real raw-key recovery; C models UI decision/state using independent bounded numeric callee contracts, not native output feed. Numeric solver/classifier/vertex and delegated redraw/banner bodies excluded.",
+      "evidence": [
+        "analysis/understanding/ui-mid/proposed-equation-recovery-understanding.json",
+        "analysis/understanding/ui-mid/EQUATION-RECOVERY-HANDOFF.md",
+        "analysis/understanding/ui-mid/equation-recovery-proof.json"
+      ],
+      "audit": "Root read complete controller ASM, high-level models and handoffs; recovery native observer/test also inspected. All declared current pins independently verified: refresh20, commit21, recovery20. Original350/628/75 calls and700/1256/150 O2/O3 controller comparisons. Full new224 starts reached. Delegated callee instructions and unrestricted full persistent RAM/numeric result parity excluded; explicit external MMIO acknowledgment and bounded coefficient contracts preserved."
+    },
+    {
+      "start": "0xe8d4",
+      "end": "0xe8e6",
+      "source": "analysis/understanding/ui-mid/fx_equation_recovery.c",
+      "scope": "Complete original E862 calls and real raw-key recovery; C models UI decision/state using independent bounded numeric callee contracts, not native output feed. Numeric solver/classifier/vertex and delegated redraw/banner bodies excluded.",
+      "evidence": [
+        "analysis/understanding/ui-mid/proposed-equation-recovery-understanding.json",
+        "analysis/understanding/ui-mid/EQUATION-RECOVERY-HANDOFF.md",
+        "analysis/understanding/ui-mid/equation-recovery-proof.json"
+      ],
+      "audit": "Root read complete controller ASM, high-level models and handoffs; recovery native observer/test also inspected. All declared current pins independently verified: refresh20, commit21, recovery20. Original350/628/75 calls and700/1256/150 O2/O3 controller comparisons. Full new224 starts reached. Delegated callee instructions and unrestricted full persistent RAM/numeric result parity excluded; explicit external MMIO acknowledgment and bounded coefficient contracts preserved."
+    },
+    {
+      "start": "0xe8f6",
+      "end": "0xe900",
+      "source": "analysis/understanding/ui-mid/fx_equation_recovery.c",
+      "scope": "Complete original E862 calls and real raw-key recovery; C models UI decision/state using independent bounded numeric callee contracts, not native output feed. Numeric solver/classifier/vertex and delegated redraw/banner bodies excluded.",
+      "evidence": [
+        "analysis/understanding/ui-mid/proposed-equation-recovery-understanding.json",
+        "analysis/understanding/ui-mid/EQUATION-RECOVERY-HANDOFF.md",
+        "analysis/understanding/ui-mid/equation-recovery-proof.json"
+      ],
+      "audit": "Root read complete controller ASM, high-level models and handoffs; recovery native observer/test also inspected. All declared current pins independently verified: refresh20, commit21, recovery20. Original350/628/75 calls and700/1256/150 O2/O3 controller comparisons. Full new224 starts reached. Delegated callee instructions and unrestricted full persistent RAM/numeric result parity excluded; explicit external MMIO acknowledgment and bounded coefficient contracts preserved."
+    },
+    {
+      "start": "0xdb00",
+      "end": "0xdb9a",
+      "source": "analysis/understanding/ui-mid/fx_input_key_filter.c",
+      "scope": "Bounded original DB00..DBE0 fragment under explicit caller frame, no skipped internal calls; complete key publication and every other persistent RAM byte parity. Surrounding INPUT preflight/continuation and remapping callees excluded.",
+      "evidence": [
+        "analysis/understanding/ui-mid/proposed-input-key-filter-understanding.json",
+        "analysis/understanding/ui-mid/INPUT-KEY-FILTER-HANDOFF.md",
+        "analysis/understanding/ui-mid/input-key-filter-proof.json"
+      ],
+      "audit": "Root read whole filtering ASM/notes/C and prompt mapping/controller model. Every declared original source/tool/artifact pin current. Filtering112640 true bounded DB00 entries/225280 O2/O3 comparisons with all otherRAM unchanged; explicit initialFP savedmode versus live guards, internal leaves unmodified. Prompt86 complete originaldialogs/172 O2/O3 action/token comparisons independently compose already understood dialog model. All116 newly claimed starts observed. Bounded filter block excludes surrounding INPUT; prompt renderer/device RAM excluded."
+    },
+    {
+      "start": "0xdbac",
+      "end": "0xdbe0",
+      "source": "analysis/understanding/ui-mid/fx_input_key_filter.c",
+      "scope": "Bounded original DB00..DBE0 fragment under explicit caller frame, no skipped internal calls; complete key publication and every other persistent RAM byte parity. Surrounding INPUT preflight/continuation and remapping callees excluded.",
+      "evidence": [
+        "analysis/understanding/ui-mid/proposed-input-key-filter-understanding.json",
+        "analysis/understanding/ui-mid/INPUT-KEY-FILTER-HANDOFF.md",
+        "analysis/understanding/ui-mid/input-key-filter-proof.json"
+      ],
+      "audit": "Root read whole filtering ASM/notes/C and prompt mapping/controller model. Every declared original source/tool/artifact pin current. Filtering112640 true bounded DB00 entries/225280 O2/O3 comparisons with all otherRAM unchanged; explicit initialFP savedmode versus live guards, internal leaves unmodified. Prompt86 complete originaldialogs/172 O2/O3 action/token comparisons independently compose already understood dialog model. All116 newly claimed starts observed. Bounded filter block excludes surrounding INPUT; prompt renderer/device RAM excluded."
+    },
+    {
+      "start": "0xd3b6",
+      "end": "0xd426",
+      "source": "analysis/understanding/ui-mid/fx_prompt_tokens.c",
+      "scope": "Complete constant/conversion prompt decisions and token publication, genuine raw-key numeric dialog; delegated rendering/keyboard/timer parity excluded.",
+      "evidence": [
+        "analysis/understanding/ui-mid/proposed-prompt-tokens-understanding.json",
+        "analysis/understanding/ui-mid/PROMPT-TOKENS-HANDOFF.md",
+        "analysis/understanding/ui-mid/prompt-tokens-proof.json"
+      ],
+      "audit": "Root read whole filtering ASM/notes/C and prompt mapping/controller model. Every declared original source/tool/artifact pin current. Filtering112640 true bounded DB00 entries/225280 O2/O3 comparisons with all otherRAM unchanged; explicit initialFP savedmode versus live guards, internal leaves unmodified. Prompt86 complete originaldialogs/172 O2/O3 action/token comparisons independently compose already understood dialog model. All116 newly claimed starts observed. Bounded filter block excludes surrounding INPUT; prompt renderer/device RAM excluded."
     }
   ]
 }

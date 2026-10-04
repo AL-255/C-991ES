@@ -200,6 +200,196 @@
       ],
       "complete": true,
       "audit": "Root reviewed every newly claimed ASM instruction, complete notes/model and matching recorded pins. Prefix report full native/tool/artifact closure; pending-search report model/ROM/listing pins only."
+    },
+    {
+      "start": "0x16336",
+      "end": "0x163f0",
+      "scope": "Complete operation admission policy and two-operand staging boundary, with delegated raw checker/pair transfers/pops; angle-unit versus saved-right argument binding and default mask wrapper",
+      "source": "analysis/understanding/parser/sources/operation_admission.c",
+      "evidence": [
+        "analysis/understanding/parser/OPERATION-ADMISSION.md",
+        "analysis/understanding/parser/operation-admission-proof.json.gz",
+        "analysis/understanding/parser/ADMISSION-REDUCTION-ERRATUM.md"
+      ],
+      "audit": "Root read complete policy models/notes and original reduction ASM; independent floor worker read all admission ASM and documented PASS. Root verified current43/44 declared source/artifact pins. Bounded native observations10437/66377 and strictO2/O3 policy comparisons17922/132754 remain original frozen evidence; numerical/checker callees delegated. Immutable root erratum makes >=136 mask7 explicit and corrects older fraction100 caller prose; no altered historical proof attribution."
+    },
+    {
+      "start": "0x16542",
+      "end": "0x16552",
+      "scope": "Complete operation admission policy and two-operand staging boundary, with delegated raw checker/pair transfers/pops; angle-unit versus saved-right argument binding and default mask wrapper",
+      "source": "analysis/understanding/parser/sources/operation_admission.c",
+      "evidence": [
+        "analysis/understanding/parser/OPERATION-ADMISSION.md",
+        "analysis/understanding/parser/operation-admission-proof.json.gz",
+        "analysis/understanding/parser/ADMISSION-REDUCTION-ERRATUM.md"
+      ],
+      "audit": "Root read complete policy models/notes and original reduction ASM; independent floor worker read all admission ASM and documented PASS. Root verified current43/44 declared source/artifact pins. Bounded native observations10437/66377 and strictO2/O3 policy comparisons17922/132754 remain original frozen evidence; numerical/checker callees delegated. Immutable root erratum makes >=136 mask7 explicit and corrects older fraction100 caller prose; no altered historical proof attribution."
+    },
+    {
+      "start": "0x16a12",
+      "end": "0x16a14",
+      "scope": "Complete operation admission policy and two-operand staging boundary, with delegated raw checker/pair transfers/pops; angle-unit versus saved-right argument binding and default mask wrapper",
+      "source": "analysis/understanding/parser/sources/operation_admission.c",
+      "evidence": [
+        "analysis/understanding/parser/OPERATION-ADMISSION.md",
+        "analysis/understanding/parser/operation-admission-proof.json.gz",
+        "analysis/understanding/parser/ADMISSION-REDUCTION-ERRATUM.md"
+      ],
+      "audit": "Root read complete policy models/notes and original reduction ASM; independent floor worker read all admission ASM and documented PASS. Root verified current43/44 declared source/artifact pins. Bounded native observations10437/66377 and strictO2/O3 policy comparisons17922/132754 remain original frozen evidence; numerical/checker callees delegated. Immutable root erratum makes >=136 mask7 explicit and corrects older fraction100 caller prose; no altered historical proof attribution."
+    },
+    {
+      "start": "0x16622",
+      "end": "0x1669a",
+      "scope": "Complete policy-driven forced drain and incoming-operation precedence loops, with numerical evaluator an explicit callback and native variant field external getter",
+      "source": "analysis/understanding/parser/sources/reduction_loops.c",
+      "evidence": [
+        "analysis/understanding/parser/REDUCTION-LOOPS.md",
+        "analysis/understanding/parser/reduction-loops-proof.json.gz",
+        "analysis/understanding/parser/OPERATOR-PRIORITY.md",
+        "analysis/understanding/parser/ADMISSION-REDUCTION-ERRATUM.md"
+      ],
+      "audit": "Root read complete policy models/notes and original reduction ASM; independent floor worker read all admission ASM and documented PASS. Root verified current43/44 declared source/artifact pins. Bounded native observations10437/66377 and strictO2/O3 policy comparisons17922/132754 remain original frozen evidence; numerical/checker callees delegated. Immutable root erratum makes >=136 mask7 explicit and corrects older fraction100 caller prose; no altered historical proof attribution."
+    },
+    {
+      "start": "0x167a6",
+      "end": "0x167e2",
+      "scope": "Complete policy-driven forced drain and incoming-operation precedence loops, with numerical evaluator an explicit callback and native variant field external getter",
+      "source": "analysis/understanding/parser/sources/reduction_loops.c",
+      "evidence": [
+        "analysis/understanding/parser/REDUCTION-LOOPS.md",
+        "analysis/understanding/parser/reduction-loops-proof.json.gz",
+        "analysis/understanding/parser/OPERATOR-PRIORITY.md",
+        "analysis/understanding/parser/ADMISSION-REDUCTION-ERRATUM.md"
+      ],
+      "audit": "Root read complete policy models/notes and original reduction ASM; independent floor worker read all admission ASM and documented PASS. Root verified current43/44 declared source/artifact pins. Bounded native observations10437/66377 and strictO2/O3 policy comparisons17922/132754 remain original frozen evidence; numerical/checker callees delegated. Immutable root erratum makes >=136 mask7 explicit and corrects older fraction100 caller prose; no altered historical proof attribution."
+    },
+    {
+      "start": "0x16DBA",
+      "end": "0x16F94",
+      "scope": "Decimal/BASE dispatch, significant-digit scanner, signed scientific exponent, finite range/BCD packing, repeated block expansion and rational recognition caller",
+      "source": "analysis/understanding/parser-literals/corrected/decimal_literal.c",
+      "evidence": [
+        "analysis/understanding/parser-literals/corrected/FLOW.md",
+        "analysis/understanding/parser-literals/corrected/assembly.txt",
+        "analysis/understanding/parser-literals/historical-original/decimal-proof.json.gz",
+        "analysis/understanding/parser-literals/independent-review/eligibility-final.json"
+      ],
+      "audit": "Independent complex reviewer read every507 claimed original ASM instruction, verified64 original frozen files/51 proof pin occurrences plus7 corrected pins and focused main/M-store review. Root read all handwritten models and complete corrected notes and separately confirmed18+18+15 original proofpins. Decimal564/2256 and reference2048/6144 actualO2/O3 bounded parity remain original evidence;486 whole calls are native-only, not evaluator callback differential parity. Corrected byte-wrapped provider offset/comments changes no tested ordinary-domain model behavior and preserves historical source attribution. Rich/numeric/physical callees explicit, no production completion claim."
+    },
+    {
+      "start": "0x16F94",
+      "end": "0x16FF6",
+      "scope": "Variable load, flagged name-equality allocation identity, adjacent-value seam and kind16 variable store caller",
+      "source": "analysis/understanding/parser-literals/corrected/evaluator_control.c",
+      "evidence": [
+        "analysis/understanding/parser-literals/corrected/FLOW.md",
+        "analysis/understanding/parser-literals/corrected/assembly.txt",
+        "analysis/understanding/parser-literals/historical-original/whole-witnesses.json.gz",
+        "analysis/understanding/parser-literals/independent-review/eligibility-final.json"
+      ],
+      "audit": "Independent complex reviewer read every507 claimed original ASM instruction, verified64 original frozen files/51 proof pin occurrences plus7 corrected pins and focused main/M-store review. Root read all handwritten models and complete corrected notes and separately confirmed18+18+15 original proofpins. Decimal564/2256 and reference2048/6144 actualO2/O3 bounded parity remain original evidence;486 whole calls are native-only, not evaluator callback differential parity. Corrected byte-wrapped provider offset/comments changes no tested ordinary-domain model behavior and preserves historical source attribution. Rich/numeric/physical callees explicit, no production completion claim."
+    },
+    {
+      "start": "0x16FF6",
+      "end": "0x1705C",
+      "scope": "Constant ROM table/provider call and imaginary-unit/companion clear policy",
+      "source": "analysis/understanding/parser-literals/corrected/evaluator_control.c",
+      "evidence": [
+        "analysis/understanding/parser-literals/corrected/FLOW.md",
+        "analysis/understanding/parser-literals/corrected/assembly.txt",
+        "analysis/understanding/parser-literals/historical-original/whole-witnesses.json.gz",
+        "analysis/understanding/parser-literals/independent-review/eligibility-final.json"
+      ],
+      "audit": "Independent complex reviewer read every507 claimed original ASM instruction, verified64 original frozen files/51 proof pin occurrences plus7 corrected pins and focused main/M-store review. Root read all handwritten models and complete corrected notes and separately confirmed18+18+15 original proofpins. Decimal564/2256 and reference2048/6144 actualO2/O3 bounded parity remain original evidence;486 whole calls are native-only, not evaluator callback differential parity. Corrected byte-wrapped provider offset/comments changes no tested ordinary-domain model behavior and preserves historical source attribution. Rich/numeric/physical callees explicit, no production completion claim."
+    },
+    {
+      "start": "0x1705C",
+      "end": "0x1708E",
+      "scope": "Rich reference descriptor-existence literal and original token header publication",
+      "source": "analysis/understanding/parser-literals/corrected/literal_policy.c",
+      "evidence": [
+        "analysis/understanding/parser-literals/corrected/FLOW.md",
+        "analysis/understanding/parser-literals/corrected/assembly.txt",
+        "analysis/understanding/parser-literals/historical-original/reference-proof.json.gz",
+        "analysis/understanding/parser-literals/independent-review/eligibility-final.json"
+      ],
+      "audit": "Independent complex reviewer read every507 claimed original ASM instruction, verified64 original frozen files/51 proof pin occurrences plus7 corrected pins and focused main/M-store review. Root read all handwritten models and complete corrected notes and separately confirmed18+18+15 original proofpins. Decimal564/2256 and reference2048/6144 actualO2/O3 bounded parity remain original evidence;486 whole calls are native-only, not evaluator callback differential parity. Corrected byte-wrapped provider offset/comments changes no tested ordinary-domain model behavior and preserves historical source attribution. Rich/numeric/physical callees explicit, no production completion claim."
+    },
+    {
+      "start": "0x1708E",
+      "end": "0x17128",
+      "scope": "Terminal variable/M+/M- store, callback boundary, numeric type gate and post-store original-result restoration",
+      "source": "analysis/understanding/parser-literals/corrected/evaluator_control.c",
+      "evidence": [
+        "analysis/understanding/parser-literals/corrected/FLOW.md",
+        "analysis/understanding/parser-literals/corrected/assembly.txt",
+        "analysis/understanding/parser-literals/historical-original/whole-witnesses.json.gz",
+        "analysis/understanding/parser-literals/independent-review/eligibility-final.json"
+      ],
+      "audit": "Independent complex reviewer read every507 claimed original ASM instruction, verified64 original frozen files/51 proof pin occurrences plus7 corrected pins and focused main/M-store review. Root read all handwritten models and complete corrected notes and separately confirmed18+18+15 original proofpins. Decimal564/2256 and reference2048/6144 actualO2/O3 bounded parity remain original evidence;486 whole calls are native-only, not evaluator callback differential parity. Corrected byte-wrapped provider offset/comments changes no tested ordinary-domain model behavior and preserves historical source attribution. Rich/numeric/physical callees explicit, no production completion claim."
+    },
+    {
+      "start": "0x17128",
+      "end": "0x171B2",
+      "scope": "Comma argument checkpoint, variable lookahead, repeated reduction and group-op transformation",
+      "source": "analysis/understanding/parser-literals/corrected/evaluator_control.c",
+      "evidence": [
+        "analysis/understanding/parser-literals/corrected/FLOW.md",
+        "analysis/understanding/parser-literals/corrected/assembly.txt",
+        "analysis/understanding/parser-literals/historical-original/whole-witnesses.json.gz",
+        "analysis/understanding/parser-literals/independent-review/eligibility-final.json"
+      ],
+      "audit": "Independent complex reviewer read every507 claimed original ASM instruction, verified64 original frozen files/51 proof pin occurrences plus7 corrected pins and focused main/M-store review. Root read all handwritten models and complete corrected notes and separately confirmed18+18+15 original proofpins. Decimal564/2256 and reference2048/6144 actualO2/O3 bounded parity remain original evidence;486 whole calls are native-only, not evaluator callback differential parity. Corrected byte-wrapped provider offset/comments changes no tested ordinary-domain model behavior and preserves historical source attribution. Rich/numeric/physical callees explicit, no production completion claim."
+    },
+    {
+      "start": "0x171B2",
+      "end": "0x171EA",
+      "scope": "Ordinary end and cross-boundary171BE complete pending release/allocation store/callback cursor boundary",
+      "source": "analysis/understanding/parser-literals/corrected/evaluator_control.c",
+      "evidence": [
+        "analysis/understanding/parser-literals/corrected/FLOW.md",
+        "analysis/understanding/parser-literals/corrected/assembly.txt",
+        "analysis/understanding/parser-literals/historical-original/whole-witnesses.json.gz",
+        "analysis/understanding/parser-literals/independent-review/eligibility-final.json"
+      ],
+      "audit": "Independent complex reviewer read every507 claimed original ASM instruction, verified64 original frozen files/51 proof pin occurrences plus7 corrected pins and focused main/M-store review. Root read all handwritten models and complete corrected notes and separately confirmed18+18+15 original proofpins. Decimal564/2256 and reference2048/6144 actualO2/O3 bounded parity remain original evidence;486 whole calls are native-only, not evaluator callback differential parity. Corrected byte-wrapped provider offset/comments changes no tested ordinary-domain model behavior and preserves historical source attribution. Rich/numeric/physical callees explicit, no production completion claim."
+    },
+    {
+      "start": "0x171EA",
+      "end": "0x172F6",
+      "scope": "Ordinary/callback evaluator initialization, live token loop, ordered error/result publication, signed completion and caller-pointer return",
+      "source": "analysis/understanding/parser-literals/corrected/evaluator_control.c",
+      "evidence": [
+        "analysis/understanding/parser-literals/corrected/FLOW.md",
+        "analysis/understanding/parser-literals/corrected/assembly.txt",
+        "analysis/understanding/parser-literals/historical-original/whole-witnesses.json.gz",
+        "analysis/understanding/parser-literals/independent-review/eligibility-final.json"
+      ],
+      "audit": "Independent complex reviewer read every507 claimed original ASM instruction, verified64 original frozen files/51 proof pin occurrences plus7 corrected pins and focused main/M-store review. Root read all handwritten models and complete corrected notes and separately confirmed18+18+15 original proofpins. Decimal564/2256 and reference2048/6144 actualO2/O3 bounded parity remain original evidence;486 whole calls are native-only, not evaluator callback differential parity. Corrected byte-wrapped provider offset/comments changes no tested ordinary-domain model behavior and preserves historical source attribution. Rich/numeric/physical callees explicit, no production completion claim."
+    },
+    {
+      "start": "0x15740",
+      "end": "0x15762",
+      "scope": "Normalize then floor, ZEROflag admission andF3failurepublication",
+      "source": "analysis/understanding/parser-floor-gcd-lcm/corrected/integer_callers.c",
+      "evidence": [
+        "analysis/understanding/parser-floor-gcd-lcm/corrected/FLOW.md",
+        "analysis/understanding/parser-floor-gcd-lcm/corrected/assembly.txt",
+        "analysis/understanding/parser-floor-gcd-lcm/corrected/integer-proof.json.gz"
+      ],
+      "audit": "Root read full15740..15854 original ASM/high-level model/correctedFLOW. Separate parser reviewer confirmed all caller branches. Root verified26 freeze and19 proofpins. Source-current corrected546 nativeO2/O3 calls/1638 comparisons match bounded outputs/status/allRAM outside explicitly witnessedCPUframes and numeric8000..80DB scratch; componentbank/QR8 compared. All115 starts witnessed including finalLCM ten-digit gate failure. Predecessor514 proof retained privately historical; failed1e99pilot included only as diagnostic. Named numerical/copy callees exclude arbitrary rich/odd/alias/overflow intermediate parity."
+    },
+    {
+      "start": "0x15762",
+      "end": "0x15854",
+      "scope": "GCD/LCM selection, originalrightsnapshot, ordered error/normalization/integrality, sign/zero/gcd branches, divide thenmultiply and finalresidueerrorpublication",
+      "source": "analysis/understanding/parser-floor-gcd-lcm/corrected/integer_callers.c",
+      "evidence": [
+        "analysis/understanding/parser-floor-gcd-lcm/corrected/FLOW.md",
+        "analysis/understanding/parser-floor-gcd-lcm/corrected/assembly.txt",
+        "analysis/understanding/parser-floor-gcd-lcm/corrected/integer-proof.json.gz"
+      ],
+      "audit": "Root read full15740..15854 original ASM/high-level model/correctedFLOW. Separate parser reviewer confirmed all caller branches. Root verified26 freeze and19 proofpins. Source-current corrected546 nativeO2/O3 calls/1638 comparisons match bounded outputs/status/allRAM outside explicitly witnessedCPUframes and numeric8000..80DB scratch; componentbank/QR8 compared. All115 starts witnessed including finalLCM ten-digit gate failure. Predecessor514 proof retained privately historical; failed1e99pilot included only as diagnostic. Named numerical/copy callees exclude arbitrary rich/odd/alias/overflow intermediate parity."
     }
   ]
 }
