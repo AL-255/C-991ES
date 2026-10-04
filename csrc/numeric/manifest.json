@@ -30,7 +30,7 @@
     {
       "address": "0x17616",
       "name": "compact surd packing",
-      "scope": "Six normal integral components with nonnegative radicands and denominators; coefficient/denominator99 and radicand999 compact limits, scalar rational/error collapse and termwise numeric fallback"
+      "scope": "Six normal integral components with nonnegative radicands and denominators; coefficient/denominator99 and radicand999 compact limits, scalar rational/error collapse and termwise numeric fallback; compact arithmetic stores fifteen-digit numerator/denominator intermediates, including products beyond uint64_t, pre-reduction division eligibility and computed-component fallback"
     },
     {
       "address": "0x178ba",
@@ -105,22 +105,22 @@
     {
       "address": "0x15f34",
       "name": "evaluator addition",
-      "scope": "Real decimal, rational and compact surd operands, exact two-term preservation and numeric fallback; raw two-slot component preservation, four-radical reduction, integer-first scalar multiplication and termwise packing fallback; decimal/rational marker capture, post-exact decimalization and operation-specific marker restoration; rational scalar products truncate before GCD and final mixed-record packing"
+      "scope": "Real decimal, rational and compact surd operands, exact two-term preservation and numeric fallback; raw two-slot component preservation, four-radical reduction, integer-first scalar multiplication and termwise packing fallback; decimal/rational marker capture, post-exact decimalization and operation-specific marker restoration; rational scalar products truncate before GCD and final mixed-record packing; compact arithmetic stores fifteen-digit numerator/denominator intermediates, including products beyond uint64_t, pre-reduction division eligibility and computed-component fallback"
     },
     {
       "address": "0x15f40",
       "name": "evaluator subtraction",
-      "scope": "Real decimal, rational and compact surd operands, exact two-term preservation and numeric fallback; raw two-slot component preservation, four-radical reduction, integer-first scalar multiplication and termwise packing fallback; decimal/rational marker capture, post-exact decimalization and operation-specific marker restoration; rational scalar products truncate before GCD and final mixed-record packing"
+      "scope": "Real decimal, rational and compact surd operands, exact two-term preservation and numeric fallback; raw two-slot component preservation, four-radical reduction, integer-first scalar multiplication and termwise packing fallback; decimal/rational marker capture, post-exact decimalization and operation-specific marker restoration; rational scalar products truncate before GCD and final mixed-record packing; compact arithmetic stores fifteen-digit numerator/denominator intermediates, including products beyond uint64_t, pre-reduction division eligibility and computed-component fallback"
     },
     {
       "address": "0x15f4c",
       "name": "evaluator multiplication",
-      "scope": "Real decimal, rational and compact surd operands, bounded radical normalization and numeric fallback; raw two-slot component preservation, four-radical reduction, integer-first scalar multiplication and termwise packing fallback; decimal/rational marker capture, post-exact decimalization and operation-specific marker restoration; rational scalar products truncate before GCD and final mixed-record packing"
+      "scope": "Real decimal, rational and compact surd operands, bounded radical normalization and numeric fallback; raw two-slot component preservation, four-radical reduction, integer-first scalar multiplication and termwise packing fallback; decimal/rational marker capture, post-exact decimalization and operation-specific marker restoration; rational scalar products truncate before GCD and final mixed-record packing; compact arithmetic stores fifteen-digit numerator/denominator intermediates, including products beyond uint64_t, pre-reduction division eligibility and computed-component fallback"
     },
     {
       "address": "0x15f58",
       "name": "evaluator division",
-      "scope": "Real decimal, rational and compact surd operands; conjugate denominator construction and finite-component eligibility checks; raw two-slot component preservation, four-radical reduction, integer-first scalar multiplication and termwise packing fallback; decimal/rational marker capture, post-exact decimalization and operation-specific marker restoration; rational scalar products truncate before GCD and final mixed-record packing"
+      "scope": "Real decimal, rational and compact surd operands; conjugate denominator construction and finite-component eligibility checks; raw two-slot component preservation, four-radical reduction, integer-first scalar multiplication and termwise packing fallback; decimal/rational marker capture, post-exact decimalization and operation-specific marker restoration; rational scalar products truncate before GCD and final mixed-record packing; compact arithmetic stores fifteen-digit numerator/denominator intermediates, including products beyond uint64_t, pre-reduction division eligibility and computed-component fallback"
     },
     {
       "address": "0x1ce70",
@@ -166,6 +166,11 @@
       "address": "0x19be6",
       "name": "represented-integer greatest common divisor",
       "scope": "Uncapped decimal Euclidean remainder over represented integer products, including thirty-digit intermediates without host floating point or wide compiler integers"
+    },
+    {
+      "address": "0x17746",
+      "name": "finite radical coefficient and denominator reduction",
+      "scope": "Signed denominator normalization, zero numerator/denominator preservation and represented-integer GCD with fifteen-digit reduction divisions"
     }
   ],
   "gaps": [
@@ -174,7 +179,7 @@
     "Complex arithmetic and conversion; combinatorics, random generation, base-N arithmetic",
     "Statistical, matrix, vector, integration, differentiation, equation and numerical-solver subsystems",
     "Routine-level global side effects and exhaustive numeric-state equivalence outside the exposed record API",
-    "Large rational denominators combined with duplicate compact radicals can exceed the integer component representation; native fifteen-digit intermediate product/GCD rounding is not yet reproduced in those cases (tracked analysis/edge-cases/numeric-components.json)"
+    "Active zero-radicand compact records with nonzero coefficients reach noncanonical positive-zero low-level square-root behavior in the original; this raw representation anomaly is tracked separately in analysis/edge-cases/numeric-component-anomalies.json"
   ],
   "verification": "analysis/c-verification/numeric.json",
   "test": "python3 tools/test_numeric_c.py --random-cases 5000",

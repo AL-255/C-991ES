@@ -28,6 +28,8 @@ typedef struct {
  * suppressed cursors accept heights0..10. */
 int fx_key_wait_begin(fx_platform *platform, fx_key_wait *state,
                        uint16_t pair_destination);
+/* Host-owned output counterpart; no synthetic destination is written in RAM. */
+int fx_key_wait_begin_host(fx_platform *platform, fx_key_wait *state);
 /* One native iteration: blink, timer129A, host-pair test, then increment
  * idle counter8224 only when no key is ready. Returns0 waiting or1 ready.
  * Every new wait consumes this iteration even for a preloaded host key.
@@ -41,4 +43,8 @@ int fx_key_wait_tick(fx_platform *platform, fx_key_wait *state);
  * -1 without a ready wait, or -2 for unsupported height growth. */
 int fx_key_wait_finish(fx_platform *platform, fx_key_wait *state,
                         fx_key_state *key);
+/* Same finish lifecycle, returning the pair only in host state. This models
+ * callers whose native pair is a CPU local, without exporting that frame. */
+int fx_key_wait_finish_host(fx_platform *platform, fx_key_wait *state,
+                             fx_key_state *key);
 #endif

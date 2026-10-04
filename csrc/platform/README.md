@@ -13,8 +13,9 @@ The returned boot status identifies a completed ordinary initialization or a
 transfer to the welcome/diagnostic host controller. `fx_boot_prepare_power_off()`
 paints the original bitmap and configures the sleep/restart ports, returning
 `FX_BOOT_RESTART` at the reset-entry boundary. Physical time, interrupts and the
-complete calculator event loop are still being implemented. Mode12's boot
-controller is explicitly unsupported.
+complete calculator event loop are still being implemented. Mode12 resume
+initializes its input/table screen from flag8137 and reaches the ordinary
+event boundary.
 
 `fx_host_write_descriptor()` exposes the native ten-buffer descriptor;
 `fx_host_write_status()`, `fx_host_write_framebuffer()` and
@@ -24,6 +25,17 @@ packet includes the status block, optional string header and four hexadecimal
 length digits. This verifies the firmware's host protocol without executing
 the Windows emulator process.
 
+Host controllers can retain `fx_host_descriptor` fields in C memory and call
+the `_fields` packet APIs without allocating synthetic CPU locals in
+calculator RAM. The original RAM-descriptor API retains native pointer
+rereads and alias behavior. `fx_host_write_numeric_packet()` exports the
+native50-byte real/imaginary packet, and `fx_host_format_number()` exposes its
+raw23-byte field codec. This codec serializes record nibbles directly; it
+does not use approximate recognition or on-screen numeric formatting. Surds
+retain byte22, errors retain bytes6..22, and the packet caller prezeros both
+fields. Malformed rational lengths that exceed the native local buffer are
+rejected before packet writes.
+
 `tools/test_boot_c.py` compares the original ROM with the public C APIs. It
 checks complete host packets, query results, RAM, LCD and MMIO effects across
 retained-state invalid bytes, editor actions, reset/workspace contexts and boot
@@ -31,4 +43,8 @@ key gates. Native CPU stack bytes are excluded. Editor action2 branches that
 format zero additionally exclude native arithmetic workspace8000..80DB; natural
 initialization and reset checkpoints retain the stronger whole-RAM comparison.
 The C code bounds unterminated strings and oversized BASE-N label locals whose
-native behavior would hang or corrupt the CPU stack.
+native behavior would hang or corrupt the CPU stack. Export checks include
+retained bytes, input/output overlap, complete numeric packets, all256 modes,
+host-owned descriptors and native prepared checkpoints for relocated packet
+destinations. Explicit bounded-domain checks are counted separately from
+the original-ROM comparisons in the report.

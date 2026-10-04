@@ -90,6 +90,36 @@
       "end": "0x1cc70",
       "scope": "Restricted CMPLX square root: native zero-class imaginary admission (compact cancellation remains rejected), scalar real surd conversion before sign classification, positive real root or positive imaginary root for negative real, explicit exact-output permission and forced-success post-admission return",
       "source": "csrc/complex/fx_complex.c"
+    },
+    {
+      "start": "0x15f00",
+      "end": "0x15f34",
+      "scope": "Prepared CMPLX power selects full real power only when both imaginary components have native class 1, otherwise the restricted complex selector; callees are not included implicitly",
+      "source": "csrc/complex/fx_complex_dispatch.c"
+    },
+    {
+      "start": "0x15f6e",
+      "end": "0x1603e",
+      "scope": "Imaginary zero classification; raw imaginary header selects reciprocal fallback; scalar versus complex arithmetic entries; multiplying by exactly i rotates the records, clears the new imaginary marker and forces leaf success",
+      "source": "csrc/complex/fx_complex_dispatch.c"
+    },
+    {
+      "start": "0x16562",
+      "end": "0x1658e",
+      "scope": "Post-leaf context cleanup and evaluator status: nonzero leaf bypass, CMPLX compact real surd skip, marked real decimal cleans only real, other CMPLX pairs clean both, scalar contexts skip tagged headers",
+      "source": "csrc/complex/fx_complex_dispatch.c"
+    },
+    {
+      "start": "0x16a14",
+      "end": "0x16a64",
+      "scope": "Operand admission bits: immediate real error rejection, mask 255 bypass, DMS and marked fraction rejection, real-only admission using the raw imaginary exponent/sign word for ordinary decimal, rational and surd types",
+      "source": "csrc/complex/fx_complex_dispatch.c"
+    },
+    {
+      "start": "0x1702a",
+      "end": "0x17034",
+      "scope": "Imaginary-unit input value 40 copies zero real and one imaginary, bypassing ordinary literal imaginary zero initialization",
+      "source": "csrc/complex/fx_complex_dispatch.c"
     }
   ],
   "partial_blocks": []

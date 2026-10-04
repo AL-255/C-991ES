@@ -1,0 +1,22 @@
+{
+  "implementation": "Readable C statistics table editor and evaluated-input commit using the platform data bus",
+  "firmware_execution_in_implementation": false,
+  "original_rom_sha256": "28b5c3907a67426a1601dbf82ebf62b850333e889fcc958d698786d3e5f5fb7d",
+  "source": "csrc/stats/fx_stats_editor.c",
+  "header": "csrc/stats/fx_stats_editor.h",
+  "entry_points": {
+    "0x5110": "fx_stats_editor_columns",
+    "0x5096": "fx_stats_editor_address_raw",
+    "0x1d426": "fx_stats_editor_insert",
+    "0x1d550": "fx_stats_editor_delete",
+    "0x1d60a": "fx_stats_editor_clear",
+    "0x1d66c": "fx_stats_editor_write_raw",
+    "0x1d6ac": "fx_stats_editor_read_raw",
+    "0xe450": "fx_stats_editor_move",
+    "0xe680": "fx_stats_editor_commit, STAT input branch only"
+  },
+  "verification": "analysis/c-verification/stats_editor.json",
+  "understood_ranges": "csrc/stats/editor/understood_ranges.json",
+  "complete": false,
+  "remaining": ["statistics mode-entry/model-change UI", "evaluator/error routing before input commit", "regression moment-cache preparation lifecycle", "table rendering and physical input scheduling", "CPU stack aliases and scratch stack effects", "nonstatistics branches of0e680"]
+}

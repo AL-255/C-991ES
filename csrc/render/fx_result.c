@@ -70,7 +70,9 @@ static uint16_t owning_construct(const fx_render *r, uint16_t pointer, uint16_t 
 static void flatten_history(fx_render *r, uint16_t first)
 {
     uint16_t source = first, destination = 0x9838;
-    for (unsigned n = 0; n < 65535 && r->memory[source]; ++n, ++source) {
+    /* The original do-while copies an empty source's first NUL and then
+     * writes another terminator. Preserve those dormant history bytes. */
+    for (unsigned n = 0; n < 65535; ++n, ++source) {
         unsigned kind = token_kind(r, source);
         uint8_t token = r->memory[source];
         if (kind == 1 || kind == 3) {
@@ -83,6 +85,7 @@ static void flatten_history(fx_render *r, uint16_t first)
         } else {
             r->memory[destination++] = token >= 224 ? (uint8_t)(token + 176) : token;
         }
+        if (!r->memory[(uint16_t)(source + 1)]) break;
     }
     r->memory[destination] = 0;
 }

@@ -1,0 +1,41 @@
+{
+  "subsystem": "high_level_nonblocking_emulator_outer_key_controller",
+  "implementation_language": "C99",
+  "implementation_executes_firmware": false,
+  "implementation_uses_host_floating_point": false,
+  "semantic_complete": false,
+  "implemented_routines": [
+    {
+      "address": "0x1db34",
+      "name": "outer_key_controller",
+      "scope": "Host-owned descriptor and raw-key locals; conditional3D62 header,1D802 wait lifecycle, row80 bridge commands, prepared1824E reset request, current key table selection and stateful postmapping through token return or modifier retry"
+    },
+    {
+      "address": "0x3d62",
+      "name": "annunciator_row",
+      "scope": "All twelve native indicator bytes and their LCD copy; scalar classification reused as a value API"
+    }
+  ],
+  "api": {
+    "header": "csrc/ui/fx_key_controller.h",
+    "state": "fx_key_controller retains fx_key_wait, typed fx_host_descriptor, raw_key, token/event and export mask; no CPU frame or instruction PC",
+    "begin": "fx_key_controller_begin selects the fixed host descriptor, conditionally draws the header and begins a wait",
+    "tick": "WAIT0, TOKEN1, RESET2, EXPORT3; exports restart directly at wait, modifiers restart through conditional header; terminal events are retained",
+    "finish": "Consume TOKEN/RESET only; native reset is exposed to host boot lifecycle, not executed as BRK",
+    "host_pair": "8E01/8E02 are never cleared by the controller; the host consumes its pair before the next event",
+    "descriptor_fields": "Ordinary/reset keys clear optional text9838 before AF5A. E7 writes3 to wait_flag8E00 and schedules timer1."
+  },
+  "gaps": [
+    "Physical wall-clock timer scheduling, interrupt state, CPU-frame aliases and native unbounded/malformed buffers are outside this host-state interface",
+    "Canonical visible cursor fonts6/7/10 and bounded heights0..10 inherit key-wait domain restrictions; uncaptured height growth returns explicit unsupported status",
+    "Reset execution, menus and parent00D9EE input/evaluator/replay/error controllers remain separate subsystems",
+    "Native classification scratch8000..805F/8640..867B and CPU stack8D00..8DED are excluded from persistent-memory differential scope"
+  ],
+  "verification": {
+    "tool": "tools/test_key_controller_c.py",
+    "report": "analysis/c-verification/key_controller.json",
+    "oracle": "Original ROM1DB34, nested1D802 and bridge/table/dispatch routines in independent SimU8",
+    "comparison": "Complete remaining RAM/LCD/MMIO, callback, token/event, retained raw pair, named descriptor/blink fields and exact stores at8E00/8E01/8E02",
+    "limitation": "Routine lifecycle and injected host events, not complete calculator boot-to-menu/evaluator I/O"
+  }
+}

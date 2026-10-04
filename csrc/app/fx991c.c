@@ -8,6 +8,7 @@
 #include "numeric/fx_numeric.h"
 #include "format/fx_format.h"
 #include "render/fx_render.h"
+#include "render/fx_result_complex.h"
 #include "data/fx_rom_data.h"
 #include "ui/fx_input_codec.h"
 
@@ -59,29 +60,49 @@ static void usage(void)
     fputs("Subsystem probe for the high-level C firmware port (incomplete).\n"
           "  fx991c --token HEX_BYTE [HEX_CONTEXT]\n"
           "  fx991c --format HEX_10_BYTE_RECORD [--linear] [--mixed] [--decimal]\n"
-          "  fx991c --eval HEX_INPUT_TOKENS [--pbm OUTPUT_FILE]\n"
-          "  fx991c --display HEX_DISPLAY_TOKENS [--pbm OUTPUT_FILE]\n"
+          "  fx991c --eval HEX_INPUT_TOKENS [--complex] [--pbm OUTPUT_FILE]\n"
+          "  fx991c --display HEX_DISPLAY_TOKENS [--complex] [--pbm OUTPUT_FILE]\n"
           "Display input uses the natural editor's99-byte expression limit.\n"
           "Supported COMP arithmetic and functions are listed in csrc/parse/manifest.json.\n", stderr);
 }
 
-static int write_result_bitmap(const char *path, const uint8_t *input, size_t length,
-                               const fx_eval_result *evaluated)
+static int render_result(const char *path, const uint8_t *input, size_t length,
+                         const fx_eval_result *evaluated, int complex_mode,
+                         uint8_t *tokens, size_t capacity, fx_format_result *result)
 {
     static uint8_t memory[FX_RENDER_MEMORY_BYTES];
     fx_render render = {fx_rom_data, 0x30000, memory};
     fx_box box;
     if (length > 256) return -1;
     memset(memory, 0, sizeof(memory));
-    memory[0x80f9] = 0xc1;
+    memory[0x80f9] = complex_mode ? 0xc4 : 0xc1;
     memory[0x80f5] = 0xf0;
     memory[0x8106] = 1;
+    if (complex_mode) {
+        memory[0x80fc] = 1;
+        memory[0x8104] = 1;
+        memory[0x8105] = 4;
+        memory[0x8108] = 1;
+        memory[0x811f] = 10;
+    }
     memory[0x8100] = 13;
     memory[0x8121] = 1;
     memory[0x812c] = 0; memory[0x812d] = 0x82;
     memcpy(memory+0x8200, input, length);
     memcpy(memory+0x8300, evaluated->value, sizeof(evaluated->value));
-    if (fx_display_real_math_result(&render, 0x8300, &box) != 1) return -1;
+    int displayed = complex_mode ? fx_display_complex_result(&render, 0x8300, &box) :
+                                   fx_display_real_math_result(&render, 0x8300, &box);
+    if (displayed != 1) return -1;
+    if (complex_mode) {
+        size_t count = 0;
+        while (count < capacity && memory[0x8398+count]) ++count;
+        if (count >= capacity) return -1;
+        memcpy(tokens, memory+0x8398, count+1);
+        result->length = count;
+        result->kind = memory[0x8100] >> 4;
+        result->recognized = 0;
+    }
+    if (!path) return 0;
     fx_flush_framebuffer(&render);
     FILE *output = fopen(path, "wb");
     if (!output) return -1;
@@ -94,15 +115,25 @@ static int write_result_bitmap(const char *path, const uint8_t *input, size_t le
 
 int main(int argc, char **argv)
 {
-    if ((argc == 3 || (argc == 5 && !strcmp(argv[3], "--pbm"))) &&
+    if (argc >= 3 &&
         (!strcmp(argv[1], "--eval") || !strcmp(argv[1], "--display"))) {
         uint8_t input[1024], output[512];
         static uint8_t editor_memory[65536];
         fx_platform editor = {fx_rom_data, 0x30000, editor_memory, 0, FX_MEMORY_OK};
         int display_input = !strcmp(argv[1], "--display");
+        int complex_mode = 0;
+        const char *bitmap_path = NULL;
+        for (int argument = 3; argument < argc; ++argument) {
+            if (!strcmp(argv[argument], "--complex") && !complex_mode) complex_mode = 1;
+            else if (!strcmp(argv[argument], "--pbm") && !bitmap_path && argument+1 < argc)
+                bitmap_path = argv[++argument];
+            else { usage(); return 2; }
+        }
         size_t length, n;
         fx_eval_result evaluated;
         fx_eval_status status;
+        fx_eval_options eval_options = fx_eval_default_options();
+        if (complex_mode) eval_options.calculation_context = 0xc4;
         fx_format_status formatted = FX_FORMAT_UNIMPLEMENTED;
         fx_format_options options = fx_format_default_options();
         fx_format_result result = {0, 0, 0};
@@ -111,7 +142,8 @@ int main(int argc, char **argv)
         if (display_input) {
             if (length > 100) { usage(); return 2; }
             memset(editor_memory, 0, sizeof(editor_memory));
-            editor_memory[0x80f9] = 0xc1; editor_memory[0x80fc] = 1; editor_memory[0x8106] = 1;
+            editor_memory[0x80f9] = eval_options.calculation_context;
+            editor_memory[0x80fc] = 1; editor_memory[0x8106] = 1;
             editor_memory[0x812c] = 0x54; editor_memory[0x812d] = 0x81;
             memcpy(editor_memory+0x8154, input, length);
             int allowed = fx_editor_input_boundaries(&editor, 0x8154);
@@ -126,13 +158,16 @@ int main(int argc, char **argv)
             }
             ++length;
         }
-        status = fx_evaluate(input, length, NULL, &evaluated);
+        status = fx_evaluate(input, length, &eval_options, &evaluated);
         if (display_input && (status == FX_EVAL_SYNTAX || status == FX_EVAL_MATH))
             (void)fx_editor_export_input(&editor, 0x8154, 0x8400, (uint8_t)evaluated.consumed, 0);
-        if (status == FX_EVAL_OK)
+        if (status == FX_EVAL_OK && !complex_mode)
             formatted = fx_format_number(&evaluated.value[0], &options, output, sizeof(output), &result);
-        if (argc == 5 && status == FX_EVAL_OK)
-            bitmap_status = write_result_bitmap(argv[4], input, length, &evaluated);
+        if (status == FX_EVAL_OK && (complex_mode || bitmap_path)) {
+            bitmap_status = render_result(bitmap_path, input, length, &evaluated, complex_mode,
+                                          output, sizeof(output), &result);
+            if (complex_mode && !bitmap_status) formatted = FX_FORMAT_OK;
+        }
         putchar('{');
         if (display_input) {
             printf("\"conversion_status\":0,\"display_cursor\":%u,\"input_tokens\":\"", editor_memory[0x8114]);

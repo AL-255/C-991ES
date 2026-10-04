@@ -489,6 +489,123 @@ def main():
                 check(f'metadata_binary_alias_{address:x}',b.raw(),expected,detail)
                 check(f'metadata_binary_left_input_{address:x}',a.raw(),a_raw,detail)
 
+    # Finite compact arithmetic must retain the original decimal products
+    # before GCD, including products too large for a host uint64_t. All
+    # expected results below come directly from the original scalar entries.
+    def component_literal(value):
+        out=Number();lib.fx_decimal_parse(C.byref(out),str(value).encode());return out.raw()
+    def component_fraction(numerator,denominator):
+        out=Number();value=Rational(numerator,denominator,0)
+        lib.fx_rational_encode(C.byref(out),C.byref(value));return out.raw()
+    def component_raw(terms,signs=None):
+        data=bytearray(10)
+        for j,(coefficient,radicand,denominator) in enumerate(terms):
+            data[4*j:4*j+4]=bytes([radicand//100,int(f'{radicand%100:02d}',16),
+                                       int(f'{abs(coefficient):02d}',16),int(f'{denominator:02d}',16)])
+            data[9-j]=(6 if coefficient<0 else 1) if signs is None else signs[j]
+        data[0]|=0x80;return bytes(data)
+    component_small_edges=[0,1,2,3,7,9,10,11,17,25,33,49,50,67,81,97,98,99]
+    component_rad_edges=[1,2,3,4,8,9,12,18,25,27,32,49,50,72,81,97,98,99,
+                         100,121,144,242,363,512,625,729,961,980,999]
+    component_squarefree=[r for r in range(2,1000) if all(r%(p*p) for p in range(2,32))]
+    def component_small(rng,zero=True):
+        edges=component_small_edges if zero else component_small_edges[1:]
+        return rng.choice(edges) if rng.randrange(3)==0 else rng.randrange(0 if zero else 1,100)
+    def component_signed(rng,zero=True): return component_small(rng,zero)*rng.choice([-1,1])
+    def component_rad(rng):
+        return rng.choice(component_rad_edges) if rng.randrange(3)==0 else rng.randrange(1,1000)
+    def component_canonical(rng):
+        radicals=sorted(rng.sample(component_squarefree,2));terms=[]
+        for radicand in radicals:
+            coefficient,denominator=component_signed(rng,False),component_small(rng,False)
+            # Build normalized input fixtures; this is not an expected-value calculation.
+            import math
+            common=math.gcd(abs(coefficient),denominator)
+            terms.append((coefficient//common,radicand,denominator//common))
+        if rng.randrange(3)==0:terms[0]=(0,0,1)
+        return component_raw(terms,[0 if terms[0][0]==0 else (6 if terms[0][0]<0 else 1),
+                                    6 if terms[1][0]<0 else 1])
+    def component_large_fraction(rng):
+        numerator=rng.choice([-9,-7,-3,-2,-1,1,2,3,7,9])
+        denominator=rng.choice([10000000,10000001,19999999,49999999,50000000,
+                                66666667,99999989,99999997,99999998,99999999]) if rng.randrange(3)==0 else rng.randrange(10000000,100000000)
+        return component_fraction(numerator,denominator)
+    component_suites=['canonical_roots','duplicate_raw_radicals','distinct_raw_radicals',
+                      'large_denominator_rationals','zero_components','zero_conjugate_denominators']
+    def component_pair(suite_index,index):
+        rng=random.Random(0x17271700+65537*suite_index+index)
+        if suite_index==0:
+            a,b=component_canonical(rng),component_canonical(rng)
+            if index%5==0:b=component_literal(rng.choice([-9999999,-999,-99,-1,0,1,99,999,9999999]))
+            if index%11==0:b=component_fraction(component_signed(rng),component_small(rng,False))
+        elif suite_index==1:
+            radical=component_rad(rng)
+            a=component_raw([(component_signed(rng),radical,component_small(rng)),
+                             (component_signed(rng),radical,component_small(rng))])
+            other=radical if index%3 else component_rad(rng)
+            b=component_raw([(component_signed(rng),other,component_small(rng)),
+                             (component_signed(rng),other,component_small(rng))])
+        elif suite_index==2:
+            radicals=rng.sample(range(1,1000),4)
+            if index%5==0:radicals[:2]=[component_rad(rng),component_rad(rng)]
+            a=component_raw([(component_signed(rng),radicals[0],component_small(rng)),
+                             (component_signed(rng),radicals[1],component_small(rng))])
+            b=component_raw([(component_signed(rng),radicals[2],component_small(rng)),
+                             (component_signed(rng),radicals[3],component_small(rng))])
+        elif suite_index==3:
+            a=component_large_fraction(rng);first,second=component_rad(rng),component_rad(rng)
+            if index%2:second=first
+            b=component_raw([(component_signed(rng),first,component_small(rng)),
+                             (component_signed(rng),second,component_small(rng))])
+        elif suite_index==4:
+            def zeros():
+                terms=[(component_signed(rng),component_rad(rng),component_small(rng)),
+                       (component_signed(rng),component_rad(rng),component_small(rng))]
+                j=rng.randrange(2);coefficient,radicand,denominator=terms[j]
+                terms[j]=(0 if index%3 else coefficient,radicand,0 if index%3!=1 else denominator)
+                if index%7==0:terms=[(0,rng.choice([0,*component_rad_edges]),0),
+                                     (0,rng.choice([0,*component_rad_edges]),0)]
+                return component_raw(terms,[rng.choice([0,1,6]) if not t[0] else (6 if t[0]<0 else 1) for t in terms])
+            a,b=zeros(),zeros()
+            if index%4==0:a=component_literal(rng.choice([-99,-1,0,1,99]))
+            if index%13==0:a=component_large_fraction(rng)
+        else:
+            factor=rng.randrange(1,10);radicand=rng.randrange(1,999//(factor*factor)+1)
+            coefficient=rng.randrange(1,max(1,99//factor)+1);denominator=component_small(rng,False)
+            b=component_raw([(factor*coefficient*rng.choice([-1,1]),radicand,denominator),
+                             (coefficient*rng.choice([-1,1]),radicand*factor*factor,denominator)])
+            a=component_large_fraction(rng) if index%3 else component_canonical(rng)
+            if index%17==0:a=component_literal(rng.choice([-1,0,1,99]))
+        if index%2 and suite_index!=5:a,b=b,a
+        return a,b
+    historical=json.loads((ROOT/'analysis/edge-cases/numeric-components.json').read_text())['historical_failures']
+    component_fixtures=[(bytes.fromhex(f['a']),bytes.fromhex(f['b']),f['op']) for f in historical]
+    component_fixtures += [(bytes.fromhex('80000001000301010100'),bytes.fromhex(raw),3)
+                          for raw in ['80000001000200010100','80000001000200010600']]
+    component_fixtures += [(bytes.fromhex('80151750048549020601'),bytes(10),op) for op in [0,1]]
+    for suite_index,suite in enumerate(component_suites):
+        operations=[(a,b,op) for index in range(args.random_cases//2)
+                    for a,b in [component_pair(suite_index,index)] for op in range(4)]
+        if suite_index==0:operations=component_fixtures+operations
+        for index,(a_raw,b_raw,op) in enumerate(operations):
+            a,b,out=number(a_raw),number(b_raw),Number()
+            reset();put(0x8300,a_raw);put(0x8320,b_raw);m.er(0,0x8300);m.er(2,0x8320)
+            m.call([0x1c6a4,0x1c690,0x1c6cc,0x1c6b8][op],limit=3000000)
+            expected=bytes(m.ram[0x8300:0x830a]);detail=f'op={op} {a_raw.hex()} {b_raw.hex()}'
+            prefix=f'finite_components_{suite}'
+            check(prefix+'_status',lib.fx_number_binary(C.byref(out),C.byref(a),C.byref(b),op),0,detail)
+            check(prefix+'_record',out.raw(),expected,detail)
+            check(prefix+'_left_input',a.raw(),a_raw,detail);check(prefix+'_right_input',b.raw(),b_raw,detail)
+            if index%19==0:
+                check(prefix+'_left_alias_status',lib.fx_number_binary(C.byref(a),C.byref(a),C.byref(b),op),0,detail)
+                check(prefix+'_left_alias_record',a.raw(),expected,detail)
+                check(prefix+'_left_alias_other_input',b.raw(),b_raw,detail)
+                a=number(a_raw)
+            if index%23==0:
+                check(prefix+'_right_alias_status',lib.fx_number_binary(C.byref(b),C.byref(a),C.byref(b),op),0,detail)
+                check(prefix+'_right_alias_record',b.raw(),expected,detail)
+                check(prefix+'_right_alias_other_input',a.raw(),a_raw,detail)
+
     manifest = {'rom_sha256': hashlib.sha256(rom).hexdigest(), 'seed': '0x991e5',
                 'random_cases_per_group': args.random_cases, 'checks': results,
                 'checks_total': sum(results.values()),
@@ -496,7 +613,7 @@ def main():
     (build / 'results.json').write_text(json.dumps(manifest, indent=2) + '\n')
     write_report('analysis/c-verification/numeric.json', manifest,
                  ['csrc/numeric/fx_numeric.c', 'csrc/numeric/fx_numeric.h',
-                  'csrc/numeric/manifest.json', 'tools/trace_natural_result.py',
+                  'csrc/numeric/manifest.json', 'analysis/edge-cases/numeric-components.json', 'tools/trace_natural_result.py',
                   'tools/c_verification.py'], 'tools/test_numeric_c.py')
     print(json.dumps(manifest, indent=2))
 

@@ -140,18 +140,30 @@ static void scientific_exponent(writer *w, int exponent) {
 static void emit_decimal(writer *w, fx_decimal d, const fx_format_options *o) {
     int scientific = o->display_mode == 9;
     int significant = scientific ? (o->digits ? o->digits : 10) : 10;
+    fx_decimal original = d;
     /* C060 clears contexts4..6 only after exact serialization declines the
      * record. They retain grouping for exact coefficients and use the full
      * decimal width for numeric fallback (C154..C15C). */
-    int compact_scientific = o->format_context && o->format_context < 4 &&
-                             !scientific && o->display_mode != 8 &&
-                             (d.exponent < -9 || d.exponent > 9);
-    if (compact_scientific) significant = 9;
     if (o->display_mode == 8) {
         significant = d.exponent + 1 + o->digits;
         if (significant > 10) significant = 10;
     }
     round_digits(&d, significant);
+    int compact_scientific = o->format_context && o->format_context < 4 &&
+        d.mantissa && (!scientific || significant == 10) &&
+        (scientific || (d.mantissa / UINT64_C(100000)) % 10) &&
+        (o->display_mode == 8 ? d.exponent > 9 :
+         d.exponent < -9 || d.exponent > 9);
+    if (compact_scientific) {
+        /* Norm and Fix delegate the original value to nine-digit Sci.
+         * BA10/BB80 tests digit9 of their rounded ten-digit copy: a zero
+         * digit keeps the ordinary spelling and its trailing-zero trim.
+         * Sci10 instead rounds its existing ten-digit copy once more
+         * (BC4A atBCA8..BCE8), so the second half-up carry is observable. */
+        if (!scientific) d = original;
+        scientific = 1; significant = 9;
+        round_digits(&d, significant);
+    }
     if (!scientific && (d.exponent >= 10 ||
         (o->display_mode != 8 && d.exponent < (o->display_mode == 4 ? -9 : -2))))
         scientific = 1;
@@ -160,8 +172,9 @@ static void emit_decimal(writer *w, fx_decimal d, const fx_format_options *o) {
     unsigned point = o->decimal_dot ? '.' : ',';
     if (scientific) {
         byte(w, '0' + digits[0]);
-        int count = o->display_mode == 9 ? (o->digits ? o->digits : 10) : compact_scientific ? 9 : 10;
-        if (o->display_mode != 9) while (count > 1 && !digits[count - 1]) --count;
+        int count = o->display_mode == 9 ? significant : compact_scientific ? 9 : 10;
+        if (o->display_mode != 9 && !compact_scientific)
+            while (count > 1 && !digits[count - 1]) --count;
         if (count > 1) {
             byte(w, point);
             for (int i = 1; i < count; ++i) byte(w, '0' + digits[i]);
@@ -206,6 +219,9 @@ static fx_format_status emit_engineering(writer *w, fx_decimal d,
     }
     int scientific = o->display_mode == 9;
     int significant = scientific ? (o->digits ? o->digits : 10) : 10;
+    /* BC4A prepares the Sci copy before reducing compact-context precision.
+     * Engineering placement consumes that same twice-rounded copy. */
+    if (scientific) round_digits(&d, significant);
     if (o->display_mode == 8) {
         significant = d.exponent + 1 + o->digits;
         if (significant > 10) significant = 10;
@@ -565,12 +581,12 @@ static fx_format_status emit_prime_factors(writer *w, const fx_number *number,
     return FX_FORMAT_OK;
 }
 static void emit_surd_term(writer *w, int64_t coefficient, uint64_t radicand,
-                           int subsequent) {
+                           int subsequent, int force_radical) {
     if (subsequent) byte(w, coefficient < 0 ? '-' : '+');
     else if (coefficient < 0) byte(w, 0x60);
     uint64_t c = magnitude(coefficient);
-    if (radicand == 1 || c != 1) integer(w, c);
-    if (radicand != 1) {
+    if ((!force_radical && radicand == 1) || c != 1) integer(w, c);
+    if (force_radical || radicand != 1) {
         byte(w, 0x98); byte(w, 0xb8); integer(w, radicand); byte(w, 0xb9);
     }
 }
@@ -594,26 +610,29 @@ static fx_format_status emit_surd(writer *w, const fx_number *number,
         if (fx_decimal_to_integer(&v[i], &parts[i]) != FX_NUMERIC_OK) return FX_FORMAT_UNIMPLEMENTED;
     if (v[2] <= 0 || v[5] <= 0) return FX_FORMAT_INVALID;
     uint64_t d1 = (uint64_t)v[2], d2 = (uint64_t)v[5];
-    uint64_t d = d1 / gcd(d1, d2) * d2;
-    int64_t a = v[3] * (int64_t)(d / d2), c = v[0] * (int64_t)(d / d1);
+    uint64_t d = d1 * d2;
+    int64_t a = v[3] * (int64_t)d1, c = v[0] * (int64_t)d2;
     uint64_t radicand_a = (uint64_t)v[4], radicand_c = (uint64_t)v[1];
-    /* The common-denominator expander18176 places the rational term before
-     * a radical. Two radical terms retain the compact record's reverse order. */
-    if (radicand_c == 1 && radicand_a != 1) {
+    /* The common-denominator expander18176 tests the first radicand against1.
+     * When it is1, the first stored term comes first even if both are1. The
+     * second displayed term still uses C4F2's radical serialization. */
+    if (radicand_c == 1) {
         int64_t coefficient = a; a = c; c = coefficient;
         uint64_t radicand = radicand_a; radicand_a = radicand_c; radicand_c = radicand;
     }
-    uint64_t reduce = gcd(gcd(magnitude(a), magnitude(c)), d);
+    /* 174A0 skips common GCD reduction when either coefficient is zero.
+     * Starting from an LCM would silently reduce those preserved zero slots. */
+    uint64_t reduce = a && c ? gcd(gcd(magnitude(a), magnitude(c)), d) : 1;
     a /= (int64_t)reduce; c /= (int64_t)reduce; d /= reduce;
-    int factor_negative = (a < 0 && (!c || (c < 0 && (d != 1 || o->format_context)))) ||
-                          (!a && c < 0);
+    int factor_negative = a < 0 && (!c || (c < 0 && (d != 1 || o->format_context)));
     if (factor_negative) { byte(w, 0x60); a = -a; c = -c; }
-    int parentheses = d == 1 && a && c && o->format_context;
+    int parentheses = d == 1 && c && o->format_context;
     if (d != 1) fraction_begin(w);
     if (parentheses) byte(w, '(');
-    if (a) emit_surd_term(w, a, radicand_a, 0);
-    if (c) emit_surd_term(w, c, radicand_c, !!a);
-    if (!a && !c) byte(w, '0');
+    /* AE36..AE68 always serialize the first displayed slot, including a
+     * zero coefficient. Only the second slot has a zero-coefficient gate. */
+    emit_surd_term(w, a, radicand_a, 0, 0);
+    if (c) emit_surd_term(w, c, radicand_c, 1, 1);
     if (parentheses) byte(w, ')');
     if (d != 1) { fraction_middle(w); integer(w, d); fraction_end(w); }
     r->kind = 13; return FX_FORMAT_OK;
@@ -727,18 +746,23 @@ fx_format_status fx_format_number(const fx_number *number,
         }
         emit_rational(&w, r, options, result, 0); return result_status(&w, result, FX_FORMAT_OK);
     }
-    case FX_NUMBER_SURD:
+    case FX_NUMBER_SURD: {
         if (surd_exact_zero(number)) {
             fx_number zero; fx_number_zero(&zero);
             return numeric_fallback(&zero, options, tokens, capacity, result);
         }
-        if (!options->math_output || selection != 13) {
-            fx_number decimal;
-            if (fx_number_to_decimal(&decimal, number) != FX_NUMERIC_OK)
-                return result_status(&w, result, FX_FORMAT_UNIMPLEMENTED);
+        fx_number decimal;
+        if (fx_number_to_decimal(&decimal, number) != FX_NUMERIC_OK)
+            return result_status(&w, result, FX_FORMAT_UNIMPLEMENTED);
+        /* AB8E tests the converted fractional part atABE2..ABF4 before its
+         * exact-surd branch. Whole-valued records takeABFA numeric fallback,
+         * even when their stored radicands have not been simplified. */
+        if (!options->math_output || selection != 13 ||
+            fx_number_fractional_status(&decimal) == 0) {
             return numeric_fallback(&decimal, options, tokens, capacity, result);
         }
         return result_status(&w, result, emit_surd(&w, number, options, result));
+    }
     case FX_NUMBER_ERROR: return result_status(&w, result, FX_FORMAT_UNIMPLEMENTED);
     default: return result_status(&w, result, FX_FORMAT_INVALID);
     }

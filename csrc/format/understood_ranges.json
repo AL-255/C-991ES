@@ -2,6 +2,30 @@
   "basis": "Conservative inspected half-open semantic spans. Shared helpers are understood for canonical numeric records and the actual table/inequality caller contracts. This does not claim CPU scratch-state, malformed native ABI input or full-firmware completeness.",
   "ranges": [
     {
+      "start": "0xbca8",
+      "end": "0xbcec",
+      "scope": "Nonzero context and ten-digit precision checks, exponent-9..9 cutoff, second rounding to nine digits and expanded-record refresh",
+      "source": "csrc/format/fx_format.c"
+    },
+    {
+      "start": "0xabe2",
+      "end": "0xac00",
+      "scope": "Numeric fractional-part preparation, zero classification and whole-valued exact-record fallback to kind10",
+      "source": "csrc/format/fx_format.c"
+    },
+    {
+      "start": "0xae36",
+      "end": "0xaeaa",
+      "scope": "First displayed coefficient/radicand serialization including zero slots, optional second coefficient sign and unconditional second radical including sqrt1",
+      "source": "csrc/format/fx_format.c"
+    },
+    {
+      "start": "0x18176",
+      "end": "0x18206",
+      "scope": "Canonical integral-component common-denominator expansion, first-radicand1 ordering, products and common reduction before copying five expanded fields",
+      "source": "csrc/format/fx_format.c"
+    },
+    {
       "start": "0x7ee0",
       "end": "0x7f92",
       "scope": "Prime token serialization, multiplication separators, final-factor grouping, powers and return kind15",

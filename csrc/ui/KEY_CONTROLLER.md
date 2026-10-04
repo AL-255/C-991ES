@@ -1,0 +1,11 @@
+The outer key controller implements the emulator firmware routine1DB34 in readable C. It retains a typed host descriptor, raw key pair and cursor-wait state in a C object; it does not allocate a synthetic CPU frame in calculator RAM.
+
+Call fx_key_controller_begin, then call fx_key_controller_tick for each scheduled native wait iteration. WAIT means no terminal event is ready. EXPORT means the status/framebuffer/numeric packets identified by export_mask have been written and another wait has begun. TOKEN and RESET are retained until fx_key_controller_finish consumes them. A RESET event transfers control to the host boot lifecycle; the controller does not execute a BRK instruction.
+
+The emulator host remains responsible for consuming and clearing8E01/8E02. Every newly started wait performs its first blink/timer iteration even if a pair is already present. Repeating an export pair repeats the original packet/retry path. Modifiers repeat through the conditional annunciator refresh; host exports repeat directly through the wait without repainting that row.
+
+Ordinary and reset-request keys clear the optional text string at9838 before updating the status packet. The E7 action writes3 to8E00 and starts timer1. Other ordinary keys leave the wait flag cleared after completion. All output packets use the default descriptor supplied by fx_host_descriptor_default, including the50-byte raw numeric packet at8E10.
+
+fx_key_wait_begin_host and fx_key_wait_finish_host are reusable wait variants for callers whose native pair is a local value. The existing RAM-destination APIs preserve their original alias behavior. The host-output finish never writes a substitute destination into the data bus, and neither finish form automatically consumes the host key bytes.
+
+The native comparison covers injected raw pairs, idle ticks, modifier and bridge retries, token normalization, reset-request boundaries, cursor restoration, complete persistent RAM/LCD/MMIO and callback events. Native CPU stack bytes and the shared scalar classifier numeric scratch are explicitly excluded. Physical clock scheduling, malformed/unbounded native buffers, unsupported cursor heights, menus and parent input/evaluator/replay/error controllers remain separate work.

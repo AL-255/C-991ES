@@ -16,12 +16,14 @@
     "state": "fx_key_wait owns two20-byte bitmaps, framebuffer/destination addresses, blink phase/gate/countdown/period, remaining-transition and idle counters, active and ready flags",
     "begin": "fx_key_wait_begin initializes native phase0, period/countdown1 and1195 transitions; writes8E00=1",
     "tick": "fx_key_wait_tick advances blink and timer129A before checking8E01|8E02; increments8224 only when idle",
-    "finish": "fx_key_wait_finish clears8E00, reads/stores the raw pair in bus order and restores hidden pixels;8E01/8E02 remain unchanged unless the supplied output destination aliases them"
+    "finish": "fx_key_wait_finish clears8E00, reads/stores the raw pair in bus order and restores hidden pixels;8E01/8E02 remain unchanged unless the supplied output destination aliases them",
+    "begin_host": "fx_key_wait_begin_host initializes the same wait with host-owned output only",
+    "finish_host": "fx_key_wait_finish_host returns the current raw pair in host state, with no synthetic RAM destination stores; wait-flag clear and hidden bitmap restore are unchanged"
   },
   "gaps": [
     "Visible fonts outside6/7/10, suppressed heights above10, and height growth into native uncaptured local bytes return explicit unsupported status",
     "Destination aliases to original CPU-call-stack memory are outside the native parity domain",
-    "Outer1DB34 status/framebuffer/numeric bridge exports, host reset commands and menu/keypress integration belong to separate controllers",
+    "Outer1DB34 bridge/token/reset-request routing is implemented in fx_key_controller; called menu/input/evaluator controllers remain separate",
     "Physical-time scheduling, interrupts and complete reset-to-keypress device I/O remain pending"
   ],
   "verification": {

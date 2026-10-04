@@ -78,6 +78,16 @@
       "routine": "0x37bc through0xc060 error branch",
       "input": "all sixteen F0..FF headers",
       "portable_outcome": "Emits ERROR except empty FD, returns kind0, and bypasses numeric recognition and sleep side effects before mode-specific serializers."
+    },
+    {
+      "routine": "0xafe2 natural history",
+      "input": "empty output, including cached empty source followed by dormant nonzero bytes",
+      "portable_outcome": "Copies the first NUL in a do-while traversal and checks the next source byte; preserves the native extra terminator and dormant history writes. Twelve real-controller regressions and complex cached fixtures compare all256 history bytes."
+    },
+    {
+      "routine": "0xb070 ordinary complex/polar branches",
+      "input": "canonical20-byte real/imaginary records, all256 selections, rectangular/polar unit/preference overrides, FD/error/prime branches and cached invalid source addresses",
+      "portable_outcome": "Preserves both source records, classification-driven component inclusion, exact coefficient-one elision, component format contexts and initial-selection-dependent kind/history commits; all28,301 returned native calls match selected state/cache/history/framebuffer/LCD outputs. Prime cases that exceeded the default1M oracle budget all returned within20M instructions and are compared rather than omitted."
     }
   ]
 }

@@ -29,6 +29,8 @@ fx_boot_status fx_boot_reset_settings(fx_platform *platform);
 fx_boot_status fx_boot_cold_reset(fx_platform *platform);
 /* 40a2: reset transient flags, contrast, editor and workspaces, then flush. */
 fx_boot_status fx_boot_default_screen(fx_platform *platform);
+/* 1df7e: initialize mode12's input or table screen from flag8137. */
+void fx_boot_initialize_mode12(fx_platform *platform);
 /* 6fe6: five-read boot-key probe; zero denotes the 0x7b combination. */
 uint8_t fx_boot_probe_welcome_key(fx_platform *platform);
 /* D6FE..D730: stack guard data, peripheral setup, retained-state validation

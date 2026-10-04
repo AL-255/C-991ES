@@ -6,6 +6,7 @@
 #include "parse/fx_eval.h"
 #include "format/fx_format.h"
 #include "render/fx_render.h"
+#include "render/fx_result_complex.h"
 #include "data/fx_rom_data.h"
 #include "ui/fx_editor.h"
 #include "ui/fx_input_codec.h"
@@ -23,14 +24,18 @@ static uint32_t random_word(void)
 
 static void parser_bounds(void)
 {
-    static const uint8_t alphabet[] = "0123456789.+-()\x4e\x4f\x60\x68\x70\x71\x72\x73\x74\x75\x76\x77\x81\x82\x85\x86\x87\x90\x91\x92\x93\x98\x5e\xae\xa0\xa1\xa2\xa3\xb0\xb1\xb2";
+    static const uint8_t alphabet[] = "0123456789.+-()\x4e\x4f\x60\x63\x68\x70\x71\x72\x73\x74\x75\x76\x77\x80\x81\x82\x85\x86\x87\x88\x90\x91\x92\x93\x98\x9f\x5e\xae\xa0\xa1\xa2\xa3\xa8\xb0\xb1\xb2\xbe\xbf\xc3";
     uint8_t input[1024];
     fx_eval_result result;
     for (unsigned n = 0; n < 20000; ++n) {
         size_t length = random_word() % sizeof(input);
         for (size_t i = 0; i < length; ++i)
             input[i] = alphabet[random_word() % (sizeof(alphabet) - 1)];
-        fx_eval_status status = fx_evaluate(input, length, NULL, &result);
+        fx_eval_options options = fx_eval_default_options();
+        options.calculation_context = n % 2 ? 0xc4 : 0xc1;
+        options.math_output = (uint8_t)(n % 3 != 0);
+        options.angle_unit = (uint8_t)(4 + n % 3);
+        fx_eval_status status = fx_evaluate(input, length, &options, &result);
         assert(status == FX_EVAL_OK || status == FX_EVAL_SYNTAX || status == FX_EVAL_MATH ||
                status == FX_EVAL_UNIMPLEMENTED || status == FX_EVAL_RESOURCE_LIMIT);
         assert(result.consumed <= length);
@@ -157,6 +162,29 @@ static void render_bounds(void)
         assert(fx_layout_sequence(&render, 0x8200, &box, 2, 17) != 0);
     }
     fx_flush_framebuffer(&render);
+    fx_number pair[2];
+    assert(fx_decimal_parse(&pair[0], "1") == FX_NUMERIC_OK);
+    assert(fx_decimal_parse(&pair[1], "2") == FX_NUMERIC_OK);
+    for (unsigned polar = 0; polar < 2; ++polar) {
+        for (unsigned selection = 0; selection < 14; ++selection) {
+            memset(memory, 0, sizeof memory);
+            memory[0x80f9] = 0xc4; memory[0x80fc] = 1;
+            memory[0x8100] = (uint8_t)selection; memory[0x8104] = 1;
+            memory[0x8105] = 4; memory[0x8106] = 1;
+            memory[0x8108] = (uint8_t)!polar;
+            memory[0x811f] = 10; memory[0x8121] = 1;
+            memory[0x812d] = 0x82;
+            memcpy(memory+0x8300, pair, sizeof pair);
+            fx_box box;
+            assert(fx_display_complex_result(&render, 0x8300, &box) == 1);
+            assert(!memcmp(memory+0x8300, pair, sizeof pair));
+            /* Cached output intentionally bypasses the numeric address. */
+            memory[0x8130] = 0;
+            assert(fx_display_complex_result(&render, 0x7fff, &box) == -1);
+            memory[0x8130] = 0;
+            assert(fx_display_complex_result(&render, 0xffed, &box) == -1);
+        }
+    }
 }
 
 static void editor_bounds(void)

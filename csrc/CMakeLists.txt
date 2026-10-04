@@ -16,6 +16,8 @@ add_library(fx991_firmware STATIC
     ui/fx_cursor.c
     ui/fx_key_dispatch.c
     ui/fx_key_wait.c
+    ui/fx_key_controller.c
+    ui/fx_annunciator.c
     ui/fx_editor.c
     ui/fx_construct_editor.c
     ui/fx_natural_editor.c
@@ -29,8 +31,10 @@ add_library(fx991_firmware STATIC
     complex/fx_complex.c
     complex/fx_complex_angle.c
     complex/fx_complex_round.c
+    complex/fx_complex_dispatch.c
     stats/fx_stats.c
     stats/fx_stats_cache.c
+    stats/fx_stats_editor.c
     stats/normal/fx_stats_normal.c
     trig/fx_trig.c
     trig/fx_trig_math.c
@@ -44,6 +48,7 @@ add_library(fx991_firmware STATIC
     render/fx_layout_validate.c
     render/fx_viewport.c
     render/fx_result.c
+    render/fx_result_complex.c
     render/fx_result_linear.c
     render/fx_result_special.c
     render/fx_result_format_state.c
@@ -78,7 +83,7 @@ if(BUILD_TESTING)
     set_tests_properties(public_api_bounds PROPERTIES
         ENVIRONMENT "ASAN_OPTIONS=detect_leaks=0:halt_on_error=1;UBSAN_OPTIONS=halt_on_error=1")
     find_package(Python3 REQUIRED COMPONENTS Interpreter)
-    foreach(subsystem tokens platform boot keys key_dispatch key_wait cursor editor editor_construct input_codec numeric numeric_transcend numeric_power numeric_root numeric_logbase combinatorics complex complex_angles complex_round stats stats_cache stats_normal trig trig_math trig_inverse trig_hyperbolic math_context render format format_base format_budget eval cli)
+    foreach(subsystem tokens platform boot keys key_dispatch key_wait key_controller annunciator cursor editor editor_construct input_codec numeric numeric_transcend numeric_power numeric_root numeric_logbase combinatorics complex complex_angles complex_round complex_dispatch stats stats_cache stats_editor stats_normal trig trig_math trig_inverse trig_hyperbolic math_context render render_complex format format_base format_budget eval eval_complex cli)
         add_test(NAME differential_${subsystem}
                  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../tools/test_${subsystem}_c.py)
         set_tests_properties(differential_${subsystem} PROPERTIES

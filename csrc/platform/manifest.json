@@ -209,8 +209,8 @@
     },
     {
       "address": "0xd74c",
-      "name": "Boot equation/inequality mode flags and LCD clearing; mode12 menu transfer remains external",
-      "scope": "Complete semantic span 0xd74c..0xd7a6; see boot verification limitations"
+      "name": "Boot equation/inequality and mode12 screen initialization",
+      "scope": "Complete semantic span 0xd74c..0xd7aa"
     },
     {
       "address": "0xd7aa",
@@ -231,15 +231,30 @@
       "address": "0x6f82 / 0x6fd8 / 0xd6fe",
       "name": "High-level reset entry",
       "scope": "Startup data initialization, callback register, boot validation/default-screen effects throughD7AE; welcome/diagnostic transitions exposed as statuses"
+    },
+    {
+      "address": "0x747a",
+      "name": "Raw real/imaginary host numeric packet",
+      "scope": "Complete50-byte packet with copied source records and prezeroed fields; original RAM/packet writes"
+    },
+    {
+      "address": "0x75a4",
+      "name": "Raw decimal, rational, surd and ERROR host field codec",
+      "scope": "Complete23-byte bounded output including retained-tail and malformed-nibble quirks; malformed rational counts that exceed native local capacity explicitly rejected"
+    },
+    {
+      "address": "0x1df7e",
+      "name": "Mode12 input/table screen initialization",
+      "scope": "Complete semantic span 0x1df7e..0x1dfb0, plus integrated boot resume"
     }
   ],
   "gaps": [
     "Full main calculator event loop",
     "Physical keyboard/timer interrupt scheduling",
     "Diagnostic screens and welcome-key blocking controller",
-    "Mode12 boot menu transfer",
     "Original Windows host execution; firmware packets are verified without invoking the host process",
-    "Native numeric operand workspace8000..80db after legacy formatter paths"
+    "Native numeric operand workspace8000..80db after legacy formatter paths",
+    "Malformed host-export rational counts exceeding the native23-byte local are rejected; CPU-frame corruption is not reproduced"
   ],
   "verification": [
     "tools/test_platform_c.py",

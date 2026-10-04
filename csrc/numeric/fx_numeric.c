@@ -688,135 +688,184 @@ static fx_numeric_status pack_exact(fx_number *out, const exact_value *value) {
     }
     return fx_surd_pack(out, components);
 }
-/* The compact-radical arithmetic keeps two slots per operand, including
- * zero coefficients. Radical sorting takes place before those empty slots
- * are discarded. Keeping that order also preserves the original decimal
- * fallback when more than two distinct radicals survive the four products. */
-static int reduce_fraction(exact_term *t) {
-    uint64_t common;
-    if (!t->denominator || !t->numerator) return 1;
-    common = gcd64(abs64(t->numerator), t->denominator);
-    t->numerator /= (int64_t)common; t->denominator /= common;
+/* Compact-radical intermediate fractions use the original finite decimal
+ * precision. The raw component products can exceed uint64_t before GCD;
+ * storing numerator and denominator as number records preserves each native
+ * fifteen-digit arithmetic boundary without a CPU/workspace abstraction. */
+typedef struct {
+    fx_number numerator, denominator;
+    uint64_t radicand;
+} finite_term;
+static fx_numeric_status rational_integer_gcd(fx_number *out,
+                                             const fx_number *a,
+                                             const fx_number *b);
+static fx_numeric_status rational_scalar_binary(fx_number *out,
+                                               const fx_number operands[4],
+                                               fx_binary_op op);
+static int finite_zero(const fx_number *number) {
+    fx_decimal value;
+    return fx_decimal_decode(&value,number) == FX_NUMERIC_OK && !value.sign;
+}
+static int finite_reduce(finite_term *term) {
+    fx_decimal numerator, denominator;
+    fx_number common;
+    if (fx_decimal_decode(&numerator,&term->numerator) != FX_NUMERIC_OK ||
+        fx_decimal_decode(&denominator,&term->denominator) != FX_NUMERIC_OK) return 0;
+    if (denominator.sign < 0) {
+        denominator.sign = 1; numerator.sign = -numerator.sign;
+        (void)fx_decimal_encode(&term->numerator,&numerator);
+        (void)fx_decimal_encode(&term->denominator,&denominator);
+    }
+    /* 0x17746 skips GCD when either component is zero. In particular, a
+     * zero denominator survives until compact packing or decimal fallback. */
+    if (!numerator.sign || !denominator.sign) return 1;
+    if (rational_integer_gcd(&common,&term->numerator,&term->denominator) != FX_NUMERIC_OK) return 0;
+    (void)fx_decimal_binary(&term->numerator,&term->numerator,&common,FX_DIVIDE);
+    (void)fx_decimal_binary(&term->denominator,&term->denominator,&common,FX_DIVIDE);
     return 1;
 }
-static int raw_pair(exact_term pair[2], const fx_number *number) {
+static void empty_term(finite_term *term) {
+    fx_number_zero(&term->numerator); term->radicand = 0;
+    fx_decimal_from_u8(&term->denominator,1);
+}
+static int raw_pair(finite_term pair[2], const fx_number *number) {
     exact_value value;
-    pair[0].numerator = 0; pair[0].radicand = 0; pair[0].denominator = 1;
+    empty_term(&pair[0]); pair[1] = pair[0];
     if (fx_number_kind(number) == FX_NUMBER_SURD) {
         fx_number components[6]; unsigned i;
-        if (fx_surd_unpack(components, number) != FX_NUMERIC_OK) return 0;
+        if (fx_surd_unpack(components,number) != FX_NUMERIC_OK) return 0;
         for (i = 0; i < 2; ++i) {
-            int64_t rad, den;
-            if (fx_decimal_to_integer(&pair[i].numerator, &components[3*i]) != FX_NUMERIC_OK ||
-                fx_decimal_to_integer(&rad, &components[3*i+1]) != FX_NUMERIC_OK ||
-                fx_decimal_to_integer(&den, &components[3*i+2]) != FX_NUMERIC_OK || rad < 0 || den < 1) return 0;
-            pair[i].radicand = (uint64_t)rad; pair[i].denominator = (uint64_t)den;
+            int64_t radicand;
+            if (fx_decimal_to_integer(&radicand,&components[3*i+1]) != FX_NUMERIC_OK || radicand < 0) return 0;
+            pair[i].numerator = components[3*i];
+            pair[i].radicand = (uint64_t)radicand;
+            pair[i].denominator = components[3*i+2];
         }
         return 1;
     }
     if ((number->bytes[0] & 0xf0) != 0 && (number->bytes[0] & 0xf0) != 0x20) return 0;
     if (fx_number_kind(number) == FX_NUMBER_DECIMAL && number->bytes[8] > 7) return 0;
-    if (!extract_exact(&value, number) || value.count > 1) return 0;
-    pair[1] = pair[0];
-    if (value.count) pair[1] = value.terms[0];
+    if (!extract_exact(&value,number) || value.count > 1) return 0;
+    if (value.count) {
+        (void)fx_decimal_from_integer(&pair[1].numerator,value.terms[0].numerator);
+        (void)fx_decimal_from_integer(&pair[1].denominator,(int64_t)value.terms[0].denominator);
+        pair[1].radicand = value.terms[0].radicand;
+    }
     return 1;
 }
-static int raw_product(exact_term *out, const exact_term *a, const exact_term *b) {
-    uint64_t square;
-    if (!mul_signed(a->numerator, b->numerator, &out->numerator) ||
-        !mul_unsigned(a->denominator, b->denominator, &out->denominator) ||
-        !mul_unsigned(a->radicand, b->radicand, &out->radicand)) return 0;
-    if (out->radicand) {
-        square_factors(out->radicand, &square, &out->radicand);
-        if (!mul_signed(out->numerator, (int64_t)square, &out->numerator)) return 0;
+static int raw_product(finite_term *out, const finite_term *a, const finite_term *b) {
+    finite_term product; uint64_t square; fx_number factor;
+    product.radicand = a->radicand*b->radicand;
+    (void)fx_decimal_binary(&product.numerator,&a->numerator,&b->numerator,FX_MULTIPLY);
+    (void)fx_decimal_binary(&product.denominator,&a->denominator,&b->denominator,FX_MULTIPLY);
+    if (product.radicand) {
+        square_factors(product.radicand,&square,&product.radicand);
+        (void)fx_decimal_from_integer(&factor,(int64_t)square);
+        (void)fx_decimal_binary(&product.numerator,&product.numerator,&factor,FX_MULTIPLY);
     }
-    return reduce_fraction(out);
+    if (!finite_reduce(&product)) return 0;
+    *out = product; return 1;
 }
-static int raw_sum(exact_term *out, const exact_term *a, const exact_term *b) {
-    int64_t x, y; uint64_t denominator;
-    if (!mul_signed(a->numerator, (int64_t)b->denominator, &x) ||
-        !mul_signed(b->numerator, (int64_t)a->denominator, &y) ||
-        !mul_unsigned(a->denominator, b->denominator, &denominator) ||
-        (y > 0 && x > INT64_MAX-y) || (y < 0 && x < INT64_MIN-y)) return 0;
-    out->numerator = x+y; out->denominator = denominator; out->radicand = a->radicand;
-    return reduce_fraction(out);
+static int raw_sum(finite_term *out, const finite_term *a, const finite_term *b) {
+    finite_term sum; fx_number first, second;
+    (void)fx_decimal_binary(&first,&a->numerator,&b->denominator,FX_MULTIPLY);
+    (void)fx_decimal_binary(&second,&b->numerator,&a->denominator,FX_MULTIPLY);
+    (void)fx_decimal_add_plain(&sum.numerator,&first,&second);
+    (void)fx_decimal_binary(&sum.denominator,&a->denominator,&b->denominator,FX_MULTIPLY);
+    sum.radicand = a->radicand;
+    if (!finite_reduce(&sum)) return 0;
+    *out = sum; return 1;
 }
-static void empty_term(exact_term *term) {
-    term->numerator = 0; term->radicand = 0; term->denominator = 1;
-}
-static void canonical_empty_terms(exact_term pair[2]) {
-    if (!pair[0].numerator) empty_term(&pair[0]);
-    if (!pair[1].numerator) { pair[1] = pair[0]; empty_term(&pair[0]); }
+static void canonical_empty_terms(finite_term pair[2]) {
+    if (finite_zero(&pair[0].numerator)) empty_term(&pair[0]);
+    if (finite_zero(&pair[1].numerator)) { pair[1] = pair[0]; empty_term(&pair[0]); }
 }
 /* 0x17f46 combines the sorted four-term polynomial into its two output
  * slots. A zero coefficient with a nonzero radical still occupies a slot
  * until the corresponding cancellation branch is reached. */
-static int reduce_four(exact_term pair[2], exact_term terms[4]) {
+static int reduce_four(finite_term pair[2], finite_term terms[4]) {
     unsigned i, j;
     for (i = 1; i < 4; ++i) {
-        exact_term t = terms[i]; j = i;
+        finite_term t = terms[i]; j = i;
         while (j && terms[j-1].radicand > t.radicand) { terms[j] = terms[j-1]; --j; }
         terms[j] = t;
     }
     if (!terms[1].radicand) { pair[0] = terms[2]; pair[1] = terms[3]; }
     else if (!terms[0].radicand) {
         if (terms[1].radicand == terms[2].radicand) {
-            if (!raw_sum(&pair[0], &terms[1], &terms[2])) return 0;
+            if (!raw_sum(&pair[0],&terms[1],&terms[2])) return 0;
             pair[1] = terms[3];
         } else if (terms[2].radicand == terms[3].radicand) {
-            pair[0] = terms[1]; if (!raw_sum(&pair[1], &terms[2], &terms[3])) return 0;
+            pair[0] = terms[1]; if (!raw_sum(&pair[1],&terms[2],&terms[3])) return 0;
         } else return 0;
     } else if (terms[0].radicand == terms[1].radicand) {
-        if (!raw_sum(&pair[0], &terms[0], &terms[1])) return 0;
+        if (!raw_sum(&pair[0],&terms[0],&terms[1])) return 0;
         if (terms[0].radicand == terms[2].radicand) {
-            if (!raw_sum(&pair[0], &pair[0], &terms[2])) return 0;
+            if (!raw_sum(&pair[0],&pair[0],&terms[2])) return 0;
             pair[1] = terms[3];
         } else if (terms[2].radicand == terms[3].radicand) {
-            if (!raw_sum(&pair[1], &terms[2], &terms[3])) return 0;
-        } else if (!pair[0].numerator) { pair[0] = terms[2]; pair[1] = terms[3]; }
+            if (!raw_sum(&pair[1],&terms[2],&terms[3])) return 0;
+        } else if (finite_zero(&pair[0].numerator)) { pair[0] = terms[2]; pair[1] = terms[3]; }
         else return 0;
     } else if (terms[1].radicand == terms[2].radicand) {
         pair[0] = terms[0];
-        if (!raw_sum(&pair[1], &terms[1], &terms[2])) return 0;
+        if (!raw_sum(&pair[1],&terms[1],&terms[2])) return 0;
         if (terms[1].radicand == terms[3].radicand) {
-            if (!raw_sum(&pair[1], &pair[1], &terms[3])) return 0;
-        } else if (!pair[1].numerator) pair[1] = terms[3];
+            if (!raw_sum(&pair[1],&pair[1],&terms[3])) return 0;
+        } else if (finite_zero(&pair[1].numerator)) pair[1] = terms[3];
         else return 0;
     } else if (terms[2].radicand == terms[3].radicand) {
-        if (!raw_sum(&pair[0], &terms[2], &terms[3]) || pair[0].numerator) return 0;
+        if (!raw_sum(&pair[0],&terms[2],&terms[3]) || !finite_zero(&pair[0].numerator)) return 0;
         pair[0] = terms[0]; pair[1] = terms[1];
     } else return 0;
     canonical_empty_terms(pair);
     if (pair[0].radicand == pair[1].radicand) {
-        if (!raw_sum(&pair[1], &pair[0], &pair[1])) return 0;
+        if (!raw_sum(&pair[1],&pair[0],&pair[1])) return 0;
         empty_term(&pair[0]);
     }
     return 1;
 }
-static fx_numeric_status pack_raw_pair(fx_number *out, const exact_term pair[2]) {
+static fx_numeric_status pack_raw_pair(fx_number *out, const finite_term pair[2]) {
     fx_number components[6]; unsigned i;
-    for (i = 0; i < 2; ++i) {
-        if (pair[i].radicand > (uint64_t)INT64_MAX || pair[i].denominator > (uint64_t)INT64_MAX)
-            return FX_NUMERIC_UNREPRESENTABLE;
-        (void)fx_decimal_from_integer(&components[3*i], pair[i].numerator);
-        (void)fx_decimal_from_integer(&components[3*i+1], (int64_t)pair[i].radicand);
-        (void)fx_decimal_from_integer(&components[3*i+2], (int64_t)pair[i].denominator);
+    if (finite_zero(&pair[0].numerator) && finite_zero(&pair[1].numerator)) {
+        fx_number_zero(out); return FX_NUMERIC_OK;
     }
-    return fx_surd_pack(out, components);
+    if (finite_zero(&pair[0].numerator) && pair[1].radicand == 1) {
+        fx_number operands[4];
+        operands[0] = pair[1].numerator; operands[1] = pair[1].denominator;
+        fx_number_zero(&operands[2]); fx_decimal_from_u8(&operands[3],1);
+        return rational_scalar_binary(out,operands,FX_ADD);
+    }
+    for (i = 0; i < 2; ++i) {
+        components[3*i] = pair[i].numerator;
+        (void)fx_decimal_from_integer(&components[3*i+1],(int64_t)pair[i].radicand);
+        components[3*i+2] = pair[i].denominator;
+    }
+    /* Native0x17616 checks exponent bytes before extracting compact fields.
+     * Oversized fractions therefore use their computed decimal components,
+     * including denominator values that cannot fit in a host integer. */
+    for (i = 0; i < 6; ++i)
+        if (components[i].bytes[8] >= (i%3 == 1 ? 3 : 2))
+            return surd_components_to_decimal(out,components);
+    return fx_surd_pack(out,components);
 }
 static int compact_binary(fx_number *out, const fx_number *a, const fx_number *b, fx_binary_op op,
                           fx_numeric_status *status) {
-    exact_term x[2], y[2], pair[2], terms[4]; unsigned i, j;
+    finite_term x[2], y[2], pair[2], terms[4]; unsigned i, j;
     if (!raw_pair(x,a) || !raw_pair(y,b)) return 0;
     if (op == FX_ADD || op == FX_SUBTRACT) {
         terms[0] = x[0]; terms[1] = x[1]; terms[2] = y[0]; terms[3] = y[1];
-        if (op == FX_SUBTRACT) { terms[2].numerator = -terms[2].numerator; terms[3].numerator = -terms[3].numerator; }
+        if (op == FX_SUBTRACT) {
+            (void)fx_number_negate(&terms[2].numerator,&terms[2].numerator);
+            (void)fx_number_negate(&terms[3].numerator,&terms[3].numerator);
+        }
         if (!reduce_four(pair,terms)) return 0;
     } else if (op == FX_MULTIPLY) {
         if (fx_number_kind(a) == FX_NUMBER_DECIMAL) {
             for (i = 0; i < 2; ++i) {
                 pair[i] = y[i];
-                if (!mul_signed(x[1].numerator,y[i].numerator,&pair[i].numerator) || !reduce_fraction(&pair[i])) return 0;
+                (void)fx_decimal_binary(&pair[i].numerator,&x[1].numerator,&y[i].numerator,FX_MULTIPLY);
+                if (!finite_reduce(&pair[i])) return 0;
             }
         } else {
             for (i = 0; i < 2; ++i) for (j = 0; j < 2; ++j)
@@ -824,39 +873,45 @@ static int compact_binary(fx_number *out, const fx_number *a, const fx_number *b
             if (!reduce_four(pair,terms)) return 0;
         }
     } else if (op == FX_DIVIDE && !y[0].radicand) {
-        exact_term reciprocal;
+        finite_term reciprocal; fx_decimal coefficient; fx_number radicand;
         if (!y[1].radicand) return 0;
-        reciprocal.numerator = y[1].numerator < 0 ? -(int64_t)y[1].denominator : (int64_t)y[1].denominator;
-        reciprocal.radicand = y[1].radicand;
-        if (!mul_unsigned(abs64(y[1].numerator),y[1].radicand,&reciprocal.denominator)) return 0;
+        reciprocal.numerator = y[1].denominator; reciprocal.radicand = y[1].radicand;
+        if (fx_decimal_decode(&coefficient,&y[1].numerator) != FX_NUMERIC_OK) return 0;
+        if (coefficient.sign < 0) (void)fx_number_negate(&reciprocal.numerator,&reciprocal.numerator);
+        coefficient.sign = coefficient.mantissa ? 1 : 0;
+        (void)fx_decimal_encode(&reciprocal.denominator,&coefficient);
+        (void)fx_decimal_from_integer(&radicand,(int64_t)y[1].radicand);
+        (void)fx_decimal_binary(&reciprocal.denominator,&reciprocal.denominator,&radicand,FX_MULTIPLY);
         for (i = 0; i < 2; ++i) if (!raw_product(&pair[i],&x[i],&reciprocal)) return 0;
         canonical_empty_terms(pair);
-        if (pair[0].radicand > pair[1].radicand) { exact_term t = pair[0]; pair[0] = pair[1]; pair[1] = t; }
+        if (pair[0].radicand > pair[1].radicand) { finite_term t = pair[0]; pair[0] = pair[1]; pair[1] = t; }
     } else if (op == FX_DIVIDE) {
-        exact_term scalar = {0,1,1}; int64_t left, right;
-        uint64_t first_square, second_square;
-        if (!mul_signed(y[0].numerator,(int64_t)y[1].denominator,&left) ||
-            !mul_signed(y[1].numerator,(int64_t)y[0].denominator,&right) ||
-            !mul_signed(left,left,&left) || !mul_signed(right,right,&right) ||
-            !mul_signed(left,(int64_t)y[0].radicand,&left) ||
-            !mul_signed(right,(int64_t)y[1].radicand,&right) ||
-            !mul_unsigned(y[0].denominator,y[0].denominator,&first_square) ||
-            !mul_unsigned(y[1].denominator,y[1].denominator,&second_square) ||
-            !mul_unsigned(first_square,second_square,&scalar.denominator)) return 0;
-        scalar.numerator = left-right;
-        if (!reduce_fraction(&scalar)) return 0;
-        y[1].numerator = -y[1].numerator;
+        finite_term scalar; fx_number left, right, radicand;
+        scalar.radicand = 1;
+        (void)fx_decimal_binary(&scalar.denominator,&y[0].denominator,&y[1].denominator,FX_MULTIPLY);
+        (void)fx_decimal_binary(&scalar.denominator,&scalar.denominator,&scalar.denominator,FX_MULTIPLY);
+        (void)fx_decimal_binary(&left,&y[0].numerator,&y[1].denominator,FX_MULTIPLY);
+        (void)fx_decimal_binary(&left,&left,&left,FX_MULTIPLY);
+        (void)fx_decimal_from_integer(&radicand,(int64_t)y[0].radicand);
+        (void)fx_decimal_binary(&left,&left,&radicand,FX_MULTIPLY);
+        (void)fx_decimal_binary(&right,&y[1].numerator,&y[0].denominator,FX_MULTIPLY);
+        (void)fx_decimal_binary(&right,&right,&right,FX_MULTIPLY);
+        (void)fx_decimal_from_integer(&radicand,(int64_t)y[1].radicand);
+        (void)fx_decimal_binary(&right,&right,&radicand,FX_MULTIPLY);
+        (void)fx_decimal_binary(&scalar.numerator,&left,&right,FX_SUBTRACT);
+        if (!finite_reduce(&scalar)) return 0;
+        (void)fx_number_negate(&y[1].numerator,&y[1].numerator);
         for (i = 0; i < 2; ++i) for (j = 0; j < 2; ++j)
             if (!raw_product(&terms[2*i+j],&x[i],&y[j])) return 0;
         if (!reduce_four(pair,terms)) return 0;
         for (i = 0; i < 2; ++i) if (pair[i].radicand) {
-            int64_t numerator; uint64_t denominator;
-            if (!mul_signed(pair[i].numerator,(int64_t)scalar.denominator,&numerator) ||
-                !mul_unsigned(pair[i].denominator,abs64(scalar.numerator),&denominator) ||
-                abs64(numerator) >= UINT64_C(10000000000) || denominator >= UINT64_C(10000000000)) return 0;
-            pair[i].numerator = scalar.numerator < 0 ? -numerator : numerator;
-            pair[i].denominator = denominator;
-            if (!reduce_fraction(&pair[i])) return 0;
+            fx_number numerator, denominator;
+            (void)fx_decimal_binary(&numerator,&pair[i].numerator,&scalar.denominator,FX_MULTIPLY);
+            (void)fx_decimal_binary(&denominator,&pair[i].denominator,&scalar.numerator,FX_MULTIPLY);
+            /* 0x17ec2 honors0x17d14's pre-reduction exponent-byte test. */
+            if (numerator.bytes[8] > 14 || denominator.bytes[8] > 14) return 0;
+            pair[i].numerator = numerator; pair[i].denominator = denominator;
+            if (!finite_reduce(&pair[i])) return 0;
         }
     } else return 0;
     *status = pack_raw_pair(out,pair); return 1;

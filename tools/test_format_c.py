@@ -107,6 +107,49 @@ def main():
         for context in range(7):
             cases.append((f'surd-context-{context}-{r}', bytes.fromhex(r),
                           Options(13, 1, 0, 0, 0, 0, context, 0)))
+    # These valid compact records were packed identically by native17616.
+    # Native exact output retains the first displayed zero coefficient,
+    # skips GCD reduction around zero slots, and keeps sqrt1 on the second
+    # term. Converted whole values bypass exact serialization altogether.
+    surd_serialization_records = [
+        '80040101000901010101', '80010101000101010101',
+        '80010102000101030101', '80020101000200010001',
+        '80020102000200030001', '80020101000300010001',
+        '80000001000301010100']
+    for record in surd_serialization_records:
+        for context in range(7):
+            for math in [0,1]:
+                cases.append((f'surd-serialization-{record}-{context}-{math}',bytes.fromhex(record),
+                              Options(13,math,0,0,0,1,context,0)))
+    # These mathematically whole sums convert to a stored value immediately
+    # below the integer. Native fractional-part classification keeps their
+    # exact surd output; recognizing a nearby integer would change behavior.
+    for record in ['80040103000901090101','80010103000102030101',
+                   '80040207000901070101','80040111000903110101',
+                   '80040117000905170101','80040119000117190101',
+                   '80040103000901090606']:
+        for context in [0,4]:
+            cases.append((f'surd-near-whole-storage-{record}-{context}',bytes.fromhex(record),
+                          Options(13,1,0,0,0,1,context,0)))
+    for a in [-2,-1,0,1,2]:
+        for b in [-2,-1,0,1,2]:
+            if not a and not b: continue
+            for radicand_a,radicand_b in [(1,1),(1,2),(2,1),(2,2),(2,3),(4,9)]:
+                for denominator_a,denominator_b in [(1,1),(2,2),(2,3),(3,6)]:
+                    values = [a,radicand_a,denominator_a,b,radicand_b,denominator_b]
+                    parts = (Number * 6)(); number = Number()
+                    for position,value in enumerate(values):
+                        assert lib.fx_decimal_from_integer(C.byref(parts[position]),value) == 0
+                    assert lib.fx_surd_pack(C.byref(number),parts) == 0
+                    for context in [0,4]:
+                        cases.append((f'surd-slots-{values}-{context}',bytes(number.bytes),
+                                      Options(13,1,0,0,0,1,context,0)))
+    for record in surd_serialization_records[:2]:
+        for previous in range(16):
+            for context in [0,4]:
+                for mode in [0,4,8,9]:
+                    cases.append((f'surd-whole-history-{record}-{previous}-{context}-{mode}',bytes.fromhex(record),
+                                  Options(previous*16+13,1,0,mode,3,1,context,0)))
     for math in [0, 1]:
         for mixed in [0, 1]:
             for selection in [0, 11, 12, 13]:
@@ -162,6 +205,33 @@ def main():
             n = Number(); assert lib.fx_decimal_parse(C.byref(n), value.encode()) == 0
             cases.append((f'decimal-context-{context}-{value}', bytes(n.bytes),
                           Options(10, 1, 0, 0, 0, 0, context, 0)))
+    # Narrow coefficient contexts use nine digits outside exponent +/-9.
+    # Sci10 rounds twice; Norm/Fix restart from the original record. Include
+    # half-up double-rounding and carry across the exponent cutoff.
+    for context in range(7):
+        for mode,digits in [(0,0),(4,0),(8,0),(8,3),(9,0),(9,9),(9,8)]:
+            for selection in range(2,11):
+                for value in ['-1e99','1.23456789495e99','1.23456789495e-99',
+                              '9.99999999995e9','9.99999999995e-10',
+                              '9.99999999995e99','1.23456789495e9',
+                              '1.23456789495e-9']:
+                    n = Number(); assert lib.fx_decimal_parse(C.byref(n),value.encode()) == 0
+                    cases.append((f'decimal-context-precision-{context}-{mode}-{digits}-{selection}-{value}',bytes(n.bytes),
+                                  Options(selection,1,0,mode,digits,1,context,0)))
+    # BA10/BB80 only delegates Norm/Fix to fixed nine-digit Sci when digit9
+    # of the rounded ten-digit coefficient is nonzero. Delegation retains
+    # trailing zeroes (2.01232740), while an already short value stays short.
+    for context in range(7):
+        for mode,digits in [(0,0),(4,0),(8,0),(8,3),(9,0)]:
+            for selection in [0,10,14,30]:
+                for value in ['2.01232739742523e12','-2.01232739742523e12',
+                              '2.01232739742523e-12','2.01232739742523e9',
+                              '1e10','-1e10','2.1e10','1.2345678e10',
+                              '1.23456780001e10','1.23456789501e10',
+                              '1.23456789499e10','9.99999999995e10']:
+                    n = Number(); assert lib.fx_decimal_parse(C.byref(n),value.encode()) == 0
+                    cases.append((f'compact-fixed-width-{context}-{mode}-{digits}-{selection}-{value}',bytes(n.bytes),
+                                  Options(selection,1,0,mode,digits,1,context,0)))
     for row in json.loads((ROOT / 'analysis/pi-result-trace/manifest.json').read_text())['cases']:
         o = Options(13, 1, 0, 0, 0, 0, 0, 0)
         for address, value in row['context_overrides'].items():
@@ -340,7 +410,10 @@ def main():
     overflow_cases = 0
     boundary_samples = (cases[:12] + [case for case in cases if case[0].startswith('marked-prime-history-')][:2]
                         + [case for case in cases if case[0].startswith('tagged-prime-boundary-')]
-                        + [case for case in cases if case[0].startswith('error-13-')][:1])
+                        + [case for case in cases if case[0].startswith('error-13-')][:1]
+                        + [case for case in cases if case[0].startswith('surd-serialization-') and '-0-1' in case[0]]
+                        + [case for case in cases if case[0].startswith('decimal-context-precision-1-9-0-10-')])
+    boundary_samples += [case for case in cases if case[0].startswith('compact-fixed-width-1-0-0-10-')]
     for name, record, o in boundary_samples:
         expected_kind, expected = oracle(machine, record, o)
         number = Number.from_buffer_copy(record)

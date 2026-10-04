@@ -8,7 +8,7 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-SUITES = ('tokens', 'platform', 'boot', 'keys', 'key_dispatch', 'key_wait', 'cursor', 'editor', 'editor_construct', 'input_codec', 'numeric', 'numeric_transcend', 'numeric_power', 'numeric_root', 'numeric_logbase', 'combinatorics', 'complex', 'complex_angles', 'complex_round', 'stats', 'stats_cache', 'stats_normal', 'trig', 'trig_math', 'trig_inverse', 'trig_hyperbolic', 'math_context', 'render', 'format', 'format_base', 'format_budget', 'eval', 'cli', 'safety')
+SUITES = ('tokens', 'platform', 'boot', 'keys', 'key_dispatch', 'key_wait', 'key_controller', 'annunciator', 'cursor', 'editor', 'editor_construct', 'input_codec', 'numeric', 'numeric_transcend', 'numeric_power', 'numeric_root', 'numeric_logbase', 'combinatorics', 'complex', 'complex_angles', 'complex_round', 'complex_dispatch', 'stats', 'stats_cache', 'stats_editor', 'stats_normal', 'trig', 'trig_math', 'trig_inverse', 'trig_hyperbolic', 'math_context', 'render', 'render_complex', 'format', 'format_base', 'format_budget', 'eval', 'eval_complex', 'cli', 'safety')
 
 
 def audit():
@@ -28,6 +28,11 @@ def audit():
             if not p.exists() or hashlib.sha256(p.read_bytes()).hexdigest() != digest:
                 issues.append(f'{name}: changed or missing tested input {file}')
         cases = report.get('cases', report.get('total_cases', report.get('checks_total', 0)))
+        if isinstance(cases, dict):
+            cases = report.get('total_cases', report.get('checks_total', sum(cases.values())))
+        if type(cases) is not int or cases < 0:
+            issues.append(f'{name}: invalid reported check count')
+            cases = 0
         results[name] = {'status': report.get('status'), 'cases': cases,
                          'pinned_inputs': len(inputs)}
     for requirement in scope['requirements']:

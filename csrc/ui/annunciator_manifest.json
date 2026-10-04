@@ -1,0 +1,30 @@
+{
+  "subsystem": "high_level_annunciator_row",
+  "implementation_language": "C99",
+  "implementation_executes_firmware": false,
+  "implementation_uses_host_floating_point": false,
+  "semantic_complete": false,
+  "implemented_routines": [
+    {
+      "address": "0x003d62",
+      "name": "annunciator_row",
+      "scope": "Clear the complete twelve-byte87D0 row, set modifier/scalar/mode/angle/format/math/result/history indicators in native bus-write order, and copy all twelve bytes toF800. Classify immutable8226 and modeC4-only8408 through the shared native scalar value predicate, preserving compact-surd zero/sign behavior."
+    }
+  ],
+  "api": {
+    "header": "csrc/ui/fx_annunciator.h",
+    "draw": "fx_annunciator_draw(fx_platform *) returns0 success, -1 for an invalid platform, or the negative scalar-classifier status; a classifier failure retains preceding row writes and does not update the LCD."
+  },
+  "gaps": [
+    "Native scalar-classifier numeric scratch8000..805F and8640..867B is absent from the host value API, and original CPU call-stack writes are not reproduced.",
+    "Malformed compact-surds outside the shared classifier value domain are explicitly unsupported through its negative status.",
+    "Physical LCD timing, interrupts, outer key/action controllers and full firmware lifecycle remain outside this routine API."
+  ],
+  "verification": {
+    "tool": "tools/test_annunciator_c.py",
+    "report": "analysis/c-verification/annunciator.json",
+    "oracle": "Original003D62 through003E74return in independent SimU8",
+    "comparison": "Complete persistent RAM/LCD/MMIO, every persistent per-address bus-write count, selected ordered bus-write traces, immutable scalar sources, surrounding-buffer preservation and callback events. Numeric scratch8000..805F/8640..867B and CPU call stack8D00..8DED are excluded explicitly.",
+    "limitation": "Routine-level passive peripheral oracle; no firmware-completion claim."
+  }
+}

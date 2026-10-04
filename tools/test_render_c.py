@@ -747,6 +747,26 @@ def main():
                 same_region(0xf800, 512, reason)
                 result_cases += 1
     counts['ordinary_real_result_controller_b070_and_lcd'] = result_cases
+    # AFE2 starts with a do-while: empty prime/cached text still writes its
+    # first NUL and may copy dormant bytes before the following terminator.
+    empty_history_cases=0
+    for cached in (0,1):
+      for selection in (14,15,0x8f):
+        for tail in (b'\0',b'\0XY\0'):
+          reset()
+          for address,value in [(0x80f9,193),(0x80fc,1),(0x8106,1),(0x8104,1),
+                                (0x8100,selection),(0x8130,cached),(0x811f,10),(0x8121,1)]: setting(address,value)
+          record=bytes.fromhex('03625402861350898400') if selection&15==15 else bytes.fromhex('00000000000000000000')
+          for n,value in enumerate(record): setting(0x8300+n,value)
+          for n,value in enumerate(tail): setting(0x8398+n,value)
+          for n in range(256): setting(0x9800+n,(n*31+5)&255)
+          oracle.word(0x812c,0x8200);memory[0x812c]=0;memory[0x812d]=0x82
+          oracle.er(0,0x8300);oracle.call(0xb070)
+          assert lib.fx_display_real_math_result(r,0x8300,C.byref(Box()))==1
+          reason=('empty history do-while',cached,selection,tail.hex())
+          for start,length in [(0x8100,64),(0x9800,256),(0x87d0,384),(0xf800,512)]:same_region(start,length,reason)
+          empty_history_cases+=1
+    counts['empty_natural_history_do_while_regressions'] = empty_history_cases
     linear_cases = 0
     for sample in fixtures:
         for selection in (0,1,2,3,4,5,6,7,8,9,10,11,12,13,0x1d,0x65,0x56):

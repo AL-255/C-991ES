@@ -1,0 +1,50 @@
+{
+  "basis": "Inspected assembly and native differential return status/callback/full persistent RAM checks for readable C editor functions. CPU stack and stack aliases, malformed prepared tables that overwrite the native stack, preceding evaluator control and physical timing are excluded. The0e680 claim is restricted to the STAT branch and excludes unrelated mode paths.",
+  "ranges": [
+    {
+      "start": "0x5096", "end": "0x5144",
+      "scope": "Raw cell addressing/output parameter aliases, row and reserved-record provider, byte-narrowed geometry and complete native column-count policy",
+      "source": "csrc/stats/fx_stats_editor.c", "verification": "analysis/c-verification/stats_editor.json"
+    },
+    {
+      "start": "0x519c", "end": "0x51ae",
+      "scope": "Pending input-flag clear at8101/8100/8130 and51aa shared tail entry",
+      "source": "csrc/stats/fx_stats_editor.c", "verification": "analysis/c-verification/stats_editor.json"
+    },
+    {
+      "start": "0xe450", "end": "0xe5a6",
+      "scope": "Complete table cursor movement with byte capacities/remaining count, signed threshold, E0/E1/E2/E3/ED routing and handled-versus-blocked flag effects",
+      "source": "csrc/stats/fx_stats_editor.c", "verification": "analysis/c-verification/stats_editor.json"
+    },
+    {
+      "start": "0xe680", "end": "0xe694",
+      "scope": "Input commit entry, evaluated-record pointer retention, pending input flag clear and initial context read; STAT branch only",
+      "source": "csrc/stats/fx_stats_editor.c", "verification": "analysis/c-verification/stats_editor.json"
+    },
+    {
+      "start": "0xe6a2", "end": "0xe6a6",
+      "scope": "Selection of context18 STAT data-input commit branch",
+      "source": "csrc/stats/fx_stats_editor.c", "verification": "analysis/c-verification/stats_editor.json"
+    },
+    {
+      "start": "0xe6de", "end": "0xe724",
+      "scope": "Common input-commit UI return state3 and STAT selected-row insertion/visible-column remapping",
+      "source": "csrc/stats/fx_stats_editor.c", "verification": "analysis/c-verification/stats_editor.json"
+    },
+    {
+      "start": "0xe732", "end": "0xe756",
+      "scope": "STAT record write, ED cursor advance, moment-cache invalidation and branch to common UI-state return; TABLE conversion/reset path excluded",
+      "source": "csrc/stats/fx_stats_editor.c", "verification": "analysis/c-verification/stats_editor.json"
+    },
+    {
+      "start": "0x1d426", "end": "0x1d646",
+      "scope": "Insertion capacity and row priority, reserve-aware shifting, row deletion/tail clearing, STAT800-byte clear and three-position reset",
+      "source": "csrc/stats/fx_stats_editor.c", "verification": "analysis/c-verification/stats_editor.json"
+    },
+    {
+      "start": "0x1d66c", "end": "0x1d6ec",
+      "scope": "Raw table record write/read with five descending independently snapshotted word copies, native status and aliases",
+      "source": "csrc/stats/fx_stats_editor.c", "verification": "analysis/c-verification/stats_editor.json"
+    }
+  ]
+}

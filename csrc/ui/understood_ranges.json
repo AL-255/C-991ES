@@ -138,6 +138,24 @@
       "end": "0x1dcb6",
       "scope": "Key-token remapping, modifier consumption and input permission normalization; blocking wait excluded",
       "source": "csrc/ui/fx_key_dispatch.c"
+    },
+    {
+      "start": "0x3d62",
+      "end": "0x3e74",
+      "scope": "Complete annunciator bit construction and twelve-byte LCD row copy; shared scalar classification is a value API with explicit native scratch exclusion",
+      "source": "csrc/ui/fx_annunciator.c"
+    },
+    {
+      "start": "0x1d802",
+      "end": "0x1d902",
+      "scope": "Nonblocking emulator wait begin/tick/finish lifecycle; host-owned cursor locals, mandatory first tick and retained raw pair; CPU stack and physical scheduling excluded",
+      "source": "csrc/ui/fx_key_wait.c"
+    },
+    {
+      "start": "0x1db34",
+      "end": "0x1dcb6",
+      "scope": "Complete outer emulator key controller: descriptor locals, header gating, bridge commands/retries, reset-request boundary, table selection, modifier consumption and final token; called menu/evaluator controllers excluded",
+      "source": "csrc/ui/fx_key_controller.c"
     }
   ]
 }

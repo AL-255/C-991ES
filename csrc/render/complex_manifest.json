@@ -1,0 +1,57 @@
+{
+  "subsystem": "ordinary complex and polar result display",
+  "implementation_kind": "readable high-level C",
+  "executes_original_rom": false,
+  "implemented_routines": [
+    {
+      "address": "0xb070",
+      "name": "fx_display_complex_result",
+      "scope": "ordinary modes1/65/129/193/196/136, rectangular/polar component flow, cache bypass, format contexts, kind commits, history, legacy rows and natural viewport"
+    },
+    {
+      "address": "0x36b8",
+      "name": "imaginary_suffix",
+      "scope": "exact coefficient-one elision, empty spelling and imaginary-unit token80"
+    },
+    {
+      "address": "0x382e",
+      "name": "rectangular",
+      "scope": "ordinary-mode preference; CMPLX196,8108 default and8101 overrides"
+    },
+    {
+      "address": "0xb19e",
+      "name": "polar_conversion",
+      "scope": "both-zero and DMS-positive-axis bypass, immutable copied records, scalar class preservation and radius context6"
+    },
+    {
+      "address": "0xb2b8",
+      "name": "imaginary_composition",
+      "scope": "contexts1..5, native FD/prime quirks, signed/binary imaginary spelling, angle separator, initial-selection-dependent final kind"
+    },
+    {
+      "address": "0xb388",
+      "name": "legacy_rows",
+      "scope": "baseline12/22, byte-valued width/space decision, second-row history encoding"
+    }
+  ],
+  "gaps": [
+    "80FFbit4 status-label/padding composition remains unsupported; returns-1.",
+    "Equation69 polar/default policy,137 serialization, and other nonordinary result contexts remain separate.",
+    "Modes without persistent output scratch and natural permission use original CPU-stack text; mode1 selections14/15 return-1.",
+    "Unused numeric workspaces within8000..80DB and inactive8640 metric slots are not exposed by value/formatter APIs.",
+    "CPU scratch registers, flags and temporary stack aliases are outside this portable semantic API; native fault fixtures are recorded explicitly.",
+    "Source records must be separate from output/history/frame buffers; overlapping caller memory is outside the immutable-record contract."
+  ],
+  "verification": "analysis/c-verification/render_complex.json",
+  "verification_command": "python3 tools/test_render_complex_c.py",
+  "understanding_ranges": "csrc/render/understood_ranges.json",
+  "complete": false,
+  "verification_summary": {
+    "status": "pass",
+    "native_comparisons": 28301,
+    "original_native_faults": 0,
+    "oracle_instruction_limit_per_call": 20000000,
+    "scope": "tokens,8100..813F, immutable20-byte input, active viewport state/cache,9800..98FF history,384 framebuffer bytes,512 LCD bytes before/after flush,F031",
+    "not_claimed": "all RAM, CPU ABI, reset-to-keypress timing, full firmware"
+  }
+}

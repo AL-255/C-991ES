@@ -262,8 +262,8 @@
     },
     {
       "address": "0xb070",
-      "name": "fx_display_real_math_result / fx_display_real_linear_result",
-      "scope": "ordinary real natural/legacy display, selected formatter branches, raw scientific suffixes in natural output, history, pointer restoration and viewport or fixed-row placement, including selection10 cached natural-input viewport reuse"
+      "name": "fx_display_real_math_result / fx_display_real_linear_result / fx_display_complex_result",
+      "scope": "ordinary real, complex and polar natural/legacy display; native component contexts, selection/cache commits and immutable complex records; raw scientific suffixes, history and viewport or fixed-row placement, including cached unread-source bypass; see complex_manifest.json for admitted modes and remaining policies"
     },
     {
       "address": "0xaf5a",
@@ -278,7 +278,7 @@
     {
       "address": "0xafe2",
       "name": "flatten_history",
-      "scope": "formatter-created construct tokens into history-text encoding"
+      "scope": "formatter-created construct tokens into history-text encoding, including do-while empty-source writes and dormant trailing source bytes"
     },
     {
       "address": "0x3664",
@@ -387,8 +387,8 @@
     }
   ],
   "gaps": [
-    "B070 nonzero imaginary/complex/polar, mode137 and mode-specific equation history/status hooks remain partial; unsupported contexts return-1. Direct equationB4B0/inequalityB754 controllers, special37BC and BASE-N fixed-row branches are translated. Ordinary natural-input selection10 cached viewport reuse is translated.",
-    "B070/37BC/B754 unused numeric scratch RAM within0x8000..0x80DB remains untranslated because numeric/formatter APIs expose records and tokens rather than native operand workspaces. Active viewport state0x8000..0x8005 and0x8007..0x800A is compared;0x8006 and inactive0x8640 metric slots remain gaps. Intermediate inequality C060 selection state is modeled separately from the enclosing3634 result-kind commit; complex-component state remains pending.",
+    "B070 mode137,80FFbit4 status labels and mode-specific equation69 polar/history/status hooks remain partial; unsupported contexts return-1. Ordinary complex/polar flows are translated and verified separately in render_complex.json. Direct equationB4B0/inequalityB754 controllers, special37BC and BASE-N fixed-row branches are translated.",
+    "B070/37BC/B754 unused numeric scratch RAM within0x8000..0x80DB remains untranslated because numeric/formatter APIs expose records and tokens rather than native operand workspaces. Active viewport state0x8000..0x8005 and0x8007..0x800A is compared;0x8006 and inactive0x8640 metric slots remain gaps. Intermediate inequality C060 selection state is modeled separately from the enclosing3634 result-kind commit; ordinary complex-component state is translated and compared in render_complex.json.",
     "Special BASE-N rejects invalid nonempty base masks and raw glyph8127 mode; Nonerror mode137 serialization remains untranslated. Null-value title lookup retains all80FA byte values.",
     "Inequality B754 rejects special80FF bit4 status contexts for nonerror values; overlong C060 text>=36 bytes cannot be represented by the original local field without native stack aliasing and returns explicit formatting failure. Invalid/cyclic RAM strings are bounded; CPU stack aliases are not emulated. B070 equation caption history wrapper remains separate from directB4B0.",
     "Viewport fallback with a failed second measurement or a nonterminating overlapping copy is an explicit pending native-state audit; tested fallback replacements succeed.",
@@ -404,5 +404,7 @@
   "parity_ledger": "csrc/render/parity-ledger.json",
   "complete": false,
   "secondary_verification": "csrc/render/differential-results.json",
-  "understanding_ranges": "csrc/render/understood_ranges.json"
+  "understanding_ranges": "csrc/render/understood_ranges.json",
+  "complex_verification": "analysis/c-verification/render_complex.json",
+  "complex_manifest": "csrc/render/complex_manifest.json"
 }

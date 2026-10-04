@@ -288,6 +288,12 @@
       "end": "0x19f1a",
       "scope": "Two-operand scalar rational/integral classification, component extraction order and saved numerator/denominator records",
       "source": "csrc/numeric/fx_numeric.c"
+    },
+    {
+      "start": "0x17746",
+      "end": "0x178a4",
+      "scope": "Radical fraction sign normalization, zero component skip, finite represented-integer GCD and reduction divisions; scalar decimal/rational triplet expansion with zero radicand rule",
+      "source": "csrc/numeric/fx_numeric.c"
     }
   ],
   "partial_blocks": [

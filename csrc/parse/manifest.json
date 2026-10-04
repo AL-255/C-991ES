@@ -21,12 +21,12 @@
     {
       "address": "0x171f4",
       "name": "evaluate expression",
-      "scope": "COMP literals, scientific input, e/pi, parentheses, unary signs, arithmetic and stronger implicit multiplication, compact/mixed fractions, square/cube/nth roots, general real powers, factorial/percent/nPr/nCr, forward/inverse trigonometric and hyperbolic functions, ln/log10/arbitrary-base logarithm and exp/exp10; native status, both numeric records, consumed pointer, operation cleanup and nested expression-to-LCD checks"
+      "scope": "COMP literals, scientific input, e/pi, parentheses, unary signs, arithmetic and stronger implicit multiplication, compact/mixed fractions, square/cube/nth roots, general real powers, factorial/percent/nPr/nCr, forward/inverse trigonometric and hyperbolic functions, ln/log10/arbitrary-base logarithm and exp/exp10; native status, both numeric records, consumed pointer, operation cleanup and nested expression-to-LCD checks; shared COMP/CMPLX grammar with imaginary-unit token, rectangular arithmetic, complex fractions, restricted complex powers, conjugation/magnitude/argument, function admission and native error cursor"
     },
     {
       "address": "0x16562",
       "name": "post-operation numeric cleanup",
-      "scope": "decimal path after successful COMP arithmetic dispatch"
+      "scope": "Native post-operation cleanup for supported COMP and CMPLX arithmetic, respecting scalar header/class rules"
     },
     {
       "address": "0x16268 / 0x16272 / 0x16308",
@@ -68,12 +68,13 @@
     "remaining postfix operators and full function dispatch",
     "number literal parsing in all bases",
     "function dispatch and mode constraints",
-    "variable and complex expression evaluation",
+    "variable evaluation and remaining mode-dependent grammar",
     "full error/recovery behavior in other contexts, expression editing and keyboard integration"
   ],
   "verification": [
     "tools/test_tokens_c.py",
-    "tools/test_eval_c.py"
+    "tools/test_eval_c.py",
+    "tools/test_eval_complex_c.py"
   ],
   "unsupported_behavior": "explicit FX_EVAL_UNIMPLEMENTED and offending token; no host libm or CPU/ROM fallback"
 }

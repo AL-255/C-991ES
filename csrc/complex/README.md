@@ -75,3 +75,39 @@ all sixteen error headers and native return statuses. Coordinate coverage passes
 checks. All passing reports pin implementation, test and oracle hashes. The
 emulator and firmware are never executed by the C implementation. Full firmware
 and expression/UI integration remain incomplete.
+
+`fx_complex_dispatch.c` connects prepared numeric values to CMPLX input-token
+operations without parsing expressions. The context contains native calculation,
+angle and display settings plus the already resolved exact-output permission.
+It supports imaginary-unit token 0x80, unary numeric functions, conjugate token 0x88,
+argument token 0xC3, absolute token 0x63, negation, postfix powers and binary arithmetic/power.
+Real-only binary functions include degree-first nth roots, permutations,
+combinations and base-first logarithms; native admission checks the right
+operand before the left, then runs the scalar leaf. The raw factorial input is 0x57. Token 0x97 is rejected
+by the original parser and is unsupported by this value dispatcher.
+The five public calls return the complete pair and a separate native status;
+all source/output aliases are supported. The parser's preceding tagged-record
+rewriting, variable commits and numeric workspaces remain outside this API.
+
+The binary wrappers choose scalar arithmetic when both imaginary records have
+native zero class 1. This matters for power: real-only values retain the general
+real exponent algorithm, while complex exponents admit only reciprocal,
+square and cube. Multiplication by exactly `i` rotates the component records,
+clears the new imaginary marker, and preserves the forced native leaf success.
+General real power's format guard can return native status 0x30 while writing an
+F3 record; status is therefore not inferred solely from the output header.
+
+The unary admission check precedes numeric functions. It uses the raw imaginary
+exponent/sign word for ordinary real-only inputs, rather than converting the
+imaginary component to test numeric equality. Rejected operands remain intact.
+After successful leaves, native context cleanup skips a compact real surd;
+a marked real decimal cleans only its real component; other CMPLX pairs clean
+both components. A nonzero native leaf status bypasses all cleanup. This keeps
+compact cancellation and display markers available to the result formatter.
+
+`test_complex_dispatch_c.py` tests these prepared native admission, leaf and
+cleanup stages independently, including all sixteen error headers, aliases,
+large/tiny decimal components and display contexts. It uses no parser or ROM
+interpreter in the production implementation. The canonical report records 53,908 passing comparisons and pins the current
+implementation, headers, test and oracle inputs. Original evaluator regressions
+verify raw-token normalization and real-only rejection status/cursor positions.

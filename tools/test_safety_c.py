@@ -6,6 +6,7 @@ from pathlib import Path
 import subprocess
 
 from c_verification import ROOT, write_report
+from c_build_inputs import build_inputs
 
 
 def main():
@@ -19,15 +20,14 @@ def main():
     env['ASAN_OPTIONS'] = 'detect_leaks=0:halt_on_error=1'
     env['UBSAN_OPTIONS'] = 'halt_on_error=1:print_stacktrace=1'
     subprocess.run([str(build / 'fx991c_safety')], env=env, check=True)
-    sources = [str(p.relative_to(ROOT)) for p in (ROOT / 'csrc').rglob('*')
-               if p.suffix in ('.c', '.h') or p.name == 'CMakeLists.txt']
+    sources = build_inputs(ROOT)
     report = write_report('analysis/c-verification/safety.json', {
         'cases': 140000, 'domain': 'Deterministic parser/formatter/glyph-line/ordinary-and-structured-editor/input-conversion/cursor-and-key bounds fuzzing plus long-literal and recursion boundaries',
         'comparison': 'API contracts and canaries under address/undefined-behavior instrumentation; no original firmware execution',
         'sanitizers': ['AddressSanitizer', 'UndefinedBehaviorSanitizer'],
         'leak_sanitizer': 'Disabled because host ptrace is incompatible; tested code uses caller-owned fixed buffers',
         'scope': 'Memory/undefined behavior check of implemented APIs; not a behavioral parity proof'},
-        sources + ['tools/c_verification.py'], 'tools/test_safety_c.py')
+        sources + ['tools/c_build_inputs.py', 'tools/c_verification.py'], 'tools/test_safety_c.py')
     print(json.dumps({k: v for k, v in report.items() if k != 'tested_inputs_sha256'}, indent=2))
 
 

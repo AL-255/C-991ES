@@ -107,23 +107,40 @@ int fx_key_wait_tick(fx_platform *p, fx_key_wait *state)
     return 0;
 }
 
-int fx_key_wait_finish(fx_platform *p, fx_key_wait *state, fx_key_state *key)
+int fx_key_wait_begin_host(fx_platform *p, fx_key_wait *state)
+{
+    return fx_key_wait_begin(p, state, 0);
+}
+
+static int finish(fx_platform *p, fx_key_wait *state, fx_key_state *key,
+                  int data_destination)
 {
     if (!p || !p->ram || !state || !state->active || !state->ready) return -1;
     uint8_t height = read_byte(p, 0x811b);
     if (state->captured_height > 10 || height > state->captured_height) return -2;
     /* A destination which changes the row count into uncaptured native
      * local bytes cannot be modeled by bounded host bitmaps. */
-    if ((state->pair_destination == 0x811b && read_byte(p, 0x8e01) > state->captured_height) ||
-        (state->pair_destination == 0x811a && read_byte(p, 0x8e02) > state->captured_height))
+    if (data_destination &&
+        ((state->pair_destination == 0x811b && read_byte(p, 0x8e01) > state->captured_height) ||
+         (state->pair_destination == 0x811a && read_byte(p, 0x8e02) > state->captured_height)))
         return -2;
     write_byte(p, 0x8e00, 0);
     uint8_t columns = read_byte(p, 0x8e01);
-    write_byte(p, state->pair_destination, columns);
+    if (data_destination) write_byte(p, state->pair_destination, columns);
     uint8_t rows = read_byte(p, 0x8e02);
-    write_byte(p, (uint16_t)(state->pair_destination+1), rows);
+    if (data_destination) write_byte(p, (uint16_t)(state->pair_destination+1), rows);
     restore(p, state->hidden, state->framebuffer);
     if (key) { key->columns = columns; key->rows = rows; }
     state->active = state->ready = 0;
     return 0;
+}
+
+int fx_key_wait_finish(fx_platform *p, fx_key_wait *state, fx_key_state *key)
+{
+    return finish(p, state, key, 1);
+}
+
+int fx_key_wait_finish_host(fx_platform *p, fx_key_wait *state, fx_key_state *key)
+{
+    return finish(p, state, key, 0);
 }

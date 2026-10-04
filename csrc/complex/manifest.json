@@ -3,21 +3,84 @@
   "implementation": "Readable high-level C99 formulas using canonical ten-byte scalar records; no original firmware execution or host floating-point arithmetic",
   "complete": false,
   "implemented_routines": [
-    {"address": "0x1ccf6", "name": "scalar sign and domain classification", "scope": "Native zero/negative/positive/domain classes, classification before metadata clearing and compact cancellation remaining positive rather than zero"},
-    {"address": "0x18404", "name": "complex addition", "scope": "Component addition with real header40 normalization; twenty-byte error normalization"},
-    {"address": "0x1845c", "name": "complex subtraction", "scope": "Negated right components before addition, retaining original scalar order"},
-    {"address": "0x183c4", "name": "complex multiplication", "scope": "Imaginary component before real component, scalar exact/fallback arithmetic"},
-    {"address": "0x18480", "name": "complex division", "scope": "Three axis-specific branches and ordered generic denominator/numerators; component integer-ratio rational reconstruction"},
-    {"address": "0x18632 / 0x1869e / 0x18672 / 0x186a8", "name": "restricted complex powers", "scope": "Reciprocal, square, cube and the native selector rejecting all other exponent records"},
-    {"address": "0x186f4 / 0x15d4e / 0x18724", "name": "conjugate, negate and component cleanup", "scope": "Canonical decimal/rational/surd/error pairs, exact early-error policy including zero-code F0 continuation, original component order and prepared native return status"},
-    {"address": "0x1cade", "name": "complex magnitude", "scope": "Both safe-square and ratio-scaling branches, short exact-root recognition, zero and error components"},
-    {"address": "0x1cbfc", "name": "restricted complex square root", "scope": "Zero imaginary admission, real surd conversion, classification before marker clearing and positive imaginary roots for negative real values"},
-    {"address": "0x15c82 / 0x15cbe / 0x15d36", "name": "display-precision rounding", "scope": "Norm/Sci/Fix scalar rounding, exact integral Fix short circuit, imaginary-first complex wrapper and separate native firmware return status"},
-    {"address": "0x18708 / 0x1c604", "name": "complex argument", "scope": "Decimal atan2 in degree/radian/grad units, mandatory y/x truncation before reciprocal, quadrant and signed-zero branches"},
-    {"address": "0x182ec / 0x18366", "name": "polar and rectangular conversion", "scope": "Full twenty-byte numeric outputs including exact trigonometric special results, magnitude, argument, source aliases, dual F3 errors and successful axis angles with rejected F3 radius"}
+    {
+      "address": "0x1ccf6",
+      "name": "scalar sign and domain classification",
+      "scope": "Native zero/negative/positive/domain classes, classification before metadata clearing and compact cancellation remaining positive rather than zero"
+    },
+    {
+      "address": "0x18404",
+      "name": "complex addition",
+      "scope": "Component addition with real header40 normalization; twenty-byte error normalization"
+    },
+    {
+      "address": "0x1845c",
+      "name": "complex subtraction",
+      "scope": "Negated right components before addition, retaining original scalar order"
+    },
+    {
+      "address": "0x183c4",
+      "name": "complex multiplication",
+      "scope": "Imaginary component before real component, scalar exact/fallback arithmetic"
+    },
+    {
+      "address": "0x18480",
+      "name": "complex division",
+      "scope": "Three axis-specific branches and ordered generic denominator/numerators; component integer-ratio rational reconstruction"
+    },
+    {
+      "address": "0x18632 / 0x1869e / 0x18672 / 0x186a8",
+      "name": "restricted complex powers",
+      "scope": "Reciprocal, square, cube and the native selector rejecting all other exponent records"
+    },
+    {
+      "address": "0x186f4 / 0x15d4e / 0x18724",
+      "name": "conjugate, negate and component cleanup",
+      "scope": "Canonical decimal/rational/surd/error pairs, exact early-error policy including zero-code F0 continuation, original component order and prepared native return status"
+    },
+    {
+      "address": "0x1cade",
+      "name": "complex magnitude",
+      "scope": "Both safe-square and ratio-scaling branches, short exact-root recognition, zero and error components"
+    },
+    {
+      "address": "0x1cbfc",
+      "name": "restricted complex square root",
+      "scope": "Zero imaginary admission, real surd conversion, classification before marker clearing and positive imaginary roots for negative real values"
+    },
+    {
+      "address": "0x15c82 / 0x15cbe / 0x15d36",
+      "name": "display-precision rounding",
+      "scope": "Norm/Sci/Fix scalar rounding, exact integral Fix short circuit, imaginary-first complex wrapper and separate native firmware return status"
+    },
+    {
+      "address": "0x18708 / 0x1c604",
+      "name": "complex argument",
+      "scope": "Decimal atan2 in degree/radian/grad units, mandatory y/x truncation before reciprocal, quadrant and signed-zero branches"
+    },
+    {
+      "address": "0x182ec / 0x18366",
+      "name": "polar and rectangular conversion",
+      "scope": "Full twenty-byte numeric outputs including exact trigonometric special results, magnitude, argument, source aliases, dual F3 errors and successful axis angles with rejected F3 radius"
+    },
+    {
+      "address": "0x15f00 / 0x15f6e..0x1603e / 0x16562 / 0x16a14",
+      "name": "prepared CMPLX value dispatch",
+      "scope": "Typed raw-token unary/binary leaf selection, imaginary unit, unary and two-operand real-only admission, degree-first root, nPr/nCr, base-first logarithm, real-only power fallback, multiplication by exactly i, native status and context cleanup; excludes preceding tagged-record rewriting"
+    }
   ],
-  "verification": ["analysis/c-verification/complex.json", "analysis/c-verification/complex_angles.json", "analysis/c-verification/complex_round.json"],
-  "tests": ["python3 tools/test_complex_c.py --random-cases 8000", "python3 tools/test_complex_angles_c.py --random-cases 6000", "python3 tools/test_complex_round_c.py"],
+  "verification": [
+    "analysis/c-verification/complex.json",
+    "analysis/c-verification/complex_angles.json",
+    "analysis/c-verification/complex_round.json",
+    "analysis/c-verification/complex_dispatch.json"
+  ],
+  "tests": [
+    "python3 tools/test_complex_c.py --random-cases 8000",
+    "python3 tools/test_complex_angles_c.py --random-cases 6000",
+    "python3 tools/test_complex_round_c.py",
+    "python3 tools/test_complex_dispatch_c.py"
+  ],
   "gaps": [
     "Full CMPLX expression evaluation, mode admission/rejection and keyboard UI",
     "Routine-level global numeric workspaces, malformed BCD and complete hardware state parity",

@@ -58,11 +58,16 @@ void fx_boot_clear_result_workspaces(fx_platform *p)
     fx_boot_clear_exported_input(p);
 }
 
-static void reset_layout_flags(fx_platform *p)
+static void reset_layout_dimensions(fx_platform *p)
 {
     put_byte(p, 0x811c, 1);
     put_byte(p, 0x811d, 1);
     put_byte(p, 0x811e, 1);
+}
+
+static void reset_layout_flags(fx_platform *p)
+{
+    reset_layout_dimensions(p);
     put_byte(p, 0x80fe, 0);
     put_byte(p, 0x80ff, 0);
     put_byte(p, 0x8101, 0);
@@ -224,6 +229,22 @@ fx_boot_status fx_boot_initialize(fx_platform *p)
     return fx_boot_retained_state_invalid(p) ? fx_boot_cold_reset(p) : FX_BOOT_READY;
 }
 
+void fx_boot_initialize_mode12(fx_platform *p)
+{
+    put_byte(p, 0x8101, 0);
+    put_byte(p, 0x8100, 0);
+    put_byte(p, 0x8130, 0);
+    if (byte_at(p, 0x8137)) {
+        reset_layout_dimensions(p);
+        put_byte(p, 0x80fc, 18);
+        put_byte(p, 0x80fe, 0);
+    } else {
+        put_byte(p, 0x80fc, 9);
+        put_byte(p, 0x80fe, 4);
+    }
+    put_byte(p, 0x80fd, 0);
+}
+
 fx_boot_status fx_boot_resume(fx_platform *p)
 {
     fx_boot_status status = fx_boot_default_screen(p);
@@ -248,7 +269,7 @@ fx_boot_status fx_boot_resume(fx_platform *p)
     if (mode == 12) {
         put_byte(p, 0x80f5, 0);
         fx_fill_display(&render, 0, 2);
-        return FX_BOOT_UNIMPLEMENTED;
+        fx_boot_initialize_mode12(p);
     }
     return FX_BOOT_READY;
 }

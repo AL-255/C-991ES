@@ -111,8 +111,8 @@
     },
     {
       "start": "0xd74c",
-      "end": "0xd7a6",
-      "scope": "Boot equation/inequality mode flags and LCD clearing; mode12 menu transfer remains external",
+      "end": "0xd7aa",
+      "scope": "Boot equation/inequality and mode12 screen initialization through the event-controller transfer",
       "source": "csrc/platform/fx_boot.c"
     },
     {
@@ -143,6 +143,18 @@
       "start": "0x6fd8",
       "end": "0x6fe6",
       "scope": "No-op startup hook, callback register initialization and boot transfer",
+      "source": "csrc/platform/fx_boot.c"
+    },
+    {
+      "start": "0x747a",
+      "end": "0x7916",
+      "scope": "Host numeric export from copied records, raw decimal/rational/surd/error field codec; malformed rational local-buffer overflow explicitly bounded",
+      "source": "csrc/platform/fx_host_bridge.c"
+    },
+    {
+      "start": "0x1df7e",
+      "end": "0x1dfb0",
+      "scope": "Mode12 input/table screen initialization from flag8137, with original transient and layout fields",
       "source": "csrc/platform/fx_boot.c"
     }
   ]

@@ -41,13 +41,28 @@ Prime factorization deliberately
 tries only the168 primes through997 and encloses a remaining factor in
 parentheses. The extra `format_context` parameter controls compact scientific
 precision and surd parentheses; it is not an engineering-mode switch.
-Contexts1..3 use compact scientific precision. Contexts4..6 retain grouping
+Contexts1..3 reduce Sci10 to nine-digit scientific precision outside
+exponent-9..9. Sci10 first rounds to ten digits and then rounds that copy to
+nine. Norm and large-value Fix delegate to nine-digit Sci only when the tenth
+digit of their rounded coefficient is nonzero, restarting from the original
+record and retaining all nine digits. Already short coefficients keep their
+ordinary trailing-zero trimming.
+Contexts4..6 retain grouping
 around exact coefficients but restore the ordinary decimal width when exact
 output falls back to a numeric result, as the original C060 does atC154.
 Its trial division retains the original finite15-digit quotient behavior,
 including for magnitudes beyond the display's ten digits.
 Forced numeric output of rational and surd records uses the original decimal
 arithmetic order through `fx_number_to_decimal`.
+Exact surd output also checks the converted fractional part first: whole-valued
+records take the numeric fallback, including their preceding DMS/ENG selection.
+Mathematically whole sums that convert to a stored near-integer retain exact
+surd output; this test applies no approximate integer recognition.
+The common-denominator serializer preserves the first displayed slot when its
+coefficient is zero and skips common GCD reduction around zero coefficients.
+If both radicands are1, the first stored term comes first and the second term
+retains its explicit square-root construct. These rules follow the native
+serialization rather than simplifying the expression algebraically.
 Error records bypass selection and produce kind0 with the `ERROR` token
 string; error code13 produces an empty string. Error-screen layout and UI
 actions belong to the display/controller subsystem.

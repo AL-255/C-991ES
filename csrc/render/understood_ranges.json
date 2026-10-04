@@ -235,6 +235,30 @@
       "end": "0x10e5c",
       "scope": "Byte-valued component/result-kind combination including surd and absent-real exceptions",
       "source": "csrc/render/fx_result_inequality.c"
+    },
+    {
+      "start": "0x36b8",
+      "end": "0x36f0",
+      "scope": "Imaginary-unit suffix attachment with exact plus/minus-one coefficient elision, empty spelling and byte-token rules",
+      "source": "csrc/render/fx_result_complex.c"
+    },
+    {
+      "start": "0x382e",
+      "end": "0x3876",
+      "scope": "Rectangular/polar display preference, mode196 and equation eligibility gates,8101 overrides and8108 default; equation C2AA implementation remains separate",
+      "source": "csrc/render/fx_result_complex.c"
+    },
+    {
+      "start": "0xb19e",
+      "end": "0xb20a",
+      "scope": "Polar conversion branch, zero-pair and DMS-positive-axis bypass, component reclassification and polar radius context6",
+      "source": "csrc/render/fx_result_complex.c"
+    },
+    {
+      "start": "0xb2b8",
+      "end": "0xb388",
+      "scope": "Imaginary/angle context selection, i coefficient elision, unary-to-binary sign conversion, polar separator, initial-selection kind commit and second-row composition; status labels/padding are separate called routines",
+      "source": "csrc/render/fx_result_complex.c"
     }
   ]
 }

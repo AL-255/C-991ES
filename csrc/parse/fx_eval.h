@@ -27,6 +27,7 @@ typedef struct {
 
 fx_eval_options fx_eval_default_options(void);
 /* Calculator INPUT tokens, not ASCII math or recursive DISPLAY tokens.
+ * COMP(C1) and CMPLX(C4) share this grammar; CMPLX preserves both records.
  * Unsupported functions return an explicit status rather than approximate
  * using host libm or falling back to original-ROM execution. */
 fx_eval_status fx_evaluate(const uint8_t *input, size_t length,

@@ -12,18 +12,17 @@ routine addresses, the semantic API being compared, and remaining gaps.
 | Subsystem | Current implementation |
 | --- | --- |
 | Platform | Startup/reset, prepared retained-state initialization, power-off and emulator host packets; peripheral registers and key drive |
-| Keyboard/editor | Matrix scan, bounded debounce/held sampling, key tables, modifier dispatch, nonblocking host key wait, cursor, structured editing and display-to-input conversion |
-| Parser | COMP literals, e/π, parentheses/signs, arithmetic/fractions, square/cube/nth roots, powers, factorial/percent/nPr/nCr, trig/hyperbolic functions, single/two-argument logarithms and exponentials |
-| Numeric | Packed records, decimal and finite rational/surd arithmetic, roots and combinatorics with explicit remaining component precision gaps |
+| Keyboard/editor | Matrix scan, bounded debounce/held sampling, key tables, modifier dispatch, nonblocking host key wait/controller, annunciator row, cursor, structured editing and display-to-input conversion |
+| Parser | Shared COMP/CMPLX literals, e/π, parentheses/signs, arithmetic/fractions, square/cube/nth roots, powers, factorial/percent/nPr/nCr, trig/hyperbolic functions, single/two-argument logarithms and exponentials; complex fractions, restricted powers, conjugation/magnitude/argument |
+| Numeric | Packed records, decimal and finite rational/surd arithmetic, roots and combinatorics; malformed zero-radicand records remain documented |
 | Complex | Prepared arithmetic, classification, native return statuses, conjugation, magnitude, restricted roots/powers, polar coordinates and rounding |
-| Statistics | Prepared moments, seven regression models/predictions, cache semantics, normal P/Q/R and standardization |
+| Statistics | Prepared moments, seven regression models/predictions, cache semantics, normal P/Q/R and standardization; table editing, cursor and STAT input commits |
 | Formatting | Decimal, rational/surd, fraction/π recognition, tagged prime output, width budgets and BASE-N integer output |
 | Trigonometry | Decimal rotation kernel, angle reduction, forward/inverse sin/cos/tan and forward special-result tables |
 | Rendering | Fonts/pixels, recursive construct layout, viewport/result controllers, equation/inequality captions and special error displays |
 | Integration | Expression-token probe and differential expression-to-LCD pipeline for supported grammar |
 
-Complete keyboard and mode UIs, complex expression/display composition, event
-scheduling, menus/history and reset-to-key-sequence behavior still require
+Complete keyboard and mode UIs, event scheduling, menus/history and reset-to-key-sequence behavior still require
 implementation and verification. Numerical integration, differentiation, sums,
 solving, matrix/vector/table calculations and other advanced functions remain
 pending. Passing a subset suite does not complete those requirements.
@@ -53,6 +52,19 @@ errors back to the display cursor. For example, the display-token fraction
 ```sh
 analysis/build/c-port/fx991c --display aebbb831b9b832b9bc
 ```
+
+Add `--complex` to evaluate in prepared CMPLX mode. The same parser keeps both
+numeric records and the result controller composes rectangular output, including
+coefficient-one elision. For example, `1+2i` uses raw token `80` for `i`:
+
+```sh
+analysis/build/c-port/fx991c --eval 312b3280 --complex --pbm /tmp/complex.pbm
+```
+
+For CMPLX, the JSON `tokens` field contains the composed natural result, as
+produced by the display controller. The ordinary COMP probe reports standalone
+scalar formatter tokens. Both pipelines compare their resulting PBM pixels
+with the original firmware.
 
 Raw powers include an implicit opening parenthesis after the caret. Thus
 `2^3+1)` means `2^(3+1)` and `2^3)+1` means `(2^3)+1`. The natural editor
