@@ -1,0 +1,11 @@
+{
+  "subsystem": "CALC variable dependency scanner",
+  "basis": "Readable semantic C and 7412 original172F6 calls comparing status and allRAM outside each actual measured CPU frame. CALC assignment discovery does not implement the enclosing CALC editor/evaluation lifecycle.",
+  "ranges": [
+    {"start":"0x172f6","end":"0x17330","scope":"Physical FF variable-list initialization, fixed prepared INPUT source and token classification; CALC skips SOLVE suffix handling when screen.bit6 is clear","source":"csrc/ui/fx_calc_scan.c"},
+    {"start":"0x1735c","end":"0x17366","scope":"Statement-start flag reset and CALC ordinary termination before the SOLVE selected-variable branch","source":"csrc/ui/fx_calc_scan.c"},
+    {"start":"0x1736a","end":"0x1737e","scope":"Colon boundary commits the pending assignment into the eight-bit variable mask, including id-minus-one shift policy, then resets the pending assignment","source":"csrc/ui/fx_calc_scan.c"},
+    {"start":"0x17382","end":"0x173d0","scope":"Exclude Ans and variable10; first-token assignment lookahead, single-byte unread, suppression of already assigned variables and ordered unique physical-list insertion","source":"csrc/ui/fx_calc_scan.c"},
+    {"start":"0x173f0","end":"0x173fa","scope":"Native successful scanner return; CPU saved-register frames become host locals","source":"csrc/ui/fx_calc_scan.c"}
+  ]
+}
