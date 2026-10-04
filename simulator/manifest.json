@@ -29,7 +29,11 @@
     "runtime_installer_dependency": false,
     "host_floating_point_expression_evaluation": false,
     "immutable_firmware_data": "csrc/data/fx_rom_data.c",
-    "requirements": ["Python3 standard library", "CMake", "GCC or Clang with unsigned128-bit integer support"]
+    "requirements": [
+      "Python3 standard library",
+      "CMake",
+      "GCC or Clang with unsigned128-bit integer support"
+    ]
   },
   "browser_backends": {
     "local_native_http": {
@@ -38,7 +42,7 @@
       "scope": "Python transports requests to the compiled native C session; JavaScript draws returned pixels"
     },
     "static_webassembly": {
-      "status": "local_actual_wasm_and_static_ui_proofs_pass",
+      "status": "actual_ci_and_public_http_browser_proofs_pass",
       "builder": "simulator/build_web.py",
       "output_directory": "simulator/dist",
       "deployment_workflow": ".github/workflows/pages.yml",
@@ -55,17 +59,57 @@
       "session_lifetime": "Opaque C session in the page module; reload creates fresh memory",
       "filesystem_runtime": false,
       "native_proof_is_wasm_proof": false,
-      "deployment_verified": false
+      "deployment_verified": true,
+      "deployment_verification": {
+        "status": "pass",
+        "release_commit": "bd216d3280f3ce5bdf44a0835bdb74ae67f4abda",
+        "ci_run_id": 37234480485,
+        "ci_run_url": "https://github.com/AL-255/casio-explore/actions/runs/37234480485",
+        "ci_summary": "simulator/verification/deployment_ci.json",
+        "ci_summary_sha256": "36bd9f4e8fb3dd56b6080005f323229a16034ce3c90faaa6269bc04624856ceb",
+        "ci_build_report_sha256": "74cea12f42fb1801769ea5478664b2449ae53ea039e1b6c8ea49872b6b381421",
+        "public_summary": "simulator/verification/deployment_public.json",
+        "public_summary_sha256": "d24f2881325d4561d5efaef7301260a136c0ceceeb37a0e5242861098a7cf45b",
+        "public_http_full_proof_sha256": "498fdb709c208822eec792b8e39b00c1857357c8a9ee9c6f68972dd6efdb95af",
+        "public_browser_full_proof_sha256": "1af65d7d192d44c42cd36619dc60f410a1a0bd354e8177f464e6226fa88a756e",
+        "public_browser_completed_utc": "2026-10-04T21:06:00.474605+00:00",
+        "verified_at_utc": "2026-10-04T21:09:35.110276+00:00",
+        "scope": "Actual public HTTP delivery and desktop/mobile C-WASM UI proof; full firmware completeness remains false"
+      }
     }
   },
   "api": {
     "session_type": "opaque fx_simulator",
-    "functions": ["fxsim_create", "fxsim_destroy", "fxsim_reset", "fxsim_evaluate"],
+    "functions": [
+      "fxsim_create",
+      "fxsim_destroy",
+      "fxsim_reset",
+      "fxsim_evaluate"
+    ],
     "input": "ASCII expression; bounded4096 bytes excluding NUL",
-    "modes": {"0": "COMP", "1": "CMPLX", "2": "BIN", "3": "OCT", "4": "DEC", "5": "HEX"},
-    "angles": {"0": "DEG", "1": "RAD", "2": "GRAD"},
-    "math": {"0": "linear output", "1": "natural output"},
-    "successful_native_statuses": [0,34,35,37],
+    "modes": {
+      "0": "COMP",
+      "1": "CMPLX",
+      "2": "BIN",
+      "3": "OCT",
+      "4": "DEC",
+      "5": "HEX"
+    },
+    "angles": {
+      "0": "DEG",
+      "1": "RAD",
+      "2": "GRAD"
+    },
+    "math": {
+      "0": "linear output",
+      "1": "natural output"
+    },
+    "successful_native_statuses": [
+      0,
+      34,
+      35,
+      37
+    ],
     "response": "JSON, including native status, exact packed records, formatter tokens and framebuffer",
     "error_positions": {
       "encoder": "ASCII byte offset",
@@ -78,7 +122,11 @@
     "evaluation": "ASCII lowering into supported native-token prepared COMP/CMPLX/BASE-N expression grammar",
     "implicit_product": "Native implicit-multiplication precedence is retained",
     "power": "ASCII powers are right-associative; native implicit power groups are closed explicitly",
-    "persistent_session_fields": ["ten scalar variable pairs including Ans", "PreAns", "random seed"],
+    "persistent_session_fields": [
+      "ten scalar variable pairs including Ans",
+      "PreAns",
+      "random seed"
+    ],
     "stores": "Terminal ->A..F/X/Y/M",
     "display": "Prepared expression/result rendering at96x32,384 row-major packed framebuffer bytes; exact formatting follows mode and mathematical admission",
     "plain_text": "Best-effort transliteration of formatter-owned DISPLAY tokens, not numeric recomputation",
@@ -103,7 +151,10 @@
       "report": "analysis/c-verification/simulator_input.json",
       "status": "pass",
       "checks": 3804,
-      "builds": ["O2", "O3"],
+      "builds": [
+        "O2",
+        "O3"
+      ],
       "native_calls": 0,
       "scope": "Exact token fixtures, syntax, output transaction, capacities, source/output overlap and bounded input"
     },
@@ -118,7 +169,11 @@
       "versioned_native_observations_sha256": "994fb7377426f2d6c10014d940d77744ca201a9c681b261ccceb7d4447d31792",
       "expression_controls": 55,
       "backend_comparisons": 165,
-      "builds": ["O2", "O3", "served Release"],
+      "builds": [
+        "O2",
+        "O3",
+        "served Release"
+      ],
       "native_calls": 298,
       "native_instructions": 2051060,
       "report_sha256": "65ac2a37f2fb6fc0e442c4a6970f341b19f68dd12156250b2b9681c71f1442a5",
@@ -171,7 +226,7 @@
       "actual_C_WASM_evaluations": 21,
       "screenshots": 5,
       "source_pin_count": 247,
-      "scope": "Actual local static-WASM browser controls and canvas pixels; public deployment remains separately unverified"
+      "scope": "Actual local static-WASM browser controls and canvas pixels; public deployment is verified separately by deployment_public"
     },
     {
       "tool": "tools/test_simulator_wasm_c.py",
@@ -189,6 +244,29 @@
       "plain_field_scope": "C-only transliteration",
       "pagehide_scope": "Synthetic persisted true/false event controls; actual BFcache navigation is not proved",
       "scope": "Actual browser-compiled C ABI and comparison-only saved native observations; no fresh ROM execution or complete key/RAM parity"
+    },
+    {
+      "report": "simulator/verification/deployment_ci.json",
+      "report_sha256": "36bd9f4e8fb3dd56b6080005f323229a16034ce3c90faaa6269bc04624856ceb",
+      "full_proof_sha256": "74cea12f42fb1801769ea5478664b2449ae53ea039e1b6c8ea49872b6b381421",
+      "status": "pass",
+      "ci_run_id": 37234480485,
+      "release_commit": "bd216d3280f3ce5bdf44a0835bdb74ae67f4abda",
+      "source_pin_count": 242,
+      "artifact_count": 8,
+      "native_calls": 0,
+      "scope": "Successful official-toolchain CI build/deploy with all242 sources and8 generated artifacts identical to the locally tested build"
+    },
+    {
+      "report": "simulator/verification/deployment_public.json",
+      "report_sha256": "d24f2881325d4561d5efaef7301260a136c0ceceeb37a0e5242861098a7cf45b",
+      "status": "pass",
+      "public_http_resource_count": 6,
+      "public_browser_checks": 198,
+      "actual_C_WASM_evaluations": 21,
+      "screenshots": 5,
+      "native_calls": 0,
+      "scope": "Actual public HTTP delivery and desktop/mobile browser UI; all six resources bind exact CI assets"
     }
   ]
 }
