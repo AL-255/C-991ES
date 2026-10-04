@@ -1,0 +1,20 @@
+{
+  "subsystem": "physical terminal matrix/vector reference cleanup",
+  "language": "handwritten high-level C99",
+  "implemented_routines": [
+    {"address":"0x1415a","name":"fx_eval_finish_cleanup","scope":"Prepared6x/9x reference admission, sixteen masked physical identities, cached dimensions, fixed-stride active-cell integer cleanup, partial commit and separate native error status"},
+    {"address":"0x1415a","name":"fx_eval_finish_cleanup_address","scope":"Live physical reference/dimension/payload aliases and original ascending error-word publication, including odd-address alignment"}
+  ],
+  "verification": "analysis/c-verification/eval_finish.json",
+  "test": "tools/test_eval_finish_c.py",
+  "native_evidence": "analysis/native-fixtures/eval-finish",
+  "verification_counts": {"original_leaf_observations":2600,"parity_completes":2518,"explicit_host_limits":82,"api_guards":20,"original_terminal_caller_frames":12,"native_calls":2612},
+  "unsupported_original_outcomes": {"status0":16,"status3":34,"cpu101":32},
+  "gaps": [
+    "A cell outside829E..883D returns explicit UNIMPLEMENTED before its write, retaining earlier cell commits; unchecked native CPU-frame corruption is not emulated.",
+    "Malformed decimal records outside fx_decimal_integer_cleanup's finite record contract return explicit UNIMPLEMENTED, including native status0/3 cases retained in the evidence.",
+    "Wrapping physical references and the leaf numeric workspace/conventional CPU-frame overlap are outside the prepared address API.",
+    "The enclosing evaluator owns the retained terminal status and named variable/rich-bank refresh after physical cleanup; this module does not claim the complete parser or controller."
+  ],
+  "preserved_abi": "Only new terminal cleanup APIs are added. Existing numeric, storage and typed linear algebra APIs are unchanged."
+}

@@ -1,0 +1,24 @@
+{
+  "subsystem": "Prepared Ran# and RanInt# generation",
+  "implementation": "Portable readable C99 finite packed-decimal preparation and xorshift32; no firmware execution, CPU model, host RNG or floating point",
+  "api": "csrc/numeric/fx_random.h",
+  "implemented_routines": [
+    {"address":"0x13d74","name":"xorshift32","scope":"All uint32_t states, shifts13/17/5 with four-byte XOR feedback"},
+    {"address":"0x13db8","name":"Ran#","scope":"Prepared normal and unchecked decimal seed records; old raw exponent-byte addend, mantissa selection, finite scaling, four-byte conversion, full fraction seed commit and three-place output"},
+    {"address":"0x13e70","name":"positive fractional mantissa selection","scope":"Replace external exponent/sign bytes with99/00 without changing mantissa"},
+    {"address":"0x13e7a","name":"floor","scope":"Integral truncation then subtractone only for changed negative ordinary scalar results; malformed mantissa nibbles are retained"},
+    {"address":"0x13ebe","name":"RanInt#","scope":"Prepared lower/upper scalar admission, CAA8 ten-digit integral gates on both bounds and span, strict positive span, widthplusone, full seed scaling and floor"},
+    {"address":"0x08078","name":"decimal to four-byte unsigned integer","scope":"Three finite decimal divmod steps with256 and fourth high-byte extraction"},
+    {"address":"0x080f4","name":"four-byte unsigned integer to decimal","scope":"Exact reconstruction over the complete uint32_t domain"}
+  ],
+  "gaps": [
+    "Forged raw8x compact-surd seed headers, which are unreachable from the verified reset/idle/Ran# lifecycle, remain explicitly UNIMPLEMENTED; their complete original outcomes are retained in the native fixture corpus",
+    "Malformed compact-surd bound components rejected by the separately verified numeric foundation remain explicitly UNIMPLEMENTED",
+    "Existing raw decimal helpers identify proven native magnitude-ordering nonreturns with UNIMPLEMENTED, leaving output untouched",
+    "Raw8C/C2 expression grammar, random seed binding to user RAM and UI/controller scheduling are separate integration work",
+    "The prepared API exports value, persistent seed and native status; unused CPU/decimal scratch is outside that value API"
+  ],
+  "verification": "tools/test_numeric_random_c.py",
+  "test_report": "analysis/c-verification/numeric_random.json",
+  "execution_notes": "csrc/numeric/random/EXECUTION.md"
+}

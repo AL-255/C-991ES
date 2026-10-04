@@ -65,6 +65,8 @@ The implementation retains these observable selections:
 
 | Raw token | Matrix reference | Vector reference |
 | --- | --- | --- |
+| `61` | Forced new temporary, copy, release old temporary, then marked-fraction conversion and inverse cosh | Ordinary copy/reuse, then scalar conversion rejects kind9 with fullF3/status3 |
+| `62` | Same staging, then marked-fraction conversion and inverse tanh | Same ordinary copy/reuse and scalar kind9 rejection |
 | `5A` | REF | Normal-R scalar leaf rejects kind9 with fullF3/status3 |
 | `5B` | RREF | Scalar bias addition rejects kind9; unchecked ten-digit extraction reads zero, then NOT serializes−1/status0 |
 | `C3` | Vector magnitude rejects kind6 with fullF3/status3 | Vector magnitude returns a scalar but keeps its temporary allocated |
@@ -75,6 +77,34 @@ their scalar leaf. They retain that temporary allocation after returning.
 Vector `63` remains a different path: it releases a temporary before magnitude.
 The complete20-byte work result and the reference bank state are compared
 independently; a numerical error does not roll back an earlier copy or release.
+
+Raw `61`/`62` decode selectors7/8, become162/163 in rich selection, then the
+eight-bit doubled table index wraps to entries1C4EA/1C4D8. Their function mode11
+selects inverse hyperbolic cosh/tanh; mode9 belongs to separate inverse circular
+entries. The wrapped functions are independent of the angle setting. Matrix
+selection reserves a new slot, saves the old reference at work+20, rewrites
+only the current low nibble, copies the complete bank, and releases the old
+temporary before committing the bitmap and calling the scalar leaf. Vector
+selection copies persistent slots and reuses existing temporaries. An exhausted
+bitmap returns status7 before numerical work.
+
+Ordinary zero metadata has a zero denominator and reaches fullF3/status3.
+Canonical marked scalar variables also reach this path: for example the
+marked1/2 record `61a20000000000000301` references bank1. Staging into slot4
+rewrites its header to64, so unchecked scalar conversion sees4/2=2 and raw61
+returns acosh(2). The implementation preserves the native finite fraction
+conversion and invokes the existing high-level inverse hyperbolic helper.
+Live tests compare prepared20-byte leaf payload/status and full171F4 named,
+nested and marked-variable results separately, including near-one guards.
+
+Malformed fraction fields can convert to nondecimal finite digits. If that
+record is outside the ordinary hyperbolic helper's verified contract, rich61/62
+return `FX_NUMERIC_UNIMPLEMENTED` with the earlier allocation/copy/release
+retained and the result uncommitted. This boundary includes native executions
+that do return a finite value: malformed record `6141d755588230e80fb0`, staged
+into slot4, gives a native finite atanh result while the typed helper declines
+it. This is distinct from the proven non-return boundary below and must not be
+reported as an invented Math error.
 
 Matrix `88` clears the marked header as the original scalar load does and then
 interprets the reference's remaining bytes as unchecked fraction fields. Valid

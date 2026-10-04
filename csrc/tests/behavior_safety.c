@@ -37,6 +37,8 @@ static void parser_bounds(void)
         options.angle_unit = (uint8_t)(4 + n % 3);
         fx_eval_status status = fx_evaluate(input, length, &options, &result);
         assert(status == FX_EVAL_OK || status == FX_EVAL_SYNTAX || status == FX_EVAL_MATH ||
+               status == FX_EVAL_STACK || status == FX_EVAL_ARGUMENT ||
+               status == FX_EVAL_CONVERGENCE ||
                status == FX_EVAL_UNIMPLEMENTED || status == FX_EVAL_RESOURCE_LIMIT);
         assert(result.consumed <= length);
     }
@@ -47,7 +49,7 @@ static void parser_bounds(void)
         memset(input, '1', sizeof(input));
     }
     memset(input, '(', sizeof(input)); input[sizeof(input)-1] = '1';
-    assert(fx_evaluate(input, sizeof(input), NULL, &result) == FX_EVAL_RESOURCE_LIMIT);
+    assert(fx_evaluate(input, sizeof(input), NULL, &result) == FX_EVAL_STACK);
     assert(fx_evaluate(NULL, 0, NULL, &result) == FX_EVAL_SYNTAX);
     assert(fx_evaluate(input, sizeof(input), NULL, NULL) == FX_EVAL_SYNTAX);
 }
@@ -104,6 +106,8 @@ static void base_parser_bounds(void)
         fx_eval_status status = fx_evaluate_base_n(input, length, masks[n % 4],
             NULL, NULL, &retained, &guarded.result);
         assert(status == FX_EVAL_OK || status == FX_EVAL_SYNTAX || status == FX_EVAL_MATH ||
+               status == FX_EVAL_STACK || status == FX_EVAL_ARGUMENT ||
+               status == FX_EVAL_CONVERGENCE ||
                status == FX_EVAL_UNIMPLEMENTED || status == FX_EVAL_RESOURCE_LIMIT);
         assert(guarded.result.consumed <= length);
         assert(memcmp(&guarded.result.value[1], &retained, sizeof retained) == 0);

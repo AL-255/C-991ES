@@ -1,0 +1,56 @@
+{
+  "subsystem": "prepared evaluator physical reference storage",
+  "source": "csrc/parse/fx_eval_storage.c",
+  "public_api": "csrc/parse/fx_eval_storage.h",
+  "implementation_style": "Named raw records, bounded caller-owned data memory, explicit byte/word copies and storage/type decisions. No instruction fetch, CPU state machine, interpreter or numerical leaf execution.",
+  "native_entries": {
+    "00B942": "ascending byte copy with observable forward-overlap propagation",
+    "015BA8": "first available temporary identity4..8 from the upper five bitmap bits",
+    "015BBC": "raw reserve shift, including identity9 and modulo-eight shift identities",
+    "015BCA": "raw release shift preserving all other bitmap bits",
+    "0163F0..016538": "prepared scalar/rich storage selection, record swap, temporary construction, operation remapping and mask commit before numerical dispatch",
+    "016494/0164FC": "selected temporary allocation and original-header copy source resolution",
+    "01695C": "low-nibble source/destination identity, dimension word before all90 payload bytes"
+  },
+  "representation": {
+    "caller_ram_bytes": 65536,
+    "read_only_rom_boundary": "8000",
+    "native_dimension_base": "80E0",
+    "native_payload_base": "829E",
+    "native_slot_bytes": 90,
+    "masked_slot_identities": 16,
+    "allocatable_temporary_identities": [4, 5, 6, 7, 8],
+    "allocation_mask_address": "8125",
+    "numerical_operand_data_base": "8078",
+    "named_reference_bytes": 10
+  },
+  "policies": [
+    "Raw headers are selected by unsigned byte ranges:60..7F and90..FF are rich;80..8F remains scalar routing. The highF error family is therefore admitted to reference staging before a later numerical Math3.",
+    "1695C masks both supplied header bytes to0F. Dimension source and destination use80E0+2*identity; payload uses829E+90*identity. Both data arenas alias ordinary globals and variables for raw identities.",
+    "Dimension word is read completely before its write. The payload uses45 ascending word read/write pairs, not a whole-object overlap snapshot.",
+    "All256 allocation masks were checked. Only identities4..8 can be chosen;F8..FF are exhausted. Raw reserve/release use modulo-eight variable shifts, so identity9 changes bit04 even though it cannot be allocated.",
+    "Selected temporary allocation preserves the original source header before rewriting the reference low nibble. The dimension/payload copy precedes the8125 bitmap commit.",
+    "15BDA's record swap retains its8078 numerical operand-data writes. ContextC4 selects both components; context changes through raw record aliases affect the subsequent pop position.",
+    "Native component transfer loads eight bytes and then two bytes before writing. EA+ rounds the tail address even, so an odd physical record uses tail offset7 and preserves its byte9.",
+    "Named working references require separate host storage. The address adapters include aliases between reference records, dimensions, context/mask bytes, payload and scalar variable banks.",
+    "ROM data is immutable below8000; writable addresses begin at8000. Prepared count1/2/FF admits depth0..9; unary count1 also admits depth10 without the15BDA stack swap. Count2/FF at depth10, all selectors above depth10, unsupported wraparound, ROM destinations and non-prepared arities return an explicit unimplemented status before mutation."
+  ],
+  "verification": {
+    "test": "tools/test_eval_storage_c.py",
+    "report": "analysis/c-verification/eval_storage.json",
+    "comparisons_per_optimization": 65637,
+    "native_calls_per_optimization": 28880,
+    "unary_depth9_vs10_native_cases": 336,
+    "unary_boundary_adapters": ["named records", "physical address"],
+    "optimization_variants": ["O2", "O3"],
+    "memory_projection": "All65536 RAM bytes except bytes actually written in the prepared CPU frame; numerical operand-stack data and scalar variable aliases remain included."
+  },
+  "integration_limit": "The existing typed evaluator API excludes physical bus aliases. A rawF arithmetic branch that needs this storage stage must signal unsupported without an explicit full-memory adapter; merely returning Math3 while preserving imaginary variables does not reproduce native state. The environment suite retains96 failing diagnostics until that adapter is integrated.",
+  "remaining": [
+    "Full-memory evaluator adapter and synchronization of the ordinary variable banks",
+    "Numerical leaves, pending operation stack reduction and finish/controller behavior",
+    "Actual CPU frame aliases, malformed nonreturning native calls and bus writes outside the bounded prepared contract",
+    "Peripheral callback metadata outside the raw RAM projection"
+  ],
+  "full_firmware_complete": false
+}

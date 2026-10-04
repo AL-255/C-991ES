@@ -12,6 +12,200 @@ from nxu8.machine import Machine
 from trace_natural_result import settings
 
 
+def paired_cli_cases(m, executable, pbm, rng):
+    """Retain171F4's raw result and derive presentation policy through F12A.
+
+    The CLI exports a fresh result-only bitmap. F12A first establishes the
+    native status labels and local70-sentinel cleanup; a separate zero-RAM
+    B070/37BC call then renders those flags without editor pixels. All expected
+    records, labels, tokens and pixels come from unchanged original ROM calls.
+    """
+    controls = [b'\x6c3,4)', b'\x6c\x603,4)', b'\x6c3,\x604)',
+                b'\x6c\x603,\x604)', b'\x6c0,0)', b'\x6c0,1)', b'\x6c1,0)',
+                b'\x6c1\xae3,1\xae2)', b'\x6c\x982),1)',
+                b'\x6d2,30)', b'\x6d\x602,30)', b'\x6d2,\x6030)',
+                b'\x6d0,30)', b'\x6d1\xae2,30)', b'\x6d2,90)', b'\x6d2,180)',
+                b'(\x6c3,4))', b'(\x6d2,30))', b'\x6c3,4)+1',
+                b'\x60\x6d2,30)', b'\x6c3,4)\x47', b'\x6d2,30)\x47',
+                b'\x6c3,4)\x75', b'\x6c\x6d2,30),4)', b'\x6c1,1)\x5f1',
+                b'10\x5f3', b'0\x5f3', b'10\x5f5', b'10\x5f0',
+                b'\x6010\x5f3', b'10\x5f\x603', b'1\xae2\x5f1\xae3',
+                b'10\x5f\x983)', b'10\x5f\x6c1,1)', b'(10\x5f3)',
+                b'10\x5f3+1', b'10\x5f3\x47', b'10\x5f3\x75']
+
+    def signed(value):
+        return (b'\x60' if value < 0 else b'') + str(abs(value)).encode()
+
+    random_controls = []
+    for _ in range(24):
+        x, y = rng.randrange(-99, 100), rng.randrange(-99, 100)
+        radius, angle = rng.randrange(0, 100), rng.randrange(-360, 361)
+        numerator, denominator = rng.randrange(-999, 1000), rng.randrange(1, 100)
+        random_controls.extend([b'\x6c' + signed(x) + b',' + signed(y) + b')',
+                                b'\x6d' + signed(radius) + b',' + signed(angle) + b')',
+                                signed(numerator) + b'\x5f' + signed(denominator)])
+    cases = [(tokens, mode, None, None) for mode in (193, 196)
+             for tokens in controls + random_controls]
+    for base, name in ((1, 'bin'), (7, 'oct'), (9, 'dec'), (15, 'hex')):
+        cases.extend((tokens, 2, name, None) for tokens in
+                     (b'\x5110\x5f\x513', b'\x60\x5110\x5f\x513',
+                      b'\x510\x5f\x513', b'\x5110\x5f\x515'))
+
+    def put(address, data):
+        for offset, byte in enumerate(data):
+            m.ram[address + offset] = byte
+
+    structured = [b'\x6c3,4)', b'\x6d2,30)',
+                  b'\x6c\xae\xbb\xb81\xb9\xb82\xb9\xbc,4)', b'10\x5f3',
+                  b'\xae\xbb\xb81\xb9\xb82\xb9\xbc\x5f\xae\xbb\xb81\xb9\xb83\xb9\xbc']
+    for mode in (193, 196):
+        for display in structured:
+            m.reset(); settings(m); m.ram[0x80f9] = mode
+            put(0x8154, display + b'\0\0'); m.word(0x812c, 0x8154)
+            m.er(0, 0x8154); m.call(0x9ee4)
+            assert m.reg(0) == 1, (display.hex(), mode, 'native input boundary')
+            m.er(0, 0x8154); m.er(2, 0x8200); m.word(0x8dee, 0); m.ram[0x8df0] = 1
+            m.call(0x9ff2)
+            tokens = bytes(m.ram[0x8200:0x8400]).split(b'\0', 1)[0]
+            cases.append((tokens, mode, None, display))
+
+    def evaluate_context(tokens, mode, radix, screen):
+        m.reset()
+        for address, value in ((0x80f9, mode), (0x80fa, radix if mode == 2 else 1),
+                               (0x80fc, screen), (0x80fe, 1), (0x80f5, 240),
+                               (0x80f7, 1), (0x8104, 1), (0x8105, 4),
+                               (0x8106, 1), (0x8108, 1), (0x8121, 1),
+                               (0x8117, 1), (0x8119, 1), (0x811a, 124),
+                               (0x811b, 10), (0x811c, 1), (0x811d, 1),
+                               (0x811e, 1), (0x811f, 10)):
+            m.ram[address] = value
+        put(0x8600, tokens + b'\0\0'); put(0x8154, tokens + b'\0\0')
+        m.word(0x812c, 0x8154)
+        # Six original startup pointers, including the special-function table.
+        put(0x8dee, m.rom[0x1f8dc:0x1f8ee])
+        put(0x8140, bytes.fromhex('09000000000000000001') + bytes(10))
+
+    def full_commit(tokens, mode, radix):
+        evaluate_context(tokens, mode, radix, 17 if mode == 2 else 1)
+        m.word(0x9300, 0x8154); m.word(0x9302, 0x8140)
+        for offset, value in ((4, 1), (6, mode), (8, 1 if mode & 128 else 0),
+                              (9, 1 if mode & 64 else 0), (10, 0)):
+            m.ram[0x9300 + offset] = value
+        m.er(0, 0x9300)
+        # Answer the native timer poll through the existing passive adapter;
+        # every original instruction still executes.
+        stop = m.lib.calculus_expression_call(0x1f12a, 20000000, 0)
+        assert stop == 100 and m.reg(0) == (0 if mode == 2 else 2), (
+            tokens.hex(), mode, stop, m.reg(0))
+        return m.ram[0x80ff], m.ram[0x8101], bytes(m.ram[0x8140:0x8154])
+
+    counts = {'cases': len(cases), 'successful_PBM_cases': 0, 'error_cases': 0,
+              'no_PBM_cases': 0, 'F12A_commit_calls': 0, 'native_calls': len(structured) * 4,
+              'COMP_paired_cases': 0, 'CMPLX_coordinate_cases': 0,
+              'BASE_Qrem_cases': 0, 'sentinel_scalar_cases': 0,
+              'CMPLX_PBM_cases': 0, 'natural_input_conversion_cases': len(structured) * 2,
+              'random_expression_cases': len(random_controls) * 2}
+    for tokens, mode, base_name, display in cases:
+        radix = {'bin': 1, 'oct': 7, 'dec': 9, 'hex': 15}.get(base_name, 9)
+        evaluate_context(tokens, mode, radix, 1)
+        m.word(0x8190, 0x8600); m.er(0, 0x8190); m.er(2, 0x8300)
+        m.call(0x171f4, limit=20000000); counts['native_calls'] += 1
+        status = m.reg(0)
+        raw_record = bytes(m.ram[0x8300:0x8314])
+        consumed = m.word(0x8190) - 0x8600
+        flags = ['--complex'] if mode == 196 else ['--base', base_name] if mode == 2 else []
+        if status not in (0, 34, 35, 37):
+            proc = subprocess.run([str(executable), '--eval', tokens.hex(), *flags],
+                                  capture_output=True, text=True)
+            actual = json.loads(proc.stdout)
+            assert proc.returncode == 1 and (
+                actual['eval_status'], actual['record'], actual['consumed']) == (
+                status, raw_record.hex(), consumed), (tokens.hex(), mode, actual)
+            counts['error_cases'] += 1
+            continue
+
+        flag_byte, complex_override, committed = full_commit(tokens, mode, radix)
+        counts['native_calls'] += 1; counts['F12A_commit_calls'] += 1
+        local_record = bytearray(raw_record)
+        if status == 37 and raw_record[10] == 0x70:
+            local_record[10:] = bytes(10)
+            counts['sentinel_scalar_cases'] += 1
+        if mode == 2:
+            assert flag_byte == 0 and committed == raw_record[:10] + bytes(10)
+            counts['BASE_Qrem_cases'] += 1
+        else:
+            assert committed == bytes(local_record), (tokens.hex(), mode, 'native commit changed value')
+            if status in (34, 35):
+                if mode == 196:
+                    assert (flag_byte, complex_override) == (0, 2 if status == 34 else 1)
+                    counts['CMPLX_coordinate_cases'] += 1
+                else:
+                    assert (flag_byte, complex_override) == (18 if status == 34 else 17, 0)
+            if status == 37:
+                assert flag_byte == (0 if raw_record[10] == 0x70 else 20)
+            if mode == 193 and flag_byte & 16:
+                counts['COMP_paired_cases'] += 1
+
+        # Match the CLI's fresh result-only framebuffer, not F12A's editor row.
+        m.reset()
+        for address, value in ((0x80f9, mode), (0x80f5, 240), (0x8106, 1),
+                               (0x8100, 13), (0x8121, 1),
+                               (0x80ff, flag_byte), (0x8101, complex_override)):
+            m.ram[address] = value
+        if mode == 196 or status != 0:
+            for address, value in ((0x80fc, 1), (0x8104, 1), (0x8105, 4),
+                                   (0x8108, 1), (0x811f, 10)):
+                m.ram[address] = value
+        if mode == 2:
+            m.ram[0x80fa] = radix; m.ram[0x811f] = 10
+        put(0x8200, tokens + b'\0'); put(0x8300, local_record); m.word(0x812c, 0x8200)
+        m.call(0xc034); m.er(0, 0x8300)
+        m.call(0x37bc if mode == 2 else 0xb070, limit=20000000)
+        m.call(0x3cfc); counts['native_calls'] += 3
+        expected_pbm = b'P4\n96 32\n' + b''.join(
+            bytes(m.ram[0xf800+16*y:0xf80c+16*y]) for y in range(32))
+        persistent_tokens = bytes(m.ram[0x8398:0x8798]).split(b'\0', 1)[0].hex()
+        expected_kind = m.ram[0x8100] >> 4
+        if mode == 196 or (mode == 193 and flag_byte & 16):
+            expected_tokens = persistent_tokens
+        else:
+            # Preserve the existing ordinary COMP isolated formatter alphabet,
+            # including37/70 scalar fallback, and BASE's radix formatter.
+            m.reset(); settings(m); put(0x8300, raw_record)
+            if mode == 2:
+                m.ram[0x80f9] = 2; m.ram[0x80fa] = radix
+                m.er(0, 0x8300); m.er(2, 0x8500); m.call(0x158b8)
+                expected_kind = 0; counts['native_calls'] += 1
+            else:
+                m.call(0xc034); m.er(0, 0x8300); m.er(2, 0x8500)
+                m.word(0x8dee, 0); m.call(0xc060)
+                expected_kind = m.reg(0); counts['native_calls'] += 2
+            expected_tokens = bytes(m.ram[0x8500:0x8700]).split(b'\0', 1)[0].hex()
+        for with_pbm in (True, False):
+            command = [str(executable), '--eval' if display is None else '--display',
+                       tokens.hex() if display is None else display.hex(), *flags]
+            if with_pbm:
+                command += ['--pbm', str(pbm)]
+            proc = subprocess.run(command, capture_output=True, text=True)
+            actual = json.loads(proc.stdout)
+            if display is not None:
+                assert (actual['conversion_status'], actual['input_tokens']) == (0, tokens.hex()), (
+                    display.hex(), mode, actual)
+            assert proc.returncode == 0 and (
+                actual['eval_status'], actual['format_status'], actual['bitmap_status'],
+                actual['record'], actual['consumed'], actual['tokens'], actual['kind']) == (
+                status, 0, 0, raw_record.hex(), consumed, expected_tokens, expected_kind), (
+                tokens.hex(), mode, with_pbm, actual, expected_tokens, expected_kind)
+            if with_pbm:
+                assert pbm.read_bytes() == expected_pbm, (tokens.hex(), mode, 'paired CLI pixels')
+                counts['successful_PBM_cases'] += 1
+                if mode == 196:
+                    counts['CMPLX_PBM_cases'] += 1
+            else:
+                counts['no_PBM_cases'] += 1
+    return counts
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--no-report', action='store_true')
@@ -215,17 +409,19 @@ def main():
         result = json.loads(actual.stdout)
         assert actual.returncode == 1 and (result['eval_status'], result['consumed'], result['display_cursor']) == (
             expected_status, consumed, m.ram[0x8114]), (display.hex(), result, m.ram[0x8114])
+    paired = paired_cli_cases(m, executable, pbm, rng)
     sources = build_inputs(ROOT)
     data = {
-        'cases': len(cases) + base_cases + len(invalid_arguments) + 1 + len(evaluator_errors) + len(boundary_errors) + len(mapped_errors),
-        'successful_expression_PBM_cases': len(cases) + base_cases,
-        'base_expression_PBM_cases': base_cases,
-        'complex_expression_PBM_cases': len(complex_inputs) + len(complex_displays),
-        'natural_input_conversion_cases': len(display_inputs) + len(complex_displays), 'natural_boundary_error_cases': len(boundary_errors),
+        'cases': len(cases) + base_cases + len(invalid_arguments) + 1 + len(evaluator_errors) + len(boundary_errors) + len(mapped_errors) + paired['cases'] + paired['no_PBM_cases'],
+        'successful_expression_PBM_cases': len(cases) + base_cases + paired['successful_PBM_cases'],
+        'base_expression_PBM_cases': base_cases + paired['BASE_Qrem_cases'],
+        'complex_expression_PBM_cases': len(complex_inputs) + len(complex_displays) + paired['CMPLX_PBM_cases'],
+        'natural_input_conversion_cases': len(display_inputs) + len(complex_displays) + paired['natural_input_conversion_cases'], 'natural_boundary_error_cases': len(boundary_errors),
         'natural_evaluator_error_cursor_cases': len(mapped_errors),
         'invalid_argument_cases': len(invalid_arguments) + 1, 'evaluator_error_cases': len(evaluator_errors),
-        'comparison': 'Standalone executable JSON status,20-byte record,consumed pointer,formatter tokens and all96x32 PBM pixels versus original171F4/C034/C060/B070/158B8/37BC/3CFC.',
-        'scope': 'Prepared ordinary Math COMP and rectangular CMPLX contexts including structured input; BASE-N raw grammar plus radix token formatting and fixed-row result display. No reset/key UI.'}
+        'paired_coordinate_Qrem': paired,
+        'comparison': 'Standalone executable JSON status,20-byte record,consumed pointer,formatter tokens and all96x32 PBM pixels versus original171F4/F12A/C034/C060/B070/158B8/37BC/3CFC. Paired tokens are checked both with and without PBM export.',
+        'scope': 'Prepared ordinary Math COMP and CMPLX contexts including structured input, successful34Pol/35Rec/37Qrem status labels and70-sentinel scalar fallback; BASE-N raw grammar plus radix token formatting and fixed-row display precedence. F12A supplies native presentation policy; fresh result-only displays exclude editor pixels. No reset/key UI.'}
     report = data if options.no_report else write_report('analysis/c-verification/cli.json', data,
         sources + ['tools/c_build_inputs.py', 'tools/c_verification.py', 'tools/trace_natural_result.py',
                    'tools/nxu8/calculus_expression_events.c'], 'tools/test_cli_c.py')

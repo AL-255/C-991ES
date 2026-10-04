@@ -23,16 +23,18 @@ MODULES=[
     'ui/fx_editor','ui/fx_natural_editor',
     'platform/fx_platform','platform/fx_host_bridge','platform/fx_boot','platform/fx_boot_events',
     'platform/fx_persistent','platform/fx_diagnostic_contrast','platform/fx_result_classify',
-    'parse/fx_tokens','parse/fx_eval','numeric/fx_numeric','numeric/fx_transcend','numeric/fx_power',
+    'parse/fx_tokens','parse/fx_eval','parse/fx_eval_storage','parse/fx_eval_finish','numeric/fx_numeric','numeric/fx_transcend','numeric/fx_power',
     'numeric/fx_root','numeric/fx_combinatorics','numeric/fx_logbase','numeric/fx_calculus',
     'numeric/fx_integral','numeric/fx_derivative','numeric/fx_base','numeric/fx_base_literal',
-    'numeric/fx_sexagesimal',
+    'numeric/fx_sexagesimal','numeric/fx_quotient_remainder',
+    'numeric/fx_raw_decimal_parts','numeric/fx_raw_decimal_divide',
+    'numeric/fx_raw_decimal_multiply_add','numeric/fx_raw_fraction_convert',
     'complex/fx_complex','complex/fx_complex_angle','complex/fx_complex_round','complex/fx_complex_dispatch',
     'linalg/fx_linalg','linalg/fx_linalg_store',
     'trig/fx_trig','trig/fx_trig_math','trig/fx_trig_inverse','trig/fx_trig_hyperbolic','trig/fx_math_context',
     'format/fx_format','format/fx_format_base','format/fx_format_budget',
     'render/fx_render','render/fx_render_context','render/fx_render_memory','render/fx_layout','render/fx_layout_validate','render/fx_viewport',
-    'render/fx_result','render/fx_result_special','render/fx_result_linear','render/fx_result_complex',
+    'render/fx_result','render/fx_result_special','render/fx_result_linear','render/fx_result_complex','render/fx_result_pair',
     'render/fx_result_inequality','render/fx_result_format_state','data/fx_rom_data']
 
 
@@ -93,7 +95,7 @@ def main():
     native_polls=C.c_uint.in_dll(events,'input_controller_polls')
     native_x=((C.c_uint8*10)*8192).in_dll(events,'input_controller_poll_x')
     abort_poll=0
-    rng=random.Random(0xf12a);counts={};gaps=[]
+    rng=random.Random(0xf12a);counts={};gaps=[];stack_witnesses=[]
     background=bytearray(rng.randbytes(65536))
     background[0x8dee:0x8e00]=rom[0x1f8dc:0x1f8ee]
     def count(group):counts[group]=counts.get(group,0)+1
@@ -169,7 +171,8 @@ def main():
     def compare(group,detail,state,numeric=False,presentation=False):
         actual=bytearray(ram);expected=bytes(native.ram)
         actual[ORACLE_CONTEXT+4]=state.context.return_value
-        excludes=[(0x8b00,0x8dee)]
+        stack_floor=getattr(state,'native_presentation_stack_floor',0x8b00) if presentation else 0x8b00
+        excludes=[(stack_floor,0x8dee)]
         if numeric:excludes += [(0x8000,0x80dc),(0x8640,0x87d0)]
         if numeric and state.input[0] in (0x6a,0x6b):excludes += [(0x850a,0x8640)]
         if presentation:excludes += [(0x8640,0x8708)]
@@ -194,9 +197,33 @@ def main():
     def present(state,detail):
         actual=lib.fx_input_controller_present(C.byref(p),C.byref(state))
         assert actual==1,(detail,'present',actual)
+        trace_polar=state.evaluator_status==34 and state.context.calculation_mode==0xc4 and state.context.natural_result
+        if trace_polar:native.trace_open(build/'pol-presentation.trace.csv',reads=False)
         native.call(0x1ee7c)
         if native.ram[0x80fe]!=1:
             native.er(0,state.context.result_address);native.call(0xb070)
+        if trace_polar:
+            native.trace_close()
+            instructions={};lowest=0x8b00;stack_writes=[]
+            for line in (build/'pol-presentation.trace.csv').read_text().splitlines():
+                fields=line.split(',')
+                if fields[0]=='I':
+                    instructions[fields[1]]=fields
+                    lowest=min(lowest,int(fields[3],16))
+                elif fields[0]=='W' and int(fields[3],16)==0:
+                    address,size=int(fields[4],16),int(fields[5])
+                    if 0x8a00<=address<0x8b00:
+                        instruction=instructions[fields[1]];pc=int(instruction[2],16)
+                        # Each newly exposed byte is a real PUSH XR0 below
+                        # the previous fixed CPU-stack boundary, not a result
+                        # or persistent workspace write hidden by a mask.
+                        assert rom[pc:pc+2]==b'\x6e\xf0',(detail,fields,instruction)
+                        stack_writes.append({'pc':hex(pc),'sp_before':instruction[3],
+                                             'address':hex(address),'size':size})
+            assert lowest>=0x8a00,(detail,'unexpected_stack_depth',hex(lowest))
+            state.native_presentation_stack_floor=lowest
+            stack_witnesses.append({'expression':bytes(state.input).split(b'\0',1)[0].hex(),
+                                    'minimum_sp':hex(lowest),'writes_below_8b00':stack_writes})
         if not native.ram[0x80fe]&32:
             native.call(0x1e9a0)
             if native.reg(0)>0:native.ram[0x8129]=1
@@ -339,21 +366,23 @@ def main():
     run(0x1824e);compare('error_host_reset_request',0,state,True)
     assert lib.fx_input_controller_finish(C.byref(state),None)==2
     count('reset_completion')
-    for expression in (b'\x6c3,4)',b'\x6d2,30)',b'2_30'):
-        state,actual=prepare(expression,natural=0)
-        assert actual==4;run(0x1f2ac)
-        actual=lib.fx_input_controller_tick(C.byref(p),C.byref(state))
-        assert actual==-2,('capability_gap',expression.hex(),actual)
-        run(0x1f39a)
-        native_status=native.reg(5)
-        native_result=bytes(native.ram[0x8140:0x8154]).hex()
-        if 0<native_status<32:
-            put(0x8e01,4);put(0x8e02,16)
-        run(0x2fffe)
-        gaps.append({'input':expression.hex(),'native_action':native.reg(0),'c_return':actual,
-                     'native_evaluator_status':native_status,'native_result':native_result,
-                     'native_ram_sha256':hashlib.sha256(bytes(native.ram)).hexdigest(),
-                     'native_lcd_sha256':hashlib.sha256(bytes(native.ram[0xf800:0xfa00])).hexdigest()})
+    for mode in (0xc1,0xc4):
+        for natural in (0,1):
+            for expression in (b'\x6c3,4)',b'\x6d2,30)',b'2_30',b'10_3',
+                               b'\x6010_3',b'2.5_1.2',b'2\xaf30',
+                               b'\x6c3,4)+1',b'(\x6c3,4))',b'\x6c3,4)\x47',
+                               b'\x6d.999999999999999,0)'):
+                state=success(expression,('paired_transaction',mode,natural,expression.hex()),
+                              mode=mode,natural=natural,
+                              variable_record=bytes.fromhex('07000000000000000001'),
+                              imaginary_record=bytes.fromhex('01000000000000000001'))
+                present(state,('paired_or_scalar_presentation',mode,natural,expression.hex()))
+            for expression in (b'\x6c3,4,5)',b'\x6d2,30,4)',b'\x6c0,0)',
+                               b'\x6d\x602,30)',b'\x6c3,4\x47)',b'10_0'):
+                error(expression,('paired_error',mode,natural,expression.hex()),
+                      mode=mode,natural=natural,
+                      variable_record=bytes.fromhex('07000000000000000001'),
+                      imaginary_record=bytes.fromhex('01000000000000000001'))
     for i in range(args.random_cases):
         a,b=rng.randrange(1,100000),rng.randrange(1,100000)
         op=rng.choice([b'+',b'-',b'N',b'O'])
@@ -374,8 +403,9 @@ def main():
         assert actual==-1
         count('explicit_invalid_lifecycle')
     report={'cases':sum(counts.values()),'domains':counts,'unsupported_native_fixtures':gaps,
-        'comparison':'Original F12A preparation and completed ordinary COMP/CMPLX transactions; native status, named context return and remaining64KiB RAM/LCD/MMIO/callbacks. CPU stack8B00..8DED is excluded. After numeric evaluation, excluded called workspaces are8000..80DB and40 ten-byte surd/common-denominator operand slots8640..87CF; integral/derivative transactions additionally exclude850A..863F. Presentation excludes inherited inactive layout slots8640..8707. Cancellation callback X records and counts are compared independently.',
-        'scope':'Ordinary COMP/CMPLX preparation, evaluation, variable/Ans/replay commit, colon continuation, cancellation, nonblocking error wait/recovery/reset/host exports, ordinary natural/linear expression and result presentation; mode45/12/4B initial history/result gates. Native Pol/Rec/polar results are recorded as explicit parser capability gaps.'}
+        'native_presentation_stack_witnesses':stack_witnesses,
+        'comparison':'Original F12A preparation and completed ordinary COMP/CMPLX transactions; native status, named context return and remaining64KiB RAM/LCD/MMIO/callbacks. CPU stack8B00..8DED is excluded; natural CMPLX Pol presentation additionally excludes traced PUSH XR0 bytes down to its measured minimum SP, with write-PC witnesses retained. After numeric evaluation, excluded called workspaces are8000..80DB and40 ten-byte surd/common-denominator operand slots8640..87CF; integral/derivative transactions additionally exclude850A..863F. Presentation excludes inherited inactive layout slots8640..8707. Cancellation callback X records and counts are compared independently.',
+        'scope':'Ordinary COMP/CMPLX preparation, evaluation, variable/Ans/replay commit, colon continuation, cancellation, nonblocking error wait/recovery/reset/host exports, ordinary natural/linear expression and result presentation; mode45/12/4B initial history/result gates. Paired Pol/Rec and quotient/remainder transactions and presentation, AF polar expressions, coordinate writes before later syntax failures, quotient fallback sentinel clearing and native labels/metadata are compared.'}
     if not args.no_report:
         deps=implementation_inputs(ROOT,sources)+['tools/test_platform_c.py','tools/test_error_event_c.py',
              'tools/test_key_controller_c.py','tools/test_key_wait_c.py','tools/test_boot_c.py',

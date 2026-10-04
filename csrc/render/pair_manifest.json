@@ -1,0 +1,35 @@
+{
+  "subsystem": "paired Pol/Rec/Qrem/SOLVE result display",
+  "implementation_kind": "readable high-level C",
+  "executes_original_rom": false,
+  "implemented_routines": [
+    {"address": "0xb070", "name": "fx_display_pair_result", "scope": "prepared ordinary modes1/65/129/193/196/136 with80FFbit4; complete status-byte label admission, two scalar records, legacy/natural/cached output and immutable source"},
+    {"address": "0x10e7a", "name": "label", "scope": "full-byte17/18/19/20 and fallback label selection, complete SOLVE83FC byte ROM index,8127 radius-glyph selection"},
+    {"address": "0xc1f0", "name": "component_row", "scope": "bounded paired label/value padding, including dormant writes beyond the earlier NUL"},
+    {"address": "0xb41a", "name": "natural_pair_composition", "scope": "paired delimiter before second label/value and native initial-selection history policy"},
+    {"address": "0x110fe", "name": "decimal_delimiter", "scope": "ROM comma or semicolon selected by complete8104 truth value"},
+    {"address": "0xc060", "name": "format_component", "scope": "paired error/DMS/current-previous-selection gates, fixed-budget12 fallback, intermediate state and final composed-kind timing; ordinary formatter leaves reused"}
+  ],
+  "gaps": [
+    "Equation69 polar/default policy,137 serialization and earlier special/equation/inequality result controllers are separate.",
+    "Natural output without persistent scratch uses original CPU-stack text and returns-1 in this prepared API.",
+    "When a required scroll has wrappedtotalheight>=63, native3922 corrupts CPU return-frame memory; portable API returns-1 after exact prior formatting writes.",
+    "Numeric scratch within8000..80DB, inactive viewport metrics, CPU scratch registers/flags and native temporary stack aliases are not exposed.",
+    "Source records must be disjoint from controller state, persistent output, history and frame buffers."
+  ],
+  "verification": "analysis/c-verification/render_pair.json",
+  "verification_command": "python3 tools/test_render_pair_c.py",
+  "understanding_ranges": "csrc/render/pair/understood_ranges.json",
+  "complete": false,
+  "verification_summary": {
+    "status": "pass",
+    "complete_b070_cases": 63555,
+    "portable_api_admission_checks": 141,
+    "comparisons": 606585,
+    "original_native_calls": 127587,
+    "architectural_nonreturn_boundaries": 477,
+    "tested_input_pins": 48,
+    "scope": "tokens including dormant persistent scratch,80F0..813F,immutable20-byte input,active viewport/cache,9800..98FF history,384 framebuffer bytes,512 LCD bytes before/afterflush,F031",
+    "not_claimed": "all RAM,CPU ABI,reset-to-keypress timing,full firmware"
+  }
+}

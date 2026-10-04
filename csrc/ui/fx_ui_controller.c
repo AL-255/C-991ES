@@ -8,6 +8,7 @@
 #include "../platform/fx_result_classify.h"
 #include "../render/fx_render.h"
 #include "../render/fx_result_complex.h"
+#include "../render/fx_result_pair.h"
 #include "../render/fx_result_special.h"
 #include "../parse/fx_tokens.h"
 #include "../complex/fx_complex.h"
@@ -162,7 +163,9 @@ static fx_ui_status redraw(fx_platform *p,fx_ui_controller *s,int expression)
          * Its temporary result never replaces the persistent result pair. */
         fx_ui_status admitted=admit_complex_result(p,s);
         if (admitted!=FX_UI_COMPLETE) return admitted;
-        if (fx_display_complex_result(&r,0x8140,NULL)!=1) return FX_UI_UNIMPLEMENTED;
+        int displayed=read_byte(p,0x80ff)&16 ? fx_display_pair_result(&r,0x8140,NULL) :
+                                             fx_display_complex_result(&r,0x8140,NULL);
+        if (displayed!=1) return FX_UI_UNIMPLEMENTED;
         if (fx_result_format_kind(p)==15 && prime_workspace(p))
             return request(s,FX_UI_REQUEST_RESULT_FORMAT);
     }

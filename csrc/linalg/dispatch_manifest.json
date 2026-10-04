@@ -18,6 +18,8 @@
     "63": "matrix absolute or vector magnitude",
     "B3": "display round",
     "60": "negate",
+    "61": "matrix forced-new temporary or vector copy/reuse, then wrapped inverse cosh scalar leaf",
+    "62": "same staging and wrapped inverse tanh scalar leaf",
     "75": "matrix square",
     "76": "matrix cube",
     "77": "matrix inverse",
@@ -34,8 +36,8 @@
   "verified": {
     "report": "analysis/c-verification/linalg_dispatch.json",
     "test": "tools/test_linalg_dispatch_c.py",
-    "checks": 105175,
-    "native_calls": 13723
+    "checks": 121630,
+    "native_calls": 15811
   },
   "prepared_context": [
     "Mutable nine-slot bank with rows/columns0..3 and complete90-byte backing per slot; valid rich reference IDs0..8.",
@@ -45,11 +47,13 @@
     "Cancellation responses count native timer checks at5564; physical key/interrupt timing is external.",
     "Input/output record aliases supported; inputs inside mutable bank storage are excluded. Inactive cells, reference metadata and late partial mutations retained.",
     "Wrapped rich selector leaves retain native operation index, temporary staging and allocation policy; canonical raw171F4 expressions verify true token mappings rather than prepared selectors alone.",
-    "Matrix88 uses separate finite packed decimal adapters and unchanged guarded factor API. Native arithmetic non-return preserves prior bank mutations and leaves the typed output uncommitted."
+    "Matrix88 uses separate finite packed decimal adapters and unchanged guarded factor API. Native arithmetic non-return preserves prior bank mutations and leaves the typed output uncommitted.",
+    "Rich61/62 retain eight-bit table-index wrapping to1C4EA/1C4D8, inverse hyperbolic mode11 and pre-leaf staging. Rewritten marked6x metadata uses native finite fraction conversion and the existing inverse hyperbolic kernel; kind9 rejects."
   ],
   "remaining": [
     "Shared parent-owned parser integration and workspace/UI side effects.",
     "Genuine matrix/vector IDs9..15 and dimensions exceeding3 are outside the safe typed bank ABI.",
+    "Malformed finite marked-metadata conversion outside the ordinary hyperbolic helper contract returnsUNIMPLEMENTED after the exact prior staging, retaining bank mutations and leaving output uncommitted even when the native function returns a finite result.",
     "Physical timer/key cancellation controller."
   ],
   "full_firmware_complete": false

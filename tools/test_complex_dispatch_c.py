@@ -111,6 +111,43 @@ for context in [0xc4,0xc1,0x02]:
     counts['context-cleanup']=counts.get('context-cleanup',0)+1
     actual=[host,bytes(out).hex(),status.value,bytes(aa).hex()];want=[0,expected.hex(),fw,raw.hex()]
     if actual!=want:failures.append(dict(group='context-cleanup',left=raw.hex(),context=context,leaf=leaf,actual=actual,expected=want))
+# A successful leaf may leave a value whose integer cleanup carries exponent99
+# into Math ERROR. Compare the complete continuation, including early errors,
+# scalar-context imaginary preservation, marked-real routing and alias output.
+overflow=bytes.fromhex('09999999999999999901')
+negative_overflow=overflow[:-1]+b'\x06'
+marked_overflow=bytes([overflow[0]|0x40])+overflow[1:]
+near_overflow=[overflow,negative_overflow,marked_overflow,
+               bytes.fromhex('09999999999999919901'),
+               bytes.fromhex('09999999999999909901'),
+               bytes.fromhex('09999999999999919801')]
+cleanup_examples=[]
+cleanup_pairs=[]
+for value in near_overflow:
+ for companion in [zero,one,b'\xf0'+bytes(9),b'\xf3'+bytes(9)]:
+  cleanup_pairs.extend([value+companion,companion+value])
+for context in [0xc4,0xc1,0x02]:
+ for raw in cleanup_pairs:
+  for leaf in [0,3,0x30]:
+   ctx=Context(context,1,4,8,0)
+   m.reset();settings(m);m.ram[0x80f9]=context;m.ram[0x8102]=8;m.ram[0x8103]=0
+   for i,x in enumerate(raw):m.ram[0x8300+i]=x
+   m.er(12,0x8300);m.reg(0,leaf);m.reg(1,context)
+   m.word(0x8dee,0xfffe);m.word(0x8df0,2);m.call(0x16562)
+   expected=bytes(m.ram[0x8300:0x8314]);fw=m.reg(2)
+   for alias in [False,True]:
+    source=Complex.from_buffer_copy(raw);out=source if alias else Complex();status=C.c_uint8(0xab)
+    host=lib.fx_complex_dispatch_cleanup(C.byref(out),C.byref(source),leaf,C.byref(ctx),C.byref(status))
+    counts['cleanup-overflow-continuation']=counts.get('cleanup-overflow-continuation',0)+1
+    actual=[host,bytes(out).hex(),status.value];want=[0,expected.hex(),fw]
+    if not alias:actual.append(bytes(source).hex());want.append(raw.hex())
+    if actual!=want:failures.append(dict(group='cleanup-overflow-continuation',left=raw.hex(),context=context,leaf=leaf,alias=alias,actual=actual,expected=want))
+   if leaf==0 and raw in [overflow+one,one+overflow,marked_overflow+one]:
+    cleanup_examples.append(dict(context=context,input20=raw.hex(),result20=expected.hex(),status=fw))
+for value in [overflow,negative_overflow,marked_overflow]:
+ for imaginary in [zero,one,overflow,b'\xf0'+bytes(9),b'\xf3'+bytes(9)]:
+  for digits in [0,9]:
+   check('display-round-cleanup-overflow',value+imaginary,None,0xb3,Context(0xc4,1,4,8,digits),alias=True)
 rng=random.Random(0x16562)
 for index in range(args.random_cases):
  a=rng.choice(recs)+rng.choice(recs);b=rng.choice(recs)+rng.choice(recs)
@@ -222,6 +259,7 @@ total=sum(counts.values())
 report={'scope':'Prepared CMPLX value dispatch: native16A14 unary admission, scalar/complex leaves,16562 context cleanup, binaryzero classification, i rotation and original numeric return status; parser163F0 tagged-record rewriting is excluded',
         'oracle':'Extracted firmware through the independent test-only nX-U8 machine',
         'cases':counts,'total_cases':total,'failures':failures,
+        'cleanup_overflow_examples':cleanup_examples,
         'timestamp_utc':datetime.now(timezone.utc).isoformat(),
         'complete':False,'full_firmware_complete':False}
 if failures:

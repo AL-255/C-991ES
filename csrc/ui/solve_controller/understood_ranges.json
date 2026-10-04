@@ -1,0 +1,20 @@
+{
+  "subsystem": "prepared SOLVE scanner, prompts and result commit",
+  "ranges": [
+    {"start":"0x172f6","end":"0x1731a","scope":"Common scanner context, ten-byte FF list and INPUT source initialization; no synthetic CPU locals in C","source":"csrc/ui/fx_solve_controller.c"},
+    {"start":"0x1731a","end":"0x1736a","scope":"SOLVE token scan, selected suffix lookahead, colon rejection and default X selection; CALC assignment bookkeeping after1736a is excluded","source":"csrc/ui/fx_solve_controller.c"},
+    {"start":"0x1737e","end":"0x17392","scope":"Nonterminal suffix re-read, variable admission and C0 branch before untranslated CALC assignment mask","source":"csrc/ui/fx_solve_controller.c"},
+    {"start":"0x173bc","end":"0x173fa","scope":"Unique variable insertion, requested-variable12 error, selected-last movement and publication","source":"csrc/ui/fx_solve_controller.c"},
+    {"start":"0xde1c","end":"0xde7e","scope":"Special-screen saved-formula restore, screen/item/prompt initialization and continuation/prompt/empty launch guards","source":"csrc/ui/fx_solve_controller.c"},
+    {"start":"0xdd84","end":"0xde1c","scope":"List initialization and current coefficient/chosen-guess selection, terminator transition, saved equation restore and synthesized ED; CALC item3 is understood but not admitted","source":"csrc/ui/fx_solve_controller.c"},
+    {"start":"0xded4","end":"0xdf42","scope":"Plain coefficient/guess label construction, variable read, screen clear, presentation and prompt state; earlier table-row branch excluded","source":"csrc/ui/fx_solve_controller.c"},
+    {"start":"0xe7c6","end":"0xe7e0","scope":"Accepted coefficient real-record publication through522a and next prompt index","source":"csrc/ui/fx_solve_controller.c"},
+    {"start":"0x37a0","end":"0x37bc","scope":"Special-screen literal prompt label drawing rather than expression token decoding","source":"csrc/ui/fx_solve_controller.c"},
+    {"start":"0x1f2b8","end":"0x1f2da","scope":"Exact C0/item4 numerical solve dispatch and returned native status; other special numerical modes excluded","source":"csrc/ui/fx_solve_controller.c"},
+    {"start":"0x1f440","end":"0x1f464","scope":"C0 fresh descriptor byteA0 eligibility, status0/36 root-residual preservation and result flags/item32 versus64","source":"csrc/ui/fx_solve_controller.c"},
+    {"start":"0x1f550","end":"0x1f558","scope":"C0 bypass of ordinary colon/replay history commit after Ans/PreAns publication","source":"csrc/ui/fx_solve_controller.c"},
+    {"start":"0x1f598","end":"0x1f5a6","scope":"Display-input emptiness guard: nonempty resumes preparation, empty returns action0 before any solver/preparer call","source":"csrc/ui/fx_solve_controller.c"},
+    {"start":"0x1f26e","end":"0x1f272","scope":"Common prepared-handler action0 return to the named descriptor/host caller","source":"csrc/ui/fx_solve_controller.c"}
+  ],
+  "note":"Conservative semantic spans only. Called numeric, editor, persistent and error kernels retain their own ledgers. This does not assert complete firmware translation or a published controller parity report."
+}

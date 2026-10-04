@@ -87,6 +87,26 @@
       "address": "0x16c9c / 0x16a7e / 0x16f94",
       "name": "DMS, conversion and constant token handlers",
       "scope": "Prepared C1/C4 and DEC BASE-N expression dispatch; completed operand admission, literal-only minutes/seconds, bounded third component, all40 direct conversions, disabled three-digit selector and exact scientific-constant record copies"
+    },
+    {
+      "address": "0x171f4 / 0x18212 / 0x16b44 / 0x16c78",
+      "name": "prepared evaluator environment and equation grammar",
+      "scope": "Separate explicit calculation options and screen/prior-operation/complex-format/restricted-state/display/base globals; natural-output permission; one admitted equality exports separate lhs/rhs records, comma-variable suffix, bit6 calculus and quotient admission, observed equation mask and restricted-state cleanup. The ordinary typed API does not model physical bus aliases."
+    },
+    {
+      "address": "0x1615a / 0x16162 / 0x1603e / 0x165c0 / 0x166fc / 0x1708e",
+      "name": "coordinate and paired-result grammar",
+      "scope": "Pol/Rec and AF polar expressions, retained first-argument numeric stack records, terminal selector policy, quotient/remainder pair and later syntax errors; both raw numeric records and consumed cursor"
+    },
+    {
+      "address": "0x163f0..0x16538 / 0x1694c..0x1699a",
+      "name": "physical evaluator prestaging",
+      "scope": "Prepared 64KiB storage view, low-four-bit physical slot dimensions, ascending word payload copies, first-free temporary reservation, wrapped releases and scalar/rich operand swaps. Unary and binary prestaging preserve physical scalar-bank aliases before an explicitly unsupported rich numerical leaf."
+    },
+    {
+      "address": "0x1415a / 0x17274",
+      "name": "physical terminal reference cleanup",
+      "scope": "Prepared storage entry uses all16 physical identities, captured dimensions, native row-stride3 and byte-sized cell-index wrap, per-cell live writes and partial commits before error. Terminal evaluation preserves its incoming status independently of the leaf error record. Cell extents outside829E..883D and malformed decimals outside the numeric cleanup contract remain explicitly unsupported."
     }
   ],
   "gaps": [
@@ -94,10 +114,9 @@
     "function dispatch and mode constraints",
     "rich variable/object references and remaining mode-dependent grammar",
     "full error/recovery behavior in other contexts, expression editing and keyboard integration",
-    "solver expression orchestration and other calculation modes",
-    "screen-dependent admission for rich/error records outside the typed ordinary variable API",
-    "Pol/Rec and polar/quotient-remainder expression orchestration remain pending; their prepared numeric APIs are separate",
-    "Rnd uses the prepared ordinary Norm1 display policy; full FIX/SCI and screen controls remain pending"
+    "Rich numerical leaf dispatch is in integration; current unsupported routes retain proven prestaging side effects.",
+    "Complete SOLVE expression/controller interactions beyond the prepared callback and key-event workflow, and other calculation-mode grammar remain pending.",
+    "Numerical CPU scratch clobbers and arbitrary caller-output/CPU-frame aliases are outside the named storage entry point."
   ],
   "verification": [
     "tools/test_tokens_c.py",
@@ -107,7 +126,11 @@
     "tools/test_eval_calculus_c.py",
     "tools/test_eval_continuous_c.py",
     "tools/test_eval_base_c.py",
-    "tools/test_eval_sexagesimal_c.py"
+    "tools/test_eval_sexagesimal_c.py",
+    "tools/test_eval_coordinate_c.py",
+    "tools/test_eval_storage_c.py",
+    "tools/test_eval_finish_c.py",
+    "tools/test_eval_environment_c.py"
   ],
   "unsupported_behavior": "explicit FX_EVAL_UNIMPLEMENTED and offending token; no host libm or CPU/ROM fallback"
 }

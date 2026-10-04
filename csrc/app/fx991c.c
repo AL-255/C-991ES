@@ -10,6 +10,7 @@
 #include "format/fx_format_base.h"
 #include "render/fx_render.h"
 #include "render/fx_result_complex.h"
+#include "render/fx_result_pair.h"
 #include "render/fx_result_special.h"
 #include "data/fx_rom_data.h"
 #include "ui/fx_input_codec.h"
@@ -77,8 +78,15 @@ static void usage(void)
           "Supported COMP arithmetic and functions are listed in csrc/parse/manifest.json.\n", stderr);
 }
 
+static int successful_evaluation(fx_eval_status status)
+{
+    return status == FX_EVAL_OK || status == FX_EVAL_POLAR_PAIR
+        || status == FX_EVAL_RECTANGULAR_PAIR || status == FX_EVAL_QUOTIENT_PAIR;
+}
+
 static int render_result(const char *path, const uint8_t *input, size_t length,
-                         const fx_eval_result *evaluated, int complex_mode, uint8_t base_radix,
+                         const fx_eval_result *evaluated, fx_eval_status status,
+                         int complex_mode, uint8_t base_radix,
                          uint8_t *tokens, size_t capacity, fx_format_result *result)
 {
     static uint8_t memory[FX_RENDER_MEMORY_BYTES];
@@ -89,7 +97,8 @@ static int render_result(const char *path, const uint8_t *input, size_t length,
     memory[0x80f9] = base_radix ? 2 : complex_mode ? 0xc4 : 0xc1;
     memory[0x80f5] = 0xf0;
     memory[0x8106] = 1;
-    if (complex_mode) {
+    int retained_pair = status != FX_EVAL_OK;
+    if (complex_mode || retained_pair) {
         memory[0x80fc] = 1;
         memory[0x8104] = 1;
         memory[0x8105] = 4;
@@ -105,11 +114,27 @@ static int render_result(const char *path, const uint8_t *input, size_t length,
     memory[0x812c] = 0; memory[0x812d] = 0x82;
     memcpy(memory+0x8200, input, length);
     memcpy(memory+0x8300, evaluated->value, sizeof(evaluated->value));
+    /* F12A commits presentation flags after the evaluator returns. Keep
+     * these changes local: JSON exposes the original171F4 records/status. */
+    if (status == FX_EVAL_POLAR_PAIR) {
+        if (complex_mode) memory[0x8101] = 2;
+        else memory[0x80ff] = 18;
+    } else if (status == FX_EVAL_RECTANGULAR_PAIR) {
+        if (complex_mode) memory[0x8101] = 1;
+        else memory[0x80ff] = 17;
+    } else if (status == FX_EVAL_QUOTIENT_PAIR) {
+        if (evaluated->value[1].bytes[0] == 0x70) {
+            fx_number zero;
+            fx_number_zero(&zero);
+            memcpy(memory+0x830a, &zero, sizeof zero);
+        } else memory[0x80ff] = 20;
+    }
     int displayed = base_radix ? fx_display_special_real_result(&render, 0x8300, &box) :
+                    memory[0x80ff] & 16 ? fx_display_pair_result(&render, 0x8300, &box) :
                     complex_mode ? fx_display_complex_result(&render, 0x8300, &box) :
                                    fx_display_real_math_result(&render, 0x8300, &box);
     if (displayed != 1) return -1;
-    if (complex_mode) {
+    if (!base_radix && (complex_mode || (memory[0x80ff] & 16))) {
         size_t count = 0;
         while (count < capacity && memory[0x8398+count]) ++count;
         if (count >= capacity) return -1;
@@ -184,14 +209,15 @@ int main(int argc, char **argv)
                               fx_evaluate(input, length, &eval_options, &evaluated);
         if (display_input && (status == FX_EVAL_SYNTAX || status == FX_EVAL_MATH))
             (void)fx_editor_export_input(&editor, 0x8154, 0x8400, (uint8_t)evaluated.consumed, 0);
-        if (status == FX_EVAL_OK && base_radix)
+        int success = successful_evaluation(status);
+        if (success && base_radix)
             formatted = fx_format_base(&evaluated.value[0], base_radix, output, sizeof(output), &result);
-        else if (status == FX_EVAL_OK && !complex_mode)
+        else if (success && !complex_mode)
             formatted = fx_format_number(&evaluated.value[0], &options, output, sizeof(output), &result);
-        if (status == FX_EVAL_OK && (complex_mode || bitmap_path)) {
-            bitmap_status = render_result(bitmap_path, input, length, &evaluated, complex_mode, base_radix,
+        if (success && (complex_mode || bitmap_path || status != FX_EVAL_OK)) {
+            bitmap_status = render_result(bitmap_path, input, length, &evaluated, status, complex_mode, base_radix,
                                           output, sizeof(output), &result);
-            if (complex_mode && !bitmap_status) formatted = FX_FORMAT_OK;
+            if ((complex_mode || status != FX_EVAL_OK) && !bitmap_status) formatted = FX_FORMAT_OK;
         }
         putchar('{');
         if (display_input) {
@@ -207,7 +233,7 @@ int main(int argc, char **argv)
         if (formatted == FX_FORMAT_OK)
             for (n = 0; n < result.length; ++n) printf("%02x", output[n]);
         puts("\"}");
-        return status == FX_EVAL_OK && formatted == FX_FORMAT_OK && !bitmap_status ? 0 : 1;
+        return success && formatted == FX_FORMAT_OK && !bitmap_status ? 0 : 1;
     }
     if (argc >= 3 && !strcmp(argv[1], "--token")) {
         unsigned token, context = 0xc1;

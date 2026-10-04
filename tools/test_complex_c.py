@@ -230,6 +230,35 @@ def main():
             check('restricted_power',[status,bytes(output).hex(),lib.fx_complex_error_status(C.byref(output))],
                   [0,bytes(machine.ram[0x8300:0x8314]).hex(),machine.reg(0)],[real,imaginary])
 
+    # Integer cleanup can carry a fifteen-digit mantissa beyond exponent99.
+    # Native18724 checks each scalar return immediately, collapsing a newly
+    # produced error to realF3/zeroimag. Its early real-F return and imaginary
+    # F0 success quirk remain distinct from this newly produced overflow.
+    cleanup_boundary=[]
+    for mantissa in [999999999990000,999999999999990,999999999999991,999999999999999]:
+        for exponent in [98,99]:
+            for sign in [-1,1]:
+                for marker in [0,0x40]:
+                    value=decimal_record(mantissa,exponent,sign,marker)
+                    for companion in [literal(0),literal(3),bytes([0xf0])+bytes(9)]:
+                        cleanup_boundary.extend([value+companion,companion+value])
+    overflow=decimal_record(999999999999999,99)
+    for code in range(16):
+        error=bytes([0xf0|code])+bytes(9)
+        cleanup_boundary.extend([error+overflow,overflow+error,literal(3)+error])
+    for raw in cleanup_boundary:
+        machine.reset();settings(machine);put(0x8300,raw);machine.er(0,0x8300)
+        machine.call(0x18724,limit=3000000)
+        expected=bytes(machine.ram[0x8300:0x8314]);native_status=machine.reg(0)
+        source=Complex.from_buffer_copy(raw);output=Complex();numerical_status=C.c_uint8(0xab)
+        host=lib.fx_complex_cleanup(C.byref(output),C.byref(source))
+        status_host=lib.fx_complex_firmware_status(C.byref(numerical_status),3,C.byref(source),C.byref(output))
+        check('cleanup_overflow_admission',[host,bytes(output).hex(),bytes(source).hex(),status_host,numerical_status.value],
+              [0,expected.hex(),raw.hex(),0,native_status],raw.hex())
+        alias=Complex.from_buffer_copy(raw)
+        alias_host=lib.fx_complex_cleanup(C.byref(alias),C.byref(alias))
+        check('cleanup_overflow_alias',[alias_host,bytes(alias).hex()],[0,expected.hex()],raw.hex())
+
     report = {'cases':sum(counts.values()),'groups':counts,'failures':len(failures),'mismatches':failures,
               'seed':'0x18480','random_cases':args.random_cases,
               'scope':'Complete20-byte complex arithmetic, restricted powers, conjugate, negate, cleanup, magnitude and restricted square root in prepared Math CMPLX context',

@@ -10,6 +10,7 @@
 #include "../platform/fx_boot_events.h"
 #include "../render/fx_render.h"
 #include "../render/fx_result_complex.h"
+#include "../render/fx_result_pair.h"
 #include "../trig/fx_math_context.h"
 #include <string.h>
 
@@ -197,12 +198,21 @@ static fx_input_status evaluate(fx_platform *p, fx_input_controller *s)
     load_variables(p,s);
     put_byte(p,0x8125,0); /* Ordinary evaluator scratch policy,171F4. */
     fx_eval_options options={s->context.calculation_mode,
-        (uint8_t)fx_exact_output_allowed(p->ram),byte_at(p,0x8105)};
+        byte_at(p,0x8106),byte_at(p,0x8105)};
+    fx_eval_environment environment={byte_at(p,0x80fc),byte_at(p,0x80f5),
+        byte_at(p,0x810c),byte_at(p,0x8124),byte_at(p,0x8102),
+        byte_at(p,0x8103),byte_at(p,0x80fa)};
+    fx_eval_state evaluator_state={&s->variables,NULL};
+    fx_number retained[2]; load_records(p,s->context.result_address,retained);
+    fx_number prior_answer;
+    for (unsigned n=0;n<10;++n) prior_answer.bytes[n]=byte_at(p,(uint16_t)(0x828a+n));
     fx_eval_result result;
     cancellation_context cancellation={p,s};
     fx_calculus_control control={cancelled,&cancellation};
-    fx_eval_status status=fx_evaluate_controlled(s->input,length+1,&options,
-                                               &s->variables,&control,&result);
+    fx_eval_storage storage={p->ram,65536u,p->rom,p->rom_size};
+    fx_eval_status status=fx_evaluate_prepared_with_storage(s->input,length+1,&options,
+        &environment,&evaluator_state,&control,&retained[1],&prior_answer,
+        &storage,NULL,&result);
     put_byte(p,0x8124,(uint8_t)(byte_at(p,0x8124)&~1u));
     s->unsupported_token=result.unsupported_token;
     if (status<0) return status==FX_EVAL_RESOURCE_LIMIT ? FX_INPUT_RESOURCE_LIMIT : FX_INPUT_UNIMPLEMENTED;
@@ -278,8 +288,12 @@ fx_input_status fx_input_controller_present(fx_platform *p, fx_input_controller 
         if (modifiers&128) put_byte(p,0x80f8,(uint8_t)((modifiers+128)&~8u));
         if (!fx_render_viewport(&render,NULL)) return FX_INPUT_UNIMPLEMENTED;
     } else if (fx_input_draw_linear_expression(p)) return FX_INPUT_UNIMPLEMENTED;
-    if (!editing && fx_display_complex_result(&render,s->context.result_address,NULL)!=1)
-        return FX_INPUT_UNIMPLEMENTED;
+    if (!editing) {
+        int displayed=byte_at(p,0x80ff)&16 ?
+            fx_display_pair_result(&render,s->context.result_address,NULL) :
+            fx_display_complex_result(&render,s->context.result_address,NULL);
+        if (displayed!=1) return FX_INPUT_UNIMPLEMENTED;
+    }
     if (!(byte_at(p,0x80fe)&32)) {
         uint8_t count;
         if (fx_replay_count(p,&count)) return FX_INPUT_RESOURCE_LIMIT;

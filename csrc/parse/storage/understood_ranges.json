@@ -1,0 +1,30 @@
+{
+  "basis": "Independent instruction-span inspection and original-ROM differential comparisons of raw masks, all16 header-slot identities, selected temporary construction, storage/type route boundaries, physical aliases and all65536 RAM bytes excluding actual prepared CPU-frame writes. Numerical leaves and complete evaluator integration remain separate.",
+  "ranges": [
+    {
+      "start": "0xb942",
+      "end": "0xb97c",
+      "scope": "Prepared nonwrapping segmentzero forward byte transfers with exact per-byte overlap propagation; immutable lower ROM data and writable upper RAM. CPU-frame argument mechanics, actual CPU-frame overlap, peripheral callback metadata and malformed/nonreturning calls are excluded.",
+      "source": "csrc/parse/fx_eval_storage.c"
+    },
+    {
+      "start": "0x15ba8",
+      "end": "0x15bda",
+      "scope": "All256 allocation masks with only4..8 chosen; raw reserve/release for every byte identity including9 and modulo-eight variable-shift effects. Register flags beyond returned allocation and mask are outside the named host API.",
+      "source": "csrc/parse/fx_eval_storage.c"
+    },
+    {
+      "start": "0x163f0",
+      "end": "0x16538",
+      "scope": "Prepared logical arities1,2,FF and data-stack depths0..9, plus unary count1 at depth10 without a stack swap: unsigned raw type/slot extraction, scalar-route or Math3/stack7 boundaries, matrix/vector/error-header temporary selection, original source preservation, named/address record swaps and numeric8078 data effects, operation remapping, temporary release and8125 mask commit before leaf dispatch. Count2/FF at depth10 and all depths above10 remain unsupported. Numerical leaves, actual CPU register/frame state and preceding pending-operation-stack reduction are excluded.",
+      "source": "csrc/parse/fx_eval_storage.c"
+    },
+    {
+      "start": "0x1695c",
+      "end": "0x1699c",
+      "scope": "All high header nibbles and all16 low slot identities: dimension-word resolution at80E0 followed by45 ascending word copies from829E+90*slot, including inactive payload and scalar-bank aliases. The separate1694C unmasked explicit-byte-slot wrapper is not claimed by this masked-header API.",
+      "source": "csrc/parse/fx_eval_storage.c"
+    }
+  ],
+  "partial_blocks": []
+}

@@ -68,7 +68,7 @@ numeric error header.
 The independent oracle is the extracted firmware running in `tools/nxu8`.
 `test_complex_angles_c.py` compares all twenty output bytes across named values,
 random decimal values, rational/surd components, error records, both Math output
-permissions and every angle unit. The canonical core suite passes 78,167 checks,
+permissions and every angle unit. The canonical core suite passes 78,647 checks,
 including direct scalar classification, metadata admission, compact cancellation,
 all sixteen error headers and native return statuses. Coordinate coverage passes
 13,091 checks, including special polar angles. Display rounding passes 21,232
@@ -108,6 +108,13 @@ compact cancellation and display markers available to the result formatter.
 `test_complex_dispatch_c.py` tests these prepared native admission, leaf and
 cleanup stages independently, including all sixteen error headers, aliases,
 large/tiny decimal components and display contexts. It uses no parser or ROM
-interpreter in the production implementation. The canonical report records 53,908 passing comparisons and pins the current
+interpreter in the production implementation. The canonical report records 54,832 passing comparisons and pins the current
 implementation, headers, test and oracle inputs. Original evaluator regressions
 verify raw-token normalization and real-only rejection status/cursor positions.
+
+Cleanup detects an error newly produced by significant-digit carry at the
+exponent99 boundary. Native CMPLX cleanup then emits real F3, clears the
+imaginary record and returns status3; existing incoming error-record quirks
+remain distinct. Scalar/C1 cleanup preserves its caller's unused second
+record. The boundary regressions cover both components, signs, markers,
+carry thresholds, aliases, early error headers and skipped-cleanup leaves.

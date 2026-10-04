@@ -66,7 +66,13 @@ fx_numeric_status fx_complex_firmware_status(uint8_t *firmware_status,
     case FX_COMPLEX_NEGATE_RETURN:
         numerical = imaginary ? imaginary : real; break;
     case FX_COMPLEX_CLEANUP_RETURN:
-        numerical = input->real.bytes[0] >= 0xf0 ? real : imaginary ? 3 : 0; break;
+        /* 18724 returns the original real error directly. Otherwise either
+         * component cleanup can overflow; its nonzero return takes18762,
+         * which constructs a full Math error and clears the imaginary part. */
+        numerical = input->real.bytes[0] >= 0xf0 ? real :
+            imaginary || scalar_error_status(&result->real) ||
+            scalar_error_status(&result->imaginary) ? 3 : 0;
+        break;
     case FX_COMPLEX_MAGNITUDE_RETURN:
         numerical = input->real.bytes[0] >= 0xf0 || input->imaginary.bytes[0] >= 0xf0 ||
                     canonical_component_zero(&input->real) ||
@@ -272,11 +278,14 @@ fx_numeric_status fx_complex_cleanup(fx_complex *out, const fx_complex *in)
     result = *in;
     if (result.real.bytes[0] >= 0xf0) { *out = result; return FX_NUMERIC_OK; }
     status = fx_decimal_integer_cleanup(&result.real);
-    if (status == FX_NUMERIC_OK && result.imaginary.bytes[0] >= 0xf0 &&
-        (result.imaginary.bytes[0] & 15)) {
+    if (status == FX_NUMERIC_OK &&
+        (scalar_error_status(&result.real) || scalar_error_status(&result.imaginary))) {
         complex_error(out); return FX_NUMERIC_OK;
     }
     if (status == FX_NUMERIC_OK) status = fx_decimal_integer_cleanup(&result.imaginary);
+    if (status == FX_NUMERIC_OK && scalar_error_status(&result.imaginary)) {
+        complex_error(out); return FX_NUMERIC_OK;
+    }
     if (status == FX_NUMERIC_OK) *out = result;
     return status;
 }

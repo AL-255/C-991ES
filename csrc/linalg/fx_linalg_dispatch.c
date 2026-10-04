@@ -4,6 +4,7 @@
 #include <string.h>
 #include "../numeric/fx_raw_fraction_convert.h"
 #include "../numeric/fx_raw_decimal_exp.h"
+#include "../trig/fx_trig_hyperbolic.h"
 
 static int reference(const fx_number *number)
 {
@@ -141,6 +142,13 @@ fx_numeric_status fx_linalg_dispatch_unary(fx_linalg_dispatch_result *out,
         result.firmware_status = 3; *out = result; return FX_NUMERIC_OK;
     }
     switch (token) {
+    case 0x61: case 0x62:
+        /* Rich selector7/8 becomes162/163. Doubling its byte-sized table
+         * index wraps to1C4EA/1C4D8: inverse cosh/tanh, not BASE NOT/Neg.
+         * Matrix selection always stages a new copy; vectors reuse temps. */
+        scalar_leaf = token == 0x61 ? 4 : 5;
+        new_slot = kind == 0x60;
+        operation = FX_LINALG_TRANSPOSE; break;
     case 0xc0: operation = FX_LINALG_DETERMINANT; scalar_output = kind == 0x60; break;
     case 0xc1: operation = FX_LINALG_TRANSPOSE; break;
     case 0xc3: operation = FX_LINALG_VECTOR_MAGNITUDE; break;
@@ -174,6 +182,32 @@ fx_numeric_status fx_linalg_dispatch_unary(fx_linalg_dispatch_result *out,
          * emits a canonical F3, then its unchecked ten-digit extraction sees
          * zero. Complement and signed serialization still execute. */
         fx_number failed_conversion;
+        if (scalar_leaf >= 4) {
+            fx_number converted;
+            fx_decimal decoded;
+            if (kind == 0x90) {
+                fx_number_error(&result.value.real,3);
+                result.firmware_status = 3;
+                *out = result; return FX_NUMERIC_OK;
+            }
+            status = fx_raw_fraction_convert(&converted,&result.value.real);
+            if (status != FX_NUMERIC_OK) return status;
+            /* The unchecked fraction converter can retain malformed finite
+             * digits. They are outside the ordinary hyperbolic helper's
+             * contract; preserve staging, leaving the output uncommitted. */
+            if (converted.bytes[0] < 0xf0 &&
+                fx_decimal_decode(&decoded,&converted) != FX_NUMERIC_OK)
+                return FX_NUMERIC_UNIMPLEMENTED;
+            status = fx_hyperbolic_decimal(&result.value.real,&converted,
+                scalar_leaf == 4 ? FX_COSINE : FX_TANGENT,1);
+            if (status == FX_NUMERIC_INVALID) return FX_NUMERIC_UNIMPLEMENTED;
+            if (status != FX_NUMERIC_OK) return status;
+            result.firmware_status = result.value.real.bytes[0] >= 0xf0 ?
+                result.value.real.bytes[0] & 15 : 0;
+            status = cleanup(&result);
+            if (status == FX_NUMERIC_OK) *out = result;
+            return status;
+        }
         if (scalar_leaf == 3) {
             fx_number converted;
             unsigned native_status;

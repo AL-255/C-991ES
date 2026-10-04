@@ -9,6 +9,10 @@ add_library(fx991_firmware STATIC
     data/fx_rom_data.c
     parse/fx_tokens.c
     parse/fx_eval.c
+    parse/fx_eval_storage.c
+    parse/fx_eval_finish.c
+    parse/fx_solve_expression.c
+    numeric/fx_random.c
     platform/fx_platform.c
     platform/fx_boot.c
     platform/fx_boot_events.c
@@ -30,6 +34,7 @@ add_library(fx991_firmware STATIC
     ui/fx_input_prepare.c
     ui/fx_input_recover.c
     ui/fx_input_controller.c
+    ui/fx_solve_controller.c
     ui/fx_input_display.c
     ui/fx_ui_controller.c
     ui/fx_error_display.c
@@ -83,6 +88,7 @@ add_library(fx991_firmware STATIC
     render/fx_viewport.c
     render/fx_result.c
     render/fx_result_complex.c
+    render/fx_result_pair.c
     render/fx_result_linear.c
     render/fx_result_special.c
     render/fx_result_format_state.c
@@ -118,7 +124,7 @@ if(BUILD_TESTING)
     set_tests_properties(public_api_bounds PROPERTIES
         ENVIRONMENT "ASAN_OPTIONS=detect_leaks=0:halt_on_error=1;UBSAN_OPTIONS=halt_on_error=1")
     find_package(Python3 REQUIRED COMPONENTS Interpreter)
-    foreach(subsystem tokens platform boot boot_events persistent diagnostic_contrast result_classify main_loop boot_main_ui keys key_dispatch key_wait key_controller annunciator cursor editor editor_construct input_codec input_prepare input_recover input_controller ui_controller error_display error_event menu_navigator mode_setup mode_bank_menu numeric numeric_transcend numeric_power numeric_root numeric_logbase numeric_calculus numeric_integral numeric_derivative numeric_base numeric_sexagesimal numeric_solver numeric_solve numeric_quotient raw_decimal combinatorics complex complex_angles complex_round complex_dispatch linalg linalg_reduce linalg_store linalg_dispatch stats stats_cache stats_editor stats_normal trig trig_math trig_inverse trig_hyperbolic math_context render render_complex render_linalg format format_base format_budget eval eval_complex eval_variables eval_calculus eval_continuous eval_base eval_sexagesimal cli)
+    foreach(subsystem tokens platform boot boot_events persistent diagnostic_contrast result_classify main_loop boot_main_ui keys key_dispatch key_wait key_controller annunciator cursor editor editor_construct input_codec input_prepare input_recover input_controller ui_controller error_display error_event menu_navigator mode_setup mode_bank_menu numeric numeric_transcend numeric_power numeric_root numeric_logbase numeric_calculus numeric_integral numeric_derivative numeric_base numeric_sexagesimal numeric_solver numeric_solve numeric_random numeric_quotient raw_decimal combinatorics complex complex_angles complex_round complex_dispatch linalg linalg_reduce linalg_store linalg_dispatch stats stats_cache stats_editor stats_normal trig trig_math trig_inverse trig_hyperbolic math_context render render_complex render_pair render_linalg format format_base format_budget eval eval_complex eval_variables eval_calculus eval_continuous eval_base eval_sexagesimal eval_coordinate eval_storage eval_finish eval_environment solve_controller cli)
         add_test(NAME differential_${subsystem}
                  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../tools/test_${subsystem}_c.py)
         set_tests_properties(differential_${subsystem} PROPERTIES

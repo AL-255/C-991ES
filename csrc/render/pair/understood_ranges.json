@@ -1,0 +1,10 @@
+{
+  "subsystem": "paired result labels and composition",
+  "policy": "Exact half-open instruction-boundary semantic spans; prior shared B070/formatter/layout routines remain in their existing ledgers. Native stack-alias overflow boundaries are explicit API gaps, not completed CPU emulation.",
+  "ranges": [
+    {"start": "0xc1f0", "end": "0xc236", "scope": "Label/value append padding predicate,16-byte ROM spaces, earlier NUL placement and dormant writes; paired bounded fields and independent inequality predicate understood", "source": "csrc/render/fx_result_pair.c"},
+    {"start": "0x10e7a", "end": "0x10f10", "scope": "Complete status-byte admission,Rect/Pol/SOLVE/Qrem/fallback labels,component selection,complete83FC ROM variable index and8127 radius glyph", "source": "csrc/render/fx_result_pair.c"},
+    {"start": "0xb41a", "end": "0xb42e", "scope": "Paired natural delimiter insertion and second component token append before shared history/viewport flow", "source": "csrc/render/fx_result_pair.c"},
+    {"start": "0x110fe", "end": "0x11110", "scope": "Decimal separator setting truth-value selects immutable comma or semicolon spelling and shared token append", "source": "csrc/render/fx_result_pair.c"}
+  ]
+}

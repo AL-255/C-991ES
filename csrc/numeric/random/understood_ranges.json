@@ -1,0 +1,10 @@
+{
+  "basis":"Individually inspected random generation and binary/decimal conversion spans. No broad numeric region is inferred from entry addresses.",
+  "ranges":[
+    {"start":"0x13d74","end":"0x13db8","scope":"Complete xorshift32(13,17,5) and four-byte XOR feedback","source":"csrc/numeric/fx_random.c"},
+    {"start":"0x13db8","end":"0x13e7a","scope":"Complete Ran# caller policy: seed copy/old exponent-byte addend, generic ADD/error-zero retry, fractional mantissa selection, decimal/binary scaling, seed commit and output truncation; forged raw8x generic arithmetic dependency remains separately limited","source":"csrc/numeric/fx_random.c"},
+    {"start":"0x13e7a","end":"0x13f52","scope":"Complete floor and prepared RanInt# bounds/span validation, strict positive span, widthplusone, full seed use, ordinary arithmetic/floor and Argument8 unwind","source":"csrc/numeric/fx_random.c"},
+    {"start":"0x13f66","end":"0x13f88","scope":"Random-core generic multiply, seed/output record copies and zero classifier helper","source":"csrc/numeric/fx_random.c"},
+    {"start":"0x08078","end":"0x08164","scope":"Complete decimal four-byte unsigned conversion via256 remainders and inverse base256 reconstruction; caller-independent value conversion over admitted uint32_t range","source":"csrc/numeric/fx_random.c"}
+  ]
+}

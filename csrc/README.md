@@ -89,7 +89,15 @@ cancellation polls and X restoration. Integral and derivative tests compare ever
 sampled X and every cancellation-poll X against the original evaluator.
 `fx_evaluate_with_state` adds a separate optional matrix/vector bank for native
 callback reference cleanup while preserving the ordinary variable-bank ABI.
-Rich expression arithmetic, Pol/Rec/polar and quotient/remainder expression orchestration, and complete matrix/vector mode grammar remain pending.
+Pol/Rec, polar expressions and quotient/remainder now share the parser and
+paired result renderer. Prepared evaluator globals control exact-result
+permission separately from the Math setting. Equation screens export the
+admitted left and right records for the SOLVE callback bridge.
+`fx_evaluate_prepared_with_storage` adds physical temporary-bank copies and
+the shared allocation/equation mask; the ordinary typed APIs retain their
+separate-bank contract. Physical terminal cleanup commits cells in native
+order and preserves partial changes on errors. Rich numerical dispatch is
+being integrated; complete matrix/vector mode grammar remains pending.
 
 Raw powers include an implicit opening parenthesis after the caret. Thus
 `2^3+1)` means `2^(3+1)` and `2^3)+1` means `(2^3)+1`. The natural editor

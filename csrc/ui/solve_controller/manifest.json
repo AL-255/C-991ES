@@ -1,0 +1,25 @@
+{
+  "subsystem": "SOLVE expression frontend, coefficient prompts and result commit",
+  "language": "handwritten high-level C99",
+  "implemented_routines": [
+    {"address": "0x172f6", "name": "fx_solve_scan_variables", "scope": "Screen bit6 SOLVE variable scanner, unique list, terminal suffix validation, selected-last order, Syntax2 and Variable12"},
+    {"address": "0xde1c", "name": "fx_solve_controller_enter", "scope": "Prepared C1 SOLVE entry and prior special-screen formula restore; caller guards retain empty/continuation/prompt state"},
+    {"address": "0xdca4", "name": "fx_solve_controller_advance", "scope": "SOLVE list preparation, unchanged EXE, next coefficient/guess, list completion and equation restore with ED; menu/physical key acquisition remains caller-owned"},
+    {"address": "0xde7e", "name": "prompt", "scope": "Real variable read, forced decimal surd policy, A? versus Solve for X presentation, framebuffer and host display packet"},
+    {"address": "0xd9ee", "name": "fx_solve_controller_edit/fx_solve_controller_accept", "scope": "Prepared FD2 typed data/text editing, accepted coefficient expression and bank write without Ans/replay history"},
+    {"address": "0x1f12a", "name": "fx_solve_controller_prepare/fx_solve_controller_tick", "scope": "Prepared C0/FD4 input export, fresh named descriptor, numerical root through frozen fx_solve_root, error cursor and root/residual/Ans/PreAns commit before final SOLVE presentation"},
+    {"address": "0x1074c", "name": "evaluate_equation", "scope": "Publishes the backend-cleaned selected trial and invokes an explicit raw-side expression boundary; guard/cleanup/error normalization remains in frozen numeric backend"}
+  ],
+  "verification": "analysis/c-verification/solve_controller.json",
+  "test": "tools/test_solve_controller_c.py",
+  "status": "canonical original-ROM comparison passes 5702 observations and35657 checks on the prepared flow, including uninterrupted coefficient-edit through default numerical commit",
+  "gaps": [
+    "The default callback shares the evaluator's explicit unsupported expression domains, including valid rich operations whose numerical leaf is not yet integrated after prepared storage selection. Physical matrix/vector banks are loaded from the supplied RAM image.",
+    "Final SOLVE root/residual screen drawing after native1F592 is owned by the enclosing display controller, not this prepared commit API.",
+    "Physical keyboard scanning, subordinate menus and CPU timing/stack exhaustion are outside the named nonblocking controller.",
+    "Prepared evaluator INPUT is bounded to1023 nonzero bytes plus its terminator; unterminated wrapping bus strings return an explicit resource limit instead of looping forever.",
+    "The variable scanner's non-SOLVE CALC assignment-used mask is not admitted by this module.",
+    "Malformed noncanonical zero callback records retain the explicitly documented frozen fx_solve_root boundary."
+  ],
+  "preserved_abi": "All prior numeric, evaluator, platform and ordinary UI APIs remain unchanged. Only new SOLVE APIs are added."
+}

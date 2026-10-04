@@ -25,12 +25,19 @@ void fx_linalg_dispatch_context_default(fx_linalg_dispatch_context *context,
  * preserves the right operand's imaginary record, as the non-CMPLX native
  * work record does. Numerical errors return hostOK and a separate native
  * status; status must not be inferred from the output header.
- * Native wrapped scalar selections for vector5A/5B, rich88/C3 are retained.
+ * Native wrapped scalar selections for vector5A/5B, rich61/62/88/C3 are retained.
+ * Rich61/62 select inverse cosh/tanh through the byte-sized table index.
+ * Matrix inputs always stage a new temporary and release the old temporary;
+ * vector inputs copy named slots or reuse existing temporaries before F3.
+ * Valid rewritten marked-fraction metadata uses finite scalar conversion and
+ * the existing hyperbolic helper. Malformed converted finite records outside
+ * that helper return UNIMPLEMENTED after staging, even if native returns.
  * Matrix88 can reinterpret reference metadata as marked fraction digits;
  * its original allocation/copy/release occurs before scalar conversion.
  * Unknown raw tokens return UNIMPLEMENTED before any mutation. A proven
- * native non-return after allocation also returns UNIMPLEMENTED, retaining
- * those prior bank mutations while leaving the output uncommitted. */
+ * native non-return after allocation also returns UNIMPLEMENTED. Both of
+ * these execution boundaries retain prior bank mutations and leave the
+ * complete output uncommitted; neither fabricates a numerical error. */
 fx_numeric_status fx_linalg_dispatch_unary(fx_linalg_dispatch_result *out,
     fx_linalg_bank *bank, const fx_complex *input, uint8_t token,
     const fx_linalg_dispatch_context *context);

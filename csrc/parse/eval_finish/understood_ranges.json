@@ -1,0 +1,11 @@
+{
+  "subsystem": "physical terminal reference cleanup",
+  "ranges": [
+    {"start":"0x1415a","end":"0x14162","scope":"Prepared integer-cleanup entry selects the shared active-cell loop; CPU frame storage is represented by named C state","source":"csrc/parse/fx_eval_finish.c"},
+    {"start":"0x140cc","end":"0x14108","scope":"Reference kind6/9 admission, low-four-bit physical identity, one dimension read, zero-dimension failure and active-cell address selection for integer cleanup; unrelated leaf branches excluded","source":"csrc/parse/fx_eval_finish.c"},
+    {"start":"0x1412c","end":"0x1414a","scope":"In-place scalar integer cleanup, first-error exit and ordered active-cell iteration; numerical scalar callee and unrelated absolute/rational/display-round branches excluded","source":"csrc/parse/fx_eval_finish.c"},
+    {"start":"0x13ff8","end":"0x14034","scope":"Masked physical dimension lookup and fixed-stride byte-index cell address calculation, with explicit bounded host footprint","source":"csrc/parse/fx_eval_finish.c"},
+    {"start":"0x1cdf2","end":"0x1ce06","scope":"Admitted1..15 error code publication through five ascending word stores, including physical odd-address EA alignment; other error-code admission branches excluded","source":"csrc/parse/fx_eval_finish.c"}
+  ],
+  "note":"These shared linear-algebra/numeric spans are counted once by the understanding metric. This ledger does not imply additional unique instruction coverage, native CPU-frame emulation, unsupported-record parity, or complete parser/controller translation."
+}
