@@ -33,7 +33,7 @@ def main():
     subprocess.run(['gcc','-std=c99','-O2','-Wall','-Wextra','-Werror','-shared','-fPIC',str(helper),str(ROOT/'tools/nxu8/vendor/SimU8/core.c'),'-o',str(oracle/'nxu8-harness.so')],check=True)
     m=Machine((ROOT/'firmware/fx-991es-plus-c-ver4.bin').read_bytes(),oracle);m.lib.linalg_run.argtypes=[C.c_uint64,C.c_uint32,C.c_uint32]
     rng=random.Random(0x14776);failures=[];checks=0;calls=0
-    
+
     def literal(x):
      n=Number();assert lib.fx_decimal_parse(C.byref(n),str(x).encode())==0;return bytes(n)
     def rational(x,y,flags=0):
@@ -65,7 +65,7 @@ def main():
      else:raise RuntimeError('poll limit')
      calls+=1;detail={'label':label,'input':bytes(v).hex(),'reduced':reduced,'cancel_at':context.cancel_at,'alias':alias}
      for actual,expected in [(host,0),(bytes(out.value.reference).hex(),bytes(m.ram[0x8900:0x890a]).hex()),(bytes(out.value.cells).hex(),bytes(m.ram[0x829e:0x82f8]).hex()),(out.value.rows+256*out.value.columns,m.word(0x80e0)),(out.firmware_status,m.reg(0)),(out.cancellation_checks,polls)]:check(actual,expected,detail)
-    
+
     ints=[literal(x) for x in [-9,-3,-1,0,1,2,3,7,99]]
     exact=[rational(1,3),rational(-2,7),rational(5,2),surd([1,2,1,0,1,1]),surd([-1,3,2,1,5,3])]
     errors=[bytes([x])+bytes(9) for x in [0xf0,0xf1,0xf2,0xf3,0xf8,0xff]]
