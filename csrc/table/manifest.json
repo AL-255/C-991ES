@@ -1,0 +1,20 @@
+{
+  "implementation": "csrc/table/fx_table.c",
+  "header": "csrc/table/fx_table.h",
+  "test": "tools/test_table_c.py",
+  "verification": "analysis/c-verification/table.json",
+  "original_entry": "0x004f26",
+  "scope": "Prepared actual TABLE mode88 row generation with an explicit171EA continuation1 evaluator callback and between-row device callback. Original execution exists only in the differential verifier.",
+  "implemented": [
+    "Start/End decimal comparison, Step sign admission and decimal quotient cleanup followed by floor; at most30 rows for one function and20 for two",
+    "Physical TABLE initialization, live function/phase/row-capacity settings, X publication and raw row-record column commits",
+    "Raw255 evaluator success, Math3 row publication and continuation, syntax/error abort before that row, and retained prefix on cancellation",
+    "Second-pass G column updates preserving existing X/F records, live Step rereads, callback effects and source-pointer-word aliases"
+  ],
+  "boundaries": [
+    "The callback receives actual calculation mode88 and continuation1; the current prepared handwritten evaluator does not yet implement this entry",
+    "Only writable-RAM source-pointer words8000..FFFE are admitted; ROM words and wraparoundFFFF remain explicit host gaps",
+    "CPU frames, the private60-byte numerical packet and arithmetic register arena8000..80DB are outside the named kernel API",
+    "No original instruction execution, generic CPU/register model or instruction-address dispatcher is present in the implementation"
+  ]
+}

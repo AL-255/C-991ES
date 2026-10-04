@@ -19,7 +19,7 @@ class Variables(C.Structure):
 
 SOURCES = [
     'parse/fx_eval.c', 'parse/fx_eval_storage.c', 'parse/fx_eval_finish.c', 'parse/fx_tokens.c', 'data/fx_rom_data.c',
-    'numeric/fx_numeric.c', 'numeric/fx_transcend.c', 'numeric/fx_power.c',
+    'numeric/fx_numeric.c', 'numeric/fx_random.c', 'numeric/fx_transcend.c', 'numeric/fx_power.c',
     'numeric/fx_base.c', 'numeric/fx_base_literal.c',
     'numeric/fx_sexagesimal.c', 'numeric/fx_quotient_remainder.c',
         'numeric/fx_raw_decimal_parts.c', 'numeric/fx_raw_decimal_divide.c',

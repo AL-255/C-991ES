@@ -29,7 +29,7 @@ def main():
              *['csrc/'+m+'.c' for m in MODULES]]
     library=build/'ui.so'
     subprocess.run(['gcc','-std=c99','-O2','-Wall','-Wextra','-Werror','-shared','-fPIC',
-                    '-Wl,--no-undefined',*[str(ROOT/f) for f in sources],'-o',str(library)],check=True)
+                    '-Wl,--no-undefined','-I',str(ROOT/'csrc'),*[str(ROOT/f) for f in sources],'-o',str(library)],check=True)
     lib=C.CDLL(str(library));pp=C.POINTER(Platform)
     lib.fx_ui_controller_begin.argtypes=[pp,C.POINTER(Controller),C.c_uint8,C.POINTER(Control)]
     lib.fx_ui_controller_tick.argtypes=[pp,C.POINTER(Controller)]

@@ -1,0 +1,19 @@
+{
+  "subsystem": "prepared random expression frontend",
+  "implementation": "Readable high-level C99 expression parsing with shared packed-decimal PRNG backend; no CPU/ROM or host RNG fallback",
+  "complete": false,
+  "api": "csrc/parse/fx_eval.h",
+  "implemented_routines": [
+    {"address": "0x16ff6 / 0x17002 / 0x17022", "name": "Ran# dynamic constant dispatch", "scope": "Reached-token screen guard, implicit multiplication, eager full-seed publication and native scalar/CMPLX result policy"},
+    {"address": "0x16ba8 / 0x17178 / 0x13ebe", "name": "RanInt prefix and argument dispatch", "scope": "Prefix-before-stack guard, lower/upper evaluation and saved-value budget, second-first operand admission, prepared numeric bounds policy and seed publication"},
+    {"address": "0x171a0 / 0x16c9c / 0x1708e", "name": "Pending comma and terminal reduction order", "scope": "Groups/functions/powers reduce at commas, enclosing argument checkpoint reuse, incomplete-function store validation before leaf and explicit close before later syntax"},
+    {"address": "0x16a64", "name": "Numerical calculus preflight policy", "scope": "Actual operation/dynamic draw execution, numerical3/8 normalization to canonical zero before first poll, persistent seed sharing across actual samples and cancellation"}
+  ],
+  "gaps": [
+    "Other calculation modes6/49 and invalid BASE-N selected globals remain explicit parser scope limits; the word kernels have separately pending broader prepared-mode research.",
+    "Raw8A and rawFF token routes remain explicit unsupported parser outcomes, retained in unfiltered fixtures.",
+    "Forged8x seed headers and proven unchecked decimal-add recurrences are explicit limits of the frozen numeric PRNG backend.",
+    "Caller-output/CPU-frame aliases and all numerical scratch bytes are outside these named value/storage APIs; outer display, idle key-wait seed increments, history and Ans are separate subsystems."
+  ],
+  "verification": ["tools/test_eval_random_c.py", "tools/test_eval_calculus_c.py", "analysis/c-verification/eval_random.json", "analysis/c-verification/eval_calculus.json"]
+}

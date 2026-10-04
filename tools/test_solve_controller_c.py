@@ -143,7 +143,8 @@ def main():
     source_hashes = {name: digest(ROOT/name) for name in compiled_inputs}
     shared = build/'controller.so'
     subprocess.run(['gcc', '-std=c99', '-O3', '-Wall', '-Wextra', '-Werror',
-        '-shared', '-fPIC', '-Wl,--no-undefined', *[str(ROOT/name) for name in source_names],
+        '-shared', '-fPIC', '-Wl,--no-undefined', '-I', str(ROOT/'csrc'),
+        *[str(ROOT/name) for name in source_names],
         '-o', str(shared)], check=True)
     lib = C.CDLL(str(shared)); pp = C.POINTER(Platform); sp = C.POINTER(Controller)
     for name in ('enter', 'prepare'):

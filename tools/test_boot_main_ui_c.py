@@ -34,6 +34,7 @@ def main():
     output = build/'controller.so'
     subprocess.run(['gcc', '-std=c99', '-O2', '-Wall', '-Wextra', '-Werror',
                     '-shared', '-fPIC', '-Wl,--no-undefined',
+                    '-I', str(ROOT/'csrc'),
                     *[str(ROOT/source) for source in SOURCES], '-o', str(output)], check=True)
     lib = C.CDLL(str(output))
     pp, ms, us = C.POINTER(Platform), C.POINTER(Main), C.POINTER(UI)

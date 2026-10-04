@@ -1,0 +1,23 @@
+{
+  "basis": "Instruction-span inspection of original004F26 and fresh original-ROM differential row transactions, including complete persistent RAM and explicit native171EA/mode88/continuation1 boundaries. CPU frames and arithmetic register state are outside the named C API. Whole-pipeline expression evaluation is not claimed.",
+  "ranges": [
+    {
+      "start": "0x004f26",
+      "end": "0x005074",
+      "source": "csrc/table/fx_table.c",
+      "scope": "Prepared TABLE88 generation: decimal Start/End comparison, raw Step admission, quotient arithmetic/cleanup/floor and30/20 row limits; initialization or second-pass preservation, per-row X publication and evaluator callback, live column selection, Math3 continuation, syntax/error abort, between-row cancellation, live Step increments and final source-word writeback. Source-pointer ROM/wrap words, actual CPU-frame aliases and the separately called evaluator/device implementations remain excluded. All original outcomes and the three unsupported bus-boundary cases remain in the verifier."
+    }
+  ],
+  "partial_blocks": [
+    {
+      "start": "0x005110",
+      "end": "0x005144",
+      "scope": "Only TABLE88 stride selection is modeled: two columns if810E=0 or8138.bit7, otherwise three. Non-TABLE modes are not claimed."
+    },
+    {
+      "start": "0x005144",
+      "end": "0x005166",
+      "scope": "Prepared TABLE initialization effects are verified through004F26; called helper instruction spans are separately owned."
+    }
+  ]
+}

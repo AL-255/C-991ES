@@ -1,0 +1,24 @@
+{
+  "basis": "Conservative individually inspected spans independently reviewed against the unchanged complete listing and original-ROM differential fixtures. Previously credited numerical kernels, allocator and cleanup are not credited again. This is static semantic understanding, not test coverage or firmware completion.",
+  "ranges": [
+    {
+      "start": "0x1653c",
+      "end": "0x16542",
+      "scope": "Capture and retain the actual pre-leaf calculation context across physical bank writes; named C context replaces CPU register/frame preservation. Supported post-storage selectors only.",
+      "source": "csrc/parse/fx_eval_rich.c"
+    },
+    {
+      "start": "0x1654e",
+      "end": "0x16562",
+      "scope": "Post-storage current/other record addressing, byte-wrapped doubled table index, supported numerical leaf selection and restoration of captured cleanup context. Selectors0..15 and162..164 verified; special23..28 path and unlisted numerical callees excluded.",
+      "source": "csrc/parse/fx_eval_rich.c"
+    },
+    {
+      "start": "0x18206",
+      "end": "0x18212",
+      "scope": "Exact mathematical address8640+10*index for the prepared32-record surd pool. CPU register state, allocation and out-of-pool call domains are outside the named API.",
+      "source": "csrc/parse/fx_eval_surd_workspace.c"
+    }
+  ],
+  "partial_blocks": []
+}

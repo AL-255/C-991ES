@@ -1,0 +1,30 @@
+{
+  "basis": "Individually inspected original parser spans, implemented as high-level random/preflight and comma reduction policies; verified by fresh prepared random and calculus expression tests. Semantic understanding only; addresses already credited elsewhere count once.",
+  "ranges": [
+    {
+      "start": "0x16ba8",
+      "end": "0x16bb0",
+      "scope": "RanInt prefix SCREEN.bit6 rejection before operator stacking",
+      "source": "csrc/parse/fx_eval.c"
+    },
+    {
+      "start": "0x17002",
+      "end": "0x1700c",
+      "scope": "Ran# dynamicconstant SCREEN.bit6 guard at reached token",
+      "source": "csrc/parse/fx_eval.c"
+    },
+    {
+      "start": "0x17178",
+      "end": "0x171b2",
+      "scope": "Comma argument checkpoint and repeated prior group/function/power reductions",
+      "source": "csrc/parse/fx_eval.c"
+    },
+    {
+      "start": "0x16a64",
+      "end": "0x16a7e",
+      "scope": "Numerical preflight errors3/8 become canonicalzero and status0",
+      "source": "csrc/parse/fx_eval.c"
+    }
+  ],
+  "partial_blocks": []
+}

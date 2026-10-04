@@ -1,0 +1,97 @@
+{
+  "subsystem": "post-storage full-RAM matrix/vector numerical dispatch",
+  "implementation_style": "Handwritten high-level C99: named numerical records, ordered arithmetic, physical component commits and callbacks; no CPU executor, generated instruction lift or host floating point",
+  "sources": [
+    "csrc/parse/fx_eval_rich.c",
+    "csrc/parse/fx_eval_rich_unary.c",
+    "csrc/parse/fx_eval_surd_workspace.c"
+  ],
+  "public_api": "csrc/parse/fx_eval_rich.h",
+  "native_boundary": {
+    "entry": "0x16538",
+    "exit_before": "0x16588",
+    "allocator_is_external": "csrc/parse/fx_eval_storage.c",
+    "cleanup": "0x16562"
+  },
+  "selectors": {
+    "0": "vector magnitude",
+    "1": "matrix absolute value",
+    "2": "display round",
+    "3": "determinant",
+    "4": "transpose",
+    "5": "negate",
+    "6": "inverse",
+    "7": "square",
+    "8": "cube",
+    "9": "add",
+    "10": "subtract",
+    "11": "scale",
+    "12": "divide",
+    "13": "dot",
+    "14": "cross",
+    "15": "matrix multiply",
+    "162": "wrapped acosh",
+    "163": "wrapped atanh",
+    "164": "wrapped natural exponential"
+  },
+  "representation": {
+    "RAM_bytes": 65536,
+    "masked_physical_ids": 16,
+    "dimension_base": "0x80e0",
+    "payload_base": "0x829e",
+    "payload_slot_bytes": 90,
+    "scalar_record_bytes": 10,
+    "current_and_other_bytes_each": 20,
+    "cell_offset": "10 * ((3 * row + column) & 255)",
+    "surd_pool": "32 records at0x8640 +10 * index"
+  },
+  "context": {
+    "calculation_context": "Actual pre-leaf80F9 retained across physical dimension/global aliases; C1,C4,2,6,7 verified",
+    "exact_math": "Caller-resolved18212 permission, independent of mere math-output setting",
+    "settings": "Display precision and digits supplied explicitly",
+    "cancellation": "Optional callback/userdata at native5564; numeric.cancel_at provides deterministic fixture cancellation. Every preceding physical commit and129A timer setup is visible before the callback;8E00 pending2 is set before timer setup and consumed afterward"
+  },
+  "verification": {
+    "main": {
+      "test": "tools/test_eval_rich_c.py",
+      "report": "analysis/c-verification/eval_rich.json",
+      "checks": 73004,
+      "native_calls": 8844,
+      "dispatcher_native_calls": 8672,
+      "direct_surd_native_calls": 172,
+      "callbacks": 380,
+      "callback_RAM_snapshots": 1840,
+      "pins": 66
+    },
+    "O3": {
+      "test_command": "python3 tools/test_eval_rich_c.py --optimization O3",
+      "report": "analysis/c-verification/eval_rich_o3.json"
+    },
+    "unary": {
+      "test": "tools/test_eval_rich_unary_c.py",
+      "report": "analysis/c-verification/eval_rich_unary.json",
+      "checks": 274666,
+      "native_calls": 9206,
+      "handled": 8901,
+      "native_execution_boundaries": 178,
+      "finite_host_gaps": 127,
+      "wide_norm_controls": 480,
+      "pins": 67
+    }
+  },
+  "native_evidence": [
+    "analysis/native-fixtures/eval-rich/surd-workspace/inputs.json",
+    "analysis/native-fixtures/eval-rich/unary/observations.json",
+    "analysis/native-fixtures/eval-rich/unary/unsupported.json"
+  ],
+  "comparison_policy": "Full current/other20, independent native status, polling counts and remaining64KiB RAM/MMIO.8000..80DB value-kernel arena and only individually witnessed CPU-frame writes are excluded. All actual pool/bank aliases remain compared. Direct scalar controls separately compare10-byte output and all1440 payload bytes; no full64KiB claim for those direct controls.",
+  "remaining": [
+    "Whole-expression grammar and physical storage staging/terminal cleanup are caller-owned; these modules do not claim the complete evaluator or UI",
+    "Explicit recorded native fault/instruction-limit and finite implementation gaps remain retained and replayed; an instruction limit does not prove eternal nonreturn",
+    "Matrix output index10 and above aliases native CPU pointer/loop descriptors; no fabricated descriptor or CPU frame is generated",
+    "Wide square determinant/inverse, C4 round CPU-save overflow, bounded giant-vector traversal and specific opposed-surd/round workspace overlaps remain explicit host gaps",
+    "Integer GCD/factor components beyond int64 and unproved malformed finite conversions return UNIMPLEMENTED with preceding physical commits retained",
+    "Physical interrupt/key timing is external; callbacks provide the prepared polling responses"
+  ],
+  "full_firmware_complete": false
+}

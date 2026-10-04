@@ -13,6 +13,7 @@
 #include "../numeric/fx_derivative.h"
 #include "../numeric/fx_sexagesimal.h"
 #include "../numeric/fx_quotient_remainder.h"
+#include "../numeric/fx_random.h"
 #include "../complex/fx_complex_dispatch.h"
 #include "../complex/fx_complex_angle.h"
 #include "../complex/fx_complex_round.h"
@@ -30,9 +31,10 @@ typedef struct {
     fx_eval_variables *variables;
     fx_linalg_bank *linear_algebra;
     fx_eval_storage *storage;
+    fx_number *random_seed;
     const fx_calculus_control *control;
     uint8_t base_radix;
-    uint8_t calculus_mode, calculus_token, scan_only;
+    uint8_t calculus_mode, calculus_token, preflight_mode;
     uint8_t terminal_operator;
     fx_number secondary, prior_answer;
     fx_eval_status status;
@@ -101,6 +103,11 @@ static void accept_operation(parser *p, fx_number *value, fx_numeric_status stat
         unsupported(p, 0); return;
     }
     if (status != FX_NUMERIC_OK || fx_number_kind(value) == FX_NUMBER_ERROR) {
+        if (p->preflight_mode == 2 && status == FX_NUMERIC_OK &&
+            ((value->bytes[0] & 15) == 3 || (value->bytes[0] & 15) == 8)) {
+            fx_number_zero(value);
+            return;
+        }
         p->status = FX_EVAL_MATH; return;
     }
     /* The expression dispatcher (16562..16588), unlike the arithmetic leaf,
@@ -111,6 +118,15 @@ static void accept_operation(parser *p, fx_number *value, fx_numeric_status stat
     /*1CEF0 can itself overflow when near-integer cleanup carries a finite
      * exponent99 record to10^100. The native dispatcher forwards that3. */
     if (fx_number_kind(value) == FX_NUMBER_ERROR) p->status = FX_EVAL_MATH;
+}
+
+static void preflight_failure(parser *p, fx_complex *value)
+{
+    if (p->preflight_mode == 2 &&
+        (p->status == FX_EVAL_MATH || p->status == FX_EVAL_ARGUMENT)) {
+        fx_complex_zero(value);
+        p->status = FX_EVAL_OK;
+    }
 }
 
 static fx_complex_dispatch_context complex_context(const parser *p)
@@ -277,7 +293,7 @@ static void accept_real_result(parser *p, fx_complex *destination,
 static void binary(parser *p, fx_complex *left, const fx_complex *right, fx_binary_op op)
 {
     fx_complex output = *left;
-    if (p->scan_only) { fx_complex_zero(left); return; }
+    if (p->preflight_mode == 1) { fx_complex_zero(left); return; }
     if (stage_binary(p, left, right, (uint8_t)(43 + op))) return;
     if ((p->environment.screen & 0x40) &&
         (!scalar_header_admitted(right) || !scalar_header_admitted(left))) {
@@ -324,9 +340,11 @@ static int store_token(const parser *p)
 
 static int omitted_closing(parser *p)
 {
+    /*171A0 repeatedly reduces pending groups/functions at a comma until
+     * reaching an argument checkpoint or the outer comma syntax guard. */
     if (!peek(p) || peek(p) == ':' ||
         ((p->environment.screen & 0x40) && peek(p) == '=') ||
-        ((p->calculus_mode || (p->environment.screen & 0x40)) && peek(p) == ',')) return 1;
+        peek(p) == ',') return 1;
     if (store_token(p)) {
         if (p->position+1 >= p->length || !p->input[p->position+1] ||
             p->input[p->position+1] == ':') return 1;
@@ -343,7 +361,7 @@ static int function_prefix(uint8_t token)
 {
     return token == 0x3f || token == 0x61 || token == 0x62 || token == 0x5d || (token >= 0x69 && token <= 0x6d) || token == 0x63 || token == 0x88 || token == 0xc3 || token == 0x98 || token == 0xa8 || token == 0x68 || (token >= 0x70 && token <= 0x73) ||
            (token >= 0x90 && token <= 0x93) || (token >= 0xa0 && token <= 0xa3) ||
-           (token >= 0xb0 && token <= 0xb3) || token == 0xc0 || token == 0xc1;
+           (token >= 0xb0 && token <= 0xb3) || token == 0xc0 || token == 0xc1 || token == 0xc2;
 }
 
 static void base_literal(parser *p, fx_complex *out, uint8_t input_base)
@@ -465,7 +483,7 @@ static void load_variable(parser *p, fx_complex *out, unsigned slot)
         }
         if ((header != 0 && header != 2 && header != 4 && header != 8) ||
             (kind != FX_NUMBER_DECIMAL && kind != FX_NUMBER_RATIONAL && kind != FX_NUMBER_SURD)) {
-            if (p->scan_only) {
+            if (p->preflight_mode == 1) {
                 /* The prepared ordinary screen (80FC=1) admits rich/error
                  * body values during17258 preflight. Their real evaluation
                  * fails after the first loop poll, rather than at syntax scan. */
@@ -540,6 +558,11 @@ static void primary_value(parser *p, fx_complex *out);
 static void primary(parser *p, fx_complex *out)
 {
     uint8_t token = peek(p);
+    /*16BA8 rejects a restricted RanInt prefix before its operator push. */
+    if (token == 0xc2 && (p->environment.screen & 0x40)) {
+        p->status = FX_EVAL_SYNTAX;
+        return;
+    }
     unsigned saved_depth = p->operator_depth;
     unsigned saved_group_depth = p->group_depth;
     if (token == '(' || function_prefix(token) || token == '-' || token == 0x60) {
@@ -557,8 +580,81 @@ static void primary(parser *p, fx_complex *out)
         return;
     }
     primary_value(p, out);
+    preflight_failure(p, out);
     p->operator_depth = saved_depth;
     p->group_depth = saved_group_depth;
+}
+
+/* The caller owns the full seed. Storage callbacks share the physical seed
+ * cell, and typed callbacks share one pointer for the complete evaluation.
+ * Publication happens at the leaf, before later reductions or errors. */
+static void random_value(parser *p, fx_complex *out,
+                         const fx_complex *lower, const fx_complex *upper)
+{
+    fx_number seed;
+    if (p->storage) memcpy(seed.bytes, p->storage->ram + 0x821c, 10);
+    else seed = *p->random_seed;
+    fx_random_result result;
+    fx_numeric_status status = lower ?
+        fx_random_integer(&result, &seed, &lower->real, &upper->real) :
+        fx_random_next(&result, &seed);
+    if (status != FX_NUMERIC_OK) { unsupported(p, lower ? 0xc2 : 0x8c); return; }
+    if (p->storage) memcpy(p->storage->ram + 0x821c, result.seed.bytes, 10);
+    else *p->random_seed = result.seed;
+    p->status = (fx_eval_status)result.firmware_status;
+    if (p->preflight_mode == 2 &&
+        (p->status == FX_EVAL_MATH || p->status == FX_EVAL_ARGUMENT)) {
+        fx_complex_zero(out);
+        p->status = FX_EVAL_OK;
+    } else if (p->status == FX_EVAL_OK) {
+        out->real = result.value;
+        fx_number_zero(&out->imaginary);
+        accept_operation(p, &out->real, FX_NUMERIC_OK);
+    }
+}
+
+static void random_integer(parser *p, fx_complex *out)
+{
+    fx_complex lower, upper;
+    ++p->position; /* The prefix includes its opening parenthesis. */
+    expression(p, &lower, 0);
+    if (p->status != FX_EVAL_OK) return;
+    if (peek(p) != ',') { p->status = FX_EVAL_SYNTAX; return; }
+    /*1718C retains the first argument at the comma. Stack failure occurs
+     * after evaluating that argument, before consuming or evaluating upper. */
+    if (p->value_depth >= 10) { p->status = FX_EVAL_STACK; return; }
+    unsigned width = p->options.calculation_context == 0xc4 ? 2u : 1u;
+    p->value_depth += width;
+    ++p->position;
+    expression(p, &upper, 0);
+    p->value_depth -= width;
+    if (p->status != FX_EVAL_OK) return;
+    uint8_t delimiter = peek(p);
+    if (store_token(p) && (p->environment.screen & 0x80)) {
+        p->status = FX_EVAL_SYNTAX;
+        return;
+    }
+    /*1708E store-follow validation precedes reduction while a function is
+     * unfinished. A completed ')' has already dispatched its leaf. */
+    if (delimiter != ')' && delimiter != ',' && !omitted_closing(p)) {
+        p->status = FX_EVAL_SYNTAX;
+        return;
+    }
+    /*16336/16A14 tests the second argument first, before native13EBE. */
+    if (p->preflight_mode != 1 && (!operand_admitted(p, &upper, 7) ||
+                         !operand_admitted(p, &lower, 7))) {
+        if (p->preflight_mode == 2) {
+            fx_complex_zero(out);
+            if (delimiter == ')') ++p->position;
+        } else p->status = FX_EVAL_MATH;
+        return;
+    }
+    random_value(p, out, &lower, &upper);
+    if (p->status != FX_EVAL_OK) return;
+    if (delimiter == ')') ++p->position;
+    /* A remaining comma belongs to the enclosing operator context. Its
+     * pending reduction can consume this result as that context's argument.
+     * At top level the ordinary final delimiter check reports Syntax2. */
 }
 
 static void primary_value(parser *p, fx_complex *out)
@@ -608,6 +704,12 @@ static void primary_value(parser *p, fx_complex *out)
         if (fx_number_scientific_constant(&out->real, decoded.value) != FX_NUMERIC_OK)
             unsupported(p, token);
         else ++p->position;
+    } else if (token == 0x8c) {
+        /*17006 guards the dynamic constant before sampling it. */
+        if (p->environment.screen & 0x40) p->status = FX_EVAL_SYNTAX;
+        else { ++p->position; random_value(p, out, NULL, NULL); }
+    } else if (token == 0xc2) {
+        random_integer(p, out);
     } else if (token == 0x6c || token == 0x6d) {
         coordinates(p, out, token);
     } else if (token == 0x5d || (token >= 0x69 && token <= 0x6b)) {
@@ -639,7 +741,7 @@ static void primary_value(parser *p, fx_complex *out)
             p->value_depth -= width;
             has_base = 1;
         }
-        if (p->status == FX_EVAL_OK && !p->scan_only) {
+        if (p->status == FX_EVAL_OK && p->preflight_mode != 1) {
             unsigned mask = token == 0xc0 || token == 0xc1 ? 0 :
                 token == 0x61 || token == 0x62 || token == 0x63 ||
                 token == 0x88 || token == 0xc3 || token == 0xb3 ? 255 : 7;
@@ -647,7 +749,10 @@ static void primary_value(parser *p, fx_complex *out)
              * is consumed. Logbase checks the second argument first. */
             if ((has_base && !operand_admitted(p, &second_argument, 7)) ||
                 !operand_admitted(p, out, mask)) {
-                p->status = FX_EVAL_MATH;
+                if (p->preflight_mode == 2) {
+                    fx_complex_zero(out);
+                    if (peek(p) == ')') ++p->position;
+                } else p->status = FX_EVAL_MATH;
                 --p->depth;
                 return;
             }
@@ -657,7 +762,7 @@ static void primary_value(parser *p, fx_complex *out)
             else if (!omitted_closing(p)) p->status = FX_EVAL_SYNTAX;
         }
         if (p->status == FX_EVAL_OK) {
-            if (p->scan_only) { fx_complex_zero(out); }
+            if (p->preflight_mode == 1) { fx_complex_zero(out); }
             else if (!has_base && stage_unary(p, out,
                     fx_decode_evaluator_token(token, p->options.calculation_context).value)) {
                 /* The rich route has already copied/reserved its physical
@@ -740,7 +845,7 @@ static void primary_value(parser *p, fx_complex *out)
         ++p->position;
         expression(p, out, 40); /* powers bind more tightly than unary negation */
         if (p->status == FX_EVAL_OK && token != '+') {
-            if (p->scan_only) { fx_complex_zero(out); }
+            if (p->preflight_mode == 1) { fx_complex_zero(out); }
             else if (stage_unary(p, out, 95)) { }
             else if (p->options.calculation_context == 0xc4) {
                 fx_complex_dispatch_context context = complex_context(p);
@@ -766,7 +871,7 @@ static void primary_value(parser *p, fx_complex *out)
 static int implicit_start(uint8_t token, uint8_t context)
 {
     fx_evaluator_token decoded = fx_decode_evaluator_token(token, context);
-    return variable_slot(token, context) >= 0 || token == '(' || token == 0x80 || token == 0x81 || token == 0x82 || function_prefix(token) ||
+    return token == 0x8c || variable_slot(token, context) >= 0 || token == '(' || token == 0x80 || token == 0x81 || token == 0x82 || function_prefix(token) ||
            (decoded.kind == 6 && decoded.value < 40) || decoded.kind == 7 ||
            (context == 2 && token >= 0x50 && token <= 0x53);
 }
@@ -776,7 +881,7 @@ static void sexagesimal(parser *p, fx_complex *out)
     fx_number components[3];
     size_t count = 1;
     fx_complex output = *out;
-    if (!p->scan_only && !real_only_admitted(p, out)) {
+    if (p->preflight_mode != 1 && !real_only_admitted(p, out)) {
         p->status = FX_EVAL_MATH;
         return;
     }
@@ -795,7 +900,7 @@ static void sexagesimal(parser *p, fx_complex *out)
         if (peek(p) != 0x5c) { p->status = FX_EVAL_SYNTAX; return; }
         components[count++] = component.real;
     }
-    if (p->scan_only) { fx_complex_zero(out); return; }
+    if (p->preflight_mode == 1) { fx_complex_zero(out); return; }
     fx_numeric_status status = fx_number_sexagesimal(&output.real, components, count);
     accept_real_result(p, out, &output, status);
 }
@@ -803,7 +908,7 @@ static void sexagesimal(parser *p, fx_complex *out)
 static void conversion(parser *p, fx_complex *out, fx_evaluator_token decoded)
 {
     uint8_t token = peek(p);
-    if (!p->scan_only && !real_only_admitted(p, out)) {
+    if (p->preflight_mode != 1 && !real_only_admitted(p, out)) {
         p->status = FX_EVAL_MATH;
         return;
     }
@@ -820,7 +925,7 @@ static void conversion(parser *p, fx_complex *out, fx_evaluator_token decoded)
         p->status = FX_EVAL_SYNTAX;
         return;
     }
-    if (p->scan_only) { fx_complex_zero(out); return; }
+    if (p->preflight_mode == 1) { fx_complex_zero(out); return; }
     fx_complex output = *out;
     fx_numeric_status status = fx_number_unit_convert(&output.real, &out->real, decoded.value - 55);
     accept_real_result(p, out, &output, status);
@@ -859,7 +964,7 @@ static void coordinates(parser *p, fx_complex *out, uint8_t token)
         p->status = FX_EVAL_SYNTAX;
         return;
     }
-    if (p->scan_only) fx_complex_zero(out);
+    if (p->preflight_mode == 1) fx_complex_zero(out);
     else {
         if (!real_only_admitted(p, &second) || !real_only_admitted(p, out)) {
             p->status = FX_EVAL_MATH; return;
@@ -901,7 +1006,7 @@ static void coordinates(parser *p, fx_complex *out, uint8_t token)
 static void polar_operator(parser *p, fx_complex *out, const fx_complex *right)
 {
     fx_complex operands, converted;
-    if (p->scan_only) { fx_complex_zero(out); return; }
+    if (p->preflight_mode == 1) { fx_complex_zero(out); return; }
     if (!real_only_admitted(p, right) || !real_only_admitted(p, out)) {
         p->status = FX_EVAL_MATH; return;
     }
@@ -926,7 +1031,7 @@ static void polar_operator(parser *p, fx_complex *out, const fx_complex *right)
 
 static void quotient_remainder(parser *p, fx_complex *out, const fx_complex *right)
 {
-    if (p->scan_only) { fx_complex_zero(out); return; }
+    if (p->preflight_mode == 1) { fx_complex_zero(out); return; }
     if (!real_only_admitted(p, right) || !real_only_admitted(p, out)) {
         p->status = FX_EVAL_MATH; return;
     }
@@ -949,7 +1054,7 @@ static void fraction(parser *p, fx_complex *out, const fx_complex *denominator,
 {
     int64_t n, d;
     fx_complex unmarked_denominator;
-    if (p->scan_only) { fx_complex_zero(out); return; }
+    if (p->preflight_mode == 1) { fx_complex_zero(out); return; }
     if (!operand_admitted(p, denominator, 3) || !operand_admitted(p, out, 3)) {
         p->status = FX_EVAL_MATH; return;
     }
@@ -999,7 +1104,7 @@ static void fraction(parser *p, fx_complex *out, const fx_complex *denominator,
 static void power_or_root(parser *p, fx_complex *out, const fx_complex *argument, uint8_t token)
 {
     fx_complex output = *out;
-    if (p->scan_only) { fx_complex_zero(out); return; }
+    if (p->preflight_mode == 1) { fx_complex_zero(out); return; }
     if (!operand_admitted(p, argument, token == 0x5e ? 3 : 7)) {
         p->status = FX_EVAL_MATH; return;
     }
@@ -1027,9 +1132,33 @@ static void power_or_root(parser *p, fx_complex *out, const fx_complex *argument
 static void expression(parser *p, fx_complex *out, unsigned minimum)
 {
     primary(p, out);
-    while (p->status == FX_EVAL_OK) {
+    for (;;) {
+        preflight_failure(p, out);
+        if (p->status != FX_EVAL_OK) return;
         uint8_t token = peek(p);
         fx_evaluator_token decoded = fx_decode_evaluator_token(token, p->options.calculation_context);
+        /*1708E validates the terminal store and its following delimiter
+         * before reducing pending numerical operators. The read consumes
+         * an invalid following token position, but never commits a store. */
+        if (decoded.kind == 8 && decoded.value <= 11) {
+            if (p->environment.screen & 0x80) {
+                p->status = FX_EVAL_SYNTAX;
+                return;
+            }
+            uint8_t next = p->position + 1 < p->length ? p->input[p->position + 1] : 0;
+            if (next && next != ':') {
+                ++p->position;
+                p->status = FX_EVAL_SYNTAX;
+                return;
+            }
+        }
+        /* A digit cannot begin implicit multiplication after an existing
+         * value; an unmatched ')' is rejected before a pending reduction. */
+        if ((token >= '0' && token <= '9') || token == '.' ||
+            (token == ')' && !p->group_depth)) {
+            p->status = FX_EVAL_SYNTAX;
+            return;
+        }
         if ((p->environment.screen & 0x40) &&
             (token == ':' || (token == ')' && !p->group_depth))) {
             /* The SOLVE terminator and unmatched closing guard run before
@@ -1090,15 +1219,15 @@ static void expression(parser *p, fx_complex *out, unsigned minimum)
             (token >= 0x85 && token <= 0x87)) {
             if (70 < minimum) return;
             note_operator(p, decoded.value);
-            if (!p->scan_only && !operand_admitted(p, out,
+            if (p->preflight_mode != 1 && !operand_admitted(p, out,
                     token >= 0x75 && token <= 0x77 ? 1 : 7)) {
                 p->status = FX_EVAL_MATH; return;
             }
             fx_complex output = *out;
             fx_numeric_status status;
             ++p->position;
-            if (!p->scan_only && stage_unary(p, out, decoded.value)) return;
-            if (p->scan_only) { fx_complex_zero(out); continue; }
+            if (p->preflight_mode != 1 && stage_unary(p, out, decoded.value)) return;
+            if (p->preflight_mode == 1) { fx_complex_zero(out); continue; }
             if (p->options.calculation_context == 0xc4) {
                 fx_complex_dispatch_context context = complex_context(p);
                 uint8_t firmware_status = 0;
@@ -1148,7 +1277,7 @@ static void expression(parser *p, fx_complex *out, unsigned minimum)
         /*16C78 checks the current operand for AE before stacking it or
          * consuming the separator. In particular, F3 stays an error tag;
          *16058 must never clear its marker bit into the unrelated B3 tag. */
-        if (token == 0xae && !p->scan_only && !operand_admitted(p, out, 3)) {
+        if (token == 0xae && p->preflight_mode != 1 && !operand_admitted(p, out, 3)) {
             p->status = FX_EVAL_MATH; return;
         }
         note_operator(p, implicit ? 117 : decoded.value);
@@ -1199,7 +1328,7 @@ static void expression(parser *p, fx_complex *out, unsigned minimum)
         } else if (p->status == FX_EVAL_OK && token == 0xae) {
             if (peek(p) == 0xae) {
                 fx_complex denominator;
-                if (!p->scan_only && !operand_admitted(p, &right, 3)) {
+                if (p->preflight_mode != 1 && !operand_admitted(p, &right, 3)) {
                     p->status = FX_EVAL_MATH;
                     p->operator_depth = saved_operator_depth;
                     p->value_depth -= p->options.calculation_context == 0xc4 ? 2 : 1;
@@ -1225,7 +1354,7 @@ static void expression(parser *p, fx_complex *out, unsigned minimum)
                 if (p->status == FX_EVAL_OK) fraction(p, &right, &denominator, 1);
                 /*1610E checks the restored whole part's imaginary value
                  * before its marker or mixed-fraction signs are changed. */
-                if (p->status == FX_EVAL_OK && !p->scan_only &&
+                if (p->status == FX_EVAL_OK && p->preflight_mode != 1 &&
                     p->options.calculation_context == 0xc4 &&
                     (out->imaginary.bytes[8] || out->imaginary.bytes[9]))
                     p->status = FX_EVAL_MATH;
@@ -1252,7 +1381,7 @@ static void expression(parser *p, fx_complex *out, unsigned minimum)
                 } else if (p->status == FX_EVAL_OK) binary(p, out, &right, FX_ADD);
             } else fraction(p, out, &right, 0);
         } else if (p->status == FX_EVAL_OK && (token == 0xbe || token == 0xbf)) {
-            if (p->scan_only) {
+            if (p->preflight_mode == 1) {
                 fx_complex_zero(out); p->operator_depth = saved_operator_depth;
                 p->value_depth -= p->options.calculation_context == 0xc4 ? 2 : 1; continue;
             }
@@ -1345,7 +1474,7 @@ static fx_numeric_status calculus_evaluate(fx_number *out, const fx_number *x, v
     fx_number_zero(&callback.secondary);
     callback.unsupported = 0;
     callback.calculus_mode = 1;
-    callback.scan_only = 0;
+    callback.preflight_mode = 0;
     callback.variables->values[FX_VARIABLE_X][0] = *x;
     expression(&callback, &value, 0);
     call->callback_position = callback.position;
@@ -1386,15 +1515,17 @@ static void calculus(parser *p, fx_complex *out, uint8_t token)
     p->calculus_token = token;
     call.body_start = p->position;
     p->calculus_mode = 255;
-    p->scan_only = 1;
+    p->preflight_mode = 2;
     p->options.math_output = 0;
-    /* Native171EA first validates syntax/type without running arithmetic. */
+    /* Native R6=FF evaluates the preflight expression, including dynamic
+     * constants.16A64 turns numerical3/8 into zero and continues syntax
+     * validation; seed writes already made by13DB8 remain committed. */
     expression(p, &ignored, 0);
     if (p->status != FX_EVAL_OK) goto restore;
     if (peek(p) != ',') { p->status = FX_EVAL_SYNTAX; goto restore; }
     call.body_end = p->position++;
     p->calculus_mode = 2;
-    p->scan_only = 0;
+    p->preflight_mode = 0;
     expression(p, &lower, 0);
     if (p->status != FX_EVAL_OK) goto restore;
     if (token != 0x6b) {
@@ -1453,7 +1584,7 @@ restore:
     p->options.math_output = exact;
     p->calculus_mode = 0;
     p->calculus_token = 0;
-    p->scan_only = 0;
+    p->preflight_mode = 0;
 }
 
 fx_eval_options fx_eval_default_options(void)
@@ -1510,11 +1641,12 @@ static fx_eval_status evaluate(const uint8_t *input, size_t length,
                            const fx_calculus_control *control, uint8_t selected_base,
                            const fx_number *initial_secondary,
                            const fx_number *prior_answer, fx_eval_storage *storage,
-                           fx_eval_effects *effects, fx_eval_result *result)
+                           fx_number *random_seed, fx_eval_effects *effects, fx_eval_result *result)
 {
     parser p;
     fx_complex value;
     fx_eval_variables local_variables;
+    fx_number local_seed = {{0}};
     fx_linalg_bank local_linear_algebra = {0};
     fx_eval_variables *variables = state ? state->variables : NULL;
     fx_complex_zero(&value);
@@ -1532,6 +1664,7 @@ static fx_eval_status evaluate(const uint8_t *input, size_t length,
     if (!variables) { fx_eval_variables_clear(&local_variables); variables = &local_variables; }
     p.variables = variables;
     p.storage = storage;
+    p.random_seed = random_seed ? random_seed : &local_seed;
     p.linear_algebra = state && state->linear_algebra ? state->linear_algebra : &local_linear_algebra;
     p.control = control;
     p.base_radix = selected_base;
@@ -1612,7 +1745,7 @@ fx_eval_status fx_evaluate_with_state(const uint8_t *input, size_t length,
                            const fx_eval_options *options, const fx_eval_state *state,
                            const fx_calculus_control *control, fx_eval_result *result)
 {
-    return evaluate(input, length, options, NULL, state, control, FX_BASE_DEC, NULL, NULL, NULL, NULL, result);
+    return evaluate(input, length, options, NULL, state, control, FX_BASE_DEC, NULL, NULL, NULL, NULL, NULL, result);
 }
 
 fx_eval_status fx_evaluate_prepared(const uint8_t *input, size_t length,
@@ -1623,7 +1756,7 @@ fx_eval_status fx_evaluate_prepared(const uint8_t *input, size_t length,
 {
     uint8_t selected_base = environment ? environment->selected_base : FX_BASE_DEC;
     return evaluate(input, length, options, environment, state, control,
-                    selected_base, initial_secondary, NULL, NULL, NULL, result);
+                    selected_base, initial_secondary, NULL, NULL, NULL, NULL, result);
 }
 
 fx_eval_status fx_evaluate_prepared_with_prior_answer(const uint8_t *input, size_t length,
@@ -1635,7 +1768,7 @@ fx_eval_status fx_evaluate_prepared_with_prior_answer(const uint8_t *input, size
 {
     uint8_t selected_base = environment ? environment->selected_base : FX_BASE_DEC;
     return evaluate(input, length, options, environment, state, control,
-                    selected_base, initial_secondary, prior_answer, NULL, NULL, result);
+                    selected_base, initial_secondary, prior_answer, NULL, NULL, NULL, result);
 }
 
 fx_eval_status fx_evaluate_base_n(const uint8_t *input, size_t length,
@@ -1647,7 +1780,7 @@ fx_eval_status fx_evaluate_base_n(const uint8_t *input, size_t length,
     fx_eval_state state = {variables, NULL};
     prepared.calculation_context = 2;
     return evaluate(input, length, &prepared, NULL, &state, NULL,
-                    selected_base, initial_secondary, NULL, NULL, NULL, result);
+                    selected_base, initial_secondary, NULL, NULL, NULL, NULL, result);
 }
 
 fx_eval_status fx_evaluate_controlled(const uint8_t *input, size_t length,
@@ -1681,7 +1814,7 @@ fx_eval_status fx_evaluate_prepared_observed(const uint8_t *input, size_t length
 {
     uint8_t selected_base = environment ? environment->selected_base : FX_BASE_DEC;
     return evaluate(input, length, options, environment, state, control,
-                    selected_base, initial_secondary, prior_answer, NULL, effects, result);
+                    selected_base, initial_secondary, prior_answer, NULL, NULL, effects, result);
 }
 
 fx_eval_status fx_evaluate_prepared_with_storage(const uint8_t *input, size_t length,
@@ -1719,5 +1852,20 @@ fx_eval_status fx_evaluate_prepared_with_storage(const uint8_t *input, size_t le
         globals.selected_base = storage->ram[0x80fa];
     }
     return evaluate(input, length, &prepared, &globals, state, control,
-        globals.selected_base, initial_secondary, prior_answer, storage, effects, result);
+        globals.selected_base, initial_secondary, prior_answer, storage, NULL, effects, result);
+}
+
+/* Additive session-seed entry: old public records and entry ABIs remain
+ * unchanged. Seed, input, state, observations and output use separate storage. */
+fx_eval_status fx_evaluate_prepared_random(const uint8_t *input, size_t length,
+                           const fx_eval_options *options,
+                           const fx_eval_environment *environment,
+                           const fx_eval_state *state, const fx_calculus_control *control,
+                           const fx_number *initial_secondary,
+                           const fx_number *prior_answer, fx_number *seed,
+                           fx_eval_effects *effects, fx_eval_result *result)
+{
+    uint8_t selected_base = environment ? environment->selected_base : FX_BASE_DEC;
+    return evaluate(input, length, options, environment, state, control,
+                    selected_base, initial_secondary, prior_answer, NULL, seed, effects, result);
 }

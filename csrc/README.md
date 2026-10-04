@@ -13,10 +13,11 @@ routine addresses, the semantic API being compared, and remaining gaps.
 | --- | --- |
 | Platform | Startup/reset, retained and persistent state, replay history, power/host packets, nonblocking welcome/diagnostic events and contrast UI; main scheduler with key-wait and typed UI/menu/screen completion |
 | Keyboard/editor | Matrix scan, bounded debounce/held sampling, key tables, modifier dispatch, nonblocking host key wait/controller, annunciator row, cursor, structured editing and display-to-input conversion, input preparation, error dialogs/key acceptance and cursor recovery and input error/reset recovery; ordinary typing/command and input/evaluate/commit/presentation controllers; generic menu navigation, MODE/SETUP and MATRIX/VECTOR mode menu controllers |
-| Parser | Shared COMP/CMPLX literals, e/π, parentheses/signs, arithmetic/fractions, square/cube/nth roots, powers, factorial/percent/nPr/nCr, trig/hyperbolic functions, single/two-argument logarithms and exponentials; complex fractions, restricted powers, conjugation/magnitude/argument, scalar variables/terminal stores/M+/M-, COMP absolute/conjugate/argument, finite sums/products, adaptive integrals and Richardson derivatives; BASE-N radix/prefix literals, logic and native arithmetic policies; scientific constants, DMS and unit-conversion postfixes |
+| Parser | Shared COMP/CMPLX literals, e/π, parentheses/signs, arithmetic/fractions, square/cube/nth roots, powers, factorial/percent/nPr/nCr, trig/hyperbolic functions, single/two-argument logarithms and exponentials; complex fractions, restricted powers, conjugation/magnitude/argument, scalar variables/terminal stores/M+/M-, COMP absolute/conjugate/argument, finite sums/products, adaptive integrals and Richardson derivatives; BASE-N radix/prefix literals, logic and native arithmetic policies; scientific constants, DMS and unit-conversion postfixes; Ran#/RanInt with eager shared seed writes and numerical preflight |
 | Numeric | Packed records, decimal and finite rational/surd arithmetic, roots/combinatorics and native zero-radicand/reciprocal behavior; finite sum/product, adaptive Gauss–Kronrod integration and Richardson derivative kernels; BASE-N conversions, arithmetic/logic, literals and scalar preparation; DMS composition, unit conversions and stored scientific constants; two/three-equation linear and quadratic/cubic solvers, native failure diagnostics; generic SOLVE callback iteration, finite raw decimal adapters and the distinct prepared quotient/remainder wrapper |
 | Complex | Prepared arithmetic, classification, native return statuses, conjugation, magnitude, restricted roots/powers, polar coordinates and rounding |
 | Matrix/vector | Prepared arithmetic, transpose, determinant/inverse, dot/cross/magnitude, powers, numeric preparation, REF/RREF, typed slot storage, prepared rich operand dispatch/allocation and grid/caption/cursor display |
+| TABLE | Prepared one/two-function generation, row limits, live X/Step records, timer/cancellation and callback error policies; complete mode expression/UI composition remains pending |
 | Statistics | Prepared moments, seven regression models/predictions, cache semantics, normal P/Q/R and standardization; table editing, cursor and STAT input commits |
 | Formatting | Decimal, rational/surd, fraction/π recognition, tagged prime output, width budgets and BASE-N integer output |
 | Trigonometry | Decimal rotation kernel, angle reduction, forward/inverse sin/cos/tan and forward special-result tables |
@@ -25,7 +26,7 @@ routine addresses, the semantic API being compared, and remaining gaps.
 
 Complete keyboard/mode controller composition, event scheduling, history and reset-to-key-sequence behavior still require
 implementation and verification. SOLVE expression/history/display and equation UI orchestration, complete matrix/vector mode grammar and
-object editing, table mode and other advanced functions remain pending. Passing a subset suite does not complete those requirements.
+object editing, TABLE mode expression/UI composition and other advanced functions remain pending. Passing a subset suite does not complete those requirements.
 
 Build from the repository root with CMake and GCC or Clang. Formatting currently
 uses the compiler's unsigned 128-bit integer extension for exact recognition
@@ -96,8 +97,20 @@ admitted left and right records for the SOLVE callback bridge.
 `fx_evaluate_prepared_with_storage` adds physical temporary-bank copies and
 the shared allocation/equation mask; the ordinary typed APIs retain their
 separate-bank contract. Physical terminal cleanup commits cells in native
-order and preserves partial changes on errors. Rich numerical dispatch is
-being integrated; complete matrix/vector mode grammar remains pending.
+order and preserves partial changes on errors. Prepared rich numerical dispatch includes physical matrix/vector arithmetic, unary operations and REF/RREF. Its complete expression integration and matrix/vector mode grammar remain pending.
+
+The random frontend shares one packed seed across Ran#, RanInt and calculus
+callbacks. Physical evaluation publishes each draw at 821C..8225 immediately,
+including draws made before a later error. The additive random API accepts an
+explicit seed; legacy value APIs begin with a local zero seed for each call.
+Prepared BASE word APIs keep selected-byte, global-mode and operation-mode
+policies separate from the typed BASE-N UI APIs.
+
+CALC dependency scanning and the prepared CALC/SOLVE outer controller now
+compose coefficient prompts, guess input, result commits, replay and error
+continuations. Their tested scalar workflow retains the separate owner of each
+wait and cancellation boundary. Physical key acquisition and arbitrary rich
+outer workflows still require integration.
 
 Raw powers include an implicit opening parenthesis after the caret. Thus
 `2^3+1)` means `2^(3+1)` and `2^3)+1` means `(2^3)+1`. The natural editor

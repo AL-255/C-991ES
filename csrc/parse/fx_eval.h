@@ -175,4 +175,16 @@ fx_eval_status fx_evaluate_base_n(const uint8_t *input, size_t length,
                            uint8_t selected_base, const fx_eval_options *options,
                            fx_eval_variables *variables,
                            const fx_number *initial_secondary, fx_eval_result *result);
+/* Explicit session seed. The seed is published eagerly at
+ * every draw, including draws preceding a later expression error. NULL uses
+ * a fresh zero seed for this complete evaluation. Storage entry points share
+ * the physical RAM821C seed instead; existing public struct ABIs are unchanged. */
+fx_eval_status fx_evaluate_prepared_random(const uint8_t *input, size_t length,
+                           const fx_eval_options *options,
+                           const fx_eval_environment *environment,
+                           const fx_eval_state *state,
+                           const fx_calculus_control *control,
+                           const fx_number *initial_secondary,
+                           const fx_number *prior_answer, fx_number *seed,
+                           fx_eval_effects *effects, fx_eval_result *result);
 #endif

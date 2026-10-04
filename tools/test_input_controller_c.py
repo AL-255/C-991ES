@@ -18,12 +18,12 @@ ORACLE_CONTEXT=0x9d00 # Separate from host framebuffer packet9000..9181.
 
 MODULES=[
     'ui/fx_input_controller','ui/fx_input_display','ui/fx_input_prepare','ui/fx_input_recover',
-    'ui/fx_input_codec','ui/fx_error_event','ui/fx_error_display','ui/fx_key_controller',
+    'ui/fx_input_codec','ui/fx_error_event','ui/fx_error_boundary','ui/fx_error_display','ui/fx_key_controller',
     'ui/fx_key_wait','ui/fx_annunciator','ui/fx_cursor','ui/fx_keys','ui/fx_key_dispatch',
     'ui/fx_editor','ui/fx_natural_editor',
     'platform/fx_platform','platform/fx_host_bridge','platform/fx_boot','platform/fx_boot_events',
     'platform/fx_persistent','platform/fx_diagnostic_contrast','platform/fx_result_classify',
-    'parse/fx_tokens','parse/fx_eval','parse/fx_eval_storage','parse/fx_eval_finish','numeric/fx_numeric','numeric/fx_transcend','numeric/fx_power',
+    'parse/fx_tokens','parse/fx_eval','parse/fx_eval_storage','parse/fx_eval_finish','numeric/fx_numeric','numeric/fx_random','numeric/fx_transcend','numeric/fx_power',
     'numeric/fx_root','numeric/fx_combinatorics','numeric/fx_logbase','numeric/fx_calculus',
     'numeric/fx_integral','numeric/fx_derivative','numeric/fx_base','numeric/fx_base_literal',
     'numeric/fx_sexagesimal','numeric/fx_quotient_remainder',
@@ -66,7 +66,7 @@ def main():
     sources=['csrc/'+module+'.c' for module in MODULES]
     output=build/'controller.so'
     subprocess.run(['gcc','-std=c99','-O2','-Wall','-Wextra','-Werror','-shared','-fPIC',
-                    '-Wl,--no-undefined',*[str(ROOT/f) for f in sources],'-o',str(output)],check=True)
+                    '-Wl,--no-undefined','-I',str(ROOT/'csrc'),*[str(ROOT/f) for f in sources],'-o',str(output)],check=True)
     lib=C.CDLL(str(output))
     pp=C.POINTER(Platform)
     lib.fx_input_context_capture.argtypes=[pp,C.c_uint16,C.c_uint16]

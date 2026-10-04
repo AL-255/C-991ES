@@ -1,5 +1,6 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 #include "fx_input_controller.h"
+#include "fx_error_boundary.h"
 #include "fx_input_prepare.h"
 #include "fx_input_recover.h"
 #include "fx_input_codec.h"
@@ -88,7 +89,9 @@ fx_input_status fx_input_controller_begin(fx_platform *p, fx_input_controller *s
     if (context->calculation_mode!=0xc1 && context->calculation_mode!=0xc4)
         return FX_INPUT_UNIMPLEMENTED;
     if (!byte_at(p,context->display_address)) return complete(s,0);
-    if (screen!=1 || context->special_view) return FX_INPUT_UNIMPLEMENTED;
+    if (screen!=1 && screen!=0xa0) return FX_INPUT_UNIMPLEMENTED;
+    if (context->special_view && !(screen==0xa0 && byte_at(p,0x80fd)==2))
+        return FX_INPUT_UNIMPLEMENTED;
     put_word(p,0x812c,context->display_address);
     int ready=fx_input_needs_export(p) ? fx_input_prepare_exported(p,&s->prepared_source) :
                                        fx_input_prepare_direct(p,&s->prepared_source);
@@ -164,6 +167,20 @@ static fx_input_status commit_result(fx_platform *p, fx_input_controller *s)
             zero_imaginary(p,s->context.result_address);
         else put_byte(p,0x80ff,20);
     }
+    /* F4D2..F506: special coefficient views commit one list cell without
+     * touching Ans, PreAns or replay, and clear the named D9EE return. */
+    if (s->context.special_view) {
+        uint8_t index=byte_at(p,0x83fd);
+        if (index>=10) return FX_INPUT_RESOURCE_LIMIT;
+        uint8_t id=byte_at(p,(uint16_t)(0x83fe + index));
+        if (id>=10) return FX_INPUT_INVALID;
+        if (byte_at(p,0x80ff)&16) zero_imaginary(p,s->context.result_address);
+        put_byte(p,0x80ff,0); fx_result_clear_display_state(p);
+        fx_store_variable_address(p,id,s->context.result_address);
+        put_byte(p,0x83fd,(uint8_t)(index+1));
+        s->context.return_value=0;
+        return complete(s,0);
+    }
     if (s->context.calculation_mode==0xc1)
         for (unsigned n=0;n<10;++n) put_byte(p,(uint16_t)(0x828a+n),byte_at(p,(uint16_t)(0x8230+n)));
     if (byte_at(p,0x80ff)&16) {
@@ -174,6 +191,10 @@ static fx_input_status commit_result(fx_platform *p, fx_input_controller *s)
         s->continuation=1; put_byte(p,0x80fe,(uint8_t)(byte_at(p,0x80fe)|64));
         put_word(p,0x812e,s->current_source);
     } else s->continuation=0;
+    /* F576..F58A: a finished CALC item3 expression advances to result16
+     * only after continuation has been resolved. */
+    if (!s->continuation && byte_at(p,0x80fc)==0xa0 && byte_at(p,0x80fd)==3)
+        put_byte(p,0x80fd,16);
     /* The native Ans copy leaves its remaining count at zero. EA0C uses
      * that value as the classifier companion; no CPU local is needed. */
     fx_result_classification classification;
@@ -243,7 +264,10 @@ fx_input_status fx_input_controller_tick(fx_platform *p, fx_input_controller *s)
     if (s->phase==INPUT_DONE) return FX_INPUT_COMPLETE;
     if (s->phase==INPUT_RESET) return FX_INPUT_RESET;
     if (s->phase!=INPUT_ERROR_WAIT) return FX_INPUT_INVALID;
-    fx_key_controller_status event=fx_error_event_tick(p,&s->error);
+    /* Preserve the ordinary public error API's existing restart boundary.
+     * CALC outer composition exposes the earlier completed-export phase. */
+    fx_key_controller_status event=byte_at(p,0x80fc)==0xa0 ?
+        fx_error_event_tick_export_boundary(p,&s->error) : fx_error_event_tick(p,&s->error);
     if (event==FX_KEY_CONTROLLER_WAIT) return FX_INPUT_WAIT;
     if (event==FX_KEY_CONTROLLER_EXPORT) return FX_INPUT_EXPORT;
     if (event<0) return FX_INPUT_UNIMPLEMENTED;

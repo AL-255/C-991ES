@@ -481,7 +481,8 @@ fx_ui_status fx_ui_controller_tick(fx_platform *p,fx_ui_controller *s)
     }
     if (s->phase!=UI_READY) return FX_UI_INVALID;
     if ((s->context.calculation_mode!=0xc1 && s->context.calculation_mode!=0xc4) ||
-        read_byte(p,0x80fc)!=1 || s->context.special_view)
+        (read_byte(p,0x80fc)!=1 && !(read_byte(p,0x80fc)==0xa0 &&
+          read_byte(p,0x80fd)!=2)) || s->context.special_view)
         return request(s,FX_UI_REQUEST_SPECIAL_CONTEXT);
     if (s->refresh_only) return redraw(p,s,1);
     uint8_t token=read_byte(p,0x80f5);

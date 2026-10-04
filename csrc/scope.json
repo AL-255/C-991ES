@@ -23,7 +23,8 @@
       "id": "parser",
       "scope": "All input token categories, literal bases, precedence, function dispatch, variables, errors and mode constraints",
       "status": "partial",
-      "manifest": "parse/manifest.json"
+      "manifest": "parse/manifest.json",
+      "implemented_subset": "Shared supported COMP/CMPLX and BASE-N grammar, scalar variables and stores, random/RanInt with eager live seed effects and numerical calculus preflight. Prepared physical rich numerical leaves are independently verified; complete rich expression and mode grammar remain pending."
     },
     {
       "id": "numeric",
@@ -42,13 +43,13 @@
       "id": "advanced_math",
       "scope": "Numerical integration/differentiation/sums, solving, combinatorics, random functions and complex arithmetic",
       "status": "partial",
-      "implemented_subset": "Factorial/permutations/combinations/percent, shared COMP/CMPLX expressions, scalar absolute/conjugation/argument, finite sum/product, adaptive Gauss-Kronrod integral and Richardson derivative expression orchestration with native sample order, cancellation and X restoration. Prepared linear/quadratic/cubic solvers and native degeneracy diagnostics are available; prepared generic SOLVE numerical callback iteration is available; Prepared SOLVE equation grammar exports raw sides and PreAns to a readable callback bridge; coefficient/guess prompts, typed coefficient acceptance, default memory-backed numerical solve, variable/result/history commits and error recovery have separate and uninterrupted workflow controls. Full main/UI SOLVE composition and random-function expression integration remain pending"
+      "implemented_subset": "Factorial/permutations/combinations/percent, shared COMP/CMPLX expressions, scalar absolute/conjugation/argument, finite sum/product, adaptive Gauss-Kronrod integral and Richardson derivative expression orchestration with native sample order, cancellation and X restoration. Prepared linear/quadratic/cubic solvers and native degeneracy diagnostics are available; prepared generic SOLVE numerical callback iteration is available; Prepared SOLVE equation grammar exports raw sides and PreAns to a readable callback bridge; coefficient/guess prompts, typed coefficient acceptance, default memory-backed numerical solve, variable/result/history commits and error recovery have separate and uninterrupted workflow controls. Prepared CALC/SOLVE outer scalar workflow and random/RanInt expression integration are available. Full reset/key/menu composition and physical continuous-calculus workspace behavior remain pending"
     },
     {
       "id": "calculation_modes",
       "scope": "Statistics, distributions, equation, matrix, vector, table and base-N modes, constants and unit conversions",
       "status": "partial",
-      "implemented_subset": "Prepared statistics/regression kernels and table editor/cache/normal distribution kernels; matrix/vector arithmetic, determinant/inverse, REF/RREF, numeric preparation, typed slot storage, prepared rich operand dispatch/allocation and grid/caption/cursor display; equation/inequality result display; BASE-N word conversion, arithmetic/logic, radix literals, stored-scalar preparation and integer formatting; DMS/constant/conversion expression dispatch and BASE-N shared grammar; prepared generic menus, MODE/SETUP and MATRIX/VECTOR dimension/action menu controllers; linear/quadratic/cubic equation kernels and native failure diagnostics. Complete mode grammar/UI and object allocation/editing, equation coefficient/history/display orchestration, table mode and complete menu/scheduler composition remain pending"
+      "implemented_subset": "Prepared statistics/regression kernels and table editor/cache/normal distribution kernels; matrix/vector arithmetic, determinant/inverse, REF/RREF, numeric preparation, typed slot storage, prepared rich operand dispatch/allocation and grid/caption/cursor display; equation/inequality result display; BASE-N word conversion, arithmetic/logic, radix literals, stored-scalar preparation and integer formatting; DMS/constant/conversion expression dispatch and BASE-N shared grammar; prepared generic menus, MODE/SETUP and MATRIX/VECTOR dimension/action menu controllers; linear/quadratic/cubic equation kernels and native failure diagnostics. Complete mode grammar/UI and object allocation/editing, equation coefficient/history/display orchestration, complete TABLE expression/UI composition and complete menu/scheduler composition remain pending Prepared TABLE one/two-function generation preserves live row records, range limits, callback errors and cancellation. Prepared BASE word APIs preserve independent selected/global/operation policies."
     },
     {
       "id": "format",

@@ -1,6 +1,6 @@
 /* High-level translations of the BASE-N prepared numeric kernels.
  * GPL-3.0-or-later. Integer and packed-decimal arithmetic only. */
-#include "fx_base.h"
+#include "fx_base_word.h"
 
 static int valid_base(uint8_t base)
 {
@@ -49,7 +49,6 @@ static fx_numeric_status decode_word(uint32_t *word, unsigned *carry,
     unsigned index;
     int negative;
     if (!word || !carry || !number) return FX_NUMERIC_INVALID;
-    if (!valid_base(base_mask)) return FX_NUMERIC_UNIMPLEMENTED;
     kind = fx_number_kind(number);
     if (kind == FX_NUMBER_UNSUPPORTED) return FX_NUMERIC_UNIMPLEMENTED;
     status = raw_scalar_classify(&classification, number);
@@ -87,6 +86,8 @@ static fx_numeric_status decode_word(uint32_t *word, unsigned *carry,
 fx_numeric_status fx_base_decode_word(uint32_t *word, unsigned *carry,
                                      const fx_number *number, uint8_t base_mask)
 {
+    if (!word || !carry || !number) return FX_NUMERIC_INVALID;
+    if (!valid_base(base_mask)) return FX_NUMERIC_UNIMPLEMENTED;
     return decode_word(word, carry, number, base_mask);
 }
 
@@ -96,11 +97,13 @@ fx_numeric_status fx_base_decode_word(uint32_t *word, unsigned *carry,
  * A zero pair has no leading digit and the original search never returns. */
 static fx_numeric_status serialize_logical(fx_number *out, uint32_t word,
                                            uint8_t base_mask,
+                                           uint8_t calculation_context,
                                            unsigned *native_status)
 {
     fx_number result;
     unsigned range;
-    fx_numeric_status status = fx_base_encode_word(&result, word, base_mask, &range);
+    fx_numeric_status status = fx_base_word_encode(&result, word, base_mask,
+                                                   calculation_context, &range);
     if (status != FX_NUMERIC_OK) return status;
     if (range) {
         unsigned negative = word >= UINT32_C(0x80000000);
@@ -124,20 +127,29 @@ static fx_numeric_status serialize_logical(fx_number *out, uint32_t word,
     return FX_NUMERIC_OK;
 }
 
-fx_numeric_status fx_base_encode_word(fx_number *out, uint32_t word,
-                                     uint8_t base_mask, unsigned *native_status)
+fx_numeric_status fx_base_word_encode(fx_number *out, uint32_t word,
+                                     uint8_t base_mask,
+                                     uint8_t calculation_context,
+                                     unsigned *native_status)
 {
     int64_t signed_value;
     if (!out || !native_status) return FX_NUMERIC_INVALID;
-    if (!valid_base(base_mask)) return FX_NUMERIC_UNIMPLEMENTED;
     /* Widen before subtracting: a uint32_t -> int32_t cast would depend on
      * the implementation for words whose top bit is set. */
     signed_value = word < UINT32_C(0x80000000) ? (int64_t)word :
                    (int64_t)word - INT64_C(4294967296);
-    *native_status = base_mask == FX_BASE_BIN &&
+    *native_status = calculation_context == 2 && base_mask == FX_BASE_BIN &&
                      (signed_value < -32768 || signed_value > 32767) ? 3 : 0;
     if (*native_status) return FX_NUMERIC_OK;
     return fx_decimal_from_integer(out, signed_value);
+}
+
+fx_numeric_status fx_base_encode_word(fx_number *out, uint32_t word,
+                                     uint8_t base_mask, unsigned *native_status)
+{
+    if (!out || !native_status) return FX_NUMERIC_INVALID;
+    if (!valid_base(base_mask)) return FX_NUMERIC_UNIMPLEMENTED;
+    return fx_base_word_encode(out, word, base_mask, 2, native_status);
 }
 
 fx_numeric_status fx_base_validate(const fx_number *number, uint8_t base_mask,
@@ -275,15 +287,18 @@ fx_numeric_status fx_base_prepare_scalar(fx_number *out, const fx_number *number
     return fx_base_prepare(out, &converted, base_mask, native_status);
 }
 
-fx_numeric_status fx_base_unary(fx_number *out, const fx_number *number,
-                               uint8_t base_mask, fx_base_unary_op operation,
-                               unsigned *native_status)
+fx_numeric_status fx_base_word_unary(fx_number *out, const fx_number *number,
+                                     const fx_base_word_context *context,
+                                     fx_base_unary_op operation,
+                                     unsigned *native_status)
 {
     uint32_t word;
     unsigned carry;
-    fx_number original;
+    uint8_t base_mask;
+    fx_number original, result;
     fx_numeric_status status;
-    if (!out || !number || !native_status) return FX_NUMERIC_INVALID;
+    if (!out || !number || !context || !native_status) return FX_NUMERIC_INVALID;
+    base_mask = context->selected_mask;
     if (operation != FX_BASE_NOT && operation != FX_BASE_NEGATE)
         return FX_NUMERIC_INVALID;
     original = *number;
@@ -293,7 +308,7 @@ fx_numeric_status fx_base_unary(fx_number *out, const fx_number *number,
         /* Incoming BIN carry is ignored. Only a zero residual pair in the
          * rejected serialization causes the original non-return boundary. */
         return serialize_logical(out, ~word, base_mask,
-                                  native_status);
+                                  context->calculation_context, native_status);
     } else {
         word = UINT32_C(0) - word;
         if (word == UINT32_C(0x80000000)) {
@@ -301,23 +316,26 @@ fx_numeric_status fx_base_unary(fx_number *out, const fx_number *number,
             return FX_NUMERIC_OK;
         }
     }
-    fx_number result = original;
-    status = fx_base_encode_word(&result, word, base_mask, native_status);
+    result = original;
+    status = fx_base_word_encode(&result, word, base_mask,
+                                 context->calculation_context, native_status);
     if (status == FX_NUMERIC_OK) *out = result;
     return status;
 }
 
-fx_numeric_status fx_base_binary(fx_number *out, const fx_number *left,
-                                const fx_number *right, uint8_t base_mask,
-                                fx_base_binary_op operation,
-                                unsigned *native_status)
+fx_numeric_status fx_base_word_binary(fx_number *out, const fx_number *left,
+                                      const fx_number *right,
+                                      const fx_base_word_context *context,
+                                      fx_base_binary_op operation,
+                                      unsigned *native_status)
 {
     fx_number a, b, result;
     fx_numeric_status status;
     uint32_t first, second, word;
     unsigned carry_first, carry_second;
-    if (!out || !left || !right || !native_status) return FX_NUMERIC_INVALID;
-    if (!valid_base(base_mask)) return FX_NUMERIC_UNIMPLEMENTED;
+    uint8_t base_mask;
+    if (!out || !left || !right || !context || !native_status) return FX_NUMERIC_INVALID;
+    base_mask = context->selected_mask;
     if (operation < FX_BASE_ADD || operation > FX_BASE_AND) return FX_NUMERIC_INVALID;
     a = *left; b = *right;
     if (operation <= FX_BASE_DIVIDE) {
@@ -333,10 +351,16 @@ fx_numeric_status fx_base_binary(fx_number *out, const fx_number *left,
         if (status != FX_NUMERIC_OK) return status;
         *native_status = fx_number_kind(&result) == FX_NUMBER_ERROR ?
                          result.bytes[0] & 15 : 0;
-        if (!*native_status) {
+        if (!*native_status && context->operation_context == 2) {
             if (operation == FX_BASE_DIVIDE)
                 status = truncate_raw_scalar(&result, &result, native_status);
-            else status = fx_base_validate_raw(&result, base_mask, native_status);
+            else {
+                /* Only the complete selected byte1 narrows the checker.
+                 * Every other value uses its signed32 comparison limit. */
+                status = fx_base_validate_raw(&result,
+                                               base_mask == 1 ? 1 : 9,
+                                               native_status);
+            }
         }
         if (status != FX_NUMERIC_OK) return status;
         *out = result;
@@ -352,5 +376,43 @@ fx_numeric_status fx_base_binary(fx_number *out, const fx_number *left,
     case FX_BASE_XNOR: word = ~(first ^ second); break;
     default: word = first & second; break;
     }
-    return serialize_logical(out, word, base_mask, native_status);
+    return serialize_logical(out, word, base_mask,
+                              context->calculation_context, native_status);
+}
+
+fx_numeric_status fx_base_word_decode(uint32_t *word, unsigned *carry,
+                                     const fx_number *number, uint8_t selected_mask)
+{
+    return decode_word(word, carry, number, selected_mask);
+}
+
+fx_numeric_status fx_base_word_validate(const fx_number *number,
+                                       const fx_base_word_context *context,
+                                       unsigned *native_status)
+{
+    if (!number || !context || !native_status) return FX_NUMERIC_INVALID;
+    if (*native_status || context->operation_context != 2) return FX_NUMERIC_OK;
+    return fx_base_validate_raw(number, context->selected_mask == 1 ? 1 : 9,
+                                native_status);
+}
+
+fx_numeric_status fx_base_unary(fx_number *out, const fx_number *number,
+                               uint8_t base_mask, fx_base_unary_op operation,
+                               unsigned *native_status)
+{
+    const fx_base_word_context context = {base_mask, 2, 2};
+    if (!out || !number || !native_status) return FX_NUMERIC_INVALID;
+    if (operation != FX_BASE_NOT && operation != FX_BASE_NEGATE) return FX_NUMERIC_INVALID;
+    if (!valid_base(base_mask)) return FX_NUMERIC_UNIMPLEMENTED;
+    return fx_base_word_unary(out, number, &context, operation, native_status);
+}
+
+fx_numeric_status fx_base_binary(fx_number *out, const fx_number *left,
+                                const fx_number *right, uint8_t base_mask,
+                                fx_base_binary_op operation, unsigned *native_status)
+{
+    const fx_base_word_context context = {base_mask, 2, 2};
+    if (!out || !left || !right || !native_status) return FX_NUMERIC_INVALID;
+    if (!valid_base(base_mask)) return FX_NUMERIC_UNIMPLEMENTED;
+    return fx_base_word_binary(out, left, right, &context, operation, native_status);
 }

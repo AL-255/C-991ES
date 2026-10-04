@@ -533,7 +533,7 @@ def main():
     if args.explore or failures:
         path = build / 'exploration.json'; path.write_text(json.dumps(report, indent=2) + '\n')
     else:
-        write_report(path, report, source_files + ['csrc/numeric/fx_base.h', 'csrc/numeric/fx_numeric.h',
+        write_report(path, report, source_files + ['csrc/numeric/fx_base.h', 'csrc/numeric/fx_base_word.h', 'csrc/numeric/fx_numeric.h',
                     'csrc/parse/fx_tokens.h', 'csrc/data/fx_rom_data.h', 'csrc/numeric/base/manifest.json',
                     'csrc/numeric/base/understood_ranges.json',
                     'tools/trace_natural_result.py', 'tools/c_verification.py',

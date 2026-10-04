@@ -1,0 +1,21 @@
+{
+  "subsystem": "prepared BASE word context policies",
+  "implementation": "Readable C99 packed-decimal and unsigned32 operations; no CPU/ROM or host float fallback",
+  "api": "csrc/numeric/fx_base_word.h",
+  "source": "csrc/numeric/fx_base.c",
+  "complete": false,
+  "implemented_routines": [
+    {"address": "0x15a1e / 0x15a94", "name": "selected-byte word conversion", "scope": "All256 selected bytes; exact1 magnitude gate independent of calculation/operation contexts"},
+    {"address": "0x15b00 / 0x15a64", "name": "global-context word serialization", "scope": "Signed16 only for global2 plus selected1, signed32 otherwise"},
+    {"address": "0x15e82", "name": "operation-context range admission", "scope": "Prior nonzero status bypass, context2-only raw scalar range checker"},
+    {"address": "0x15f34 / 0x15f40 / 0x15f4c / 0x15f58", "name": "prepared scalar arithmetic", "scope": "Exact scalar operations; context2-only successful-result range/truncation policy"},
+    {"address": "0x15c1c / 0x15c46 / 0x15d62 / 0x15d9e / 0x15dda / 0x15e1e", "name": "prepared unary and logical word operations", "scope": "Independent decode/serialization gates, native returning records/status and output aliases"}
+  ],
+  "gaps": [
+    "Proven zero-residual selected-BIN/global2 serializer nonreturns are retained as unsupported controls with unchanged output/status.",
+    "Malformed scalar records and caller/CPU-frame memory aliases remain outside the named value API.",
+    "Physical numerical workspace and expression/UI admission require their separately owned adapters; typed literal/UI-mask admission is preserved.",
+    "No new instruction coverage is claimed: existing BASE routine spans are already in the shared understood ledger."
+  ],
+  "verification": ["tools/test_base_word_c.py", "analysis/c-verification/base_word.json", "tools/test_numeric_base_c.py", "analysis/c-verification/numeric_base.json"]
+}

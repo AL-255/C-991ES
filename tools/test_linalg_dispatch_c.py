@@ -34,7 +34,7 @@ def main():
  p=argparse.ArgumentParser(description=__doc__);p.add_argument('--random-cases',type=int,default=6000);p.add_argument('--no-report',action='store_true');a=p.parse_args()
  build=ROOT/'analysis/build/linalg_dispatch';build.mkdir(parents=True,exist_ok=True)
  sources=['csrc/linalg/fx_linalg_dispatch.c','csrc/numeric/fx_raw_fraction_convert.c','csrc/numeric/fx_raw_decimal_divide.c','csrc/numeric/fx_raw_decimal_parts.c','csrc/numeric/fx_raw_decimal_multiply_add.c','csrc/numeric/fx_raw_decimal_exp.c','csrc/numeric/fx_transcend.c','csrc/numeric/fx_base.c','csrc/linalg/fx_linalg_store.c','csrc/linalg/fx_linalg.c','csrc/linalg/fx_linalg_reduce.c','csrc/complex/fx_complex.c','csrc/complex/fx_complex_round.c','csrc/numeric/fx_numeric.c','csrc/trig/fx_trig_hyperbolic.c']
- headers=[x[:-2]+'.h' for x in sources]+['csrc/numeric/fx_transcend_internal.h','csrc/numeric/fx_transcend_guarded.h','csrc/trig/fx_trig.h']
+ headers=[x[:-2]+'.h' for x in sources]+['csrc/numeric/fx_transcend_internal.h','csrc/numeric/fx_transcend_guarded.h','csrc/numeric/fx_base_word.h','csrc/trig/fx_trig.h']
  library=build/'dispatch.so';subprocess.run(['gcc','-std=c99','-O2','-Wall','-Wextra','-Werror','-pedantic','-shared','-fPIC','-I'+str(ROOT/'csrc/numeric'),*(str(ROOT/x) for x in sources),'-o',str(library)],check=True)
  lib=C.CDLL(str(library));lib.fx_decimal_parse.argtypes=[C.POINTER(Number),C.c_char_p];lib.fx_rational_encode.argtypes=[C.POINTER(Number),C.POINTER(Rational)];lib.fx_surd_pack.argtypes=[C.POINTER(Number),C.POINTER(Number)]
  lib.fx_raw_fraction_convert.argtypes=[C.POINTER(Number),C.POINTER(Number)];lib.fx_decimal_decode.argtypes=[C.POINTER(Decimal),C.POINTER(Number)]
