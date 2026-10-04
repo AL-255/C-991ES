@@ -1,0 +1,30 @@
+{
+  "basis": "Audited semantic models, distinct from production C integration or full-domain parity. Original proof metadata remains unchanged.",
+  "ranges": [
+    {
+      "start": "0x11860",
+      "end": "0x11884",
+      "scope": "Four fixed ROM variant parameter getters selectfields3/2/1/0 and returnROM1:FFE0+field with bytezero condition, preserved callerworking values and no persistent writes; allentry/convergence/return paths inspected",
+      "source": "analysis/understanding/numeric-low/variant_getters_model.c",
+      "evidence": [
+        "analysis/understanding/numeric-low/variant-getters-notes.md",
+        "analysis/understanding/numeric-low/variant-getters-proof.json"
+      ],
+      "uncredited_instructions": 18,
+      "audit": "Independent root static assembly/model review and matching recorded source/artifact pins; callable semantic scope only."
+    },
+    {
+      "start": "0x131ea",
+      "end": "0x13662",
+      "scope": "Complete27publicstatisticsquery adapters: model-table routing, A/B/C/correlation andaggregate fieldselection, incomingFerrorpredictionbypass, per-selected-record cleanup/status, directextrema status, sharedframe/copy/returnpaths. Mathematical callees receive no newcredit; validprepared table/modeldomain2..8, arbitrary malformed tabletargetnotasserted.",
+      "source": "analysis/understanding/numeric-low/stats_public_model.c",
+      "evidence": [
+        "analysis/understanding/numeric-low/stats-public-notes.md",
+        "analysis/understanding/numeric-low/stats-branch-proof.json.gz",
+        "analysis/c-verification/stats.json"
+      ],
+      "uncredited_instructions": 506,
+      "audit": "Independent root review of all claimed assembly instructions, meaningful semantic model, exact branch/record selection and matching recorded source pins. Production parity is separate."
+    }
+  ]
+}

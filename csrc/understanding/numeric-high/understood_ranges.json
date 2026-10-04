@@ -1,0 +1,111 @@
+{
+  "basis": "Audited semantic models, distinct from production C integration or full-domain parity. Original proof metadata remains unchanged.",
+  "ranges": [
+    {
+      "routine": "raw Math-error factory",
+      "start": "0x1bf7a",
+      "complete": true,
+      "uncredited_instruction_addresses": [
+        "0x1bf7a",
+        "0x1bf7c",
+        "0x1bf7e",
+        "0x1bf82",
+        "0x1bf84",
+        "0x1bf86",
+        "0x1bf88",
+        "0x1bf8a",
+        "0x1bf8c",
+        "0x1bf8e"
+      ],
+      "instruction_count": 10,
+      "evidence": [
+        "analysis/understanding/numeric-high/README.md",
+        "analysis/understanding/numeric-high/factory.asm",
+        "analysis/understanding/numeric-high/probe_factory.py",
+        "analysis/understanding/numeric-high/factory-report.json"
+      ],
+      "listing_sha256": "f9e715eee6fb521da0005c6c8967baa3e8141a2785898033f07dca143c41b19c",
+      "limitations": "No wrapper, parser, UI or status interpretation claim.",
+      "end": "0x1bf90",
+      "scope": "raw Math-error factory; complete leaf control and dataflow. No wrapper, parser, UI or status interpretation claim.",
+      "source": "analysis/understanding/numeric-high/README.md",
+      "audit": "Independent root static assembly/model review and matching recorded source/artifact pins; callable semantic scope only."
+    },
+    {
+      "routine": "unsigned binary byte to two packed-BCD pairs",
+      "start": "0x18d14",
+      "complete": true,
+      "uncredited_instruction_addresses": [
+        "0x18d14",
+        "0x18d16",
+        "0x18d18",
+        "0x18d1a",
+        "0x18d1c",
+        "0x18d1e",
+        "0x18d20",
+        "0x18d22",
+        "0x18d24",
+        "0x18d26",
+        "0x18d28",
+        "0x18d2a",
+        "0x18d2c",
+        "0x18d2e",
+        "0x18d30",
+        "0x18d32",
+        "0x18d34",
+        "0x18d36",
+        "0x18d38",
+        "0x18d3a",
+        "0x18d3c"
+      ],
+      "instruction_count": 21,
+      "evidence": [
+        "analysis/understanding/numeric-high/bcd-contract.md",
+        "analysis/understanding/numeric-high/probe_bcd.py",
+        "analysis/understanding/numeric-high/bcd-report.json.gz"
+      ],
+      "listing_sha256": "f9e715eee6fb521da0005c6c8967baa3e8141a2785898033f07dca143c41b19c",
+      "limitations": "Canonical packed-BCD numerical meaning; no malformed-BCD admission or parser remapping credit.",
+      "end": "0x18d3e",
+      "scope": "unsigned binary byte to two packed-BCD pairs; complete leaf control and dataflow. Canonical packed-BCD numerical meaning; no malformed-BCD admission or parser remapping credit.",
+      "source": "analysis/understanding/numeric-high/bcd-contract.md",
+      "audit": "Independent root static assembly/model review and matching recorded source/artifact pins; callable semantic scope only."
+    },
+    {
+      "routine": "two packed-BCD pairs to binary byte",
+      "start": "0x18d3e",
+      "complete": true,
+      "uncredited_instruction_addresses": [
+        "0x18d3e",
+        "0x18d40",
+        "0x18d42",
+        "0x18d44",
+        "0x18d46",
+        "0x18d48",
+        "0x18d4a",
+        "0x18d4c",
+        "0x18d4e",
+        "0x18d50",
+        "0x18d52",
+        "0x18d54",
+        "0x18d56",
+        "0x18d58",
+        "0x18d5a",
+        "0x18d5c",
+        "0x18d5e"
+      ],
+      "instruction_count": 17,
+      "evidence": [
+        "analysis/understanding/numeric-high/bcd-contract.md",
+        "analysis/understanding/numeric-high/probe_bcd.py",
+        "analysis/understanding/numeric-high/bcd-report.json.gz"
+      ],
+      "listing_sha256": "f9e715eee6fb521da0005c6c8967baa3e8141a2785898033f07dca143c41b19c",
+      "limitations": "Canonical packed-BCD numerical meaning; no malformed-BCD admission or parser remapping credit.",
+      "end": "0x18d60",
+      "scope": "two packed-BCD pairs to binary byte; complete leaf control and dataflow. Canonical packed-BCD numerical meaning; no malformed-BCD admission or parser remapping credit.",
+      "source": "analysis/understanding/numeric-high/bcd-contract.md",
+      "audit": "Independent root static assembly/model review and matching recorded source/artifact pins; callable semantic scope only."
+    }
+  ]
+}

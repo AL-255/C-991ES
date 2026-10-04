@@ -1,0 +1,31 @@
+{
+  "basis": "Audited semantic models, distinct from production C integration or full-domain parity. Original proof metadata remains unchanged.",
+  "ranges": [
+    {
+      "start": "0xEA4A",
+      "end": "0xEAF2",
+      "instruction_count": 68,
+      "meaning": "Tiny column and row label composition",
+      "scope": "Tiny column and row label composition; complete ROM template, selector and row policies; native glyph scratch remains local.",
+      "source": "analysis/understanding/ui-mid/fx_grid_decoration.c",
+      "evidence": [
+        "analysis/understanding/ui-mid/GRID-HANDOFF.md",
+        "analysis/understanding/ui-mid/grid-decoration-proof.json.gz"
+      ],
+      "audit": "Independent root static assembly/model review and matching recorded source/artifact pins; callable semantic scope only."
+    },
+    {
+      "start": "0xEAF2",
+      "end": "0xEB6A",
+      "instruction_count": 45,
+      "meaning": "ROM descriptor border selection and endpoint decorations",
+      "scope": "ROM descriptor border selection and endpoint decorations; complete ROM template, selector and row policies; native glyph scratch remains local.",
+      "source": "analysis/understanding/ui-mid/fx_grid_decoration.c",
+      "evidence": [
+        "analysis/understanding/ui-mid/GRID-HANDOFF.md",
+        "analysis/understanding/ui-mid/grid-decoration-proof.json.gz"
+      ],
+      "audit": "Independent root static assembly/model review and matching recorded source/artifact pins; callable semantic scope only."
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "basis": "Audited semantic models, distinct from production C integration or full-domain parity. Original proof metadata remains unchanged.",
+  "ranges": [
+    {
+      "start": "0x5492",
+      "end": "0x54aa",
+      "source": "analysis/understanding/early-rom/fx_rom_ramp.c",
+      "scope": "Complete detached 32-byte ROM alias ramp validator; first mismatch and success branches, segment selection and preserved RAM. No boot reachability claim.",
+      "evidence": [
+        "analysis/understanding/early-rom/RAMP-HANDOFF.md",
+        "analysis/understanding/early-rom/ramp-proof.json"
+      ],
+      "audit": "Independent root static assembly/model review and matching recorded source/artifact pins; callable semantic scope only."
+    },
+    {
+      "start": "0x413a",
+      "end": "0x41a8",
+      "source": "analysis/understanding/early-rom/fx_early_policy.c",
+      "scope": "Complete eager output-clear and editor admission/reset policy with live destination aliases",
+      "evidence": [
+        "analysis/understanding/early-rom/POLICY-HANDOFF.md",
+        "analysis/understanding/early-rom/policy-proof.json"
+      ],
+      "audit": "Independent root review of all claimed assembly instructions, meaningful semantic model, exact branch/record selection and matching recorded source pins. Production parity is separate."
+    },
+    {
+      "start": "0x41c2",
+      "end": "0x41d0",
+      "source": "analysis/understanding/early-rom/fx_early_policy.c",
+      "scope": "Complete result flags low-nibble-one predicate with known shared boolean return tails",
+      "evidence": [
+        "analysis/understanding/early-rom/POLICY-HANDOFF.md",
+        "analysis/understanding/early-rom/policy-proof.json"
+      ],
+      "audit": "Independent root review of all claimed assembly instructions, meaningful semantic model, exact branch/record selection and matching recorded source pins. Production parity is separate."
+    },
+    {
+      "start": "0x41e6",
+      "end": "0x41f6",
+      "source": "analysis/understanding/early-rom/fx_early_policy.c",
+      "scope": "Complete pending horizontal-key predicate",
+      "evidence": [
+        "analysis/understanding/early-rom/POLICY-HANDOFF.md",
+        "analysis/understanding/early-rom/policy-proof.json"
+      ],
+      "audit": "Independent root review of all claimed assembly instructions, meaningful semantic model, exact branch/record selection and matching recorded source pins. Production parity is separate."
+    },
+    {
+      "start": "0x4206",
+      "end": "0x429c",
+      "source": "analysis/understanding/early-rom/fx_early_policy.c",
+      "scope": "Complete pending statistics-key and mode88/screen18 predicates plus seven immutable exclusion-list entry gates and shared traversal",
+      "evidence": [
+        "analysis/understanding/early-rom/POLICY-HANDOFF.md",
+        "analysis/understanding/early-rom/policy-proof.json"
+      ],
+      "audit": "Independent root review of all claimed assembly instructions, meaningful semantic model, exact branch/record selection and matching recorded source pins. Production parity is separate."
+    }
+  ]
+}

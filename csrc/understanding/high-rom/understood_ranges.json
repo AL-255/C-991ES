@@ -1,0 +1,84 @@
+{
+  "basis": "Audited semantic models, distinct from production C integration or full-domain parity. Original proof metadata remains unchanged.",
+  "ranges": [
+    {
+      "start": "0x1C76A",
+      "end": "0x1C878",
+      "scope": "Complete ordinary/exact square-root admission, indexed component preparation, packing/fallback and thin call wrappers; semantic understanding distinct from raw/physical production parity.",
+      "source": "analysis/understanding/high-rom/model-root-policy.c",
+      "evidence": [
+        "analysis/understanding/high-rom/root-policy.md",
+        "csrc/parse/fx_eval_surd_workspace.c",
+        "analysis/understanding/high-rom/prior-evidence/c-verification-math_off_root.json",
+        "analysis/understanding/high-rom/prior-evidence/math-off-square-root-review-proof.json.gz",
+        "analysis/understanding/high-rom/prior-evidence/math-off-root-boundary-review-candidate-proof.json",
+        "analysis/disassembly/complete.asm"
+      ],
+      "audit": "Independent root static assembly/model review and matching recorded source/artifact pins; callable semantic scope only."
+    },
+    {
+      "start": "0x1CDA8",
+      "end": "0x1CDAE",
+      "scope": "Complete raw representation highnibble query: all256 headers, no source/RAM writes and no branch.",
+      "source": "analysis/understanding/high-rom/header-classification-model.c",
+      "evidence": [
+        "analysis/understanding/high-rom/header-classification.md",
+        "analysis/understanding/high-rom/header-classification.json",
+        "analysis/understanding/high-rom/collect-header.py",
+        "analysis/disassembly/complete.asm"
+      ],
+      "audit": "Independent root static assembly/model review and matching recorded source/artifact pins; callable semantic scope only."
+    },
+    {
+      "start": "0x1C3FA",
+      "end": "0x1C430",
+      "scope": "Finite remainder-first/quotient-second wrapper; complete caller/preparation/admission/finite-callee/commit/status/return semantics distinct from production parity.",
+      "source": "analysis/understanding/high-rom/model-special-wrappers.c",
+      "evidence": [
+        "analysis/understanding/high-rom/special-wrappers.md",
+        "analysis/understanding/high-rom/special-small-argument-proof.json",
+        "analysis/understanding/high-rom/probe-special.py",
+        "csrc/numeric/fx_numeric.c",
+        "csrc/numeric/quotient/EXECUTION.md",
+        "tools/test_numeric_c.py",
+        "analysis/qpi-independent-audit/HANDOFF.md",
+        "analysis/disassembly/complete.asm"
+      ],
+      "audit": "Independent root review of all claimed assembly instructions, meaningful semantic model, exact branch/record selection and matching recorded source pins. Production parity is separate."
+    },
+    {
+      "start": "0x1C430",
+      "end": "0x1C48C",
+      "scope": "Cancellation-aware base-ten exponential minus-one wrapper; complete caller/preparation/admission/finite-callee/commit/status/return semantics distinct from production parity.",
+      "source": "analysis/understanding/high-rom/model-special-wrappers.c",
+      "evidence": [
+        "analysis/understanding/high-rom/special-wrappers.md",
+        "analysis/understanding/high-rom/special-small-argument-proof.json",
+        "analysis/understanding/high-rom/probe-special.py",
+        "csrc/numeric/fx_numeric.c",
+        "csrc/numeric/quotient/EXECUTION.md",
+        "tools/test_numeric_c.py",
+        "analysis/qpi-independent-audit/HANDOFF.md",
+        "analysis/disassembly/complete.asm"
+      ],
+      "audit": "Independent root review of all claimed assembly instructions, meaningful semantic model, exact branch/record selection and matching recorded source pins. Production parity is separate."
+    },
+    {
+      "start": "0x1C48C",
+      "end": "0x1C4D8",
+      "scope": "Cancellation-aware base-ten logarithm of one-plus wrapper; complete caller/preparation/admission/finite-callee/commit/status/return semantics distinct from production parity.",
+      "source": "analysis/understanding/high-rom/model-special-wrappers.c",
+      "evidence": [
+        "analysis/understanding/high-rom/special-wrappers.md",
+        "analysis/understanding/high-rom/special-small-argument-proof.json",
+        "analysis/understanding/high-rom/probe-special.py",
+        "csrc/numeric/fx_numeric.c",
+        "csrc/numeric/quotient/EXECUTION.md",
+        "tools/test_numeric_c.py",
+        "analysis/qpi-independent-audit/HANDOFF.md",
+        "analysis/disassembly/complete.asm"
+      ],
+      "audit": "Independent root review of all claimed assembly instructions, meaningful semantic model, exact branch/record selection and matching recorded source pins. Production parity is separate."
+    }
+  ]
+}

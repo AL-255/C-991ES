@@ -1,0 +1,67 @@
+{
+  "basis": "Audited semantic models, distinct from production C integration or full-domain parity. Original proof metadata remains unchanged.",
+  "ranges": [
+    {
+      "start": "0x15960",
+      "end": "0x15982",
+      "scope": "Complete non-consuming editor operator-category predicate: decode packed token; accept kinds2/3/8; preserve R4/ER14; return boolean inR0",
+      "source": "analysis/understanding/parser/sources/token_predicates.c",
+      "evidence": [
+        "analysis/understanding/parser/TOKEN-PREDICATES.md",
+        "analysis/understanding/parser/token-predicates-proof.json.gz"
+      ],
+      "complete": true,
+      "audit": "Independent root static assembly/model review and matching recorded source/artifact pins; callable semantic scope only."
+    },
+    {
+      "start": "0x1599e",
+      "end": "0x159d0",
+      "scope": "Complete non-consuming completed-factor layout predicate: reject raw97 before decode; accept kinds3/4/5/6/7/8; preserve R4/ER14; caller structural delimiters analyzed separately",
+      "source": "analysis/understanding/parser/sources/token_predicates.c",
+      "evidence": [
+        "analysis/understanding/parser/TOKEN-PREDICATES.md",
+        "analysis/understanding/parser/token-predicates-proof.json.gz"
+      ],
+      "complete": true,
+      "audit": "Independent root static assembly/model review and matching recorded source/artifact pins; callable semantic scope only."
+    },
+    {
+      "start": "0x1660e",
+      "end": "0x16622",
+      "scope": "Complete pending-operation reducibility predicate communicated through unsigned comparison flags",
+      "source": "analysis/understanding/parser/sources/operator_priority.c",
+      "evidence": [
+        "analysis/understanding/parser/OPERATOR-PRIORITY.md",
+        "analysis/understanding/parser/operator-priority-proof.json.gz"
+      ],
+      "complete": true,
+      "audit": "Independent root review of all claimed assembly instructions, meaningful semantic model, exact branch/record selection and matching recorded source pins. Production parity is separate."
+    },
+    {
+      "start": "0x16772",
+      "end": "0x167a6",
+      "scope": "Complete three-valued precedence/reduction decision including structural boundary and comma override",
+      "source": "analysis/understanding/parser/sources/operator_priority.c",
+      "evidence": [
+        "analysis/understanding/parser/OPERATOR-PRIORITY.md",
+        "analysis/understanding/parser/operator-priority-proof.json.gz"
+      ],
+      "complete": true,
+      "audit": "Independent root review of all claimed assembly instructions, meaningful semantic model, exact branch/record selection and matching recorded source pins. Production parity is separate."
+    },
+    {
+      "start": "0x161f2",
+      "end": "0x16268",
+      "scope": "Complete three-digit unit selector: consumed-token errors, BCD admission/conversion, immutable capability getter gate, dormant paired-selector swap and final conversion dispatch",
+      "source": "analysis/understanding/parser/sources/conversion_selector.c",
+      "evidence": [
+        "analysis/understanding/parser/CONVERSION-SELECTOR.md",
+        "analysis/understanding/parser/conversion-selector-proof.json.gz",
+        "analysis/build/understanding-priority/numeric-high/bcd-report.json",
+        "analysis/build/understanding-priority/numeric-low/variant-getters-proof.json"
+      ],
+      "complete": true,
+      "audit": "Independent root review of all claimed assembly instructions, meaningful semantic model, exact branch/record selection and matching recorded source pins. Production parity is separate."
+    }
+  ]
+}

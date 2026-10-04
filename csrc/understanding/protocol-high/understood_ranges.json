@@ -1,0 +1,18 @@
+{
+  "basis": "Audited semantic models, distinct from production C integration or full-domain parity. Original proof metadata remains unchanged.",
+  "ranges": [
+    {
+      "start": "0x7a60",
+      "end": "0x7acc",
+      "instruction_count": 54,
+      "scope": "Complete byte-copy leaf: signed16 wrapped overlap direction, unsigned16 live caller count, forward/backward byte ordering, segment-zero ROM/RAM behavior, destination return, ABI preservation and explicit frame-alias consequences",
+      "source": "analysis/understanding/protocol-high/copy_leaf.c",
+      "evidence": [
+        "analysis/understanding/protocol-high/COPY-LEAF.md",
+        "analysis/understanding/protocol-high/copy-proof.json",
+        "analysis/understanding/protocol-high/test_copy_leaf.py"
+      ],
+      "audit": "Independent root static assembly/model review and matching recorded source/artifact pins; callable semantic scope only."
+    }
+  ]
+}
