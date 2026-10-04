@@ -106,6 +106,8 @@ explicit seed; legacy value APIs begin with a local zero seed for each call.
 Prepared BASE word APIs keep selected-byte, global-mode and operation-mode
 policies separate from the typed BASE-N UI APIs.
 
+Physical real differentiation stages the point before explicit tolerance parsing, then reads and writes its Richardson workspace in RAM. Callback and cancellation changes to that workspace remain visible. Stored surds converted to decimal publish the six components in native order. The standalone physical integral API has separately staged bounds, tolerance and callback context; its complete expression integration and C4 twenty-byte calculus contract remain pending.
+
 CALC dependency scanning and the prepared CALC/SOLVE outer controller now
 compose coefficient prompts, guess input, result commits, replay and error
 continuations. Their tested scalar workflow retains the separate owner of each

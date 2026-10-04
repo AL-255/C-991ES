@@ -1,5 +1,6 @@
 /* High-level implementation of firmware numeric storage. GPL-3.0-or-later. */
 #include "fx_numeric.h"
+#include "fx_numeric_components.h"
 #include <ctype.h>
 #include <limits.h>
 #include <string.h>
@@ -547,6 +548,14 @@ static fx_numeric_status component_sqrt(fx_number *out, const fx_number *radican
     out->bytes[0] = (uint8_t)mantissa;
     out->bytes[8] = 0x50; out->bytes[9] = 1;
     return FX_NUMERIC_OK;
+}
+/* Prepared component policy shared with compact-radical conversion. The
+ * positive-tagged zero coordinate intentionally differs from the ordinary
+ * zero-guarded square-root entry. No numerical algorithm is duplicated. */
+fx_numeric_status fx_numeric_component_sqrt(fx_number *out,
+                                             const fx_number *radicand) {
+    if (!out || !radicand) return FX_NUMERIC_INVALID;
+    return component_sqrt(out, radicand);
 }
 /* Native multiplication truncates a fixed mantissa window before normalizing.
  * Normal fifteen-digit operands give the ordinary product. A short mantissa

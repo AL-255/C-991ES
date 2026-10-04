@@ -8,7 +8,16 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-SUITES = ('tokens', 'platform', 'boot', 'boot_events', 'persistent', 'diagnostic_contrast', 'result_classify', 'main_loop', 'boot_main_ui', 'keys', 'key_dispatch', 'key_wait', 'key_controller', 'annunciator', 'cursor', 'editor', 'editor_construct', 'input_codec', 'input_prepare', 'input_recover', 'input_controller', 'ui_controller', 'error_display', 'error_event', 'menu_navigator', 'mode_setup', 'mode_bank_menu', 'numeric', 'numeric_transcend', 'numeric_power', 'numeric_root', 'numeric_logbase', 'numeric_calculus', 'numeric_integral', 'numeric_derivative', 'numeric_base', 'numeric_sexagesimal', 'numeric_solver', 'numeric_solve', 'numeric_random', 'numeric_quotient', 'raw_decimal', 'combinatorics', 'complex', 'complex_angles', 'complex_round', 'complex_dispatch', 'linalg', 'linalg_reduce', 'linalg_store', 'linalg_dispatch', 'stats', 'stats_value', 'stats_cache', 'stats_editor', 'stats_normal', 'trig', 'trig_math', 'trig_inverse', 'trig_hyperbolic', 'math_context', 'render', 'render_complex', 'render_pair', 'render_linalg', 'format', 'format_base', 'format_budget', 'eval', 'eval_complex', 'eval_variables', 'eval_calculus', 'eval_continuous', 'eval_base', 'eval_sexagesimal', 'eval_coordinate', 'eval_storage', 'eval_finish', 'eval_environment', 'solve_controller', 'calc_scan', 'eval_random', 'eval_rich', 'eval_rich_unary', 'eval_rich_reduce', 'eval_rich_parser', 'solve_outer', 'table', 'base_word', 'cli', 'safety')
+SUITES = ('tokens', 'platform', 'boot', 'boot_events', 'persistent', 'diagnostic_contrast', 'result_classify', 'main_loop', 'boot_main_ui', 'keys', 'key_dispatch', 'key_wait', 'key_controller', 'annunciator', 'cursor', 'editor', 'editor_construct', 'input_codec', 'input_prepare', 'input_recover', 'input_controller', 'ui_controller', 'error_display', 'error_event', 'menu_navigator', 'mode_setup', 'mode_bank_menu', 'numeric', 'numeric_transcend', 'numeric_power', 'numeric_root', 'numeric_logbase', 'numeric_calculus', 'numeric_integral', 'numeric_integral_storage', 'numeric_derivative', 'numeric_derivative_storage', 'numeric_surd_components', 'numeric_base', 'numeric_sexagesimal', 'numeric_solver', 'numeric_solve', 'numeric_random', 'numeric_quotient', 'raw_decimal', 'combinatorics', 'complex', 'complex_angles', 'complex_round', 'complex_dispatch', 'linalg', 'linalg_reduce', 'linalg_store', 'linalg_dispatch', 'stats', 'stats_value', 'stats_cache', 'stats_editor', 'stats_normal', 'trig', 'trig_math', 'trig_inverse', 'trig_hyperbolic', 'math_context', 'render', 'render_complex', 'render_pair', 'render_linalg', 'format', 'format_base', 'format_budget', 'eval', 'eval_complex', 'eval_variables', 'eval_calculus', 'eval_continuous', 'eval_base', 'eval_sexagesimal', 'eval_coordinate', 'eval_storage', 'eval_finish', 'eval_environment', 'solve_controller', 'calc_scan', 'eval_random', 'eval_rich', 'eval_rich_unary', 'eval_rich_reduce', 'eval_rich_parser', 'eval_stats', 'solve_outer', 'table', 'base_word', 'cli', 'safety')
+
+
+# Keep the canonical full run at the established differential workloads.
+VERIFICATION_ARGUMENTS = {
+    'numeric': ('--random-cases', '5000'),
+    'numeric_base': ('--random-cases', '8000', '--exhaustive-bin'),
+    'stats_editor': ('--random-cases', '3000'),
+    'stats_normal': ('--random-cases', '3000', '--random-tables', '200'),
+}
 
 
 def audit():
@@ -69,8 +78,9 @@ def main():
                         '-DCMAKE_BUILD_TYPE=Release'], cwd=ROOT, check=True)
         subprocess.run(['cmake', '--build', 'analysis/build/c-port', '-j4'], cwd=ROOT, check=True)
         for suite in SUITES:
-            subprocess.run([sys.executable, str(ROOT / 'tools' / f'test_{suite}_c.py')],
-                           cwd=ROOT, check=True)
+            command = [sys.executable, str(ROOT / 'tools' / f'test_{suite}_c.py')]
+            command += VERIFICATION_ARGUMENTS.get(suite, ())
+            subprocess.run(command, cwd=ROOT, check=True)
     return 0 if audit() else 1
 
 

@@ -25,7 +25,7 @@ MODULES=[
     'platform/fx_persistent','platform/fx_diagnostic_contrast','platform/fx_result_classify',
     'parse/fx_tokens','parse/fx_eval','parse/fx_eval_rich','parse/fx_eval_rich_unary','parse/fx_eval_rich_reduce','parse/fx_eval_surd_workspace','numeric/fx_raw_decimal_exp', 'stats/fx_stats', 'stats/fx_stats_value','parse/fx_eval_storage','parse/fx_eval_finish','numeric/fx_numeric','numeric/fx_random','numeric/fx_transcend','numeric/fx_power',
     'numeric/fx_root','numeric/fx_combinatorics','numeric/fx_logbase','numeric/fx_calculus',
-    'numeric/fx_integral','numeric/fx_derivative','numeric/fx_base','numeric/fx_base_literal',
+    'numeric/fx_integral','numeric/fx_derivative', 'numeric/fx_derivative_storage', 'numeric/fx_surd_components','numeric/fx_base','numeric/fx_base_literal',
     'numeric/fx_sexagesimal','numeric/fx_quotient_remainder',
     'numeric/fx_raw_decimal_parts','numeric/fx_raw_decimal_divide',
     'numeric/fx_raw_decimal_multiply_add','numeric/fx_raw_fraction_convert',

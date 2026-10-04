@@ -2027,11 +2027,11 @@
     "csrc/format/fx_format_base.h": "090a3c9a580f760da4ead2ac6fe6d132a81e81073db2353e687c87fc55f1b489",
     "csrc/format/fx_format_budget.c": "e2a9855841cf71f568cabc93f0282fddb94b5432d8770445f94095ab3bfe866c",
     "csrc/format/fx_format_budget.h": "9732cadc51faf9bbd03fe1e67cd1aad01b2810343668d820372839ccd117594d",
-    "csrc/numeric/fx_numeric.c": "de7cff57ab969facf762fa6705e4a4f288605952f85ef432813e0e8073692e93",
+    "csrc/numeric/fx_numeric.c": "39ab0c12383aec6bc4a93cbe71dadc81776db42ec62efcc81a9556ed92535109",
     "csrc/numeric/fx_numeric.h": "9d62f287b22cf4b8dc69e8a6f45035b60c8a7df98e59d85326547c64d05dff2e",
     "analysis/verification/numeric-samples.json": "4f5d8406e984849a3509cff0a51052686d967d2b0984e1b85a47efc0a031db66",
     "tools/test_numeric_c.py": "bbd523ce80ccb535a739716f32029fa91bcd4c9221098cc95fdc84bf6865ef2d",
-    "tools/c_verification.py": "99d9035e36142bd00e16c38e1488d26c7eed6834c5a7c8f411f68587d4d28a65",
+    "tools/c_verification.py": "245c95c7e38644ac51199e138b127e5d4e097348d5d948af7940b5b32af6be53",
     "tools/test_render_c.py": "21e72b4ece928d5928a18e7e6d369788029a0a0221d2a323363fba3786eccf80",
     "tools/nxu8/machine.py": "440fcfe22942a6cd9f9ab2782be322032f3a649b88d22e9d50089f288b4d9adf",
     "tools/nxu8/harness.c": "2691cd3bab734dd8bb6cf12700b6a3847b8d6ef28f4b614b2a1bbf7fdfb2f613",
@@ -2042,6 +2042,8 @@
     "tools/nxu8/vendor/SimU8/mmustub.h": "b4adb490464045a833bcf213a76d5681011b1ef90a7db3e85e3674743f8058ce",
     "tools/nxu8/vendor/SimU8/core.h": "a3fce3d1aa9ce6a83a612df69ce6825743cf38bbcc55ed8000e8ebfb589eb50b",
     "tools/nxu8/vendor/SimU8/memtypes.h": "b0f607690fe43135dcbe83a329babd699b71ca78400e1880d85f13d6ca32c194",
-    "tools/nxu8/vendor/SimU8/coretypes.h": "bf9e46adb23ccc669899e2bf438fa9d03c8d06edff234f1192da0b0071f689af"
+    "tools/nxu8/vendor/SimU8/coretypes.h": "bf9e46adb23ccc669899e2bf438fa9d03c8d06edff234f1192da0b0071f689af",
+    "csrc/numeric/fx_numeric_components.h": "47869b95cf5bbd563dc70ab9ae9693c959ecb2887ff325dfa103a57978c079bd",
+    "tools/c_build_inputs.py": "06623e082b3bc528380a7eec1aac2a820587604f0f27a6229de95f10bddf1018"
   }
 }

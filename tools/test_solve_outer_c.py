@@ -55,6 +55,8 @@ def main():
     listed = ['csrc/' + name for name in re.findall('(?<![\\w/])([\\w/]+\\.c)(?!\\w)', (ROOT / 'csrc/CMakeLists.txt').read_text().split('target_include_directories')[0])]
     sources = list(dict.fromkeys(listed + ['csrc/ui/fx_calc_scan.c', 'csrc/ui/fx_solve_outer.c', 'csrc/ui/fx_error_boundary.c']))
     dependencies = implementation_inputs(ROOT, sources) + ['csrc/CMakeLists.txt', 'tools/test_platform_c.py', 'tools/test_main_loop_c.py', 'tools/test_ui_controller_c.py', 'tools/test_input_controller_c.py', 'tools/test_error_event_c.py', 'tools/test_key_controller_c.py', 'tools/test_key_wait_c.py', 'tools/test_boot_c.py', 'tools/c_build_inputs.py', 'tools/c_verification.py', 'tools/nxu8/machine.py', 'tools/nxu8/harness.c', 'tools/nxu8/vendor/SimU8/core.c', 'firmware/fx-991es-plus-c-ver4.bin', str(FIXTURE.relative_to(ROOT)), INPUT_CATALOG, OBSERVER, SHIM, 'tools/test_solve_outer_c.py']
+    dependencies += ['tools/test_boot_events_c.py', 'tools/test_diagnostic_contrast_c.py',
+        'tools/trace_natural_result.py', 'tools/verify_firmware.py', 'tools/nxu8/decoder.py']
     dependencies += [str(path.relative_to(ROOT)) for path in (ROOT / 'tools/nxu8/vendor/SimU8').glob('*.h')]
     dependencies = sorted(set(dependencies))
     pins = {name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest() for name in dependencies}

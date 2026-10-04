@@ -814,6 +814,8 @@ def main():
         report = write_report('analysis/c-verification/solve_controller.json', report,
             compiled_inputs+['csrc/CMakeLists.txt', 'tools/test_input_controller_c.py',
                 'tools/test_platform_c.py', 'tools/test_error_event_c.py', 'tools/test_key_controller_c.py',
+                'tools/test_key_wait_c.py', 'tools/test_boot_c.py', 'tools/trace_natural_result.py',
+                'tools/verify_firmware.py', 'tools/nxu8/decoder.py',
                 'tools/test_eval_complex_c.py', 'tools/test_numeric_c.py',
                 'tools/c_build_inputs.py', 'tools/c_verification.py'],
             'tools/test_solve_controller_c.py')

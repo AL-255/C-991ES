@@ -49,7 +49,7 @@ def main():
         'numeric/fx_sexagesimal.c', 'numeric/fx_quotient_remainder.c',
         'numeric/fx_raw_decimal_parts.c', 'numeric/fx_raw_decimal_divide.c',
         'numeric/fx_raw_decimal_multiply_add.c', 'numeric/fx_raw_fraction_convert.c',
-        'numeric/fx_root.c', 'numeric/fx_logbase.c', 'numeric/fx_calculus.c', 'numeric/fx_integral.c', 'numeric/fx_derivative.c', 'numeric/fx_combinatorics.c',
+        'numeric/fx_root.c', 'numeric/fx_logbase.c', 'numeric/fx_calculus.c', 'numeric/fx_integral.c', 'numeric/fx_derivative.c', 'numeric/fx_derivative_storage.c', 'numeric/fx_surd_components.c', 'numeric/fx_combinatorics.c',
         'complex/fx_complex.c', 'complex/fx_complex_angle.c',
         'complex/fx_complex_round.c', 'complex/fx_complex_dispatch.c',
         'linalg/fx_linalg.c', 'linalg/fx_linalg_store.c',

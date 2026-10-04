@@ -1,0 +1,37 @@
+{
+  "module": "physical_real_derivative_workspace",
+  "implementation": [
+    "csrc/numeric/fx_derivative_storage.c",
+    "csrc/numeric/fx_derivative_storage.h"
+  ],
+  "verification": "analysis/c-verification/numeric_derivative_storage.json",
+  "test": "tools/test_numeric_derivative_storage_c.py",
+  "native_oracle": "tools/nxu8/derivative_storage_events.c",
+  "input_recipes": "analysis/native-fixtures/derivative-storage/inputs.json",
+  "native_entry": "171F4",
+  "driver": "04AEE",
+  "prepared_global_modes": [
+    "C1",
+    "06",
+    "07"
+  ],
+  "workspace": [
+    "851E..860D",
+    "8640..867B suppliedSURDcomponents"
+  ],
+  "new_understood_instruction_claim": false,
+  "full_firmware_complete": false,
+  "limits": [
+    "C4 complex20-byte contract",
+    "upstream rich argument and SURD variable preparation",
+    "caller X restoration and timer/device effects",
+    "whole parser glue remains root-owned",
+    "malformed decimal coordinates rejected by bounded decoder in raw comparator"
+  ],
+  "native_comparison_codes": {
+    "equal": 1,
+    "less": 2,
+    "greater": 4,
+    "raw_header_invalid": 240
+  }
+}

@@ -13,6 +13,8 @@
 #include "../numeric/fx_logbase.h"
 #include "../numeric/fx_integral.h"
 #include "../numeric/fx_derivative.h"
+#include "../numeric/fx_derivative_storage.h"
+#include "../numeric/fx_surd_components.h"
 #include "../numeric/fx_sexagesimal.h"
 #include "../numeric/fx_quotient_remainder.h"
 #include "../numeric/fx_random.h"
@@ -543,9 +545,14 @@ static void load_variable(parser *p, fx_complex *out, unsigned slot)
         }
         /* 51CA invokes173FA when18212 denies natural output. This path
          * converts compact radicals, preserving other scalar headers. */
-        if (!exact_math(p) && kind == FX_NUMBER_SURD &&
-            fx_number_to_decimal(components[index], components[index]) != FX_NUMERIC_OK) {
-            unsupported(p, peek(p)); return;
+        if (!exact_math(p) && kind == FX_NUMBER_SURD) {
+            fx_numeric_status status = p->storage ?
+                fx_surd_components_convert_copy(p->storage->ram,
+                    components[index], components[index]) :
+                fx_number_to_decimal(components[index], components[index]);
+            if (status != FX_NUMERIC_OK) {
+                unsupported(p, peek(p)); return;
+            }
         }
     }
 }
@@ -1575,6 +1582,15 @@ static void calculus_expression_finish(parser *p, fx_complex *value)
         if (p->environment.screen != 1) p->status = FX_EVAL_SYNTAX;
         else continuous_finish(p, &value->real);
     }
+    if (p->storage && p->calculus_token == 0x6b &&
+        p->calculus_mode != 1 && p->status > FX_EVAL_OK) {
+        /*04AFA establishes85B4 before preflight/argument171EA calls.
+         *17250 publishes actual expression errors here, before point/run
+         * staging. Later driver-level comma/tolerance guards do not. */
+        fx_number error;
+        fx_number_error(&error, (unsigned)p->status);
+        memcpy(p->storage->ram + 0x85b4, error.bytes, 10);
+    }
 }
 
 static fx_numeric_status calculus_evaluate(fx_number *out, const fx_number *x, void *userdata)
@@ -1595,7 +1611,14 @@ static fx_numeric_status calculus_evaluate(fx_number *out, const fx_number *x, v
     callback.unsupported = 0;
     callback.calculus_mode = 1;
     callback.preflight_mode = 0;
+    if (callback.storage) {
+        /* Fixed calculus stores overlap Mat/Vct slots7/8. Refresh before
+         * body evaluation, so the typed view observes current physical RAM. */
+        variables_from_storage(&callback);
+        bank_from_storage(&callback);
+    }
     callback.variables->values[FX_VARIABLE_X][0] = *x;
+    variables_to_storage(&callback); /*522A publishes local scalar X. */
     expression(&callback, &value, 0);
     call->callback_position = callback.position;
     call->sampled = 1;
@@ -1640,6 +1663,13 @@ static void calculus(parser *p, fx_complex *out, uint8_t token)
     calculus_call call = {.parent = p, .finite_series = token == 0x69 || token == 0x5d};
     fx_calculus_control control = {calculus_cancelled, &call};
     int has_tolerance = 0;
+    int physical_derivative = p->storage && token == 0x6b;
+    fx_derivative_storage derivative_storage = {
+        p->storage ? p->storage->ram : NULL,
+        p->storage ? p->storage->ram_size : 0
+    };
+    fx_numeric_status derivative_preparation = FX_NUMERIC_OK;
+    unsigned derivative_native_status = 0;
     if (p->calculus_mode) { p->status = FX_EVAL_SYNTAX; return; }
     if (p->options.calculation_context != 0xc1 &&
         !(p->storage && (p->options.calculation_context == 6 || p->options.calculation_context == 7))) {
@@ -1667,6 +1697,13 @@ static void calculus(parser *p, fx_complex *out, uint8_t token)
     expression(p, &lower, 0);
     calculus_expression_finish(p, &lower);
     if (p->status != FX_EVAL_OK) goto restore;
+    if (physical_derivative) {
+        /*04B20..04B2A stores the point BEFORE parsing explicit tolerance. */
+        variables_to_storage(p);
+        derivative_preparation = fx_derivative_storage_point(&derivative_storage, &lower.real);
+        bank_from_storage(p);
+        if (derivative_preparation != FX_NUMERIC_OK) { unsupported(p, token); goto restore; }
+    }
     if (token != 0x6b) {
         if (peek(p) != ',') { p->status = FX_EVAL_SYNTAX; goto restore; }
         ++p->position;
@@ -1685,6 +1722,12 @@ static void calculus(parser *p, fx_complex *out, uint8_t token)
         (void)fx_decimal_to_integer(&call.next_x, &decimal_lower);
     p->calculus_mode = 1;
     fx_numeric_status status;
+    if (physical_derivative) {
+        derivative_preparation = fx_derivative_storage_tolerance(&derivative_storage,
+            has_tolerance ? &tolerance.real : NULL, &derivative_native_status);
+        bank_from_storage(p);
+        if (derivative_preparation != FX_NUMERIC_OK) { unsupported(p, token); goto restore; }
+    }
     if (token == 0x69)
         status = fx_number_sum(&result, &lower.real, &upper.real, calculus_evaluate, &call, &control);
     else if (token == 0x5d)
@@ -1693,7 +1736,19 @@ static void calculus(parser *p, fx_complex *out, uint8_t token)
         status = fx_number_integral(&result, &lower.real, &upper.real,
                                     has_tolerance ? &tolerance.real : NULL,
                                     calculus_evaluate, &call, &control);
-    else
+    else if (physical_derivative) {
+        if (derivative_native_status) {
+            fx_number_error(&result, derivative_native_status);
+            status = FX_NUMERIC_OK;
+        } else {
+            /*171EA evaluator-error85B4 publication is driver-owned; do not
+             * rewrite a successful F-valued callback's separate EQ result. */
+            status = fx_number_derivative_storage(&result, &derivative_storage,
+                calculus_evaluate, &call, &control);
+        }
+        variables_from_storage(p);
+        bank_from_storage(p);
+    } else
         status = fx_number_derivative(&result, &lower.real,
                                       has_tolerance ? &tolerance.real : NULL,
                                       calculus_evaluate, &call, &control);

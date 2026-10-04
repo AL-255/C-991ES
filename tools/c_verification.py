@@ -2,6 +2,7 @@
 import hashlib
 import json
 from pathlib import Path
+from c_build_inputs import implementation_inputs
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -30,6 +31,14 @@ def write_report(path, report, sources, test):
                     Path('tools/nxu8/harness.c'), Path('tools/nxu8/vendor/SimU8/core.c'),
                     Path('firmware/fx-991es-plus-c-ver4.bin')]
     dependencies += [p.relative_to(ROOT) for p in (ROOT / 'tools/nxu8/vendor/SimU8').glob('*.h')]
+    # Older suites declare their compiled C files and a manual header list.
+    # Close those inputs over local quoted includes so a new shared header
+    # cannot be omitted from the evidence. Its hash was captured before the
+    # suite built; a concurrent edit still rejects publication below.
+    local_c = [p for p in dependencies if p.suffix in ('.c', '.h') and
+               (ROOT / p).resolve().is_relative_to((ROOT / 'csrc').resolve())]
+    dependencies += [Path(p) for p in implementation_inputs(ROOT, local_c)]
+    dependencies += [Path('tools/c_verification.py'), Path('tools/c_build_inputs.py')]
     report = dict(report)
     hashes = {}
     for p in dependencies:
