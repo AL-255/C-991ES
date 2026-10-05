@@ -153,6 +153,7 @@ def handler_for(engine: Engine):
                      "/device/": ("device/index.html", "text/html; charset=utf-8"),
                      "/device/index.html": ("device/index.html", "text/html; charset=utf-8"),
                      "/device/app.js": ("device/app.js", "text/javascript; charset=utf-8"),
+                     "/device/lcd-indicators.js": ("device/lcd-indicators.js", "text/javascript; charset=utf-8"),
                      "/device/styles.css": ("device/styles.css", "text/css; charset=utf-8"),
                      "/device/calculator-face.svg": ("device/calculator-face.svg", "image/svg+xml")}
             item = files.get(path)

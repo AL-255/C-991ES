@@ -1,4 +1,5 @@
 import createEngine from '../fx991sim.js';
+import {renderLcdIndicators} from './lcd-indicators.js';
 
 const $ = id => document.getElementById(id);
 
@@ -151,8 +152,10 @@ function observe() {
  c.fillStyle = '#c0cbb3';
  c.fillRect(0,0,96,32);
  const bytes = state.framebuffer.match(/../g).map(h => parseInt(h,16));
+ renderLcdIndicators($('lcd-indicators'),bytes);
  c.fillStyle = '#21362c';
- for (let y=0;y<32;y++) {
+ // Row 0 is the dedicated hardware segment row; rows 1–31 are actual dots.
+ for (let y=1;y<32;y++) {
   for (let x=0;x<96;x++) {
    if (bytes[y*12+(x>>3)] & (0x80>>(x&7))) c.fillRect(x,y,1,1);
   }

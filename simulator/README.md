@@ -1,8 +1,8 @@
 # Virtual calculator
 
-The [webpage](https://al-255.github.io/casio-explore/) uses the original fx-991ES PLUS C layout: LCD, Replay pad, scientific keys, SHIFT/ALPHA legends, and numeric keypad. The casing is a newly authored SVG; caps and legends are drawn with HTML/CSS. Original photos and emulator bitmaps are not bundled. The `/device/` route presents the same calculator.
+The [webpage](https://al-255.github.io/casio-explore/) uses the original fx-991ES PLUS C layout: LCD, Replay pad, scientific keys, SHIFT/ALPHA legends, and numeric keypad. The casing and keycaps use simple flat SVG/HTML/CSS graphics. Original photos and emulator bitmaps are not bundled. The `/device/` route presents the same calculator.
 
-Clicks submit actual original column/row packets to the persistent high-level C runtime. SHIFT, ALPHA, MODE, editing, menus, evaluation and display formatting run in C. JavaScript transports events and draws the 384 framebuffer bytes on a 96×32 canvas. ON invokes the existing virtual-device reset and is outside the 49-key matrix. Rapid taps are queued in order. Engineering controls remain in a closed drawer below the calculator.
+Clicks submit actual original column/row packets to the persistent high-level C runtime. SHIFT, ALPHA, MODE, editing, menus, evaluation and display formatting run in C. The 384-byte C LCD snapshot contains 12 bytes of status-segment controls followed by 31 bitmap rows. JavaScript renders the 18 verified indicators as labels and symbols, and draws rows 1–31 on the canvas. S/A and D/R/G have machine-style boxes; memory, mode, format, Math and history markers occupy their original slots. The C engine decides which segments are active. The raw snapshot and operation trace stay intact. ON invokes the existing virtual-device reset and is outside the 49-key matrix. Rapid taps are queued in order. Engineering controls remain in a closed drawer below the calculator.
 
 | Computer key | Calculator key |
 | --- | --- |
@@ -45,7 +45,9 @@ analysis/build/simulator/fx991sim --interactive
 
 ## Verification and limits
 
-The [redrawn UI record](../analysis/verification/original-ui-redraw.json) binds actual browser events, hit testing, source hashes, served assets and screenshots. Local scientific, advanced-mode and menu datasets compare full C-operation traces and every LCD pixel against separately collected host-C transcripts. Original CPU execution remains in separate test oracles and does not run inside the webpage. Cases include `(sqrt(998)-sqrt(997))/99`, sin(30), cos(45), and S⇔D.
+The [indicator UI record](../analysis/verification/lcd-indicators.json) binds actual browser events, indicator masks, hit testing, matrix pixels, source hashes and screenshots. Its fresh 17-recipe corpus activates 14 of the 18 indicators on the committed engine. All 18 masks and original display slots also have separate renderer-unit coverage; STAT, MAT, VCT and Disp activation was not reached in the real-key corpus. Two unassigned status bits remain in the raw snapshot without invented labels. These tests compare full C-operation traces and every matrix pixel against independently collected matching host-C transcripts.
+
+The [previous redraw record](../analysis/verification/original-ui-redraw.json) retains its earlier scientific, advanced-mode and menu proofs, including `(sqrt(998)-sqrt(997))/99`, sin(30), cos(45), and S⇔D. Original CPU execution remains in separate test oracles and does not run inside the webpage.
 
 The UI release uses the previously committed 130-module C engine. The pending 144-module working-tree engine and its broader local tests remain part of the paused firmware audit. Deployment checks use fresh references collected from the matching committed engine; those scopes are recorded separately.
 
