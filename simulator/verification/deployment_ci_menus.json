@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "status": "pass",
+  "verified_utc": "2026-10-05T00:37:16.079773+00:00",
+  "release_commit": "1dcb026a04173d0cf922c5b2fecaca5fa2ceef20",
+  "ci_run_id": 37247853875,
+  "ci_run_url": "https://github.com/AL-255/casio-explore/actions/runs/37247853875",
+  "actual_ci_run": {
+    "path": "analysis/build/github-pages-menus-run37247853875/ci-run.json",
+    "sha256": "b898eacc3f1ff6b390206b97da1d68d97ce69783151b36d84f08967556311538"
+  },
+  "actual_ci_build_report": {
+    "path": "analysis/build/github-pages-menus-run37247853875/provenance/build-report.json",
+    "sha256": "b5325689a96dcd42467136635ed2f4b93731ef516a670cfc21f3791172637a7b"
+  },
+  "actual_comparison": {
+    "path": "analysis/build/github-pages-menus-run37247853875/ci-comparison.json",
+    "sha256": "99a10375bc9c07c2bec816b3578c05f8637206e381b9cfd234e744fc5288c516"
+  },
+  "local_build_report": {
+    "path": "analysis/build/menus-polynomial-browser/build-report.json",
+    "sha256": "c04a6cac8f980104a793488fe03b24b698d867a2c209015731890ccdd77c75e3"
+  },
+  "compiled_sources": 131,
+  "source_pins": 270,
+  "artifacts": 11,
+  "matching_tool_resources": 9,
+  "differences": {},
+  "full_firmware_complete": false,
+  "scope": "Actual successful CI build and Pages deploy; all270sourcepins/131compiledsources/11artifacts match the locally tested build."
+}

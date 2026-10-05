@@ -42,7 +42,7 @@
       "scope": "Python transports requests to the compiled native C session; JavaScript draws returned pixels"
     },
     "static_webassembly": {
-      "status": "local_verified_awaiting_ci_public_verification",
+      "status": "actual_ci_http_and_public_browser_pass",
       "builder": "simulator/build_web.py",
       "output_directory": "simulator/dist",
       "deployment_workflow": ".github/workflows/pages.yml",
@@ -59,7 +59,7 @@
       "session_lifetime": "Opaque C session in the page module; reload creates fresh memory",
       "filesystem_runtime": false,
       "native_proof_is_wasm_proof": false,
-      "deployment_verified": false,
+      "deployment_verified": true,
       "previous_deployment_verification": {
         "status": "pass",
         "release_commit": "bd216d3280f3ce5bdf44a0835bdb74ae67f4abda",
@@ -78,19 +78,19 @@
       },
       "deployment_verification": {
         "status": "pass",
-        "release_commit": "92211514f6e4c386314aef73bf335c231d5158b5",
-        "ci_run_id": 37244733492,
-        "ci_run_url": "https://github.com/AL-255/casio-explore/actions/runs/37244733492",
-        "ci_summary": "simulator/verification/deployment_ci_distribution.json",
-        "ci_summary_sha256": "3705eb58d8234abae9d11ce4caf5e66c6e27bb4e42e6b2e682715191ecf403b5",
-        "ci_build_report_sha256": "1b7d7cc3f2cc607ed8ac449c797c3af0c921d5432e4e0b19dd059ccc5127fd22",
-        "public_summary": "simulator/verification/deployment_public_distribution.json",
-        "public_summary_sha256": "38863c162ee5adee73ed6336de3a2cf18acf2053ea67bd5250e449fe64166d38",
+        "release_commit": "1dcb026a04173d0cf922c5b2fecaca5fa2ceef20",
+        "ci_run_id": 37247853875,
+        "ci_run_url": "https://github.com/AL-255/casio-explore/actions/runs/37247853875",
+        "ci_summary": "simulator/verification/deployment_ci_menus.json",
+        "ci_summary_sha256": "430fd924e9a12b6b46bef7408cba8131eadbb1e714273287ede5174e1609e1ce",
+        "ci_build_report_sha256": "b5325689a96dcd42467136635ed2f4b93731ef516a670cfc21f3791172637a7b",
+        "public_summary": "simulator/verification/deployment_public_menus.json",
+        "public_summary_sha256": "faba87fee224923a732993f67013988846ad2e0c8c3e7d2fb3da338a012eed4a",
         "actual_browser_executed_this_release": true,
-        "public_http_full_proof_sha256": "ca50ec511ec908688a343225d3d0d279460225659bfa13b209a1b5fcec1f5355",
-        "prepared_browser_full_proof_sha256": "0cd784077db75f5801da08f745d8b842e6166c66ee0763880e076afff61bb155",
-        "device_browser_full_proof_sha256": "7dc0dc41444d1c5221b8812caec1e806003ab9c601b66d33ba361ba9eabec200",
-        "scope": "Exact CI/local provenance and fresh public HTTP, desktop/mobile calculator and raw-device browser verification. Full firmware completion remains false."
+        "public_http_full_proof_sha256": "a6601b79ff105e5c0837bc776d015faa994664c5d6e87af7d79a06e40ee51c31",
+        "prepared_browser_full_proof_sha256": "acf98eb508af30fe1c1e7293cb814f63688a9f11b8095184dc4ba9d92f3fec36",
+        "device_browser_full_proof_sha256": "99bf89159e1c716ce569bbb8ab9705a4d2fbaa40bf863f351f0a9108aae52aae",
+        "scope": "Fresh actual public HTTP and desktop/mobile calculator and automatic-device browser execution. All loaded bytes bind exact CI artifacts; output comparisons occur outside the C/WASM engine. Full firmware completion remains false."
       },
       "deployment_history": [
         {
@@ -123,6 +123,22 @@
           "prior_actual_browser_report_sha256": "0aa153197239c682b30bac39d10c0e48b8e4ce7af41a859d9a5c31e614fc40d7",
           "browser_evidence_reused_by_identical_artifact_hashes": true,
           "scope": "Fresh exact CI and public HTTP verification. Browser execution evidence is reused explicitly from the previous release because every compiled/site artifact is identical; no new browser or diagnostic-WASM execution is claimed. Full firmware completeness remains false."
+        },
+        {
+          "status": "pass",
+          "release_commit": "92211514f6e4c386314aef73bf335c231d5158b5",
+          "ci_run_id": 37244733492,
+          "ci_run_url": "https://github.com/AL-255/casio-explore/actions/runs/37244733492",
+          "ci_summary": "simulator/verification/deployment_ci_distribution.json",
+          "ci_summary_sha256": "3705eb58d8234abae9d11ce4caf5e66c6e27bb4e42e6b2e682715191ecf403b5",
+          "ci_build_report_sha256": "1b7d7cc3f2cc607ed8ac449c797c3af0c921d5432e4e0b19dd059ccc5127fd22",
+          "public_summary": "simulator/verification/deployment_public_distribution.json",
+          "public_summary_sha256": "38863c162ee5adee73ed6336de3a2cf18acf2053ea67bd5250e449fe64166d38",
+          "actual_browser_executed_this_release": true,
+          "public_http_full_proof_sha256": "ca50ec511ec908688a343225d3d0d279460225659bfa13b209a1b5fcec1f5355",
+          "prepared_browser_full_proof_sha256": "0cd784077db75f5801da08f745d8b842e6166c66ee0763880e076afff61bb155",
+          "device_browser_full_proof_sha256": "7dc0dc41444d1c5221b8812caec1e806003ab9c601b66d33ba361ba9eabec200",
+          "scope": "Exact CI/local provenance and fresh public HTTP, desktop/mobile calculator and raw-device browser verification. Full firmware completion remains false."
         }
       ],
       "current_local_verification": {
@@ -334,6 +350,18 @@
       "report_sha256": "1705c1dadbb7b3cd939e59421e1db249ac78458af424347355a284e01188ecad",
       "status": "pass",
       "scope": "Owned STAT/DISTRIBUTION/CONSTANT/CONVERSION runtime, prepared polynomial EQN and result-status renderer, and bounded automatic browser keypad. Prepared polynomial parity is separate from pending polynomial MAIN ownership."
+    },
+    {
+      "report": "simulator/verification/deployment_ci_menus.json",
+      "report_sha256": "430fd924e9a12b6b46bef7408cba8131eadbb1e714273287ede5174e1609e1ce",
+      "status": "pass",
+      "scope": "Actual successful CI build and Pages deploy; all270sourcepins/131compiledsources/11artifacts match the locally tested build."
+    },
+    {
+      "report": "simulator/verification/deployment_public_menus.json",
+      "report_sha256": "faba87fee224923a732993f67013988846ad2e0c8c3e7d2fb3da338a012eed4a",
+      "status": "pass",
+      "scope": "Fresh actual public HTTP and desktop/mobile calculator and automatic-device browser execution. All loaded bytes bind exact CI artifacts; output comparisons occur outside the C/WASM engine."
     }
   ],
   "latest_release_verification": "simulator/verification/menus-polynomial-release.json",
