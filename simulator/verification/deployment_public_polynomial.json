@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "status": "pass",
+  "full_firmware_complete": false,
+  "source_commit": "34f3aa611db9a1dda6cbb5948218933fc25a687e",
+  "site_url": "https://al-255.github.io/casio-explore/",
+  "ci_run_url": "https://github.com/AL-255/casio-explore/actions/runs/37249498048",
+  "ci_build_report_sha256": "756cb26a6a7d2eb91a1de143d94b95941065a70616f29bffd9176a56b3c6a7a1",
+  "public_http": {
+    "path": "analysis/build/github-pages-polynomial-run37249498048/public-http.json",
+    "sha256": "bbcfeea15ae9fba71c69d63c3e43f82ae3fb5344974a5b3b22dc900e12ff1ac7",
+    "resources": 9
+  },
+  "prepared_browser": {
+    "path": "analysis/build/github-pages-polynomial-run37249498048/public-prepared-browser/browser-report.json",
+    "sha256": "9d22e064fe112c1b26630ed8a54d63026ec827a13db4482146799fe1fa423ede",
+    "checks": 198,
+    "c_wasm_exchanges": 21,
+    "screenshots": 5
+  },
+  "device_browser": {
+    "regression": {
+      "report": "analysis/build/github-pages-polynomial-run37249498048/public-device-regression/report.json",
+      "sha256": "8c82415d8dddf6f85652e7062bcc2400162ce1500c9f3ba988d03b220d5b057b",
+      "actual_c_operations": 472,
+      "display_states": 59,
+      "pixels": 181248,
+      "screenshots": {
+        "desktop.png": "b7cf6c0db7c65bc57d671c9ad5702263ab887f6c92f02498022227a26889ab4d",
+        "mobile.png": "5f60211c69f64edc283796f582d9f4eff15792fda0308098cdbac947a57ab12c"
+      }
+    },
+    "polynomial": {
+      "report": "analysis/build/github-pages-polynomial-run37249498048/public-device-polynomial/report.json",
+      "sha256": "07fae6045941822adaab10fc4798fd2de9fa4a529bbd9e041afe4023fb5bcc9a",
+      "actual_c_operations": 258,
+      "display_states": 28,
+      "pixels": 86016,
+      "screenshots": {
+        "desktop.png": "7f81b4dd424ddd1e54fd332d352fd2bba26e03f3ad5075b619e3b56f82e07ea7",
+        "mobile.png": "ce070a386571ed87591103d041fe4c6e94119bd9fdd40126d0150c0c4778ce29"
+      }
+    }
+  },
+  "actual_c_operations": 730,
+  "display_states": 87,
+  "canvas_pixels": 267264,
+  "scope": "Fresh actual public HTTP and desktop/mobile prepared calculator, automatic regression and quadratic/cubic solve/replay key flows. Loaded resource hashes/bytes bind exact successful CI artifacts. Fresh original execution belongs to the separate native runtime proof; no CPU rerun or whole firmware claim."
+}

@@ -1,0 +1,152 @@
+{
+  "schema": 1,
+  "scope": "Authored existing coefficient physical packets plus three actual equals packets, matching preserved uninterrupted original polynomial solve-replay recipes. No expected results enter C; supported-workflow guard requires every key to reach actual wait.",
+  "rows": [
+    {
+      "id": "quadratic-solve-replay-1-3-2-v0",
+      "variant": 0,
+      "require_all_keys": true,
+      "keys": [
+        {
+          "token_label": 228,
+          "columns": 128,
+          "rows": 16
+        },
+        {
+          "token_label": 53,
+          "columns": 2,
+          "rows": 2
+        },
+        {
+          "token_label": 51,
+          "columns": 1,
+          "rows": 4
+        },
+        {
+          "token_label": 49,
+          "columns": 1,
+          "rows": 1
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 51,
+          "columns": 1,
+          "rows": 4
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 50,
+          "columns": 1,
+          "rows": 2
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        }
+      ]
+    },
+    {
+      "id": "cubic-solve-replay-1-3-3-1-v0",
+      "variant": 0,
+      "require_all_keys": true,
+      "keys": [
+        {
+          "token_label": 228,
+          "columns": 128,
+          "rows": 16
+        },
+        {
+          "token_label": 53,
+          "columns": 2,
+          "rows": 2
+        },
+        {
+          "token_label": 52,
+          "columns": 2,
+          "rows": 1
+        },
+        {
+          "token_label": 49,
+          "columns": 1,
+          "rows": 1
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 51,
+          "columns": 1,
+          "rows": 4
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 51,
+          "columns": 1,
+          "rows": 4
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 49,
+          "columns": 1,
+          "rows": 1
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        }
+      ]
+    }
+  ],
+  "basis_fixture_sha256": "49b5167589f68ed275a9db55ba570d838c32fa2733b2097c30c2fa944d137577",
+  "original_input_fixture_sha256": "48bb783ebc75a723ac955b5bf66848a9398ec4a6e8b40b024a2d8d7b6b2cd9cb"
+}

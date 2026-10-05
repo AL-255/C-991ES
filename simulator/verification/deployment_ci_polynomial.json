@@ -1,0 +1,78 @@
+{
+  "schema": 1,
+  "status": "pass",
+  "full_firmware_complete": false,
+  "source_commit": "34f3aa611db9a1dda6cbb5948218933fc25a687e",
+  "run_url": "https://github.com/AL-255/casio-explore/actions/runs/37249498048",
+  "run_id": 37249498048,
+  "build_completed_utc": "2026-10-05T00:58:20Z",
+  "deploy_completed_utc": "2026-10-05T00:58:35Z",
+  "ci_build_report": {
+    "path": "analysis/build/github-pages-polynomial-run37249498048/provenance/build-report.json",
+    "sha256": "756cb26a6a7d2eb91a1de143d94b95941065a70616f29bffd9176a56b3c6a7a1"
+  },
+  "local_build_report": {
+    "path": "analysis/build/polynomial-runtime-release/build-report.json",
+    "sha256": "6b3286771be21e132fa121e04dcaa3e8812d55e6a41240897792524e3e4f50ca"
+  },
+  "compiled_sources": 131,
+  "input_pins": 270,
+  "artifacts": {
+    "fx991sim.js": {
+      "sha256": "231dfdf96c63a9c8c26d043c967318cd0dfab3fe06ddc6ba7bacc86435a816d6",
+      "bytes": 9319
+    },
+    "fx991sim.wasm": {
+      "sha256": "46e1bc08e6cbe51458dd676dd916ef2939d4ca5a2b82f05739489f48a0c5e492",
+      "bytes": 654159
+    },
+    "index.html": {
+      "sha256": "ed4fe670187000004cbb37dae5cfea665793efc728fec48d41bd91d6c0d6e18c",
+      "bytes": 8103
+    },
+    "app.js": {
+      "sha256": "b0330d143e3510053a513c2fac0b658674950fb5368fee8302f9875a5df6d486",
+      "bytes": 10751
+    },
+    "styles.css": {
+      "sha256": "c5e1ff281873a2f30e8340e8c14cd3284d9912e84b85de3e52d023abda14c851",
+      "bytes": 11480
+    },
+    "engine.js": {
+      "sha256": "bebe985819c42dfc8d0dbae45bc88361bb45130121e1176c6fc86cafcaba0aa8",
+      "bytes": 4647
+    },
+    ".nojekyll": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "package.json": {
+      "sha256": "1239d4d885dcad42201a27ed9324f8f0f760b78700d8db9ced39a511cffe7eae",
+      "bytes": 18
+    },
+    "device/index.html": {
+      "sha256": "9c0361ac2f6a7cfc00478f114b7b39945166f7b48157fe323cf60034fb0ec536",
+      "bytes": 2289
+    },
+    "device/app.js": {
+      "sha256": "9a61ff0cfdd6eedd40001046769fe6712d31344f501ac2f02d3405412911eb9a",
+      "bytes": 7684
+    },
+    "device/styles.css": {
+      "sha256": "3bb3767485562a3da5cf0e3270e5c51bbee7696d160d2b5900e765b13a6c418b",
+      "bytes": 3090
+    }
+  },
+  "matching_compiler_resources": [
+    ".emscripten",
+    "upstream/emscripten/emscripten-version.txt",
+    "emsdk_manifest.json",
+    "emscripten-releases-tags.json",
+    "upstream/bin/wasm-opt",
+    "upstream/bin/clang",
+    "upstream/bin/wasm-ld",
+    "upstream/emscripten/emcc",
+    "node/24.19.0_64bit/bin/node"
+  ],
+  "scope": "Actual successful GitHub Actions build/deploy. All131 source files,270 input pins and11 artifacts match the local tested build. Compiler metadata/resources match on the9 common entries."
+}

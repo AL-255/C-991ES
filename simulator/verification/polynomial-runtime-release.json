@@ -482,19 +482,27 @@
     "prepared_wasm": {
       "path": "analysis/build/polynomial-runtime-release/prepared-wasm-02/report.json",
       "sha256": "07b937dc5f290f9422c5093a6adc5e86cac0c9f3077a884302587aa1b717df74"
+    },
+    "polynomial_solve_native": {
+      "path": "analysis/build/polynomial-runtime-release/solve-replay-native-01/report.json",
+      "sha256": "e6102ea52743c764c861bac9bb9ca62029f16c54a06f218d943de917c28fd53f"
+    },
+    "polynomial_solve_browser": {
+      "path": "analysis/build/polynomial-runtime-release/solve-replay-browser-01/report.json",
+      "sha256": "979e95a89217a8b28b2f0db6053b31c3a89b1b885992cc7e30c0faa05ea1ded2"
     }
   },
   "original_sessions": 56,
   "original_persistent_checkpoints": 4224,
   "original_checks": 17244,
-  "actual_browser_c_operations": 670,
-  "actual_browser_dom_states": 81,
-  "actual_browser_canvas_pixels": 248832,
+  "actual_browser_c_operations": 928,
+  "actual_browser_dom_states": 109,
+  "actual_browser_canvas_pixels": 334848,
   "saved_native_rows_for_prepared_wasm": 55,
   "prepared_wasm_abi_checks": 1117,
   "limits": [
     "Original proof excludes numeric scratch 8000..80DB and measured native frame writes; callbacks observed zero only.",
-    "Browser coefficient-grid proof and original solve/replay proof are separate scopes.",
+    "Browser coefficient, solve/replay and regression proofs have separate actual operation/pixel archives. Original parity belongs to the bounded uninterrupted runtime proof.",
     "No production CPU/firmware execution, floating-point ABI/instructions, or host calculator arithmetic.",
     "Full firmware and physical timer/interrupt behavior remain incomplete."
   ],
@@ -502,5 +510,16 @@
     "path": "analysis/build/polynomial-runtime-release/prepared-wasm/report.json",
     "sha256": "87b0fb80aff6761fda74ffff9be79741f4870bd2ae844391bbb91d4117d8d580",
     "scope": "Initial browser process closed during navigation; zero native rows/ABI cases collected. Unchanged source proof rerun successfully with workspace-owned browser TMPDIR."
+  },
+  "polynomial_solve_fixture": {
+    "path": "tools/device_browser_support/polynomial_solve_inputs.json",
+    "sha256": "dece02e209f4795bacfb129fc8c793ca4923d4db5a925393c59d03ee6fefa70d",
+    "scope": "Byte-equal input-only successor to the archived two coefficient recipes; appends3 equals packets each, matching original runtime28 solve/replay input rows."
+  },
+  "public_deployment": {
+    "source_commit": "34f3aa611db9a1dda6cbb5948218933fc25a687e",
+    "ci_summary": "simulator/verification/deployment_ci_polynomial.json",
+    "public_summary": "simulator/verification/deployment_public_polynomial.json",
+    "status": "pass"
   }
 }
