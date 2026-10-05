@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "status": "pass-with-stated-custody-limits",
+  "full_firmware_complete": false,
+  "canonical_native_review": {
+    "path": "analysis/build/verify-clear-release-review/REVIEW.json",
+    "sha256": "e890320c02545e509d226068e9bda64547fc0d4b1750164ce02ffc199974bfed"
+  },
+  "local_browser_compiled_artifact_review": {
+    "path": "analysis/build/verify-clear-browser-independent/local-release-review.json",
+    "sha256": "fe719bbe88a44e02b25eb176aab7bf9fa3732214a0f80c0fc8778195f5ce9755"
+  },
+  "local_metadata_successor_review": {
+    "path": "analysis/build/verify-clear-browser-independent/metadata-successor-review.json",
+    "sha256": "d4e75d1b2b42ae7a4e5b49451d5cdd3b0e2583d3f068de445357642a73035355"
+  },
+  "policy": "All reviews retain their exact historical source/metadata hashes. Later publication metadata changes do not retag the older receipts. No reviewer performed additional firmware/browser execution.",
+  "limits": [
+    "VERIFY hashes are captured after library load/oracle initialization and before numerical loops; no universally before-load artifact custody claim.",
+    "Saved operands and CLEAR reconstruct selected fields/full non-frame RAM respectively; numerical scratch and boundary limits remain explicit in the release."
+  ]
+}

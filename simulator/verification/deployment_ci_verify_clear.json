@@ -1,0 +1,76 @@
+{
+  "schema": 1,
+  "status": "pass",
+  "full_firmware_complete": false,
+  "source_commit": "df036024344998e004dcacbd39f4eaa3d24adf91",
+  "run_url": "https://github.com/AL-255/casio-explore/actions/runs/37253027843",
+  "run_id": 37253027843,
+  "build_completed_utc": "2026-10-05T01:51:47Z",
+  "deploy_completed_utc": "2026-10-05T01:51:59Z",
+  "actual_run": {
+    "path": "analysis/build/github-pages-verify-clear-run37253027843/actual-ci-run.json",
+    "sha256": "e912250d90f1d58074ce16d147983700e00b65f4b3c309b1175bf3b2e6a25bff"
+  },
+  "ci_build_report": {
+    "path": "analysis/build/github-pages-verify-clear-run37253027843/provenance/build-report.json",
+    "sha256": "4ffbfba72dbdbca80182790017f666dc3e7cc94c8da8a7f18c3c3b7af8301e22"
+  },
+  "local_build_report": {
+    "path": "analysis/build/verify-clear-browser/build-report.json",
+    "sha256": "38036d99ecd1bc68d6fb13233ab12a6a5a606d4cb4fd0625ce2311439ae0413f"
+  },
+  "compiled_sources": 135,
+  "input_pins": 279,
+  "artifacts": {
+    "fx991sim.js": {
+      "sha256": "231dfdf96c63a9c8c26d043c967318cd0dfab3fe06ddc6ba7bacc86435a816d6",
+      "bytes": 9319
+    },
+    "fx991sim.wasm": {
+      "sha256": "8e918dbf1649887a561b3860e91eea55e16ceb3503fe3267a52746fb4f11d473",
+      "bytes": 661088
+    },
+    "index.html": {
+      "sha256": "ed4fe670187000004cbb37dae5cfea665793efc728fec48d41bd91d6c0d6e18c",
+      "bytes": 8103
+    },
+    "app.js": {
+      "sha256": "b0330d143e3510053a513c2fac0b658674950fb5368fee8302f9875a5df6d486",
+      "bytes": 10751
+    },
+    "styles.css": {
+      "sha256": "c5e1ff281873a2f30e8340e8c14cd3284d9912e84b85de3e52d023abda14c851",
+      "bytes": 11480
+    },
+    "engine.js": {
+      "sha256": "bebe985819c42dfc8d0dbae45bc88361bb45130121e1176c6fc86cafcaba0aa8",
+      "bytes": 4647
+    },
+    ".nojekyll": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "package.json": {
+      "sha256": "1239d4d885dcad42201a27ed9324f8f0f760b78700d8db9ced39a511cffe7eae",
+      "bytes": 18
+    },
+    "device/index.html": {
+      "sha256": "9c0361ac2f6a7cfc00478f114b7b39945166f7b48157fe323cf60034fb0ec536",
+      "bytes": 2289
+    },
+    "device/app.js": {
+      "sha256": "9a61ff0cfdd6eedd40001046769fe6712d31344f501ac2f02d3405412911eb9a",
+      "bytes": 7684
+    },
+    "device/styles.css": {
+      "sha256": "3bb3767485562a3da5cf0e3270e5c51bbee7696d160d2b5900e765b13a6c418b",
+      "bytes": 3090
+    }
+  },
+  "matching_compiler_resources": 9,
+  "comparison": {
+    "path": "analysis/build/github-pages-verify-clear-run37253027843/ci-local-comparison.json",
+    "sha256": "b45781a3c230b12c122d35386a8a406a24823bbc6c74bf94c030a82fcd420976"
+  },
+  "scope": "Actual successful CI build/deploy; all135 compiled source units,279 input pins,11 artifacts and9 common SDK resource bytes match the tested local build. No full firmware completion claim."
+}

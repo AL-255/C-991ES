@@ -539,7 +539,20 @@
     "Full firmware parity and physical interrupt timing remain incomplete."
   ],
   "public_deployment": {
-    "status": "pending actual new-source CI and public artifact verification",
-    "previous_verified_source": "34f3aa611db9a1dda6cbb5948218933fc25a687e"
+    "status": "pass",
+    "source_commit": "df036024344998e004dcacbd39f4eaa3d24adf91",
+    "ci": {
+      "path": "simulator/verification/deployment_ci_verify_clear.json",
+      "sha256": "93b5cc9e721d45961e215b030fd72b16027bce32ee97d3979e8c60235d6646e6"
+    },
+    "public": {
+      "path": "simulator/verification/deployment_public_verify_clear.json",
+      "sha256": "fc1e8b77ddfe01b969a4cd774d22b31a0051d7ecb771e4b726df9299595b4ff0"
+    },
+    "actual_public_browser_executed": true
+  },
+  "independent_reviews": {
+    "path": "simulator/verification/verify-clear-independent-review.json",
+    "sha256": "e2615c5eadf2ae8e313cf6609c0689830e7c129b2806ef35fd5e8ddf02095265"
   }
 }

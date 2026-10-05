@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "status": "pass",
+  "full_firmware_complete": false,
+  "source_commit": "df036024344998e004dcacbd39f4eaa3d24adf91",
+  "site_url": "https://al-255.github.io/casio-explore/",
+  "device_url": "https://al-255.github.io/casio-explore/device/",
+  "ci_run_url": "https://github.com/AL-255/casio-explore/actions/runs/37253027843",
+  "ci_build_report_sha256": "4ffbfba72dbdbca80182790017f666dc3e7cc94c8da8a7f18c3c3b7af8301e22",
+  "public_http": {
+    "path": "analysis/build/github-pages-verify-clear-run37253027843/public-http.json",
+    "sha256": "cb7b3eb90da713892a72718d6a777ee0b10fee4bfe3fd33ce2007fb992f601cc"
+  },
+  "prepared_browser": {
+    "path": "analysis/build/github-pages-verify-clear-run37253027843/public-prepared-browser/browser-report.json",
+    "sha256": "f89c89c146b557d8d5461f48b4ff244f295a04d851e38b8f246e84a5b7d1201a"
+  },
+  "prepared_browser_checks": 198,
+  "prepared_browser_c_exchanges": 21,
+  "prepared_browser_screenshots": 5,
+  "device_browser": {
+    "regression": {
+      "proof": {
+        "path": "analysis/build/github-pages-verify-clear-run37253027843/public-device-regression/report.json",
+        "sha256": "a8658563783d0067ef143873645f1ac1ce0d6cee9b4b9b0faddf6daa73fdd15d"
+      },
+      "c_operations": 472,
+      "display_states": 59,
+      "canvas_pixels": 181248,
+      "loaded_artifacts": {
+        "fx991sim.js": "231dfdf96c63a9c8c26d043c967318cd0dfab3fe06ddc6ba7bacc86435a816d6",
+        "fx991sim.wasm": "8e918dbf1649887a561b3860e91eea55e16ceb3503fe3267a52746fb4f11d473",
+        "device/index.html": "9c0361ac2f6a7cfc00478f114b7b39945166f7b48157fe323cf60034fb0ec536",
+        "device/app.js": "9a61ff0cfdd6eedd40001046769fe6712d31344f501ac2f02d3405412911eb9a",
+        "device/styles.css": "3bb3767485562a3da5cf0e3270e5c51bbee7696d160d2b5900e765b13a6c418b"
+      },
+      "screenshots": {
+        "desktop.png": "b7cf6c0db7c65bc57d671c9ad5702263ab887f6c92f02498022227a26889ab4d",
+        "mobile.png": "5f60211c69f64edc283796f582d9f4eff15792fda0308098cdbac947a57ab12c"
+      }
+    },
+    "poly": {
+      "proof": {
+        "path": "analysis/build/github-pages-verify-clear-run37253027843/public-device-poly/report.json",
+        "sha256": "2f72a6986bbe6a965f52b2baf255632126525b7f847e66b3079c35db76f89427"
+      },
+      "c_operations": 258,
+      "display_states": 28,
+      "canvas_pixels": 86016,
+      "loaded_artifacts": {
+        "fx991sim.js": "231dfdf96c63a9c8c26d043c967318cd0dfab3fe06ddc6ba7bacc86435a816d6",
+        "fx991sim.wasm": "8e918dbf1649887a561b3860e91eea55e16ceb3503fe3267a52746fb4f11d473",
+        "device/index.html": "9c0361ac2f6a7cfc00478f114b7b39945166f7b48157fe323cf60034fb0ec536",
+        "device/app.js": "9a61ff0cfdd6eedd40001046769fe6712d31344f501ac2f02d3405412911eb9a",
+        "device/styles.css": "3bb3767485562a3da5cf0e3270e5c51bbee7696d160d2b5900e765b13a6c418b"
+      },
+      "screenshots": {
+        "desktop.png": "7f81b4dd424ddd1e54fd332d352fd2bba26e03f3ad5075b619e3b56f82e07ea7",
+        "mobile.png": "ce070a386571ed87591103d041fe4c6e94119bd9fdd40126d0150c0c4778ce29"
+      }
+    },
+    "clear": {
+      "proof": {
+        "path": "analysis/build/github-pages-verify-clear-run37253027843/public-device-clear/report.json",
+        "sha256": "dff57155f3a989e916773d1860c8980ed56e2fa962b9e3d9171979dfa4436a92"
+      },
+      "c_operations": 157,
+      "display_states": 22,
+      "canvas_pixels": 67584,
+      "loaded_artifacts": {
+        "fx991sim.js": "231dfdf96c63a9c8c26d043c967318cd0dfab3fe06ddc6ba7bacc86435a816d6",
+        "fx991sim.wasm": "8e918dbf1649887a561b3860e91eea55e16ceb3503fe3267a52746fb4f11d473",
+        "device/index.html": "9c0361ac2f6a7cfc00478f114b7b39945166f7b48157fe323cf60034fb0ec536",
+        "device/app.js": "9a61ff0cfdd6eedd40001046769fe6712d31344f501ac2f02d3405412911eb9a",
+        "device/styles.css": "3bb3767485562a3da5cf0e3270e5c51bbee7696d160d2b5900e765b13a6c418b"
+      },
+      "screenshots": {
+        "desktop.png": "4b9fbe2618ac31a46a1c3e8531df42b23813229bc916b866b70d570a45bb3c5b",
+        "mobile.png": "467a82a353e46e9cf9077f58103bd6be26d78a7cfb03a284ad5007a0b5354fb5"
+      }
+    }
+  },
+  "actual_c_operations": 887,
+  "display_states": 109,
+  "canvas_pixels": 334848,
+  "scope": "Fresh public HTTP9 resources and desktop/mobile prepared calculator198 checks/21 C-WASM exchanges/5 screenshots, plus887 automatic raw-device C operations/109 display states/334848 LCD pixels across regression, polynomial solve/replay and CLEAR flows. Loaded bytes/hashes bind exact CI artifacts. These public executions are separate from native original-CPU proofs; full C parity remains incomplete."
+}
