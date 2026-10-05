@@ -7,7 +7,7 @@
 #include "ui/fx_mode_setup.h"
 #include "ui/fx_mode_bank_menu.h"
 #include "ui/fx_parameter_menu_controller.h"
-#include "ui/fx_distribution_menu_controller.h"
+#include "ui/fx_parameter_menu_provider.h"
 #include "ui/fx_equation_controller.h"
 #include "table/fx_table_body.h"
 
@@ -63,6 +63,9 @@ typedef struct {
     fx_mode_bank_menu bank;
     fx_parameter_menu_controller parameter;
     fx_distribution_menu_controller distribution;
+    fx_statistics_menu_controller statistics;
+    fx_constant_menu_controller constant;
+    fx_parameter_menu_provider parameter_provider;
     fx_equation_controller equation;
     fx_table_body table;
     fx_calculus_control cancellation;

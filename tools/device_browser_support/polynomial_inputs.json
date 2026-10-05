@@ -1,0 +1,120 @@
+{
+  "schema": 1,
+  "scope": "Authored physical inputs only. Enable after actual polynomial runtime ownership; supported-workflow guard rejects typed-gap early termination. No expected results passed into C.",
+  "rows": [
+    {
+      "id": "quadratic-coefficients-1-3-2-v0",
+      "variant": 0,
+      "require_all_keys": true,
+      "keys": [
+        {
+          "token_label": 228,
+          "columns": 128,
+          "rows": 16
+        },
+        {
+          "token_label": 53,
+          "columns": 2,
+          "rows": 2
+        },
+        {
+          "token_label": 51,
+          "columns": 1,
+          "rows": 4
+        },
+        {
+          "token_label": 49,
+          "columns": 1,
+          "rows": 1
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 51,
+          "columns": 1,
+          "rows": 4
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 50,
+          "columns": 1,
+          "rows": 2
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        }
+      ]
+    },
+    {
+      "id": "cubic-coefficients-1-3-3-1-v0",
+      "variant": 0,
+      "require_all_keys": true,
+      "keys": [
+        {
+          "token_label": 228,
+          "columns": 128,
+          "rows": 16
+        },
+        {
+          "token_label": 53,
+          "columns": 2,
+          "rows": 2
+        },
+        {
+          "token_label": 52,
+          "columns": 2,
+          "rows": 1
+        },
+        {
+          "token_label": 49,
+          "columns": 1,
+          "rows": 1
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 51,
+          "columns": 1,
+          "rows": 4
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 51,
+          "columns": 1,
+          "rows": 4
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 49,
+          "columns": 1,
+          "rows": 1
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 #include "fx_ui_controller.h"
 #include "fx_equation_controller.h"
+#include "fx_polynomial_equation_controller.h"
 #include "../table/fx_table_runtime.h"
 #include "../table/fx_table_presentation.h"
 #include "fx_input_display.h"
@@ -12,6 +13,7 @@
 #include "../platform/fx_result_classify.h"
 #include "../render/fx_render.h"
 #include "../render/fx_result_complex.h"
+#include "../render/fx_result_status_workflow.h"
 #include "../render/fx_result_pair.h"
 #include "../render/fx_result_linear.h"
 #include "../render/fx_result_special.h"
@@ -161,7 +163,7 @@ static fx_ui_status redraw(fx_platform *p,fx_ui_controller *s,int expression)
     if (equation_caption) {
         /* 1EE7C skips expression rendering; B070/B4B0 writes the caption
          * into the ordinary host text packet and publishes AF5A status. */
-        if (read_byte(p,0x80fa)<1 || read_byte(p,0x80fa)>2
+        if (read_byte(p,0x80fa)<1 || read_byte(p,0x80fa)>4
             || read_byte(p,0x8135)<1 || read_byte(p,0x8135)>2)
             return FX_UI_UNIMPLEMENTED;
         if (fx_display_equation_caption(&r,0x9838,NULL)!=1)
@@ -176,11 +178,15 @@ static fx_ui_status redraw(fx_platform *p,fx_ui_controller *s,int expression)
         if (table_screen) {
             if (fx_table_refresh_expression(p)) return FX_UI_UNIMPLEMENTED;
         } else if (s->context.calculation_mode==0x45 && read_byte(p,0x80fc)==1) {
-            uint8_t index=read_byte(p,0x8113);
-            if(!index || index>3 || read_byte(p,0x80fa)>2)return FX_UI_UNIMPLEMENTED;
-            fx_clear_framebuffer(&r);
-            uint16_t caption=(uint16_t)(0x1a98+3u*(index-1u));
-            fx_draw_text(&r,0,1,&caption);
+            if(read_byte(p,0x80fa)>=3) {
+                if(fx_polynomial_equation_present_root_caption(p))return FX_UI_UNIMPLEMENTED;
+            } else {
+                uint8_t index=read_byte(p,0x8113);
+                if(!index || index>3)return FX_UI_UNIMPLEMENTED;
+                fx_clear_framebuffer(&r);
+                uint16_t caption=(uint16_t)(0x1a98+3u*(index-1u));
+                fx_draw_text(&r,0,1,&caption);
+            }
             if(!read_byte(p,0x8106))write_byte(p,0x8126,1);
         } else if (fx_editor_has_natural_input(p)) {
             uint8_t modifiers=read_byte(p,0x80f8);
@@ -195,8 +201,9 @@ static fx_ui_status redraw(fx_platform *p,fx_ui_controller *s,int expression)
          * Its temporary result never replaces the persistent result pair. */
         fx_ui_status admitted=admit_complex_result(p,s);
         if (admitted!=FX_UI_COMPLETE) return admitted;
-        int displayed=bank_screen ? fx_display_special_real_result(&r,0x8140,NULL) :
-            s->context.calculation_mode==0x45 && !(read_byte(p,0x80ff)&16) ?
+        int displayed=s->context.calculation_mode==0x45 && read_byte(p,0x80fa)>=3 ?
+            fx_display_status_workflow(&r,0x8140,NULL) : bank_screen ? fx_display_special_real_result(&r,0x8140,NULL) :
+            s->context.calculation_mode==0x45 && read_byte(p,0x80fa)<=2 && !(read_byte(p,0x80ff)&16) ?
             (read_byte(p,0x8106) ? fx_display_real_math_result(&r,0x8140,NULL) : fx_display_real_linear_result(&r,0x8140,NULL)) : read_byte(p,0x80ff)&16 ? fx_display_pair_result(&r,0x8140,NULL) :
                                              fx_display_complex_result(&r,0x8140,NULL);
         if (displayed!=1) return FX_UI_UNIMPLEMENTED;
@@ -564,7 +571,7 @@ fx_ui_status fx_ui_controller_tick(fx_platform *p,fx_ui_controller *s)
     }
     if (s->phase!=UI_READY) return FX_UI_INVALID;
     if ((s->context.calculation_mode!=0xc1 && s->context.calculation_mode!=0xc4 && s->context.calculation_mode!=6 &&
-         s->context.calculation_mode!=7 && s->context.calculation_mode!=0x88 && (s->context.calculation_mode!=0x45 || read_byte(p,0x80fa)<1 || read_byte(p,0x80fa)>2)) ||
+         s->context.calculation_mode!=7 && s->context.calculation_mode!=0x88 && (s->context.calculation_mode!=0x45 || read_byte(p,0x80fa)<1 || read_byte(p,0x80fa)>4)) ||
         (read_byte(p,0x80fc)!=1 && !((s->context.calculation_mode==6 ||
           s->context.calculation_mode==7) && (read_byte(p,0x80fc)==19 ||
           read_byte(p,0x80fc)==20)) && !(s->context.calculation_mode==0x88 && read_byte(p,0x80fc)==6) && !(s->context.calculation_mode==0x45 && read_byte(p,0x80fc)==21) && !(read_byte(p,0x80fc)==0xa0 &&

@@ -392,7 +392,7 @@
     }
   ],
   "gaps": [
-    "B07080FFbit4 status labels and mode-specific equation69 polar/history/status hooks remain partial; unsupported contexts return-1. Ordinary complex/polar and mode137 VERIFY flows are translated and verified separately in render_complex.json and render_mode137.json. Direct equationB4B0/inequalityB754 controllers, special37BC and BASE-N fixed-row branches are translated.",
+    "Prepared B070 equation69 status/polar/history/caption and bit4 VERIFY137/legacy MATRIX6/VECTOR7/BASE2 branches have a separate status_workflow_manifest.json proof. Natural MATRIX6/VECTOR7/BASE2 CPU-local token-buffer contexts remain unsupported. Ordinary complex/polar and mode137 VERIFY flows retain their independent proofs.",
     "B070/37BC/B754 unused numeric scratch RAM within0x8000..0x80DB remains untranslated because numeric/formatter APIs expose records and tokens rather than native operand workspaces. Active viewport state0x8000..0x8005 and0x8007..0x800A is compared;0x8006 and inactive0x8640 metric slots remain gaps. Intermediate inequality C060 selection state is modeled separately from the enclosing3634 result-kind commit; ordinary complex-component state is translated and compared in render_complex.json.",
     "Special BASE-N rejects invalid nonempty base masks and raw glyph8127 mode. Mode137 nonerror labels are translated; special labels>=26 bytes return-1 before renderer-state mutation because the native local field then aliases CPU-stack state. Null-value title lookup retains all80FA byte values.",
     "Inequality B754 rejects special80FF bit4 status contexts for nonerror values; overlong C060 text>=36 bytes cannot be represented by the original local field without native stack aliasing and returns explicit formatting failure. Invalid/cyclic RAM strings are bounded; CPU stack aliases are not emulated. B070 equation caption history wrapper remains separate from directB4B0.",
@@ -415,5 +415,7 @@
   "mode137_verification": "analysis/c-verification/render_mode137.json",
   "mode137_verification_command": "python3 tools/test_render_mode137_c.py",
   "mode137_input_fixture": "analysis/native-fixtures/render-mode137/inputs.json",
-  "mode137_notes": "csrc/render/mode137.md"
+  "mode137_notes": "csrc/render/mode137.md",
+  "status_workflow_manifest": "csrc/render/status_workflow_manifest.json",
+  "status_workflow_verification": "analysis/verification/result-status-workflow.json"
 }

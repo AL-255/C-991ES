@@ -2,6 +2,7 @@
  * GPL-3.0-or-later. No ROM execution or host floating point. */
 #include "fx_solver.h"
 #include "fx_solver_stage.h"
+#include "fx_solver_polynomial_stage.h"
 #include "../linalg/fx_linalg_stage.h"
 #include "fx_root.h"
 #include "../linalg/fx_linalg.h"
@@ -12,16 +13,69 @@ static uint8_t error(const fx_number *n)
 {
     return n->bytes[0] >= 0xf0 ? n->bytes[0] & 15 : 0;
 }
-static int poll(fx_solver_result *r, const fx_solver_context *context)
+static int polynomial_poll(fx_solver_result *r, const fx_solver_context *context,
+    fx_solver_polynomial_callback callback, void *userdata,
+    fx_solver_polynomial_stage stage)
 {
+    int requested = 0;
     ++r->cancellation_checks;
-    if (!context->cancel_at || context->cancel_at != r->cancellation_checks) return 0;
-    r->firmware_status = 1;
-    return 1;
+    if (callback) requested = callback(r, stage, userdata);
+    if (requested || (context->cancel_at &&
+                      context->cancel_at == r->cancellation_checks)) {
+        r->firmware_status = 1;
+        return 1;
+    }
+    return 0;
 }
-static fx_numeric_status classify(uint8_t *out, const fx_number *n)
+static fx_numeric_status classify(uint8_t *out, const fx_number *n,
+    const fx_complex_preparation *preparation)
 {
-    return fx_scalar_numeric_classify(out, n);
+    return preparation && preparation->classify
+        ? preparation->classify(out, n, preparation->userdata)
+        : fx_scalar_numeric_classify(out, n);
+}
+static fx_numeric_status scalar_binary(fx_number *out, const fx_number *a,
+    const fx_number *b, fx_binary_op op, const fx_complex_preparation *preparation)
+{
+    return preparation && preparation->binary
+        ? preparation->binary(out, a, b, op, preparation->userdata)
+        : fx_number_binary(out, a, b, op);
+}
+static fx_numeric_status decimal(fx_number *out, const fx_number *in,
+    const fx_complex_preparation *preparation)
+{
+    return preparation && preparation->decimal
+        ? preparation->decimal(out, in, preparation->userdata)
+        : fx_number_to_decimal(out, in);
+}
+static fx_numeric_status integer_power(fx_number *out, const fx_number *in,
+    int exponent, const fx_complex_preparation *preparation)
+{
+    if (!preparation || !preparation->binary)
+        return fx_number_integer_power(out, in, exponent);
+    if (exponent != 2 && exponent != 3) return FX_NUMERIC_UNIMPLEMENTED;
+    fx_number source = *in, squared;
+    if (source.bytes[0] >= 0xf0) { *out = source; return FX_NUMERIC_OK; }
+    if (fx_number_kind(&source) == FX_NUMBER_DECIMAL ||
+        fx_number_kind(&source) == FX_NUMBER_RATIONAL)
+        source.bytes[0] &= (uint8_t)~0x40;
+    fx_numeric_status status = scalar_binary(&squared, &source, &source,
+        FX_MULTIPLY, preparation);
+    if (status != FX_NUMERIC_OK) return status;
+    if (exponent == 3)
+        return scalar_binary(out, &source, &squared, FX_MULTIPLY, preparation);
+    *out = squared; return FX_NUMERIC_OK;
+}
+static fx_numeric_status cube_root(fx_number *out, const fx_number *in,
+    const fx_complex_preparation *preparation)
+{
+    fx_number source = *in;
+    if (preparation && preparation->decimal &&
+        fx_number_kind(&source) == FX_NUMBER_SURD) {
+        fx_numeric_status status = decimal(&source, &source, preparation);
+        if (status != FX_NUMERIC_OK) return status;
+    }
+    return fx_number_cbrt(out, &source);
 }
 static fx_numeric_status prepare(fx_number *out, const fx_number *in)
 {
@@ -35,7 +89,7 @@ static fx_numeric_status prepare(fx_number *out, const fx_number *in)
 /* 0x1876c selects fraction construction only for two plain decimals.
  * Other records retain generic scalar division's exact/metadata policy. */
 static fx_numeric_status divide(fx_number *out, const fx_number *a,
-                                const fx_number *b)
+                                const fx_number *b, const fx_complex_preparation *preparation)
 {
     int64_t numerator, denominator;
     if (a->bytes[0] >= 0xf0 || b->bytes[0] >= 0xf0) {
@@ -51,19 +105,21 @@ static fx_numeric_status divide(fx_number *out, const fx_number *a,
         ratio.flags = 0;
         return fx_rational_encode(out, &ratio);
     }
-    return fx_number_binary(out, a, b, FX_DIVIDE);
+    return scalar_binary(out, a, b, FX_DIVIDE, preparation);
 }
-static fx_numeric_status absolute(fx_number *out, const fx_number *in)
+static fx_numeric_status absolute(fx_number *out, const fx_number *in,
+    const fx_complex_preparation *preparation)
 {
     uint8_t type;
-    fx_numeric_status status = classify(&type, in);
+    fx_numeric_status status = classify(&type, in, preparation);
     if (status != FX_NUMERIC_OK) return status;
     if (type == 0xf0) { fx_number_error(out, 3); return FX_NUMERIC_OK; }
     *out = *in; out->bytes[0] &= (uint8_t)~0x40;
     return type == 2 ? fx_number_negate(out, out) : FX_NUMERIC_OK;
 }
 static fx_numeric_status square_root(fx_number *out, const fx_number *in,
-                                     const fx_solver_context *context)
+                                     const fx_solver_context *context,
+                                     const fx_complex_preparation *preparation)
 {
     /* Rational perfect squares survive the native Math-off gate. A
      * nonperfect square instead follows separate numerator/denominator
@@ -74,15 +130,18 @@ static fx_numeric_status square_root(fx_number *out, const fx_number *in,
         if (status != FX_NUMERIC_OK) return status;
         if (fx_number_kind(&exact) != FX_NUMBER_SURD) { *out = exact; return status; }
     }
-    return fx_number_sqrt(out, in, context->exact_math);
+    return preparation && preparation->root
+        ? preparation->root(out, in, context->exact_math, preparation->userdata)
+        : fx_number_sqrt(out, in, context->exact_math);
 }
 static fx_numeric_status arithmetic(fx_number *out, const fx_number *a,
-                                    const fx_number *b, fx_binary_op op)
+                                    const fx_number *b, fx_binary_op op,
+                                    const fx_complex_preparation *preparation)
 {
     if (a->bytes[0] >= 0xf0 || b->bytes[0] >= 0xf0) {
         fx_number_error(out, 3); return FX_NUMERIC_OK;
     }
-    return fx_number_binary(out, a, b, op);
+    return scalar_binary(out, a, b, op, preparation);
 }
 static fx_linalg_context following_context(const fx_solver_context *context,
                                             const fx_solver_result *r)
@@ -179,40 +238,42 @@ static fx_numeric_status linear(fx_solver_result *r, const fx_number c[12],
 /* Native 0x150b2: the positive-discriminant branch computes the smaller
  * root using 2ac/(sqrt(D)+abs(b)), avoiding subtraction cancellation. */
 static fx_numeric_status quadratic(fx_solver_result *r, unsigned degree,
-                                   const fx_solver_context *context)
+                                   const fx_solver_context *context,
+                                   fx_solver_polynomial_callback callback, void *userdata,
+    const fx_complex_preparation *preparation)
 {
     fx_number *c = r->coefficient_work, *roots = r->root_work;
     uint8_t discriminant_type, b_type, c_type;
-    fx_numeric_status status = classify(&c_type, &c[2]);
+    fx_numeric_status status = classify(&c_type, &c[2], preparation);
     if (status != FX_NUMERIC_OK) return status;
     if (c_type == 1) {
         roots[0] = c[1]; r->count = 1;
-        status = classify(&b_type, &roots[0]);
+        status = classify(&b_type, &roots[0], preparation);
         if (status != FX_NUMERIC_OK || b_type == 1) return status;
         status = fx_number_negate(&roots[0], &roots[0]);
-        if (status == FX_NUMERIC_OK) status = divide(&roots[0], &roots[0], &c[0]);
+        if (status == FX_NUMERIC_OK) status = divide(&roots[0], &roots[0], &c[0], preparation);
         r->firmware_status = error(&roots[0]);
         if (!r->firmware_status) r->count = 2;
         return status;
     }
     c[4] = c[1];
-    status = fx_number_integer_power(&c[4], &c[4], 2);
+    status = integer_power(&c[4], &c[4], 2, preparation);
     fx_decimal_from_u8(&c[5], 4);
-    if (status == FX_NUMERIC_OK) status = fx_number_binary(&c[5], &c[5], &c[0], FX_MULTIPLY);
-    if (status == FX_NUMERIC_OK) status = fx_number_binary(&c[5], &c[5], &c[2], FX_MULTIPLY);
-    if (status == FX_NUMERIC_OK) status = fx_number_binary(&c[4], &c[4], &c[5], FX_SUBTRACT);
+    if (status == FX_NUMERIC_OK) status = scalar_binary(&c[5], &c[5], &c[0], FX_MULTIPLY, preparation);
+    if (status == FX_NUMERIC_OK) status = scalar_binary(&c[5], &c[5], &c[2], FX_MULTIPLY, preparation);
+    if (status == FX_NUMERIC_OK) status = scalar_binary(&c[4], &c[4], &c[5], FX_SUBTRACT, preparation);
     if (status != FX_NUMERIC_OK) return status;
     r->firmware_status = error(&c[4]);
     if (r->firmware_status) return FX_NUMERIC_OK;
     fx_decimal_from_u8(&c[5], 2); fx_decimal_from_u8(&c[6], 2);
-    status = fx_number_binary(&c[6], &c[6], &c[0], FX_MULTIPLY);
-    if (status != FX_NUMERIC_OK || poll(r, context)) return status;
-    status = classify(&discriminant_type, &c[4]);
+    status = scalar_binary(&c[6], &c[6], &c[0], FX_MULTIPLY, preparation);
+    if (status != FX_NUMERIC_OK || polynomial_poll(r, context, callback, userdata, FX_SOLVER_POLYNOMIAL_FORMULA_PREPARED)) return status;
+    status = classify(&discriminant_type, &c[4], preparation);
     if (status != FX_NUMERIC_OK) return status;
     if (discriminant_type != 4) {
         roots[0] = c[1];
         status = fx_number_negate(&roots[0], &roots[0]);
-        if (status == FX_NUMERIC_OK) status = divide(&roots[0], &roots[0], &c[6]);
+        if (status == FX_NUMERIC_OK) status = divide(&roots[0], &roots[0], &c[6], preparation);
         if (status != FX_NUMERIC_OK) return status;
         r->firmware_status = error(&roots[0]);
         if (r->firmware_status) return FX_NUMERIC_OK;
@@ -223,8 +284,8 @@ static fx_numeric_status quadratic(fx_solver_result *r, unsigned degree,
         }
         roots[3] = roots[0];
         status = fx_number_negate(&c[4], &c[4]);
-        if (status == FX_NUMERIC_OK) status = square_root(&c[4], &c[4], context);
-        if (status == FX_NUMERIC_OK) status = divide(&c[4], &c[4], &c[6]);
+        if (status == FX_NUMERIC_OK) status = square_root(&c[4], &c[4], context, preparation);
+        if (status == FX_NUMERIC_OK) status = divide(&c[4], &c[4], &c[6], preparation);
         if (status != FX_NUMERIC_OK) return status;
         r->firmware_status = error(&c[4]);
         if (r->firmware_status) return FX_NUMERIC_OK;
@@ -232,16 +293,16 @@ static fx_numeric_status quadratic(fx_solver_result *r, unsigned degree,
         status = fx_number_negate(&c[4], &c[4]); roots[4] = c[4];
         r->count = (uint8_t)degree; return status;
     }
-    status = square_root(&c[4], &c[4], context);
-    if (status == FX_NUMERIC_OK) status = classify(&b_type, &c[1]);
-    if (status == FX_NUMERIC_OK) status = absolute(&c[1], &c[1]);
-    if (status == FX_NUMERIC_OK) status = fx_number_binary(&c[4], &c[4], &c[1], FX_ADD);
-    if (status == FX_NUMERIC_OK) status = fx_number_binary(&c[5], &c[5], &c[2], FX_MULTIPLY);
-    if (status == FX_NUMERIC_OK) status = divide(&c[5], &c[5], &c[4]);
+    status = square_root(&c[4], &c[4], context, preparation);
+    if (status == FX_NUMERIC_OK) status = classify(&b_type, &c[1], preparation);
+    if (status == FX_NUMERIC_OK) status = absolute(&c[1], &c[1], preparation);
+    if (status == FX_NUMERIC_OK) status = scalar_binary(&c[4], &c[4], &c[1], FX_ADD, preparation);
+    if (status == FX_NUMERIC_OK) status = scalar_binary(&c[5], &c[5], &c[2], FX_MULTIPLY, preparation);
+    if (status == FX_NUMERIC_OK) status = divide(&c[5], &c[5], &c[4], preparation);
     if (status != FX_NUMERIC_OK) return status;
     r->firmware_status = error(&c[5]);
     if (r->firmware_status) return FX_NUMERIC_OK;
-    status = divide(&c[4], &c[4], &c[6]);
+    status = divide(&c[4], &c[4], &c[6], preparation);
     if (status != FX_NUMERIC_OK) return status;
     r->firmware_status = error(&c[4]);
     if (r->firmware_status) return FX_NUMERIC_OK;
@@ -259,131 +320,134 @@ static fx_numeric_status quadratic(fx_solver_result *r, unsigned degree,
 #define STEP(operation) do { status = (operation); if (status != FX_NUMERIC_OK) return status; } while (0)
 #define CHECK(number) do { r->firmware_status = error(number); if ((number)->bytes[0] >= 0xf0) { r->firmware_status = 3; return FX_NUMERIC_OK; } } while (0)
 static fx_numeric_status shifted_root(fx_number *out, const fx_number *b,
-                                      const fx_number *three_a, int subtract)
+                                      const fx_number *three_a, int subtract,
+    const fx_complex_preparation *preparation)
 {
-    fx_numeric_status status = arithmetic(out, out, b, subtract ? FX_SUBTRACT : FX_ADD);
-    return status == FX_NUMERIC_OK ? divide(out, out, three_a) : status;
+    fx_numeric_status status = arithmetic(out, out, b, subtract ? FX_SUBTRACT : FX_ADD, preparation);
+    return status == FX_NUMERIC_OK ? divide(out, out, three_a, preparation) : status;
 }
-static fx_numeric_status cubic(fx_solver_result *r, const fx_solver_context *context)
+static fx_numeric_status cubic(fx_solver_result *r, const fx_solver_context *context,
+    fx_solver_polynomial_callback callback, void *userdata,
+    const fx_complex_preparation *preparation)
 {
     static const fx_number pi = {{0x03,0x14,0x15,0x92,0x65,0x35,0x89,0x80,0x00,0x01}};
     fx_number *c = r->coefficient_work, *roots = r->root_work, two, three;
     fx_numeric_status status;
     uint8_t type, q_type;
     unsigned i, matched;
-    STEP(classify(&type, &c[3]));
-    if (type == 1) return quadratic(r, 3, context);
+    STEP(classify(&type, &c[3], preparation));
+    if (type == 1) return quadratic(r, 3, context, callback, userdata, preparation);
     /* P = 3ac-b². */
     fx_decimal_from_u8(&c[4], 3);
-    STEP(arithmetic(&c[4], &c[4], &c[0], FX_MULTIPLY));
-    STEP(arithmetic(&c[4], &c[4], &c[2], FX_MULTIPLY));
-    c[8] = c[1]; STEP(fx_number_integer_power(&c[8], &c[8], 2));
-    STEP(arithmetic(&c[4], &c[4], &c[8], FX_SUBTRACT)); CHECK(&c[4]);
+    STEP(arithmetic(&c[4], &c[4], &c[0], FX_MULTIPLY, preparation));
+    STEP(arithmetic(&c[4], &c[4], &c[2], FX_MULTIPLY, preparation));
+    c[8] = c[1]; STEP(integer_power(&c[8], &c[8], 2, preparation));
+    STEP(arithmetic(&c[4], &c[4], &c[8], FX_SUBTRACT, preparation)); CHECK(&c[4]);
     /* Q = 27a²d-9abc+2b³; retain a², abc and b³ in the root bank. */
     fx_decimal_from_u8(&c[5], 27);
-    roots[0] = c[0]; STEP(fx_number_integer_power(&roots[0], &roots[0], 2));
-    STEP(arithmetic(&c[5], &c[5], &roots[0], FX_MULTIPLY));
-    STEP(arithmetic(&c[5], &c[5], &c[3], FX_MULTIPLY)); c[6] = c[5];
+    roots[0] = c[0]; STEP(integer_power(&roots[0], &roots[0], 2, preparation));
+    STEP(arithmetic(&c[5], &c[5], &roots[0], FX_MULTIPLY, preparation));
+    STEP(arithmetic(&c[5], &c[5], &c[3], FX_MULTIPLY, preparation)); c[6] = c[5];
     fx_decimal_from_u8(&c[7], 9); roots[1] = c[0];
-    STEP(arithmetic(&roots[1], &roots[1], &c[1], FX_MULTIPLY));
-    STEP(arithmetic(&roots[1], &roots[1], &c[2], FX_MULTIPLY));
-    STEP(arithmetic(&c[7], &c[7], &roots[1], FX_MULTIPLY));
-    STEP(arithmetic(&c[5], &c[5], &c[7], FX_SUBTRACT));
+    STEP(arithmetic(&roots[1], &roots[1], &c[1], FX_MULTIPLY, preparation));
+    STEP(arithmetic(&roots[1], &roots[1], &c[2], FX_MULTIPLY, preparation));
+    STEP(arithmetic(&c[7], &c[7], &roots[1], FX_MULTIPLY, preparation));
+    STEP(arithmetic(&c[5], &c[5], &c[7], FX_SUBTRACT, preparation));
     fx_decimal_from_u8(&c[7], 2); roots[2] = c[1];
-    STEP(fx_number_integer_power(&roots[2], &roots[2], 3));
-    STEP(arithmetic(&c[7], &c[7], &roots[2], FX_MULTIPLY));
-    STEP(arithmetic(&c[5], &c[5], &c[7], FX_ADD)); CHECK(&c[5]);
+    STEP(integer_power(&roots[2], &roots[2], 3, preparation));
+    STEP(arithmetic(&c[7], &c[7], &roots[2], FX_MULTIPLY, preparation));
+    STEP(arithmetic(&c[5], &c[5], &c[7], FX_ADD, preparation)); CHECK(&c[5]);
     /* H = 27a²d²-18abcd+4b³d+4ac³-b²c². A positive H selects Cardano. */
-    STEP(arithmetic(&c[6], &c[6], &c[3], FX_MULTIPLY));
+    STEP(arithmetic(&c[6], &c[6], &c[3], FX_MULTIPLY, preparation));
     fx_decimal_from_u8(&c[7], 18);
-    STEP(arithmetic(&c[7], &c[7], &c[3], FX_MULTIPLY));
-    STEP(arithmetic(&c[7], &c[7], &roots[1], FX_MULTIPLY));
-    STEP(arithmetic(&c[6], &c[6], &c[7], FX_SUBTRACT));
+    STEP(arithmetic(&c[7], &c[7], &c[3], FX_MULTIPLY, preparation));
+    STEP(arithmetic(&c[7], &c[7], &roots[1], FX_MULTIPLY, preparation));
+    STEP(arithmetic(&c[6], &c[6], &c[7], FX_SUBTRACT, preparation));
     fx_decimal_from_u8(&c[7], 4);
-    STEP(arithmetic(&c[7], &c[7], &c[3], FX_MULTIPLY));
-    STEP(arithmetic(&c[7], &c[7], &roots[2], FX_MULTIPLY));
-    STEP(arithmetic(&c[6], &c[6], &c[7], FX_ADD));
-    c[7] = c[2]; STEP(fx_number_integer_power(&c[7], &c[7], 3));
+    STEP(arithmetic(&c[7], &c[7], &c[3], FX_MULTIPLY, preparation));
+    STEP(arithmetic(&c[7], &c[7], &roots[2], FX_MULTIPLY, preparation));
+    STEP(arithmetic(&c[6], &c[6], &c[7], FX_ADD, preparation));
+    c[7] = c[2]; STEP(integer_power(&c[7], &c[7], 3, preparation));
     fx_decimal_from_u8(&roots[2], 4);
-    STEP(arithmetic(&c[7], &c[7], &roots[2], FX_MULTIPLY));
-    STEP(arithmetic(&c[7], &c[7], &c[0], FX_MULTIPLY));
-    STEP(arithmetic(&c[6], &c[6], &c[7], FX_ADD));
-    c[7] = c[2]; STEP(fx_number_integer_power(&c[7], &c[7], 2));
-    STEP(arithmetic(&c[7], &c[7], &c[8], FX_MULTIPLY));
-    STEP(arithmetic(&c[6], &c[6], &c[7], FX_SUBTRACT)); CHECK(&c[6]);
+    STEP(arithmetic(&c[7], &c[7], &roots[2], FX_MULTIPLY, preparation));
+    STEP(arithmetic(&c[7], &c[7], &c[0], FX_MULTIPLY, preparation));
+    STEP(arithmetic(&c[6], &c[6], &c[7], FX_ADD, preparation));
+    c[7] = c[2]; STEP(integer_power(&c[7], &c[7], 2, preparation));
+    STEP(arithmetic(&c[7], &c[7], &c[8], FX_MULTIPLY, preparation));
+    STEP(arithmetic(&c[6], &c[6], &c[7], FX_SUBTRACT, preparation)); CHECK(&c[6]);
     fx_decimal_from_u8(&c[3], 3);
-    STEP(arithmetic(&c[3], &c[3], &c[0], FX_MULTIPLY));
+    STEP(arithmetic(&c[3], &c[3], &c[0], FX_MULTIPLY, preparation));
     memset(roots, 0, 9*sizeof *roots);
-    if (poll(r, context)) return FX_NUMERIC_OK;
-    STEP(classify(&type, &c[6]));
+    if (polynomial_poll(r, context, callback, userdata, FX_SOLVER_POLYNOMIAL_FORMULA_PREPARED)) return FX_NUMERIC_OK;
+    STEP(classify(&type, &c[6], preparation));
     fx_decimal_from_u8(&two, 2); fx_decimal_from_u8(&three, 3);
     if (type == 1) {
         /* The simple root precedes the repeated root. Triple roots leave
          * the second scratch result present but only one result active. */
         roots[0] = c[5]; fx_decimal_from_u8(&two, 4);
-        STEP(arithmetic(&roots[0], &roots[0], &two, FX_MULTIPLY));
-        STEP(fx_number_cbrt(&roots[0], &roots[0]));
-        STEP(shifted_root(&roots[0], &c[1], &c[3], 0));
+        STEP(arithmetic(&roots[0], &roots[0], &two, FX_MULTIPLY, preparation));
+        STEP(cube_root(&roots[0], &roots[0], preparation));
+        STEP(shifted_root(&roots[0], &c[1], &c[3], 0, preparation));
         STEP(fx_number_negate(&roots[0], &roots[0])); CHECK(&roots[0]);
         roots[3] = c[5]; fx_decimal_from_u8(&two, 2);
-        STEP(divide(&roots[3], &roots[3], &two));
-        STEP(fx_number_cbrt(&roots[3], &roots[3]));
-        STEP(shifted_root(&roots[3], &c[1], &c[3], 1)); CHECK(&roots[3]);
-        STEP(classify(&type, &c[5])); r->count = type == 1 ? 1 : 2;
+        STEP(divide(&roots[3], &roots[3], &two, preparation));
+        STEP(cube_root(&roots[3], &roots[3], preparation));
+        STEP(shifted_root(&roots[3], &c[1], &c[3], 1, preparation)); CHECK(&roots[3]);
+        STEP(classify(&type, &c[5], preparation)); r->count = type == 1 ? 1 : 2;
         return FX_NUMERIC_OK;
     }
     if (type != 2) {
         /* S = a*sqrt(27H); u and v use separate stored cube roots. */
         fx_decimal_from_u8(&c[7], 27);
-        STEP(arithmetic(&c[6], &c[6], &c[7], FX_MULTIPLY));
-        STEP(square_root(&c[6], &c[6], context));
-        STEP(arithmetic(&c[6], &c[6], &c[0], FX_MULTIPLY)); c[4] = c[6];
-        STEP(arithmetic(&c[6], &c[6], &c[5], FX_SUBTRACT));
-        STEP(divide(&c[6], &c[6], &two)); STEP(fx_number_cbrt(&c[6], &c[6]));
-        STEP(arithmetic(&c[4], &c[4], &c[5], FX_ADD));
-        STEP(divide(&c[4], &c[4], &two)); STEP(fx_number_cbrt(&c[4], &c[4]));
-        roots[0] = c[6]; STEP(arithmetic(&roots[0], &roots[0], &c[4], FX_SUBTRACT));
+        STEP(arithmetic(&c[6], &c[6], &c[7], FX_MULTIPLY, preparation));
+        STEP(square_root(&c[6], &c[6], context, preparation));
+        STEP(arithmetic(&c[6], &c[6], &c[0], FX_MULTIPLY, preparation)); c[4] = c[6];
+        STEP(arithmetic(&c[6], &c[6], &c[5], FX_SUBTRACT, preparation));
+        STEP(divide(&c[6], &c[6], &two, preparation)); STEP(cube_root(&c[6], &c[6], preparation));
+        STEP(arithmetic(&c[4], &c[4], &c[5], FX_ADD, preparation));
+        STEP(divide(&c[4], &c[4], &two, preparation)); STEP(cube_root(&c[4], &c[4], preparation));
+        roots[0] = c[6]; STEP(arithmetic(&roots[0], &roots[0], &c[4], FX_SUBTRACT, preparation));
         roots[3] = roots[0];
-        STEP(shifted_root(&roots[0], &c[1], &c[3], 1)); CHECK(&roots[0]);
+        STEP(shifted_root(&roots[0], &c[1], &c[3], 1, preparation)); CHECK(&roots[0]);
         if (context->real_only) { r->count = 1; return FX_NUMERIC_OK; }
-        STEP(divide(&roots[3], &roots[3], &two));
-        STEP(shifted_root(&roots[3], &c[1], &c[3], 0));
+        STEP(divide(&roots[3], &roots[3], &two, preparation));
+        STEP(shifted_root(&roots[3], &c[1], &c[3], 0, preparation));
         STEP(fx_number_negate(&roots[3], &roots[3])); CHECK(&roots[3]); roots[6] = roots[3];
-        roots[4] = c[6]; STEP(arithmetic(&roots[4], &roots[4], &c[4], FX_ADD));
-        STEP(divide(&roots[4], &roots[4], &c[3])); STEP(divide(&roots[4], &roots[4], &two));
-        fx_decimal_from_u8(&c[4], 3); STEP(square_root(&c[4], &c[4], context));
-        STEP(arithmetic(&roots[4], &roots[4], &c[4], FX_MULTIPLY)); CHECK(&roots[4]);
+        roots[4] = c[6]; STEP(arithmetic(&roots[4], &roots[4], &c[4], FX_ADD, preparation));
+        STEP(divide(&roots[4], &roots[4], &c[3], preparation)); STEP(divide(&roots[4], &roots[4], &two, preparation));
+        fx_decimal_from_u8(&c[4], 3); STEP(square_root(&c[4], &c[4], context, preparation));
+        STEP(arithmetic(&roots[4], &roots[4], &c[4], FX_MULTIPLY, preparation)); CHECK(&roots[4]);
         STEP(fx_number_negate(&roots[7], &roots[4])); r->count = 3; return FX_NUMERIC_OK;
     }
     /* Three real roots: theta = atan(a*sqrt(-27H)/Q), stepped by 2pi. */
-    c[2] = pi; STEP(arithmetic(&c[2], &c[2], &two, FX_MULTIPLY));
+    c[2] = pi; STEP(arithmetic(&c[2], &c[2], &two, FX_MULTIPLY, preparation));
     fx_decimal_from_u8(&c[7], 27);
-    STEP(arithmetic(&c[6], &c[6], &c[7], FX_MULTIPLY));
-    STEP(fx_number_negate(&c[6], &c[6])); STEP(square_root(&c[6], &c[6], context));
-    STEP(arithmetic(&c[6], &c[6], &c[0], FX_MULTIPLY));
-    STEP(divide(&c[6], &c[6], &c[5]));
-    fx_decimal_from_u8(&c[7], 1); STEP(classify(&q_type, &c[5]));
+    STEP(arithmetic(&c[6], &c[6], &c[7], FX_MULTIPLY, preparation));
+    STEP(fx_number_negate(&c[6], &c[6])); STEP(square_root(&c[6], &c[6], context, preparation));
+    STEP(arithmetic(&c[6], &c[6], &c[0], FX_MULTIPLY, preparation));
+    STEP(divide(&c[6], &c[6], &c[5], preparation));
+    fx_decimal_from_u8(&c[7], 1); STEP(classify(&q_type, &c[5], preparation));
     if (q_type == 2) STEP(fx_number_negate(&c[7], &c[7]));
     STEP(fx_trig_inverse_decimal(&c[6], &c[6], FX_TANGENT, FX_RADIANS));
     if (c[6].bytes[0] >= 0xf0) {
-        c[6] = pi; STEP(divide(&c[6], &c[6], &two));
-        STEP(classify(&type, &c[0]));
+        c[6] = pi; STEP(divide(&c[6], &c[6], &two, preparation));
+        STEP(classify(&type, &c[0], preparation));
         if (type == 1) fx_number_zero(&c[6]);
         else if (type == 2) STEP(fx_number_negate(&c[6], &c[6]));
         if (q_type == 2) STEP(fx_number_negate(&c[6], &c[6]));
     }
     STEP(fx_number_negate(&c[3], &c[3]));
-    STEP(fx_number_negate(&c[4], &c[4])); STEP(square_root(&c[4], &c[4], context));
-    STEP(arithmetic(&c[4], &c[4], &two, FX_MULTIPLY));
-    STEP(arithmetic(&c[4], &c[4], &c[7], FX_MULTIPLY));
+    STEP(fx_number_negate(&c[4], &c[4])); STEP(square_root(&c[4], &c[4], context, preparation));
+    STEP(arithmetic(&c[4], &c[4], &two, FX_MULTIPLY, preparation));
+    STEP(arithmetic(&c[4], &c[4], &c[7], FX_MULTIPLY, preparation));
     for (i = 0; i < 3; ++i) {
         roots[i*3] = c[6];
-        if (i) STEP(arithmetic(&roots[i*3], &roots[i*3], &c[2], FX_ADD));
-        if (i == 2) STEP(arithmetic(&roots[i*3], &roots[i*3], &c[2], FX_ADD));
-        STEP(divide(&roots[i*3], &roots[i*3], &three));
+        if (i) STEP(arithmetic(&roots[i*3], &roots[i*3], &c[2], FX_ADD, preparation));
+        if (i == 2) STEP(arithmetic(&roots[i*3], &roots[i*3], &c[2], FX_ADD, preparation));
+        STEP(divide(&roots[i*3], &roots[i*3], &three, preparation));
         STEP(fx_trig_evaluate(&roots[i*3], &roots[i*3], FX_COSINE, FX_RADIANS, context->exact_math, &matched));
-        STEP(arithmetic(&roots[i*3], &roots[i*3], &c[4], FX_MULTIPLY));
-        STEP(shifted_root(&roots[i*3], &c[1], &c[3], 0)); CHECK(&roots[i*3]);
+        STEP(arithmetic(&roots[i*3], &roots[i*3], &c[4], FX_MULTIPLY, preparation));
+        STEP(shifted_root(&roots[i*3], &c[1], &c[3], 0, preparation)); CHECK(&roots[i*3]);
     }
     r->count = 3; return FX_NUMERIC_OK;
 }
@@ -395,10 +459,12 @@ void fx_solver_context_default(fx_solver_context *context)
     if (!context) return;
     context->exact_math = 1; context->real_only = 0; context->cancel_at = 0;
 }
-fx_numeric_status fx_solver_solve(fx_solver_result *out,
+static fx_numeric_status solve_prepared(fx_solver_result *out,
                                  const fx_number coefficients[12],
                                  fx_solver_kind kind,
-                                 const fx_solver_context *context)
+                                 const fx_solver_context *context,
+                                 fx_solver_polynomial_callback callback, void *userdata,
+                                 const fx_complex_preparation *preparation)
 {
     fx_solver_result result;
     fx_number input[12], leading;
@@ -419,15 +485,15 @@ fx_numeric_status fx_solver_solve(fx_solver_result *out,
             status = prepare(&result.coefficient_work[i], &result.coefficient_work[i]);
             if (status != FX_NUMERIC_OK) return status;
         }
-        if (poll(&result, context)) goto done;
+        if (polynomial_poll(&result, context, callback, userdata, FX_SOLVER_POLYNOMIAL_COEFFICIENTS_PREPARED)) goto done;
         leading = result.coefficient_work[0]; result.coefficient_work[4] = leading;
         for (i = 0; i < 4; ++i) {
-            status = classify(&before, &result.coefficient_work[i]);
-            if (status == FX_NUMERIC_OK) status = divide(&result.coefficient_work[i], &result.coefficient_work[i], &leading);
+            status = classify(&before, &result.coefficient_work[i], preparation);
+            if (status == FX_NUMERIC_OK) status = divide(&result.coefficient_work[i], &result.coefficient_work[i], &leading, preparation);
             if (status != FX_NUMERIC_OK) return status;
             result.firmware_status = error(&result.coefficient_work[i]);
             if (result.firmware_status) goto done;
-            status = classify(&after, &result.coefficient_work[i]);
+            status = classify(&after, &result.coefficient_work[i], preparation);
             if (status != FX_NUMERIC_OK) return status;
             if (after == 1 && before != 1) { result.firmware_status = 3; goto done; }
             status = fx_decimal_integer_cleanup(&result.coefficient_work[i]);
@@ -437,12 +503,12 @@ fx_numeric_status fx_solver_solve(fx_solver_result *out,
             /* 0x173fa converts only a compact surd; existing fractions
              * remain exact even when natural Math output is disabled. */
             if (!context->exact_math && fx_number_kind(&result.coefficient_work[i]) == FX_NUMBER_SURD) {
-                status = fx_number_to_decimal(&result.coefficient_work[i], &result.coefficient_work[i]);
+                status = decimal(&result.coefficient_work[i], &result.coefficient_work[i], preparation);
                 if (status != FX_NUMERIC_OK) return status;
             }
         }
-        if (poll(&result, context)) goto done;
-        status = kind == FX_SOLVER_CUBIC ? cubic(&result, context) : quadratic(&result, 2, context);
+        if (polynomial_poll(&result, context, callback, userdata, FX_SOLVER_POLYNOMIAL_NORMALIZED)) goto done;
+        status = kind == FX_SOLVER_CUBIC ? cubic(&result, context, callback, userdata, preparation) : quadratic(&result, 2, context, callback, userdata, preparation);
         if (status != FX_NUMERIC_OK) return status;
     }
 done:
@@ -452,6 +518,31 @@ done:
         result.roots[i].real = values[i*3]; result.roots[i].imaginary = values[i*3+1];
     }
     *out = result; return FX_NUMERIC_OK;
+}
+fx_numeric_status fx_solver_solve(fx_solver_result *out,
+    const fx_number coefficients[12], fx_solver_kind kind,
+    const fx_solver_context *context)
+{
+    return solve_prepared(out, coefficients, kind, context, NULL, NULL, NULL);
+}
+fx_numeric_status fx_solver_solve_polynomial_observed(fx_solver_result *out,
+    const fx_number coefficients[12], fx_solver_kind kind,
+    const fx_solver_context *context, fx_solver_polynomial_callback callback,
+    void *userdata)
+{
+    if (kind < FX_SOLVER_QUADRATIC || kind > FX_SOLVER_CUBIC)
+        return FX_NUMERIC_INVALID;
+    return solve_prepared(out, coefficients, kind, context, callback, userdata, NULL);
+}
+fx_numeric_status fx_solver_solve_polynomial_prepared(fx_solver_result *out,
+    const fx_number coefficients[12], fx_solver_kind kind,
+    const fx_solver_context *context, fx_solver_polynomial_callback callback,
+    void *userdata, const fx_complex_preparation *preparation)
+{
+    if (kind < FX_SOLVER_QUADRATIC || kind > FX_SOLVER_CUBIC)
+        return FX_NUMERIC_INVALID;
+    return solve_prepared(out, coefficients, kind, context, callback, userdata,
+        preparation);
 }
 fx_numeric_status fx_solver_cleanup(fx_solver_result *out,
                                    const fx_solver_result *input)

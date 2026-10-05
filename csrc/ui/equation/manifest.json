@@ -25,7 +25,7 @@
     "Single-pass observed linear solver publishes live banks before actual timer/cancellation boundaries; four complete boot/key workflows and 54 retained singular/cancellation prefixes have fresh O2/O3 proofs."
   ],
   "limits": [
-    "Default owned EQN runtime bodies, polynomial/INEQ/complex roots and E884 error UI continuation remain incomplete. A typed provider composes the tested linear workflows; singular/cancellation prefixes remain pending after their actual effects.",
+    "INEQ and remaining mode/whole-main continuations remain incomplete. The default runtime owns admitted linear EQN bodies; polynomial prepared-controller parity is separate from MAIN ownership. See polynomial_manifest.json for bounded coefficients, captions, errors and CPU-frame limits.",
     "Workflows exclude numerical8000..80DB, inactive8640..87CF and actual witnessed CPU-frame writes; the independent grid8001 residual remains documented.",
     "Complete coefficient commit controls compare all RAM outside witnessed CPU-frame writes."
   ],
@@ -38,5 +38,7 @@
       "O2",
       "O3"
     ]
-  }
+  },
+  "polynomial_manifest": "csrc/ui/equation/polynomial_manifest.json",
+  "polynomial_scope": "Prepared quadratic/cubic coefficient INPUT, one solve, actual timer publications, roots/vertex replay and error-key continuation have a separate current-root O2/O3 proof; polynomial MAIN runtime ownership remains pending."
 }

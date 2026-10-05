@@ -278,7 +278,8 @@ fx_runtime_status fx_runtime_step(fx_platform *p,fx_runtime *s,
         return FX_RUNTIME_ADVANCED;
     case FX_RUNTIME_START_PARAMETER: {
         fx_parameter_menu_services services;
-        fx_distribution_menu_controller_services(&services,&s->distribution);
+        fx_parameter_menu_provider_services(&services,&s->parameter_provider,
+            &s->statistics,&s->distribution,&s->constant);
         s->phase=FX_RUNTIME_PARAMETER;
         return parameter_status(p,s,fx_parameter_menu_controller_begin(p,&s->parameter,&services),1);
     }

@@ -1,0 +1,75 @@
+{
+  "subsystem": "Prepared polynomial EQN workflow",
+  "status": "adopted high-level C; prepared original-firmware differential proof passed",
+  "source": [
+    "csrc/ui/fx_polynomial_equation_controller.c",
+    "csrc/ui/fx_polynomial_equation_controller.h"
+  ],
+  "implemented_routines": [
+    {
+      "address": "0xE862",
+      "name": "polynomial solve/result controller branch",
+      "scope": "mode0x45 selectors3/4, one observed numerical pass, native timer/error/history prefix"
+    },
+    {
+      "address": "0xE906",
+      "name": "polynomial coefficient grid branch",
+      "scope": "one-row three-column quadratic/cubic pages, ordered compact preparation and selected result line"
+    },
+    {
+      "address": "0x10F10",
+      "name": "polynomial root caption branch",
+      "scope": "current cubic replay entries and bounded native caption records"
+    },
+    {
+      "address": "0xC236",
+      "name": "quadratic root/vertex caption",
+      "scope": "raw-byte caption offset including reached exhausted index5"
+    },
+    {
+      "address": "0x13798",
+      "name": "quadratic vertex export composition",
+      "scope": "existing mathematical helpers with native order and final coordinate error checks"
+    },
+    {
+      "address": "0x15658",
+      "name": "polynomial root replay export composition",
+      "scope": "bank5 to bank3, raw pair publication, cleanup/error/history per root"
+    },
+    {
+      "address": "0xD142",
+      "name": "coefficient result copy",
+      "scope": "snapshot first word then aligned eight-byte tail; eight borrowed epilogue alias recipes are prefix-only"
+    }
+  ],
+  "verification": {
+    "report": "analysis/verification/polynomial-equation-workflow.json",
+    "report_sha256": "77b4b8a61367ff1dcf65fe651d41c0d983031412b1ca6681c4e1258a457c99bf",
+    "command": "python3 tools/test_polynomial_equation_workflow_c.py",
+    "builds": [
+      "O2",
+      "O3"
+    ],
+    "native_calls": 1724,
+    "checks": 13140,
+    "native_instructions": 37140898,
+    "scope": "Prepared E862/D9EE polynomial coefficient input, one solve, actual timer publications, roots/vertex replay, grid navigation and error-key continuation. C runs before fresh original from the same authored initial RAM/keys. All retained RAM and full timer RAM compare outside only actually written measured original stack bytes and 8000..80DB arithmetic scratch. Eight D142 alias recipes stop at E6E4 before the borrowed F12A epilogue. No whole boot-main/matrix-scan or arbitrary malformed coefficient claim.",
+    "prepared_only": true
+  },
+  "gaps": [
+    "Prepared named-routine I/O, not an uninterrupted reset/boot/main workflow proof.",
+    "Retained-RAM comparison excludes8000..80DB arithmetic scratch and measured written native CPU-frame bytes.",
+    "Cubic exhausted-index caption can exceed native six-byte local frame; no generalized normal-return claim.",
+    "Eight odd/overlapping coefficient-copy controls stop atE6E4 before borrowed F12A epilogue.",
+    "Arbitrary malformed coefficient records, raw out-of-table captions and numerical error codes beyond reached1/3 remain unsupported."
+  ],
+  "dependencies": [
+    "csrc/numeric/fx_solver_polynomial_stage.h",
+    "csrc/render/fx_result_status_workflow.c",
+    "csrc/ui/fx_input_controller.c",
+    "csrc/ui/fx_ui_controller.c",
+    "csrc/parse/fx_eval.c"
+  ],
+  "complete": false,
+  "executes_original_firmware": false
+}

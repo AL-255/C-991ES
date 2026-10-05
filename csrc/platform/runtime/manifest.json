@@ -20,7 +20,7 @@
   },
   "limits": [
     "Numeric arena0x8000..0x80db discrepancies in the older ordinary-evaluation and retained-device corpora remain explicitly archived; the menu-only proof does not erase them.",
-    "Dedicated MAIN screen/numerical bodies and unowned STAT/RECALL/STORE/CLEAR parameter children remain typed requests.",
+    "Dedicated MAIN screen/numerical bodies and unowned CLEAR parameter child remain typed requests.",
     "Boot/welcome/diagnostic behavior has separate bounded original proofs; complete startup and physical hardware certification remain incomplete.",
     "Timers use explicit host acknowledgment; ordinary key packets stay host owned; physical_input is sampled by boot events only.",
     "Numerical evaluation remains a bounded semantic operation rather than a resumable algorithm."
@@ -35,9 +35,20 @@
   "owned_parameter_children": [
     "Generic parameter navigation",
     "MATRIX/VECTOR bank menus",
-    "DISTRIBUTION CFA8..D074"
+    "DISTRIBUTION CFA8..D074",
+    "STATISTICS CEB0/CE54/1DD62",
+    "CONSTANT D312/D3B6",
+    "CONVERSION D312/D3EE"
   ],
   "current_parameter_verification": {
+    "tool": "tools/test_runtime_parameter_services_c.py",
+    "fixture": "analysis/native-fixtures/runtime-parameter-services/inputs.json",
+    "legacy_fixture": "analysis/native-fixtures/runtime-parameter-services/legacy-inputs.json",
+    "distribution_fixture": "analysis/native-fixtures/runtime-parameter-services/distribution-inputs.json",
+    "summary": "analysis/verification/parameter-services-runtime.json",
+    "scope": "Prepared MAIN D7B4 assigned once; real raw SHIFT/1, SHIFT/7 and SHIFT/8 with authored physical packets and timer readiness; genuine owned-child return to MAIN. Complete boot is separate; CLEAR remains pending."
+  },
+  "previous_parameter_verification": {
     "tool": "tools/test_runtime_distribution_c.py",
     "fixture": "analysis/native-fixtures/runtime-distribution/inputs.json",
     "legacy_fixture": "analysis/native-fixtures/runtime-distribution/legacy-inputs.json",

@@ -52,6 +52,8 @@ def main():
      except Exception as error:errors.append('Response custody '+str(error))
    page.on('response',response_handler)
    page.goto(url);page.wait_for_function("!document.getElementById('reset').disabled")
+   page.locator("#autopress").uncheck();page.locator("#create").click()
+   page.wait_for_function("!document.getElementById('reset').disabled")
    def observation():return json.loads(page.locator('#observation').text_content())
    def equal(op):
     nonlocal states,pixels

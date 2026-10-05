@@ -67,7 +67,7 @@ def main():
                  'csrc/numeric/fx_raw_decimal_multiply_add.c',
                  'csrc/numeric/fx_raw_decimal_parts.c'
 ]
-    headers = ['csrc/numeric/fx_solver.h', 'csrc/numeric/fx_solver_stage.h', 'csrc/numeric/fx_numeric.h',
+    headers = ['csrc/numeric/fx_solver.h', 'csrc/numeric/fx_solver_stage.h', 'csrc/numeric/fx_solver_polynomial_stage.h', 'csrc/numeric/fx_numeric.h',
                'csrc/linalg/fx_linalg.h', 'csrc/linalg/fx_linalg_stage.h', 'csrc/complex/fx_complex.h',
                'csrc/complex/fx_complex_round.h', 'csrc/numeric/fx_root.h',
                'csrc/numeric/fx_transcend.h', 'csrc/numeric/fx_transcend_internal.h', 'csrc/numeric/fx_transcend_guarded.h',

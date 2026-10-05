@@ -2380,7 +2380,7 @@ static fx_eval_status evaluate_transported(const uint8_t *input, size_t length,
         p.options.calculation_context != 2 &&
         !(storage && (p.options.calculation_context == 6 || p.options.calculation_context == 7 ||
           (p.options.calculation_context == 0x45 && p.environment.screen == 21 &&
-           storage->ram[0x80fa]>=1 && storage->ram[0x80fa]<=2))) &&
+           storage->ram[0x80fa]>=1 && storage->ram[0x80fa]<=4))) &&
         !(table_continuation && p.options.calculation_context == 0x88))
         p.status = FX_EVAL_UNIMPLEMENTED;
     else if (p.options.calculation_context == 2 && selected_base != FX_BASE_BIN &&

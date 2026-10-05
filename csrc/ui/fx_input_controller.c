@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 #include "fx_input_controller.h"
 #include "fx_equation_controller.h"
+#include "fx_polynomial_equation_controller.h"
 #include "../parse/fx_eval_transport.h"
 #include "fx_error_boundary.h"
 #include "fx_input_prepare.h"
@@ -102,7 +103,7 @@ fx_input_status fx_input_controller_begin(fx_platform *p, fx_input_controller *s
     }
     if (context->calculation_mode!=0xc1 && context->calculation_mode!=0xc4 &&
         context->calculation_mode!=6 && context->calculation_mode!=7 &&
-        (context->calculation_mode!=0x45 || byte_at(p,0x80fa)<1 || byte_at(p,0x80fa)>2))
+        (context->calculation_mode!=0x45 || byte_at(p,0x80fa)<1 || byte_at(p,0x80fa)>4))
         return FX_INPUT_UNIMPLEMENTED;
     if (!byte_at(p,context->display_address)) return complete(s,0);
     if (screen!=1 && screen!=0xa0 && !(context->calculation_mode==0x45 && screen==21) &&
@@ -193,7 +194,10 @@ static fx_input_status commit_result(fx_platform *p, fx_input_controller *s)
     }
     if(s->context.calculation_mode==0x45 && byte_at(p,0x80fc)==21) {
         put_byte(p,0x80ff,0);fx_result_clear_display_state(p);
-        if(fx_equation_commit_coefficient(p,s->context.result_address))return FX_INPUT_UNIMPLEMENTED;
+        int committed=byte_at(p,0x80fa)>=3?
+            fx_polynomial_equation_commit_coefficient(p,s->context.result_address):
+            fx_equation_commit_coefficient(p,s->context.result_address);
+        if(committed)return FX_INPUT_UNIMPLEMENTED;
         s->context.return_value=0;return complete(s,0);
     }
     /* E680/E75E: bank coefficient editing is a physical cell route,

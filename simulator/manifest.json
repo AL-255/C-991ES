@@ -42,7 +42,7 @@
       "scope": "Python transports requests to the compiled native C session; JavaScript draws returned pixels"
     },
     "static_webassembly": {
-      "status": "actual_ci_http_and_public_browser_pass",
+      "status": "local_verified_awaiting_ci_public_verification",
       "builder": "simulator/build_web.py",
       "output_directory": "simulator/dist",
       "deployment_workflow": ".github/workflows/pages.yml",
@@ -59,7 +59,7 @@
       "session_lifetime": "Opaque C session in the page module; reload creates fresh memory",
       "filesystem_runtime": false,
       "native_proof_is_wasm_proof": false,
-      "deployment_verified": true,
+      "deployment_verified": false,
       "previous_deployment_verification": {
         "status": "pass",
         "release_commit": "bd216d3280f3ce5bdf44a0835bdb74ae67f4abda",
@@ -126,9 +126,10 @@
         }
       ],
       "current_local_verification": {
-        "summary": "simulator/verification/distribution-device-release.json",
-        "sha256": "27983473d753ccab5318c94176865a5dd82bcb82cfe173e1bef58ee76f2f4186",
-        "scope": "Current combined C/WASM build, actual device and prepared-expression browser execution; full firmware completion remains false."
+        "summary": "simulator/verification/menus-polynomial-release.json",
+        "sha256": "1705c1dadbb7b3cd939e59421e1db249ac78458af424347355a284e01188ecad",
+        "build_report_sha256": "c04a6cac8f980104a793488fe03b24b698d867a2c209015731890ccdd77c75e3",
+        "scope": "Owned STAT/DISTRIBUTION/CONSTANT/CONVERSION runtime, prepared polynomial EQN and result-status renderer, and bounded automatic browser keypad. Prepared polynomial parity is separate from pending polynomial MAIN ownership."
       }
     }
   },
@@ -327,9 +328,15 @@
       "report_sha256": "27983473d753ccab5318c94176865a5dd82bcb82cfe173e1bef58ee76f2f4186",
       "status": "pass",
       "scope": "Combined integer-only C/WASM prepared-expression and device-preview release, with independent original/native/WASM evidence boundaries."
+    },
+    {
+      "report": "simulator/verification/menus-polynomial-release.json",
+      "report_sha256": "1705c1dadbb7b3cd939e59421e1db249ac78458af424347355a284e01188ecad",
+      "status": "pass",
+      "scope": "Owned STAT/DISTRIBUTION/CONSTANT/CONVERSION runtime, prepared polynomial EQN and result-status renderer, and bounded automatic browser keypad. Prepared polynomial parity is separate from pending polynomial MAIN ownership."
     }
   ],
-  "latest_release_verification": "simulator/verification/current-release.json",
+  "latest_release_verification": "simulator/verification/menus-polynomial-release.json",
   "historical_verification_note": "Earlier verification summaries retain their actual frozen source/artifact versions. Current-release.json describes the latest local build; current public deployment is recorded separately after verification.",
   "device_preview": {
     "url": "https://al-255.github.io/casio-explore/device/",
@@ -345,9 +352,10 @@
       "simulator/device/app.js",
       "simulator/device/styles.css"
     ],
-    "interface": "Explicit raw-key press/release, one public controller step, pending timer acknowledgment, callback drain and read-only JSON/LCD observation.",
+    "interface": "Automatic bounded raw-key press/release and real controller progression, optional accelerated semantic timers, explicit/manual controls and read-only C JSON/LCD observation.",
     "state": "Opaque persistent C device retains64KiB RAM/MMIO and owned controllers; unsupported requests remain visible.",
     "transport_arithmetic": "Bounded integer-only C JSON writer; JavaScript validates transport widths and draws C pixels.",
-    "full_key_calculator_completion": false
+    "full_key_calculator_completion": false,
+    "scheduler_scope": "Real pending C requests stop progression. Polynomial MAIN ownership, remaining advanced screens and physical timing remain incomplete."
   }
 }

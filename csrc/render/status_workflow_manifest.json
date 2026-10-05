@@ -1,0 +1,51 @@
+{
+  "implementation": "csrc/render/fx_result_status_workflow.c",
+  "public_header": "csrc/render/fx_result_status_workflow.h",
+  "implementation_kind": "readable portable high-level C",
+  "executes_original_rom": false,
+  "full_firmware_complete": false,
+  "entry_points": [
+    {
+      "native": "0xb070",
+      "C": "fx_display_status_workflow",
+      "scope": "prepared equation69 ordinary, polar, paired and caption/history output; status-bit4 VERIFY137 and legacy MATRIX6/VECTOR7/BASE2; native E844 priority; existing ordinary controllers delegated"
+    },
+    {
+      "native": "0xc060",
+      "C": "fx_format_status_component",
+      "scope": "prepared component tokens/kind; error then BASE then VERIFY then status-bit4 fixed-budget admission; ordinary SURD six-component decimal preparation, bounded successful DMS reclassification and exact-kind13 tuple stages"
+    },
+    {
+      "native": "0xc2aa",
+      "C": "fx_result_equation_is_vertex",
+      "scope": "captured result index and live linked replay count with native byte threshold"
+    },
+    {
+      "native": "0x382e",
+      "C": "fx_result_equation_rectangular",
+      "scope": "equation vertex/kind gates and live byte-valued rectangular preference with explicit overrides"
+    }
+  ],
+  "verification_command": "python3 tools/test_result_status_workflow_c.py",
+  "input_fixture": "analysis/native-fixtures/result-status-workflow/inputs.json",
+  "remaining_limits": [
+    "Natural MATRIX6/VECTOR7/BASE2 output uses an original CPU-local token-buffer ABI and remains unsupported.",
+    "Numeric scratch8000..80DB and generalized physical numerical workspace parity remain separate; only the explicitly compared ordinary SURD six-record cohort is claimed here.",
+    "Source/replay/caption/settings/result/framebuffer/history fields must be disjoint; original CPU local/frame aliases are not represented.",
+    "Legacy paired text>16, captions>16, special numeric text>=26 and viewport overflow retain explicit boundaries.",
+    "No C236 top equation caption or full equation/key workflow is claimed by this prepared renderer module."
+  ],
+  "verification": {
+    "report": "analysis/verification/result-status-workflow.json",
+    "report_sha256": "26b3c8f001bc730bc85f64b5dfa12a101800d19e6e505df9d86add3ad04ac568",
+    "checks": 51414,
+    "native_calls": 9962,
+    "primary_native_calls": 5384,
+    "flush_native_calls": 4578,
+    "input_cases_per_build": 2692,
+    "builds": [
+      "O2",
+      "O3"
+    ]
+  }
+}
