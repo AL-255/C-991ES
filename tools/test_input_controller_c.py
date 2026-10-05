@@ -26,6 +26,7 @@ MODULES=[
     'ui/fx_equation_controller','ui/fx_equation_result','ui/fx_polynomial_equation_controller','numeric/fx_solver','numeric/fx_solver_classifier',
     'render/fx_result_status_workflow',
     'linalg/fx_linalg_reduce','render/fx_result_linalg','ui/fx_mode_setup','ui/fx_menu_navigator',
+    'numeric/fx_verify_relation','parse/fx_verify_chain',
     'ui/fx_input_controller','ui/fx_input_display','ui/fx_input_prepare','ui/fx_input_recover',
     'ui/fx_input_codec','ui/fx_error_event','ui/fx_error_boundary','ui/fx_error_display','ui/fx_key_controller',
     'ui/fx_key_wait','ui/fx_annunciator','ui/fx_cursor','ui/fx_keys','ui/fx_key_dispatch',

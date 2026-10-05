@@ -249,10 +249,13 @@ def main():
                      'request':state.request,'native_format':native.ram[0x8100],
                      'native_ram_sha256':hashlib.sha256(bytes(native.ram)).hexdigest(),
                      'native_lcd_sha256':hashlib.sha256(bytes(native.ram[0xf800:0xfa00])).hexdigest()})
-    for mode in (2,0x89):
-        state=prepare(mode=mode)
-        assert lib.fx_ui_controller_tick(C.byref(p),C.byref(state))==5 and state.request==1
-        count('explicit_special_context_request')
+    # Preserve both historical input recipes. Mode2 remains a request;
+    # installed VERIFY137 now completes against the actual original D9EE.
+    state=prepare(mode=2)
+    assert lib.fx_ui_controller_tick(C.byref(p),C.byref(state))==5 and state.request==1
+    count('explicit_special_context_request')
+    state=prepare(mode=0x89)
+    complete(state,('installed_VERIFY_context',))
     inactive=Controller()
     for actual in (lib.fx_ui_controller_begin(None,C.byref(inactive),0,None),
                    lib.fx_ui_controller_tick(C.byref(p),C.byref(inactive)),

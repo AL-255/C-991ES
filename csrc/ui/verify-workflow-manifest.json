@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "subsystem": "prepared-VERIFY-main-workflow",
+  "documented_understanding_percentage": 100.0,
+  "full_firmware_complete": false,
+  "native_entries": [
+    "18A02..18AE6 finite predicates",
+    "138EE relation chain",
+    "171F4 actual137 operands",
+    "D9EE ordinary137 screen1 main events"
+  ],
+  "new_sources": [
+    "csrc/numeric/fx_verify_relation.c",
+    "csrc/parse/fx_verify_chain.c",
+    "csrc/ui/fx_verify_controller.c"
+  ],
+  "test": "tools/test_verify_workflow_c.py",
+  "report": "analysis/c-verification/verify_workflow.json",
+  "canonical_after_adoption": {
+    "path": "analysis/c-verification/verify_workflow.json",
+    "sha256": "aa73a1a943ef977b478881e2612a1a6ed98beb3c5acf06aed73bd952aa461b40"
+  },
+  "private_proof_sha256": "9881fbd8137711420c04de3dfc1634573da04be6d2c777d1b2a34204281efb68",
+  "fresh_original_calls": 1128,
+  "archived_original_main_calls": 96,
+  "C_compared_calls": 1320,
+  "checks": 7539,
+  "scope_document": "csrc/ui/verify-workflow.md",
+  "limits": [
+    "Main RAM comparison excludes arithmetic scratch and the measured cumulative original CPU stack interval",
+    "No key scanning, full boot or uninterrupted hardware main-loop parity",
+    "No generalized physical numeric-pool, source/output or inherited sample-sink aliases",
+    "Wrapped ROM operand streams, unmapped raw relation entries and advanced calculus remain explicit host boundaries",
+    "Public INPUT present137 shares statically reviewed policy; no separate direct-present native corpus"
+  ]
+}

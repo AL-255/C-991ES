@@ -5,6 +5,10 @@ Prepared entry is original D7B4 with authored R5=1/R4=0, not a boot claim.
 The matching C entry has named MAIN state only. Each native PC is set once;
 after that only authored physical packets and timer readiness advance either
 path. No native checkpoint, return value or CPU local is supplied to C.
+
+The exact legacy CLEAR keys[] arrival is retained and checked at its installed
+child WAIT. A separately labeled added AC packet, its real0770delay/timer
+acknowledgement, and the child/MAIN return are also compared.
 """
 import argparse
 import ctypes as C
@@ -58,6 +62,7 @@ def main():
         ap.error('Private proof cannot replace canonical reports')
     fp=args.fixture.resolve() if args.fixture else ROOT/FIXTURE
     fixture_bytes=fp.read_bytes();fixture=json.loads(fixture_bytes)
+    if not args.fixture:assert digest(fixture_bytes)=="ac8117b0cbcd51526da0fe5391c79de546e89d5f55f6f8f2506909e18957aa0e" and len(fixture["rows"])==71,"Historical71 fixture changed"
     assert set(fixture)=={'schema','entry','rows'} and fixture['schema']==1
     assert fixture['entry']=='prepared-MAIN-D7B4-wait1-last0'
     for row in fixture['rows']:
@@ -80,7 +85,7 @@ def main():
     (out/'inputs.json').write_bytes(fixture_bytes)
     report=dict(scope=__doc__,status='running',full_firmware_complete=False,
         source_sha256_pre=pins,rows=[],checkpoints=[],comparisons=0,guards=0,
-        completed_main=0,pending=0,owned_prefixes=0,resets=0,exports=0,timers=0,original_calls=0)
+        completed_main=0,pending=0,owned_prefixes=0,clear_owned_prefixes=0,clear_ac_returns=0,resets=0,exports=0,timers=0,original_calls=0)
     artifacts={}
     def stable():
         assert all(sha(ROOT/p if not Path(p).is_absolute() else p)==h for p,h in pins.items()),'Source attribution drift'
@@ -187,22 +192,43 @@ def main():
                             status=lib.fx_runtime_step(C.byref(p),state,None,1);skip();stop=n.parameter_menu_observe(3000000,0,0)
                             compare('timer-ready-'+str(i),status);report['timers']+=1
                         if status==5:break
+                    # The exact historical CLEAR arrival now reaches its real child WAIT.
+                    # Keep keys[] unchanged; an explicitly added AC proves child/MAIN return.
+                    if status==0 and field(13)==5:
+                        assert recipe=={"label":"pending-8-193-1-1","mode":193,"context":1,"submode":1,"opening":[233,57],"keys":[]}
+                        assert stop==200 and field(0)==constants[2]
+                        report["clear_owned_prefixes"]+=1
+                        submit(0xe6);status=lib.fx_runtime_step(C.byref(p),state,None,0)
+                        skip();stop=n.parameter_menu_observe(3000000,0,0)
+                        assert status==3 and stop==202 and field(5)==1 and field(6)==0x770
+                        compare("CLEAR-added-AC-delay",status);release()
+                        before=bytes(ram)
+                        assert lib.fx_runtime_step(C.byref(p),state,None,0)==3 and bytes(ram)==before
+                        report["guards"]+=1
+                        status=lib.fx_runtime_step(C.byref(p),state,None,1)
+                        skip();stop=n.parameter_menu_observe(3000000,0,0)
+                        assert status==1 and stop==250 and field(0)==constants[3]
+                        compare("CLEAR-added-AC-child-return",status);report["timers"]+=1
+                        assert field(16)==m.reg(0)==0
+                        report["clear_ac_returns"]+=1
                     if status==1:
                         assert stop==250 and field(0)==constants[3]
                         assert field(16)==m.reg(0)
                         status=lib.fx_runtime_step(C.byref(p),state,None,0);assert status==1 and field(0)==constants[0]
                         to(0xd980);compare('real-MAIN-return',status)
                         assert (field(4),field(3))==(m.reg(4),m.reg(5));report['completed_main']+=1
-                    elif status==0 and recipe['mode']==12 and not recipe['keys']:
-                        # Preserve the two exact former DIST-arrival inputs.
+                    elif status==0 and not recipe['keys']:
+                        # Preserve the exact former STAT/DIST/CONST-arrival inputs.
                         # Their real installed child now owns this raw wait;
                         # this is a prefix witness, not a completed menu.
                         assert stop==200 and field(0)==constants[2]
-                        assert field(13)==2
+                        assert field(13) in (1,2,3,4)
                         report['owned_prefixes']+=1
                     else:assert status==5,(recipe['label'],'unfinished',status)
                 report['rows'].append(dict(input=recipe,optimization=opt,events=events,request=[field(i) for i in (9,10,11,12)],returned=field(8)))
             stable()
+        expected_clear=sum(row=={"label":"pending-8-193-1-1","mode":193,"context":1,"submode":1,"opening":[233,57],"keys":[]} for row in fixture["rows"])*(1 if args.optimization else 2)
+        assert report["clear_owned_prefixes"]==report["clear_ac_returns"]==expected_clear
         report['status']='pass'
     except Exception as error:
         report['status']='failed';report['failure']=repr(error);raise
@@ -214,6 +240,6 @@ def main():
             artifact_drift=artifacts_post!=artifacts,completed_utc=datetime.now(timezone.utc).isoformat())
         if report['source_drift'] or report['artifact_drift']:report['status']='failed'
         (out/'report.json').write_text(json.dumps(report,indent=2)+'\n')
-    print(json.dumps({k:report[k] for k in ('status','original_calls','comparisons','guards','completed_main','pending','owned_prefixes','resets','exports','timers')}))
+    print(json.dumps({k:report[k] for k in ('status','original_calls','comparisons','guards','completed_main','pending','owned_prefixes','clear_owned_prefixes','clear_ac_returns','resets','exports','timers')}))
     return 0 if report['status']=='pass' else 1
 if __name__=='__main__':raise SystemExit(main())

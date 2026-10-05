@@ -41,17 +41,18 @@ int parameter_runtime_provider_custody(const fx_runtime *s)
     uintptr_t first=(uintptr_t)&s->parameter;
     uintptr_t last=first+sizeof s->parameter;
     const void *children[]={&s->statistics,&s->distribution,&s->constant,
-        &s->parameter_provider};
+        &s->parameter_provider,&s->clear};
     const size_t sizes[]={sizeof s->statistics,sizeof s->distribution,
-        sizeof s->constant,sizeof s->parameter_provider};
-    for(unsigned i=0;i<4;++i) {
+        sizeof s->constant,sizeof s->parameter_provider,sizeof s->clear};
+    for(unsigned i=0;i<5;++i) {
         uintptr_t start=(uintptr_t)children[i],end=start+sizes[i];
         if(start<last && end>first)return 0;
     }
     if(s->parameter.services.context!=&s->parameter_provider ||
        s->parameter_provider.statistics!=&s->statistics ||
        s->parameter_provider.distribution!=&s->distribution ||
-       s->parameter_provider.constant!=&s->constant)return 0;
+       s->parameter_provider.constant!=&s->constant ||
+       s->parameter_provider.clear!=&s->clear)return 0;
     const void *selected=s->parameter_provider.selected.context;
     switch(s->parameter_provider.active_kind) {
     case FX_PARAMETER_MENU_CHILD_NONE:return selected==0;
@@ -59,6 +60,7 @@ int parameter_runtime_provider_custody(const fx_runtime *s)
     case FX_PARAMETER_MENU_DISTRIBUTION:return selected==&s->distribution;
     case FX_PARAMETER_MENU_RECALL:
     case FX_PARAMETER_MENU_STORE:return selected==&s->constant;
+    case FX_PARAMETER_MENU_CLEAR:return selected==&s->clear;
     default:return 0;
     }
 }

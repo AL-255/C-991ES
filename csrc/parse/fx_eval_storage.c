@@ -120,6 +120,28 @@ static void copy_pair(fx_eval_storage *s, uint8_t *destination, const uint8_t *s
         memcpy(destination + 10 + output_tail, component + 8, 2);
     }
 }
+fx_numeric_status fx_eval_storage_save_operand(fx_eval_storage *s,
+    const fx_number value[2], uint8_t *count, uint8_t *native_status)
+{
+    if (!valid(s) || !value || !count || !native_status) return FX_NUMERIC_INVALID;
+    if (*count >= 10) { *native_status = 7; return FX_NUMERIC_OK; }
+    unsigned destination = 0x8078u + 10u * *count;
+    ++*count;
+    if (s->ram[0x80f9] == 0xc4u) ++*count;
+    copy_pair(s, s->ram + destination, (const uint8_t *)value);
+    *native_status = 0; return FX_NUMERIC_OK;
+}
+fx_numeric_status fx_eval_storage_restore_operand(fx_eval_storage *s,
+    fx_number value[2], uint8_t *count, uint8_t *native_status)
+{
+    if (!valid(s) || !value || !count || !native_status) return FX_NUMERIC_INVALID;
+    if (!*count) { *native_status = 7; return FX_NUMERIC_OK; }
+    --*count;
+    if (s->ram[0x80f9] == 0xc4u) --*count;
+    unsigned source = 0x8078u + 10u * *count;
+    copy_pair(s, (uint8_t *)value, s->ram + source);
+    *native_status = 0; return FX_NUMERIC_OK;
+}
 static void release_reference(uint8_t *mask, uint8_t header)
 {
     if (rich(header) && (header & 15u) >= 4u)

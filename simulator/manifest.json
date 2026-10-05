@@ -154,10 +154,25 @@
         }
       ],
       "current_local_verification": {
-        "summary": "simulator/verification/polynomial-runtime-release.json",
-        "sha256": "80ed6c3af3c0e301b1a058ee25734d9614da3857d97719563b4309e399a6ed6b",
+        "summary": "simulator/verification/verify-clear-release.json",
+        "sha256": "38d40e5a4da9331a98b548ef36f7c29f6817ce569f9560fe39515bf48d550eab",
         "status": "pass",
-        "scope": "Owned polynomial EQN in default C runtime, bounded uninterrupted original boot/key comparison, actual WebAssembly ABI and automatic browser coefficient-grid/regression flows. Numeric scratch/frame residuals and remaining advanced controller gaps stay explicit."
+        "scope": "Combined high-level C VERIFY/saved-operand/CLEAR adoption with bounded original/native proofs, integer-only prepared WASM ABI and actual automatic raw-device regression, polynomial and CLEAR browser interactions."
+      },
+      "pending_local_artifacts": {
+        "build": {
+          "path": "analysis/build/verify-clear-browser/build-report.json",
+          "sha256": "38036d99ecd1bc68d6fb13233ab12a6a5a606d4cb4fd0625ce2311439ae0413f"
+        },
+        "wasm": {
+          "sha256": "8e918dbf1649887a561b3860e91eea55e16ceb3503fe3267a52746fb4f11d473",
+          "bytes": 661088
+        },
+        "javascript": {
+          "sha256": "231dfdf96c63a9c8c26d043c967318cd0dfab3fe06ddc6ba7bacc86435a816d6",
+          "bytes": 9319
+        },
+        "policy": "Public deployment record remains the previously verified source until successful new-source CI and public browser verification."
       }
     }
   },
@@ -394,7 +409,7 @@
       "scope": "Fresh actual public HTTP and desktop/mobile prepared calculator, automatic regression and quadratic/cubic solve/replay key flows. Loaded resource hashes/bytes bind exact successful CI artifacts. Fresh original execution belongs to the separate native runtime proof; no CPU rerun or whole firmware claim."
     }
   ],
-  "latest_release_verification": "simulator/verification/polynomial-runtime-release.json",
+  "latest_release_verification": "simulator/verification/verify-clear-release.json",
   "historical_verification_note": "Earlier verification summaries retain their actual frozen source/artifact versions. Current-release.json describes the latest local build; current public deployment is recorded separately after verification.",
   "device_preview": {
     "url": "https://al-255.github.io/casio-explore/device/",
@@ -414,6 +429,6 @@
     "state": "Opaque persistent C device retains64KiB RAM/MMIO and owned controllers; unsupported requests remain visible.",
     "transport_arithmetic": "Bounded integer-only C JSON writer; JavaScript validates transport widths and draws C pixels.",
     "full_key_calculator_completion": false,
-    "scheduler_scope": "Real pending C requests stop progression. Quadratic/cubic EQN now runs through the owned runtime; remaining advanced screens and physical timing remain incomplete."
+    "scheduler_scope": "Real pending C requests stop progression. Quadratic/cubic EQN now runs through the owned runtime; remaining advanced screens and physical timing remain incomplete. CLEAR now retains its real child continuation; complete remaining advanced modes and timing remain incomplete."
   }
 }

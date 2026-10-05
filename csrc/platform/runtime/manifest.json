@@ -1,6 +1,6 @@
 {
   "subsystem": "named high-level runtime scheduler",
-  "implementation": "Handwritten C composition of boot, MAIN, INPUT/UI, MODE/SETUP, retained bank menus, owned parameter children, TABLE, linear and polynomial EQN. No instruction execution or translated firmware.",
+  "implementation": "Handwritten C composition of boot, MAIN, INPUT/UI, MODE/SETUP, retained bank menus, owned parameter children including CLEAR, TABLE, linear and polynomial EQN. No instruction execution or translated firmware.",
   "complete": false,
   "proof": {
     "suite": "runtime",
@@ -20,7 +20,7 @@
   },
   "limits": [
     "Numeric arena0x8000..0x80db discrepancies in the older ordinary-evaluation and retained-device corpora remain explicitly archived; the menu-only proof does not erase them.",
-    "Dedicated MAIN screen/numerical bodies and unowned CLEAR parameter child remain typed requests.",
+    "Dedicated MAIN screen/numerical bodies remain typed requests.",
     "Boot/welcome/diagnostic behavior has separate bounded original proofs; complete startup and physical hardware certification remain incomplete.",
     "Timers use explicit host acknowledgment; ordinary key packets stay host owned; physical_input is sampled by boot events only.",
     "Numerical evaluation remains a bounded semantic operation rather than a resumable algorithm."
@@ -38,7 +38,8 @@
     "DISTRIBUTION CFA8..D074",
     "STATISTICS CEB0/CE54/1DD62",
     "CONSTANT D312/D3B6",
-    "CONVERSION D312/D3EE"
+    "CONVERSION D312/D3EE",
+    "CLEAR D426..D4D2, retained sibling with explicit reset boundary"
   ],
   "current_parameter_verification": {
     "tool": "tools/test_runtime_parameter_services_c.py",
@@ -46,7 +47,7 @@
     "legacy_fixture": "analysis/native-fixtures/runtime-parameter-services/legacy-inputs.json",
     "distribution_fixture": "analysis/native-fixtures/runtime-parameter-services/distribution-inputs.json",
     "summary": "analysis/verification/parameter-services-runtime.json",
-    "scope": "Prepared MAIN D7B4 assigned once; real raw SHIFT/1, SHIFT/7 and SHIFT/8 with authored physical packets and timer readiness; genuine owned-child return to MAIN. Complete boot is separate; CLEAR remains pending."
+    "scope": "Prepared MAIN D7B4 assigned once; real raw SHIFT/1, SHIFT/7 and SHIFT/8 with authored physical packets and timer readiness; genuine owned-child return to MAIN. Complete boot is separate; CLEAR now retains its genuine WAIT and actual added AC/timer return in the separately referenced combined proof."
   },
   "previous_parameter_verification": {
     "tool": "tools/test_runtime_distribution_c.py",
@@ -69,6 +70,15 @@
       "Observed callbacks are zero only.",
       "28 recipes per build are bounded coverage; arbitrary malformed coefficients and caption routes remain unsupported.",
       "This original/native proof makes no browser, WebAssembly or physical interrupt timing claim."
-    ]
+    ],
+    "historical_source_scope": "Source34f3aa deployment; preserved proof is not retagged to the combined source.",
+    "current_root_regression": {
+      "path": "analysis/build/runtime-polynomial/root-current-02/report.json",
+      "sha256": "df126ec876055f79bbbbb61d1bdf01b5cc05b635a994e9cc9751327805860cd1"
+    }
+  },
+  "current_combined_verification": {
+    "path": "analysis/verification/verify-clear-runtime.json",
+    "sha256": "9298a199d3bb5d887ce69fbb6dcbf68ee807957f01ae2b5e9f53c71a3eec48c7"
   }
 }

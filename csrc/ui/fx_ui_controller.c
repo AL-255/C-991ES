@@ -191,7 +191,13 @@ static fx_ui_status redraw(fx_platform *p,fx_ui_controller *s,int expression)
         } else if (fx_editor_has_natural_input(p)) {
             uint8_t modifiers=read_byte(p,0x80f8);
             if (modifiers&128) write_byte(p,0x80f8,(uint8_t)((modifiers+128)&~8u));
-            if (!fx_render_viewport(&r,NULL)) return FX_UI_UNIMPLEMENTED;
+            /* 1EEEE..1EF02 preserves the editor's TRUE/FALSE prompt
+             * after an empty VERIFY redraw. Modifier normalization above
+             * still precedes the live mode, expression and key checks. */
+            int verify_prompt=read_byte(p,0x80f9)==0x89 &&
+                !read_byte(p,0x8154) && read_byte(p,0x80f5)!=0xfe;
+            if (!verify_prompt && !fx_render_viewport(&r,NULL))
+                return FX_UI_UNIMPLEMENTED;
         } else if (fx_input_draw_linear_expression(p)) return FX_UI_UNIMPLEMENTED;
     }
     if (!equation_caption && read_byte(p,0x80fe)!=1) {
@@ -201,7 +207,9 @@ static fx_ui_status redraw(fx_platform *p,fx_ui_controller *s,int expression)
          * Its temporary result never replaces the persistent result pair. */
         fx_ui_status admitted=admit_complex_result(p,s);
         if (admitted!=FX_UI_COMPLETE) return admitted;
-        int displayed=s->context.calculation_mode==0x45 && read_byte(p,0x80fa)>=3 ?
+        int displayed=s->context.calculation_mode==0x89 ?
+            fx_display_status_workflow(&r,0x8140,NULL) :
+            s->context.calculation_mode==0x45 && read_byte(p,0x80fa)>=3 ?
             fx_display_status_workflow(&r,0x8140,NULL) : bank_screen ? fx_display_special_real_result(&r,0x8140,NULL) :
             s->context.calculation_mode==0x45 && read_byte(p,0x80fa)<=2 && !(read_byte(p,0x80ff)&16) ?
             (read_byte(p,0x8106) ? fx_display_real_math_result(&r,0x8140,NULL) : fx_display_real_linear_result(&r,0x8140,NULL)) : read_byte(p,0x80ff)&16 ? fx_display_pair_result(&r,0x8140,NULL) :
@@ -493,9 +501,12 @@ static fx_ui_status data_action(fx_platform *p,fx_ui_controller *s)
     }
     if (read_byte(p,0x80fe)&64) return finish_action(p,s,0);
     token=read_byte(p,0x80f5);
-    if (s->context.calculation_mode==0xc4 || s->context.calculation_mode==0x88) {
-        uint16_t first=s->context.calculation_mode==0x88 ? 0x106d : 0x1077;
-        for (uint16_t a=first;a<0x1081;++a) {
+    if (s->context.calculation_mode==0xc4 || s->context.calculation_mode==0x88 ||
+        s->context.calculation_mode==0x89) {
+        uint16_t first=s->context.calculation_mode==0x89 ? 0x1081 :
+            s->context.calculation_mode==0x88 ? 0x106d : 0x1077;
+        uint16_t end=s->context.calculation_mode==0x89 ? 0x108a : 0x1081;
+        for (uint16_t a=first;a<end;++a) {
             uint8_t forbidden=read_byte(p,a);
             if (!forbidden) break;
             if (forbidden==token) { token=0; break; }
@@ -571,7 +582,8 @@ fx_ui_status fx_ui_controller_tick(fx_platform *p,fx_ui_controller *s)
     }
     if (s->phase!=UI_READY) return FX_UI_INVALID;
     if ((s->context.calculation_mode!=0xc1 && s->context.calculation_mode!=0xc4 && s->context.calculation_mode!=6 &&
-         s->context.calculation_mode!=7 && s->context.calculation_mode!=0x88 && (s->context.calculation_mode!=0x45 || read_byte(p,0x80fa)<1 || read_byte(p,0x80fa)>4)) ||
+         s->context.calculation_mode!=7 && s->context.calculation_mode!=0x88 &&
+         s->context.calculation_mode!=0x89 && (s->context.calculation_mode!=0x45 || read_byte(p,0x80fa)<1 || read_byte(p,0x80fa)>4)) ||
         (read_byte(p,0x80fc)!=1 && !((s->context.calculation_mode==6 ||
           s->context.calculation_mode==7) && (read_byte(p,0x80fc)==19 ||
           read_byte(p,0x80fc)==20)) && !(s->context.calculation_mode==0x88 && read_byte(p,0x80fc)==6) && !(s->context.calculation_mode==0x45 && read_byte(p,0x80fc)==21) && !(read_byte(p,0x80fc)==0xa0 &&

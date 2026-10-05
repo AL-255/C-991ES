@@ -10,6 +10,7 @@ import argparse
 from datetime import datetime, timezone
 import hashlib
 import json
+import re
 from pathlib import Path
 import subprocess
 import sys
@@ -21,6 +22,15 @@ ROOT=next(p for p in Path(__file__).resolve().parents if (p/'firmware/fx-991es-p
 def sha(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 def require(value,message):
     if not value:raise ValueError(message)
+
+def firmware_sources(source_root, cmake_text):
+    """Derive the ordered production target, including later additive modules."""
+    block=re.search(r'add_library\(\s*fx991_firmware\s+STATIC\s+(.*?)\)',cmake_text,re.S)
+    require(block is not None,'Missing fx991_firmware STATIC target')
+    names=re.findall(r'(?<![\w/])([\w/]+\.c)(?!\w)',block.group(1))
+    require(names and len(names)==len(set(names)),'Empty or repeated production source list')
+    require('ui/fx_polynomial_equation_controller.c' in names,'Polynomial workflow is not in the production target')
+    return [str((source_root/'csrc'/name).resolve()) for name in names]
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
@@ -38,7 +48,12 @@ def main():
     out.mkdir(parents=True,exist_ok=False)
     worker=Path(__file__).with_name('runtime_polynomial_variant.py')
     fixture=SCRIPT_ROOT/'analysis/native-fixtures/runtime-polynomial/inputs.json'
+    source_root=(args.candidate_root or SCRIPT_ROOT).resolve()
+    cmake=source_root/'csrc/CMakeLists.txt'
+    cmake_bytes=cmake.read_bytes()
+    expected_sources=firmware_sources(source_root,cmake_bytes.decode())
     wrapper_pins={str(p):sha(p) for p in (Path(__file__).resolve(),worker,fixture)}
+    wrapper_pins[str(cmake)]=hashlib.sha256(cmake_bytes).hexdigest()
     report=dict(schema=1,status='running',scope=__doc__,created_at=datetime.now(timezone.utc).isoformat(),builds={},source_sha256_pre=wrapper_pins,default_workload=not args.optimization,successful_external_body_completion_calls=0)
     try:
         for opt in ([args.optimization] if args.optimization else ('O2','O3')):
@@ -55,7 +70,7 @@ def main():
             require(proof['corpus']=='all' and proof['sequences']==28,'Default workload changed')
             require(proof['successful_external_body_completion_calls']==0 and not proof['failures'] and not proof['source_changes'],'Unexpected injection, failure or source drift')
             require(proof['poll_snapshot_persistent_gap_count']==0,'Unresolved persistent poll mismatch')
-            require(proof['compiled_sources'] and len(proof['compiled_sources'])==126,'Unexpected target closure')
+            require(proof['compiled_sources']==expected_sources,'Worker did not compile the exact current fx991_firmware target')
             require(all(sha(p)==h for p,h in proof['source_pins'].items()),'Worker source drift')
             require(all(sha(p)==h for p,h in proof['artifacts'].items()),'Worker artifact drift')
             report['builds'][opt]=dict(proof_path=str(files[0]),proof_sha256=sha(files[0]),archive_path=str(files[0].with_name('observations.jsonl.gz')),archive_sha256=sha(files[0].with_name('observations.jsonl.gz')),sequences=proof['sequences'],observations=proof['observations'],checks=proof['checks'],poll_count=proof['poll_count'],completed_main_cycles=proof['completed_main_cycles'],outer_returns=proof['outer_returns'],exports=proof['exports'],resets=proof['resets'],nonzero_callbacks=proof['nonzero_callbacks'],source_pins=proof['source_pins'],artifacts=proof['artifacts'])

@@ -1,0 +1,122 @@
+{
+  "schema": 1,
+  "scope": "Authored physical cold-device inputs for actual CLEAR cancel/settings/memory browser workflows. No output fields; original prepared CLEAR parity is separate.",
+  "rows": [
+    {
+      "id": "clear-cancel-v0",
+      "variant": 0,
+      "require_all_keys": true,
+      "keys": [
+        {
+          "token_label": 233,
+          "columns": 128,
+          "rows": 1
+        },
+        {
+          "token_label": 57,
+          "columns": 4,
+          "rows": 4
+        },
+        {
+          "token_label": 230,
+          "columns": 4,
+          "rows": 16
+        }
+      ]
+    },
+    {
+      "id": "clear-settings-v0",
+      "variant": 0,
+      "require_all_keys": true,
+      "keys": [
+        {
+          "token_label": 233,
+          "columns": 128,
+          "rows": 1
+        },
+        {
+          "token_label": 57,
+          "columns": 4,
+          "rows": 4
+        },
+        {
+          "token_label": 49,
+          "columns": 1,
+          "rows": 1
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 230,
+          "columns": 4,
+          "rows": 16
+        }
+      ]
+    },
+    {
+      "id": "clear-memory-Ans-v0",
+      "variant": 0,
+      "require_all_keys": true,
+      "keys": [
+        {
+          "token_label": 49,
+          "columns": 1,
+          "rows": 1
+        },
+        {
+          "token_label": 43,
+          "columns": 1,
+          "rows": 8
+        },
+        {
+          "token_label": 50,
+          "columns": 1,
+          "rows": 2
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 233,
+          "columns": 128,
+          "rows": 1
+        },
+        {
+          "token_label": 57,
+          "columns": 4,
+          "rows": 4
+        },
+        {
+          "token_label": 50,
+          "columns": 1,
+          "rows": 2
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        },
+        {
+          "token_label": 139,
+          "columns": 2,
+          "rows": 64
+        },
+        {
+          "token_label": 240,
+          "columns": 1,
+          "rows": 64
+        }
+      ]
+    }
+  ]
+}

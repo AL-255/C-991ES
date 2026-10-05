@@ -79,6 +79,8 @@ typedef struct {
     uint16_t timer_period;
     uint8_t active, timer_pending, export_mask, returned, menu_kind;
     fx_polynomial_equation_controller polynomial;
+    /* Separate from parameter begin memset; provider borrows this sibling. */
+    fx_clear_controller clear;
 } fx_runtime;
 
 /* Reset and ordinary boot tail are real available high-level controllers.

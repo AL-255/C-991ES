@@ -20,6 +20,9 @@ static fx_parameter_menu_status begin(fx_platform *p,void *context,
     case FX_PARAMETER_MENU_STORE:
         if(!s->constant)return FX_PARAMETER_MENU_INVALID;
         fx_constant_menu_controller_services(&s->selected,s->constant);break;
+    case FX_PARAMETER_MENU_CLEAR:
+        if(!s->clear)return FX_PARAMETER_MENU_REQUEST;
+        fx_clear_controller_services(&s->selected,s->clear);break;
     default:return FX_PARAMETER_MENU_REQUEST;
     }
     s->active_kind=request->kind;
@@ -53,12 +56,19 @@ static uint16_t timer_period(const void *context)
     const fx_parameter_menu_provider *s=context;
     return s && s->selected.timer_period?s->selected.timer_period(s->selected.context):0;
 }
+void fx_parameter_menu_provider_services_with_clear(fx_parameter_menu_services *services,
+    fx_parameter_menu_provider *s,fx_statistics_menu_controller *statistics,
+    fx_distribution_menu_controller *distribution,fx_constant_menu_controller *constant,
+    fx_clear_controller *clear)
+{
+    if(!services || !s)return;
+    memset(s,0,sizeof *s);
+    s->statistics=statistics;s->distribution=distribution;s->constant=constant;s->clear=clear;
+    *services=(fx_parameter_menu_services){s,begin,tick,timer,finish,export_mask,timer_period};
+}
 void fx_parameter_menu_provider_services(fx_parameter_menu_services *services,
     fx_parameter_menu_provider *s,fx_statistics_menu_controller *statistics,
     fx_distribution_menu_controller *distribution,fx_constant_menu_controller *constant)
 {
-    if(!services || !s)return;
-    memset(s,0,sizeof *s);
-    s->statistics=statistics;s->distribution=distribution;s->constant=constant;
-    *services=(fx_parameter_menu_services){s,begin,tick,timer,finish,export_mask,timer_period};
+    fx_parameter_menu_provider_services_with_clear(services,s,statistics,distribution,constant,NULL);
 }

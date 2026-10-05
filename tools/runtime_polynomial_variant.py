@@ -11,6 +11,7 @@ SCRIPT_ROOT=Path(__file__).resolve().parents[1]
 ROOT=next(p for p in Path(__file__).resolve().parents if (p/'firmware/fx-991es-plus-c-ver4.bin').exists());sys.path.insert(0,str(ROOT/'tools'))
 from nxu8.machine import Machine
 from c_build_inputs import implementation_inputs
+from test_runtime_polynomial_c import firmware_sources
 ap=argparse.ArgumentParser();ap.add_argument('--build-dir',type=Path,required=True);ap.add_argument('--candidate-root',type=Path);ap.add_argument('--verbose',action='store_true');ap.add_argument('--corpus',choices=['polynomial','error','witness','all'],default='all');ap.add_argument('--optimization',choices=['O2','O3'],default='O2');args=ap.parse_args()
 if sys.flags.optimize:ap.error('Optimized Python disables proof assertions')
 SOURCE=(args.candidate_root or SCRIPT_ROOT).resolve()
@@ -56,7 +57,7 @@ for original in browser['rows']:
 selected=[v for v in fixture['scenarios'] if args.corpus=='all' or v['corpus']==args.corpus]
 run=(args.build_dir or ROOT/'analysis/build/runtime-polynomial-ownership').resolve()/uuid.uuid4().hex/args.optimization;run.mkdir(parents=True)
 (run/'tmp').mkdir();os.environ['TMPDIR']=str(run/'tmp')
-sources=['csrc/'+n for n in re.findall(r'(?<![\w/])([\w/]+\.c)(?!\w)',cmake_bytes.decode().split('target_include_directories')[0])]
+sources=[str(Path(path).relative_to(SOURCE)) for path in firmware_sources(SOURCE,cmake_bytes.decode())]
 implementation_closure=implementation_inputs(SOURCE,sources)
 adapter=SCRIPT_ROOT/'tools/runtime_polynomial_support/adapter.c';observer=SCRIPT_ROOT/'tools/runtime_polynomial_support/native.c'
 paths=[*[SOURCE/n for n in implementation_closure],SOURCE/'csrc/CMakeLists.txt',adapter,observer,fixture_path,legacy_path,browser_path,Path(__file__).resolve(),SCRIPT_ROOT/'tools/test_runtime_polynomial_c.py',ROOT/'tools/nxu8/harness.c',ROOT/'tools/nxu8/isa.txt',ROOT/'analysis/disassembly/complete.asm',ROOT/'tools/nxu8/vendor/SimU8/core.c',*sorted((ROOT/'tools/nxu8/vendor/SimU8').glob('*.h')),ROOT/'firmware/fx-991es-plus-c-ver4.bin',ROOT/'tools/device_browser_support/polynomial_inputs.json',ROOT/'csrc/app/fx_device_session.c']

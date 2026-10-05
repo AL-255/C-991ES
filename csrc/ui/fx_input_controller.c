@@ -3,6 +3,7 @@
 #include "fx_equation_controller.h"
 #include "fx_polynomial_equation_controller.h"
 #include "../parse/fx_eval_transport.h"
+#include "../parse/fx_verify_chain.h"
 #include "fx_error_boundary.h"
 #include "fx_input_prepare.h"
 #include "fx_input_recover.h"
@@ -16,6 +17,7 @@
 #include "../render/fx_render.h"
 #include "../render/fx_result_complex.h"
 #include "../render/fx_result_pair.h"
+#include "../render/fx_result_status_workflow.h"
 #include "../trig/fx_math_context.h"
 #include <string.h>
 
@@ -103,6 +105,7 @@ fx_input_status fx_input_controller_begin(fx_platform *p, fx_input_controller *s
     }
     if (context->calculation_mode!=0xc1 && context->calculation_mode!=0xc4 &&
         context->calculation_mode!=6 && context->calculation_mode!=7 &&
+        context->calculation_mode!=0x89 &&
         (context->calculation_mode!=0x45 || byte_at(p,0x80fa)<1 || byte_at(p,0x80fa)>4))
         return FX_INPUT_UNIMPLEMENTED;
     if (!byte_at(p,context->display_address)) return complete(s,0);
@@ -281,7 +284,17 @@ static fx_input_status evaluate(fx_platform *p, fx_input_controller *s)
     fx_eval_storage storage={p->ram,65536u,p->rom,p->rom_size};
     fx_eval_source source={s->current_source,s->context.result_address,NULL,NULL};
     uint16_t returned_source=s->current_source;
-    fx_eval_status status=fx_evaluate_prepared_source(length+1,&options,
+    fx_eval_status status;
+    if(s->context.calculation_mode==0x89) {
+        fx_verify_chain_result relation={0};
+        status=fx_verify_chain(&storage,s->current_source,
+            s->context.result_address,sizeof s->input,&control,&relation);
+        if(status>=0)returned_source=relation.source;
+        result.unsupported_token=relation.unsupported_token;
+        /*Each real137 operand uses live physical variable banks. Refresh
+         *before the ordinary INPUT commit to retain eager operand stores.*/
+        load_variables(p,s);
+    } else status=fx_evaluate_prepared_source(length+1,&options,
         &environment,&evaluator_state,&control,&prior_answer,
         &storage,&source,&returned_source,NULL,&result);
     put_byte(p,0x8124,(uint8_t)(byte_at(p,0x8124)&~1u));
@@ -356,10 +369,16 @@ fx_input_status fx_input_controller_present(fx_platform *p, fx_input_controller 
     if (fx_editor_has_natural_input(p)) {
         uint8_t modifiers=byte_at(p,0x80f8);
         if (modifiers&128) put_byte(p,0x80f8,(uint8_t)((modifiers+128)&~8u));
-        if (!fx_render_viewport(&render,NULL)) return FX_INPUT_UNIMPLEMENTED;
+        /* EE7C shares the live VERIFY empty-prompt bypass with D9EE. */
+        int verify_prompt=byte_at(p,0x80f9)==0x89 &&
+            !byte_at(p,0x8154) && byte_at(p,0x80f5)!=0xfe;
+        if (!verify_prompt && !fx_render_viewport(&render,NULL))
+            return FX_INPUT_UNIMPLEMENTED;
     } else if (fx_input_draw_linear_expression(p)) return FX_INPUT_UNIMPLEMENTED;
     if (!editing) {
-        int displayed=byte_at(p,0x80ff)&16 ?
+        int displayed=s->context.calculation_mode==0x89 ?
+            fx_display_status_workflow(&render,s->context.result_address,NULL) :
+            byte_at(p,0x80ff)&16 ?
             fx_display_pair_result(&render,s->context.result_address,NULL) :
             fx_display_complex_result(&render,s->context.result_address,NULL);
         if (displayed!=1) return FX_INPUT_UNIMPLEMENTED;

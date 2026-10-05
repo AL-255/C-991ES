@@ -37,6 +37,17 @@ fx_numeric_status fx_eval_storage_copy_slot(fx_eval_storage *storage,
 fx_numeric_status fx_eval_storage_copy_bytes(fx_eval_storage *storage,
     uint16_t destination, uint16_t source, size_t length);
 
+/* Pending mathematical operands occupy ten physical ten-byte slots at8078.
+ * Count is a byte, distinct from a host recursion depth. A push rejects an
+ * incoming count>=10; pop rejects zero. Each adjusts count by one, then by
+ * another in live C4. Transfer rereads live mode after its real component.
+ * Named records, count and native_status must remain outside calculator RAM.
+ * Saved bytes remain observable after pop. */
+fx_numeric_status fx_eval_storage_save_operand(fx_eval_storage *storage,
+    const fx_number value[2], uint8_t *count, uint8_t *native_status);
+fx_numeric_status fx_eval_storage_restore_operand(fx_eval_storage *storage,
+    fx_number value[2], uint8_t *count, uint8_t *native_status);
+
 /* Selected16494/164FC temporary construction, regardless of the old slot.
  * Header rewrite precedes dimension/payload copy; mask commits to8125 last.
  * A full mask returns native7 without mutation. The named record and mask

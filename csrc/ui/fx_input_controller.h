@@ -41,7 +41,9 @@ fx_input_context fx_input_context_capture(fx_platform *platform,
 /* F12A input gates/preparation and old-result preservation. PREPARED is the
  * native F2AC checkpoint, before evaluation. COMPLETE covers empty/reset/
  * replay gates. Prepared COMP/CMPLX, matrix/vector modes6/7 and the linear
- * equation coefficient screen21 are admitted. Rich references commit to bank
+ * equation coefficient screen21 and ordinary VERIFY137 are admitted.
+ * VERIFY operands retain live mode137 and use138EE's relation chain.
+ * Rich references commit to bank
  * Ans; scalar bank and equation edits retain their distinct physical orders. */
 fx_input_status fx_input_controller_begin(fx_platform *platform,
     fx_input_controller *state, const fx_input_context *context,
