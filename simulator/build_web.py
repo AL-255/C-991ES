@@ -102,7 +102,8 @@ def main() -> None:
         raise ValueError(f"Compiler is not the pinned Emscripten {SDK_VERSION}: {version}")
     sources = firmware_sources()
     assets = [ROOT / "simulator/web" / name for name in ("index.html", "app.js", "styles.css", "engine.js")]
-    device_assets = [ROOT / "simulator/device" / name for name in ("index.html", "app.js", "styles.css")]
+    device_assets = [ROOT / "simulator/device" / name for name in
+                     ("index.html", "app.js", "styles.css", "calculator-face.svg")]
     inputs = implementation_closure(sources) | set(assets) | set(device_assets) | {Path(__file__).resolve(), ROOT / "csrc/CMakeLists.txt"}
     input_pins = {str(path.relative_to(ROOT)): sha256(path) for path in sorted(inputs)}
     output.mkdir(parents=True, exist_ok=True)
@@ -132,7 +133,7 @@ def main() -> None:
         raise ValueError(f"Source changed during compilation: {changed}")
     artifacts = {name: {"sha256": sha256(output / name), "bytes": (output / name).stat().st_size}
                  for name in ("fx991sim.js", "fx991sim.wasm", "index.html", "app.js", "styles.css", "engine.js", ".nojekyll", "package.json",
-                              "device/index.html", "device/app.js", "device/styles.css")}
+                              "device/index.html", "device/app.js", "device/styles.css", "device/calculator-face.svg")}
     compiler_changes = {name: sha256(sdk / name) for name, digest in compiler_pins.items() if sha256(sdk / name) != digest}
     if compiler_changes:
         raise ValueError(f"Compiler input changed during invocation: {compiler_changes}")

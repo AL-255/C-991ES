@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="405" height="816" viewBox="0 0 405 816" role="img" aria-label="Redrawn calculator casing">
+  <defs>
+    <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#818592"/><stop offset=".4" stop-color="#4c5261"/><stop offset="1" stop-color="#262c3b"/>
+    </linearGradient>
+    <linearGradient id="silver" x1="0" x2="1">
+      <stop stop-color="#aaaead"/><stop offset=".08" stop-color="#d5d7d5"/><stop offset=".18" stop-color="#e2e3e0"/>
+      <stop offset=".65" stop-color="#ddddda"/><stop offset=".87" stop-color="#e7e8e3"/><stop offset="1" stop-color="#b6b9b7"/>
+    </linearGradient>
+    <linearGradient id="bezel" x1="0" y1="0" x2=".9" y2="1">
+      <stop stop-color="#a7aaa5"/><stop offset=".26" stop-color="#d5d8d0"/><stop offset=".72" stop-color="#e3e7dc"/><stop offset="1" stop-color="#b7bcb4"/>
+    </linearGradient>
+    <linearGradient id="replay" x1=".1" y1="0" x2=".8" y2="1">
+      <stop stop-color="#9ca2b8"/><stop offset=".5" stop-color="#848da7"/><stop offset="1" stop-color="#6c7691"/>
+    </linearGradient>
+    <linearGradient id="lower" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#ffffff" stop-opacity="0"/><stop offset=".6" stop-color="#ffffff" stop-opacity=".04"/><stop offset="1" stop-color="#ffffff" stop-opacity=".6"/>
+    </linearGradient>
+  </defs>
+  <!-- The case is authored from geometric curves, with no embedded bitmap. -->
+  <path d="M49 8C127 1 283 1 356 10C383 12 397 28 399 56L392 683C389 750 375 784 338 803C304 819 105 819 67 804C24 787 12 754 9 687L5 63C5 30 20 12 49 8Z" fill="url(#rim)"/>
+  <path d="M48 15C139 7 273 7 354 17C379 18 387 33 389 60L381 682C378 743 366 777 332 795C299 811 108 811 74 797C36 782 22 750 19 686L16 66C15 35 25 19 48 15Z" fill="url(#silver)" stroke="#f0f1ed" stroke-width="2"/>
+  <path d="M27 53L30 656C31 731 41 771 79 790" fill="none" stroke="#999d9b" stroke-width="1.2" opacity=".65"/>
+  <path d="M376 48L368 680C366 748 355 773 333 789" fill="none" stroke="#f5f5ef" stroke-width="2" opacity=".65"/>
+  <path d="M35 116C36 113 48 110 59 110H347C364 110 371 114 373 130L370 237C369 257 358 268 342 271H60C43 268 35 259 34 241L34 133Z" fill="url(#bezel)"/>
+  <path d="M53 127H351C355 127 358 131 358 137V233C358 243 353 247 344 247H62C52 247 48 243 48 233V139C48 132 49 129 53 127Z" fill="#c0cbb3" stroke="#97a492" stroke-width="2"/>
+  <path d="M53 129H351" stroke="#6b776b" stroke-width="2" opacity=".45"/>
+  <path d="M53 130V232" stroke="#738170" stroke-width="2" opacity=".3"/>
+  <path d="M61 247H344" stroke="#f1f5e9" stroke-width="2" opacity=".8"/>
+  <text x="53" y="104" fill="#333738" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="900" letter-spacing="-.6">CASIO</text>
+  <text x="187" y="102" fill="#357e77" font-family="Arial,Helvetica,sans-serif" font-size="16" font-weight="700" font-style="italic" letter-spacing="-.5">NATURAL-V.P.A.M.</text>
+  <ellipse cx="203" cy="339" rx="51" ry="46" fill="#565f76" stroke="#e9e9df" stroke-width="1.6"/>
+  <ellipse cx="203" cy="338" rx="47" ry="42" fill="url(#replay)" stroke="#aeb5c8" stroke-width="1.5"/>
+  <text x="203" y="342" fill="#4c5874" font-family="Arial,Helvetica,sans-serif" font-size="10" text-anchor="middle">REPLAY</text>
+  <g fill="#55617c" stroke="#b1b8cc" stroke-width=".7">
+    <path d="M203 306L198 314H208Z"/>
+    <path d="M165 339L173 334V344Z"/>
+    <path d="M241 339L233 334V344Z"/>
+    <path d="M203 372L198 364H208Z"/>
+  </g>
+  <path d="M26 681C32 753 47 778 77 792C125 809 288 809 330 793C358 780 372 746 378 683L370 744C357 790 338 804 298 809H106C60 804 42 785 30 741Z" fill="url(#lower)"/>
+</svg>

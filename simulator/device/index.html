@@ -1,1 +1,55 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Device keypad · Casio Explore</title><link rel="stylesheet" href="./styles.css"></head><body><main><header><a href="../index.html">← Expression calculator</a><p class="eyebrow">CASIO EXPLORE · DEVICE PREVIEW</p><h1>Press a key.</h1><p>Each press submits the real packet, advances bounded C phases, then releases the key. The display shows the actual C LCD.</p></header><section class="workbench"><div class="calculator"><div class="brand"><strong>fx-991ES</strong><span>HIGH-LEVEL C DEVICE</span></div><div class="lcd-shell"><canvas id="lcd" width="96" height="32" aria-label="Actual calculator LCD"></canvas></div><div id="keypad" class="keypad" aria-label="Raw device keypad"></div><p id="key-legend" class="legend">Each click is one bounded press and release.</p></div><aside><div class="toolbar"><label>Variant <input id="variant" type="number" min="0" max="255" step="1" value="0"></label><button id="create">New device</button><button id="reset">Reset</button></div><label class="timer-policy"><input id="autopress" type="checkbox" checked> Process and release each key automatically.</label><label class="timer-policy"><input id="autotimer" type="checkbox" checked> Accelerate pending semantic timers on the next animation frame (physical timing is not emulated).</label><div class="actions"><button id="step" class="primary">Advance one step</button><button id="release">Release key</button><button id="timer">Acknowledge timer</button><button id="callback">Drain callback</button></div><div class="status"><span id="status">Loading C engine…</span><p id="packet"></p><p id="detail"></p><p id="error" role="alert"></p></div><p id="scheduler-status" aria-live="polite"></p><details><summary>Actual C call trace</summary><pre id="scheduler-log"></pre></details><details><summary>Device observation</summary><pre id="observation"></pre></details><p class="scope">Pending requests remain visible until their C implementation is available. This prototype does not supply fabricated results.</p></aside></section><footer>C execution · Raw key packets · Actual LCD pixels</footer></main><script type="module" src="./app.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#d5d5dc">
+  <title>fx-991ES PLUS C · Virtual calculator</title>
+  <link rel="icon" type="image/svg+xml" href="./calculator-face.svg">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main>
+    <section class="calculator" aria-label="Casio fx-991ES PLUS C virtual calculator">
+      <h1 class="sr-only">Casio fx-991ES PLUS C virtual calculator</h1>
+      <img class="calculator-face" src="./calculator-face.svg" alt="" aria-hidden="true">
+      <canvas id="lcd" width="96" height="32" aria-label="Calculator LCD display"></canvas>
+      <div class="keypad-area">
+        <div class="reset-pocket">
+          <span class="on-label" aria-hidden="true">ON</span>
+          <button id="reset" class="calc-key control-key on-key" type="button" aria-label="ON, reset calculator" title="ON · reset calculator" disabled>ON</button>
+        </div>
+        <div id="keypad" class="keypad" aria-label="Calculator keypad"></div>
+      </div>
+    </section>
+    <details id="advanced-controls" class="engineering-panel">
+      <summary>Engine details</summary>
+      <div class="engineering-content">
+        <div class="toolbar">
+          <label>Variant <input id="variant" type="number" min="0" max="255" step="1" value="0"></label>
+          <button id="create" type="button">New device</button>
+        </div>
+        <label class="timer-policy"><input id="autopress" type="checkbox" checked> Process and release each key automatically.</label>
+        <label class="timer-policy"><input id="autotimer" type="checkbox" checked> Accelerate pending semantic timers on the next animation frame.</label>
+        <div class="actions">
+          <button id="step" type="button">Advance one step</button>
+          <button id="release" type="button">Release key</button>
+          <button id="timer" type="button">Acknowledge timer</button>
+          <button id="callback" type="button">Drain callback</button>
+        </div>
+        <div class="status">
+          <span id="status" aria-live="polite">Loading C engine…</span>
+          <p id="packet"></p><p id="detail"></p><p id="error" role="alert"></p>
+        </div>
+        <p id="key-legend">Each click is one bounded press and release.</p>
+        <p id="scheduler-status" aria-live="polite"></p>
+        <details><summary>Actual C call trace</summary><pre id="scheduler-log"></pre></details>
+        <details><summary>Device observation</summary><pre id="observation"></pre></details>
+        <p class="scope">The LCD uses the C engine's pixels. Semantic timer acceleration is enabled; physical timing is not emulated.</p>
+        <a href="https://github.com/AL-255/casio-explore">Source code</a>
+      </div>
+    </details>
+  </main>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

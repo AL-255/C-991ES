@@ -17,7 +17,7 @@ import time
 from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
-WEB = Path(__file__).resolve().parent / "web"
+WEB = Path(__file__).resolve().parent / "dist"
 RESPONSE_BYTES = 32768
 
 
@@ -147,7 +147,14 @@ def handler_for(engine: Engine):
                      "/index.html": ("index.html", "text/html; charset=utf-8"),
                      "/app.js": ("app.js", "text/javascript; charset=utf-8"),
                      "/engine.js": ("engine.js", "text/javascript; charset=utf-8"),
-                     "/styles.css": ("styles.css", "text/css; charset=utf-8")}
+                     "/styles.css": ("styles.css", "text/css; charset=utf-8"),
+                     "/fx991sim.js": ("fx991sim.js", "text/javascript; charset=utf-8"),
+                     "/fx991sim.wasm": ("fx991sim.wasm", "application/wasm"),
+                     "/device/": ("device/index.html", "text/html; charset=utf-8"),
+                     "/device/index.html": ("device/index.html", "text/html; charset=utf-8"),
+                     "/device/app.js": ("device/app.js", "text/javascript; charset=utf-8"),
+                     "/device/styles.css": ("device/styles.css", "text/css; charset=utf-8"),
+                     "/device/calculator-face.svg": ("device/calculator-face.svg", "image/svg+xml")}
             item = files.get(path)
             if not item:
                 self.json_reply(404, {"error": "Not found"})
@@ -156,7 +163,7 @@ def handler_for(engine: Engine):
             try:
                 self.reply(200, (WEB / name).read_bytes(), mime)
             except FileNotFoundError:
-                self.json_reply(503, {"error": "Simulator interface is not built"})
+                self.json_reply(503, {"error": "Build the virtual calculator first: python3 simulator/build_web.py"})
 
         def do_POST(self):
             path = urlsplit(self.path).path
