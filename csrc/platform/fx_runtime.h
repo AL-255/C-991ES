@@ -9,6 +9,7 @@
 #include "ui/fx_parameter_menu_controller.h"
 #include "ui/fx_parameter_menu_provider.h"
 #include "ui/fx_equation_controller.h"
+#include "ui/fx_polynomial_equation_controller.h"
 #include "table/fx_table_body.h"
 
 typedef enum {
@@ -25,7 +26,8 @@ typedef enum {
     FX_RUNTIME_BODY,
     FX_RUNTIME_START_EQUATION, FX_RUNTIME_EQUATION, FX_RUNTIME_RETURN_EQUATION,
     FX_RUNTIME_START_TABLE, FX_RUNTIME_TABLE, FX_RUNTIME_RETURN_TABLE,
-    FX_RUNTIME_START_PARAMETER, FX_RUNTIME_PARAMETER, FX_RUNTIME_RETURN_PARAMETER
+    FX_RUNTIME_START_PARAMETER, FX_RUNTIME_PARAMETER, FX_RUNTIME_RETURN_PARAMETER,
+    FX_RUNTIME_START_POLYNOMIAL, FX_RUNTIME_POLYNOMIAL, FX_RUNTIME_RETURN_POLYNOMIAL
 } fx_runtime_phase;
 typedef enum {
     FX_RUNTIME_EVENT_NONE = 0, FX_RUNTIME_EVENT_BOOT_READY,
@@ -39,7 +41,8 @@ typedef enum {
     FX_RUNTIME_BODY_NONE = 0, FX_RUNTIME_MAIN_BODY,
     FX_RUNTIME_INPUT_BODY, FX_RUNTIME_INPUT_GAP,
     FX_RUNTIME_MENU_GAP, FX_RUNTIME_BOOT_GAP, FX_RUNTIME_MAIN_GAP,
-    FX_RUNTIME_EQUATION_GAP, FX_RUNTIME_TABLE_GAP, FX_RUNTIME_PARAMETER_GAP
+    FX_RUNTIME_EQUATION_GAP, FX_RUNTIME_TABLE_GAP, FX_RUNTIME_PARAMETER_GAP,
+    FX_RUNTIME_POLYNOMIAL_GAP
 } fx_runtime_body_kind;
 typedef struct {
     fx_runtime_body_kind kind;
@@ -75,6 +78,7 @@ typedef struct {
     uint32_t steps;
     uint16_t timer_period;
     uint8_t active, timer_pending, export_mask, returned, menu_kind;
+    fx_polynomial_equation_controller polynomial;
 } fx_runtime;
 
 /* Reset and ordinary boot tail are real available high-level controllers.

@@ -12,6 +12,7 @@ static fx_runtime_status body(fx_runtime *s, fx_runtime_body_kind kind,
     if(kind==FX_RUNTIME_INPUT_BODY || kind==FX_RUNTIME_INPUT_GAP)input=&s->input;
     else if(kind==FX_RUNTIME_EQUATION_GAP && s->equation.input.active)input=&s->equation.input;
     else if(kind==FX_RUNTIME_TABLE_GAP && s->table.input.active)input=&s->table.input;
+    else if(kind==FX_RUNTIME_POLYNOMIAL_GAP && s->polynomial.input.active)input=&s->polynomial.input;
     if(input) {
         s->request.context_return=input->context.return_value;
         s->request.action=input->handler_action;
@@ -36,6 +37,9 @@ static fx_runtime_status main_request(fx_platform *p,fx_runtime *s,
     else if(operation==FX_MAIN_SCREEN21 && p->ram[0x80f9]==0x45 &&
             p->ram[0x80fa]>=1 && p->ram[0x80fa]<=2)
         s->phase=FX_RUNTIME_START_EQUATION;
+    else if(operation==FX_MAIN_SCREEN21 && p->ram[0x80f9]==0x45 &&
+            p->ram[0x80fa]>=3 && p->ram[0x80fa]<=4)
+        s->phase=FX_RUNTIME_START_POLYNOMIAL;
     else if(p->ram[0x80f9]==0x88 && (operation==FX_MAIN_SCREEN6 ||
             operation==FX_MAIN_SCREEN18_ADMISSION || operation==FX_MAIN_SCREEN18))
         s->phase=FX_RUNTIME_START_TABLE;
@@ -164,6 +168,25 @@ static fx_runtime_status equation_status(fx_platform *p,fx_runtime *s,
     default:
         return body(s,FX_RUNTIME_EQUATION_GAP,s->main.pending_request,
                     (uint8_t)s->equation.input.request,status);
+    }
+}
+static fx_runtime_status polynomial_status(fx_platform *p,fx_runtime *s,
+    fx_ui_status status)
+{
+    switch(status) {
+    case FX_UI_COMPLETE:
+        s->phase=FX_RUNTIME_RETURN_POLYNOMIAL;
+        s->event=FX_RUNTIME_EVENT_HANDLER_RETURN;return FX_RUNTIME_ADVANCED;
+    case FX_UI_PREPARED:
+        s->event=FX_RUNTIME_EVENT_INPUT_PREPARED;return FX_RUNTIME_ADVANCED;
+    case FX_UI_WAIT:
+        s->event=FX_RUNTIME_EVENT_WAIT_ITERATION;return FX_RUNTIME_WAIT;
+    case FX_UI_EXPORT:
+        return export_event(s,fx_polynomial_equation_controller_export_mask(&s->polynomial));
+    case FX_UI_RESET:return reset_event(p,s);
+    default:
+        return body(s,FX_RUNTIME_POLYNOMIAL_GAP,s->main.pending_request,
+                    (uint8_t)s->polynomial.input.request,status);
     }
 }
 static fx_runtime_status parameter_status(fx_platform *p,fx_runtime *s,
@@ -309,6 +332,18 @@ fx_runtime_status fx_runtime_step(fx_platform *p,fx_runtime *s,
         return equation_status(p,s,fx_equation_controller_tick(p,&s->equation));
     case FX_RUNTIME_RETURN_EQUATION:
         if(fx_equation_controller_finish(&s->equation,&s->returned)!=FX_UI_COMPLETE)
+            return FX_RUNTIME_INVALID;
+        if(fx_main_loop_accept_handler(p,&s->main,s->returned)!=FX_MAIN_ADVANCED)
+            return FX_RUNTIME_INVALID;
+        s->phase=FX_RUNTIME_MAIN;s->event=FX_RUNTIME_EVENT_CYCLE_RETURN;
+        return FX_RUNTIME_ADVANCED;
+    case FX_RUNTIME_START_POLYNOMIAL:
+        s->phase=FX_RUNTIME_POLYNOMIAL;
+        return polynomial_status(p,s,fx_polynomial_equation_controller_begin(p,&s->polynomial,&s->cancellation));
+    case FX_RUNTIME_POLYNOMIAL:
+        return polynomial_status(p,s,fx_polynomial_equation_controller_tick(p,&s->polynomial));
+    case FX_RUNTIME_RETURN_POLYNOMIAL:
+        if(fx_polynomial_equation_controller_finish(&s->polynomial,&s->returned)!=FX_UI_COMPLETE)
             return FX_RUNTIME_INVALID;
         if(fx_main_loop_accept_handler(p,&s->main,s->returned)!=FX_MAIN_ADVANCED)
             return FX_RUNTIME_INVALID;

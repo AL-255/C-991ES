@@ -57,7 +57,7 @@
     "prepared_only": true
   },
   "gaps": [
-    "Prepared named-routine I/O, not an uninterrupted reset/boot/main workflow proof.",
+    "The prepared proof remains separate from the newer bounded uninterrupted boot/MAIN runtime proof; full firmware completeness remains false.",
     "Retained-RAM comparison excludes8000..80DB arithmetic scratch and measured written native CPU-frame bytes.",
     "Cubic exhausted-index caption can exceed native six-byte local frame; no generalized normal-return claim.",
     "Eight odd/overlapping coefficient-copy controls stop atE6E4 before borrowed F12A epilogue.",
@@ -71,5 +71,21 @@
     "csrc/parse/fx_eval.c"
   ],
   "complete": false,
-  "executes_original_firmware": false
+  "executes_original_firmware": false,
+  "runtime_verification": {
+    "summary": "analysis/verification/polynomial-runtime.json",
+    "sha256": "828ba521471b0dd9342ac6fbb8af7ec5697b6df99cd6f4af1cb1d6bacddd5dbe",
+    "tool": "tools/test_runtime_polynomial_c.py",
+    "fixture": "analysis/native-fixtures/runtime-polynomial/inputs.json",
+    "original_sessions": 56,
+    "checkpoints": 4224,
+    "checks": 17244,
+    "scope": "Fresh uninterrupted original 6F82 boot -> physical MODE5 -> selector3/4 -> polynomial coefficients, solve/replay, recovery, export/reset boundaries -> MAIN. Original PC set once per session; same authored RAM, physical packets and timer readiness supplied independently to C. No original output, CPU locals or fabricated body completion supplied to C.",
+    "limits": [
+      "Numeric scratch 8000..80DB and individually witnessed original CPU-frame writes remain explicit residuals; this is not whole RAM parity.",
+      "Observed callbacks are zero only.",
+      "28 recipes per build are bounded coverage; arbitrary malformed coefficients and caption routes remain unsupported.",
+      "This original/native proof makes no browser, WebAssembly or physical interrupt timing claim."
+    ]
+  }
 }

@@ -11,7 +11,7 @@
   "state": "64KiB data/MMIO and named C controllers; no CPU, instruction executor or writable public RAM seam",
   "stepping": "Explicit reset, raw matrix packet submission/release, bounded runtime steps, pending timer acknowledgement and callback consumption",
   "observations": "Read-only snapshot/RAM and allocated read-only JSON transport",
-  "current_release_summary": "simulator/verification/current-release.json",
+  "current_release_summary": "simulator/verification/polynomial-runtime-release.json",
   "verification": {
     "device_sequences_per_optimization": 24,
     "native_checkpoints_per_optimization": 678,
@@ -40,5 +40,9 @@
   "distribution_runtime": {
     "summary": "analysis/verification/distribution-runtime.json",
     "scope": "Retained default parameter child with actual raw-key MAIN return; following numerical body remains incomplete."
+  },
+  "polynomial_runtime": {
+    "summary": "analysis/verification/polynomial-runtime.json",
+    "scope": "Owned default runtime polynomial workflow; separate uninterrupted original boot/key and actual native/WASM/browser proof scopes."
   }
 }

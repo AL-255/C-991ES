@@ -32,7 +32,7 @@
     "snapshot": "Allocated JSON observation; immutable after creation and valid after reset or session destruction until snapshot_free.",
     "serialization": "Fixed schema and controlled status/hex strings; bounded4096bytes; exact signed32 and unsigned32 integer output."
   },
-  "verification_summary": "simulator/verification/menus-polynomial-release.json",
+  "verification_summary": "simulator/verification/polynomial-runtime-release.json",
   "limits": [
     "Original device RAM/controller parity is covered by separate native oracle tests; the thin bridge tests compare against the real public C session API.",
     "Browser/WASM tests compare exported JSON and LCD, with no claim of public full64KiB WASM RAM parity.",

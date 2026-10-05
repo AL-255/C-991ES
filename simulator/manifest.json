@@ -42,7 +42,7 @@
       "scope": "Python transports requests to the compiled native C session; JavaScript draws returned pixels"
     },
     "static_webassembly": {
-      "status": "actual_ci_http_and_public_browser_pass",
+      "status": "local_pass_previous_public_release_verified",
       "builder": "simulator/build_web.py",
       "output_directory": "simulator/dist",
       "deployment_workflow": ".github/workflows/pages.yml",
@@ -53,9 +53,9 @@
       "emscripten_build_commit": "f6264d4a4dd9ba24a9f0a5702835a44d1463de13",
       "compiler_temporary_directory": "analysis/build/simulator-wasm/compiler-tmp",
       "builder_python_requirement": "Python3.9 or newer",
-      "build_report_sha256": "e0bfeaff6604842be5b8b742a58ad5bb93019349e53ac7ab53f01cc84abd06c3",
+      "build_report_sha256": "6b3286771be21e132fa121e04dcaa3e8812d55e6a41240897792524e3e4f50ca",
       "javascript_artifact_sha256": "231dfdf96c63a9c8c26d043c967318cd0dfab3fe06ddc6ba7bacc86435a816d6",
-      "wasm_artifact_sha256": "b752e39704060b3c9735ce0c07b99748cee63b685790d802a9826341bcb4097b",
+      "wasm_artifact_sha256": "46e1bc08e6cbe51458dd676dd916ef2939d4ca5a2b82f05739489f48a0c5e492",
       "session_lifetime": "Opaque C session in the page module; reload creates fresh memory",
       "filesystem_runtime": false,
       "native_proof_is_wasm_proof": false,
@@ -142,10 +142,10 @@
         }
       ],
       "current_local_verification": {
-        "summary": "simulator/verification/menus-polynomial-release.json",
-        "sha256": "1705c1dadbb7b3cd939e59421e1db249ac78458af424347355a284e01188ecad",
-        "build_report_sha256": "c04a6cac8f980104a793488fe03b24b698d867a2c209015731890ccdd77c75e3",
-        "scope": "Owned STAT/DISTRIBUTION/CONSTANT/CONVERSION runtime, prepared polynomial EQN and result-status renderer, and bounded automatic browser keypad. Prepared polynomial parity is separate from pending polynomial MAIN ownership."
+        "summary": "simulator/verification/polynomial-runtime-release.json",
+        "sha256": "9af6bce9d2cf9287bbf29c4261cd88ac906204ef1ff4e52da73a197eddd669c0",
+        "status": "pass",
+        "scope": "Owned polynomial EQN in default C runtime, bounded uninterrupted original boot/key comparison, actual WebAssembly ABI and automatic browser coefficient-grid/regression flows. Numeric scratch/frame residuals and remaining advanced controller gaps stay explicit."
       }
     }
   },
@@ -362,9 +362,15 @@
       "report_sha256": "faba87fee224923a732993f67013988846ad2e0c8c3e7d2fb3da338a012eed4a",
       "status": "pass",
       "scope": "Fresh actual public HTTP and desktop/mobile calculator and automatic-device browser execution. All loaded bytes bind exact CI artifacts; output comparisons occur outside the C/WASM engine."
+    },
+    {
+      "report": "simulator/verification/polynomial-runtime-release.json",
+      "report_sha256": "9af6bce9d2cf9287bbf29c4261cd88ac906204ef1ff4e52da73a197eddd669c0",
+      "status": "pass",
+      "scope": "Owned polynomial EQN in default C runtime, bounded uninterrupted original boot/key comparison, actual WebAssembly ABI and automatic browser coefficient-grid/regression flows. Numeric scratch/frame residuals and remaining advanced controller gaps stay explicit."
     }
   ],
-  "latest_release_verification": "simulator/verification/menus-polynomial-release.json",
+  "latest_release_verification": "simulator/verification/polynomial-runtime-release.json",
   "historical_verification_note": "Earlier verification summaries retain their actual frozen source/artifact versions. Current-release.json describes the latest local build; current public deployment is recorded separately after verification.",
   "device_preview": {
     "url": "https://al-255.github.io/casio-explore/device/",
@@ -384,6 +390,6 @@
     "state": "Opaque persistent C device retains64KiB RAM/MMIO and owned controllers; unsupported requests remain visible.",
     "transport_arithmetic": "Bounded integer-only C JSON writer; JavaScript validates transport widths and draws C pixels.",
     "full_key_calculator_completion": false,
-    "scheduler_scope": "Real pending C requests stop progression. Polynomial MAIN ownership, remaining advanced screens and physical timing remain incomplete."
+    "scheduler_scope": "Real pending C requests stop progression. Quadratic/cubic EQN now runs through the owned runtime; remaining advanced screens and physical timing remain incomplete."
   }
 }

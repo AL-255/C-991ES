@@ -1,6 +1,6 @@
 {
   "subsystem": "named high-level runtime scheduler",
-  "implementation": "Handwritten C composition of boot, main, whole INPUT/UI, MODE/SETUP, retained MATRIX/VECTOR bank controllers, parameter wrapper and an owned DISTRIBUTION child. No instruction execution or translated firmware.",
+  "implementation": "Handwritten C composition of boot, MAIN, INPUT/UI, MODE/SETUP, retained bank menus, owned parameter children, TABLE, linear and polynomial EQN. No instruction execution or translated firmware.",
   "complete": false,
   "proof": {
     "suite": "runtime",
@@ -54,5 +54,21 @@
     "legacy_fixture": "analysis/native-fixtures/runtime-distribution/legacy-inputs.json",
     "summary": "analysis/verification/distribution-runtime.json",
     "scope": "Prepared actual D7B4 MAIN entry assigned once; raw SHIFT/1 and authored keys/timer readiness; real child return to D980. Separate from uninterrupted boot."
+  },
+  "owned_polynomial_runtime": {
+    "summary": "analysis/verification/polynomial-runtime.json",
+    "sha256": "828ba521471b0dd9342ac6fbb8af7ec5697b6df99cd6f4af1cb1d6bacddd5dbe",
+    "tool": "tools/test_runtime_polynomial_c.py",
+    "fixture": "analysis/native-fixtures/runtime-polynomial/inputs.json",
+    "original_sessions": 56,
+    "checkpoints": 4224,
+    "checks": 17244,
+    "scope": "Fresh uninterrupted original 6F82 boot -> physical MODE5 -> selector3/4 -> polynomial coefficients, solve/replay, recovery, export/reset boundaries -> MAIN. Original PC set once per session; same authored RAM, physical packets and timer readiness supplied independently to C. No original output, CPU locals or fabricated body completion supplied to C.",
+    "limits": [
+      "Numeric scratch 8000..80DB and individually witnessed original CPU-frame writes remain explicit residuals; this is not whole RAM parity.",
+      "Observed callbacks are zero only.",
+      "28 recipes per build are bounded coverage; arbitrary malformed coefficients and caption routes remain unsupported.",
+      "This original/native proof makes no browser, WebAssembly or physical interrupt timing claim."
+    ]
   }
 }
