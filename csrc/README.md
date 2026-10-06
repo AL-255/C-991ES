@@ -41,6 +41,22 @@ routine addresses, the semantic API being compared, and remaining gaps.
 Complete keyboard/mode controller composition, event scheduling, history and reset-to-key-sequence behavior still require
 implementation and verification. Prepared two/three-equation linear coefficient entry, solve, result recall and replay are implemented; single-pass solver poll publication and four complete runtime linear workflows are verified; singular/cancellation prefixes retain actual effects, while error UI, polynomial orchestration and complete EQN mode remain pending. Bounded MATRIX/VECTOR bank screens compose whole INPUT and result presentation; complete mode grammar and object editing, default TABLE runtime ownership, SOLVE expression/history/display and other advanced functions remain pending. Passing a subset suite does not complete those requirements.
 
+Documented instruction understanding is measured separately from implementation
+completion and behavioral coverage. The tracked `understood_ranges.json` ledgers
+cover 46,094 unique instruction addresses in the pinned local disassembly.
+The [research documentation](../doc/reverse-engineering/README.md) preserves
+durable findings; raw proof artifacts and fixtures remain local under ignored
+`analysis/`. Original differential tests and the instruction counter require
+those local inputs, which are absent from a fresh clone. Native and WASM builds
+do not require pre-existing analysis artifacts or `eps-emu/`.
+
+To measure the available local listing and ledgers without writing progress
+history or plots:
+
+```sh
+python3 tools/measure_code_understanding.py
+```
+
 Build from the repository root with CMake and GCC or Clang. Formatting currently
 uses the compiler's unsigned 128-bit integer extension for exact recognition
 intervals; arithmetic uses integer and decimal-digit algorithms rather than

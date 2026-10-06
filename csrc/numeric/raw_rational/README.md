@@ -6,4 +6,4 @@ Run `python3 tools/test_raw_rational_c.py` for the input-only corpus and fresh o
 
 The API covers values and independent native status. Original numerical scratch, MMIO, register/stack writes and odd-pointer marshaling are outside it. REF/RREF caller integration additionally compares persistent RAM and callback states.
 
-The [preferred-divide review](../../../analysis/raw-rational-wrapper-audit/REVIEW.md) documents the 29 newly inventoried semantic instructions. This is an understanding claim, separate from C implementation completion. The global project remains incomplete.
+The preferred-divide review (local evidence: `analysis/raw-rational-wrapper-audit/REVIEW.md`) documents the 29 newly inventoried semantic instructions. This is an understanding claim, separate from C implementation completion. The global project remains incomplete.

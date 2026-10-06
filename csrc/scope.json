@@ -76,7 +76,7 @@
     }
   ],
   "completion_gate": "All requirements completed and directly verified against original behavior. Passing tests for implemented subsets never implies full completion.",
-  "understanding_metric": "Unique documented understood instruction addresses / 46094 decoded instructions in the pinned complete.asm listing; conservative lower bound, separate from completion and parity. See the tracked understood_ranges.json ledgers; the pinned listing and supporting semantic models are local prerequisites.",
+  "understanding_metric": "Unique documented understood instruction addresses / 46094 decoded instructions in the pinned complete.asm listing; conservative lower bound, separate from completion and parity. See the tracked understood_ranges.json ledgers, doc/reverse-engineering/README.md and tools/measure_code_understanding.py; original listing and supporting analysis models are local prerequisites.",
   "current_combined_verification": {
     "path": "analysis/verification/verify-clear-runtime.json",
     "sha256": "9298a199d3bb5d887ce69fbb6dcbf68ee807957f01ae2b5e9f53c71a3eec48c7"

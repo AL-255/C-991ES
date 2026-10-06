@@ -1,5 +1,6 @@
 __pycache__/
-analysis/build/
+/analysis/
 simulator/dist/
-eps-emu/.git/
-eps-emu/.venv/
+/eps-emu/
+/.vscode/
+/casio-understanding-matplotlib-*/

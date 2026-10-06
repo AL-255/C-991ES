@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """Run implemented C suites and audit coverage/provenance without claiming full parity."""
 import argparse
+from datetime import datetime, timezone
 import hashlib
 import json
 from pathlib import Path
 import subprocess
 import sys
+from measure_code_understanding import measure
 
 ROOT = Path(__file__).resolve().parents[1]
 SUITES = ('verify_workflow', 'eval_saved_operands', 'clear_controller', 'tokens', 'platform', 'boot', 'boot_events', 'persistent', 'diagnostic_contrast', 'result_classify', 'main_loop', 'boot_main_ui', 'runtime', 'runtime_equation_canonical', 'equation_workflow', 'polynomial_equation_workflow', 'equation_commit', 'coordinate_workspace', 'coordinate_surd_workspace', 'odd_result', 'rich_ui', 'eval_c4_integral', 'eval_c4_derivative', 'complex_surd_continuation', 'complex_surd_binary_workspace', 'numeric_c4_integral', 'numeric_c4_derivative', 'keys', 'key_dispatch', 'key_wait', 'key_controller', 'annunciator', 'cursor', 'editor', 'editor_construct', 'input_codec', 'input_prepare', 'input_recover', 'input_controller', 'ui_controller', 'error_display', 'error_event', 'menu_navigator', 'mode_setup', 'mode_bank_menu', 'numeric', 'numeric_transcend', 'numeric_power', 'numeric_root', 'numeric_logbase', 'numeric_calculus', 'numeric_integral', 'numeric_integral_storage', 'numeric_derivative', 'numeric_derivative_storage', 'numeric_surd_components', 'numeric_base', 'numeric_sexagesimal', 'numeric_solver', 'numeric_solver_stage', 'numeric_solve', 'numeric_random', 'numeric_quotient', 'raw_decimal', 'raw_rational', 'combinatorics', 'complex', 'complex_angles', 'complex_round', 'complex_dispatch', 'linalg', 'linalg_reduce', 'linalg_store', 'linalg_dispatch', 'stats', 'stats_value', 'stats_cache', 'stats_editor', 'stats_normal', 'trig', 'trig_math', 'trig_inverse', 'trig_hyperbolic', 'math_context', 'render', 'render_mode137', 'render_complex', 'render_pair', 'result_status_workflow', 'render_linalg', 'format', 'format_base', 'format_budget', 'eval', 'eval_complex', 'eval_variables', 'eval_calculus', 'eval_integral_physical', 'eval_continuous', 'eval_base', 'eval_sexagesimal', 'eval_coordinate', 'eval_storage', 'eval_finish', 'eval_environment', 'solve_controller', 'calc_scan', 'eval_random', 'eval_rich', 'eval_rich_unary', 'eval_rich_reduce', 'eval_rich_parser', 'eval_stats', 'solve_outer', 'table', 'table_controller', 'table_composition', 'table_ui', 'base_word', 'cli', 'safety')
@@ -23,6 +25,7 @@ VERIFICATION_ARGUMENTS = {
 def audit():
     scope = json.loads((ROOT / 'csrc/scope.json').read_text())
     issues = []
+    understanding = measure()
     results = {}
     for name in SUITES:
         path = ROOT / 'analysis/c-verification' / (name + '.json')
@@ -58,6 +61,10 @@ def audit():
     if scope['complete'] and not requirements_complete:
         issues.append('Completion flag contradicts pending requirements')
     result = {'implemented_subset_verified': not issues, 'full_firmware_complete': scope['complete'],
+              'code_understood_percentage': understanding['percentage'],
+              'understood_instructions': understanding['understood_instructions'],
+              'total_disassembled_instructions': understanding['total_disassembled_instructions'],
+              'code_understood_timestamp_utc': datetime.now(timezone.utc).isoformat(timespec='microseconds').replace('+00:00', 'Z'),
               'suites': results, 'total_reported_cases': sum(r['cases'] for r in results.values()),
               'requirements': [{k: r[k] for k in ('id', 'status')} for r in scope['requirements']],
               'issues': issues,

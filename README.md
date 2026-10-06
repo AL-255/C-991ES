@@ -1,23 +1,24 @@
 # Casio Explore
 
-Research into the Casio fx-991ES Plus firmware, with original execution traces and an ongoing implementation in readable, high-level C.
+Research into the Casio fx-991ES Plus firmware and an ongoing implementation in readable, high-level C.
 
-The [browser calculator simulator](https://al-255.github.io/casio-explore/) retains the original fx-991ES PLUS C LCD and keypad layout with simple flat SVG, HTML and CSS graphics; no original interface bitmap is bundled. All 49 physical matrix keys drive the persistent C runtime through WebAssembly. The LCD renders its actual matrix pixels and 18 original status indicators, including boxed S/A and angle labels. The [device route](https://al-255.github.io/casio-explore/device/) presents the same calculator. See the [simulator guide](simulator/README.md) for local builds, keyboard shortcuts and verification scope. The [indicator UI record](analysis/verification/lcd-indicators.json) and [previous redraw record](analysis/verification/original-ui-redraw.json) keep visual verification separate from full firmware parity.
+The [browser calculator](https://al-255.github.io/casio-explore/) retains the original fx-991ES PLUS C LCD and keypad layout with authored flat SVG, HTML and CSS. All 49 matrix keys drive a persistent C runtime through WebAssembly. Its LCD renders actual matrix pixels and 18 status indicators. The [device route](https://al-255.github.io/casio-explore/device/) presents the same calculator. See the [simulator guide](simulator/README.md) for builds, keyboard shortcuts and verification limits.
 
-The [C implementation guide](csrc/README.md) describes the compiled subsystems, build commands, differential tests, and remaining implementation scope. Original CPU execution is confined to the test oracles.
+The [C implementation guide](csrc/README.md) describes the subsystems, native builds and differential tests. The project remains incomplete; documented instruction understanding and successful UI tests do not establish full firmware parity. The published engine and pending working-tree audit are distinguished in [AGENTS.md](AGENTS.md).
 
-The extracted images and their provenance are recorded in [firmware/extraction.json](firmware/extraction.json). The [complete disassembly](analysis/disassembly/complete.asm) reconstructs the firmware bytes.
+Useful reverse-engineered knowledge is retained in [doc/reverse-engineering](doc/reverse-engineering/README.md):
 
-The natural-result display investigations include:
+- [Natural display](doc/reverse-engineering/natural-display/README.md): exact radicals, rational/π recognition, special trigonometric replacements, and EQN versus SOLVE display policy.
+- [Arithmetic and parser](doc/reverse-engineering/arithmetic/README.md): records, stacks, numeric kernels and corrected interpretations.
+- [Runtime and LCD](doc/reverse-engineering/runtime/README.md): controllers, scheduling, indicator controls and parity limits.
+- [Firmware lineage](doc/reverse-engineering/firmware-lineage/README.md): related images and original host behavior.
 
-- [Exact radical evaluation and display](analysis/exact-result-trace/README.md), including `(sqrt(998)-sqrt(997))/99`.
-- [Recognition of rational multiples of π](analysis/pi-result-trace/README.md).
-- [Exact replacements for special trigonometric results](analysis/special-angle-trace/README.md).
+Raw disassembly, traces, screenshots, fixtures and generated reports remain in the local ignored `analysis/` directory. The external `eps-emu/` checkout and editor settings in `.vscode/` are also local-only. These directories were removed from Git history and are absent from fresh clones. Native/WASM builds use tracked sources and firmware data; original differential tests additionally require their local analysis inputs.
 
-To repeat firmware extraction, supply an external Ver.4.00 installer; the extraction script requires Python 3, 7z, and objdump:
+Firmware images and provenance are recorded in [firmware/extraction.json](firmware/extraction.json). To repeat extraction, supply an external Ver.4.00 installer and install Python 3, 7z and objdump:
 
 ```sh
 python3 tools/extract_firmware.py --installer /path/to/installer.exe
 ```
 
-The [extraction notes](doc/firmware-extraction.txt) retain the recorded procedure and validation. The [history rewrite record](doc/history-rewrite.json) maps the preserved research commits to their new IDs.
+The [extraction notes](doc/firmware-extraction.txt) retain the procedure and validation. [History cleanup](doc/history-cleanup.json) records this artifact removal; [the earlier rewrite](doc/history-rewrite.json) records the previous original-history cleanup. Progress plotting has been retired.
