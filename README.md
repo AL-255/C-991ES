@@ -4,7 +4,7 @@ Research into the Casio fx-991ES Plus firmware and an ongoing implementation in 
 
 The [browser calculator](https://al-255.github.io/C-991ES/) retains the original fx-991ES PLUS C LCD and keypad layout with authored flat SVG, HTML and CSS. All 49 matrix keys drive a persistent C runtime through WebAssembly. Its LCD renders actual matrix pixels and 18 status indicators. The [device route](https://al-255.github.io/C-991ES/device/) presents the same calculator. See the [simulator guide](simulator/README.md) for builds, keyboard shortcuts and verification limits.
 
-The [C implementation guide](csrc/README.md) describes the subsystems, native builds and differential tests. The project remains incomplete; documented instruction understanding and successful UI tests do not establish full firmware parity. The published engine and pending working-tree audit are distinguished in [AGENTS.md](AGENTS.md).
+The [C implementation guide](csrc/README.md) describes the subsystems, native builds and differential tests. The project remains incomplete; documented instruction understanding and successful UI tests do not establish full firmware parity. The [website verification record](doc/website.md) binds the C-991ES branding to its actual Pages build and browser checks. The published engine and pending working-tree audit are distinguished in [AGENTS.md](AGENTS.md).
 
 Useful reverse-engineered knowledge is retained in [doc/reverse-engineering](doc/reverse-engineering/README.md):
 
