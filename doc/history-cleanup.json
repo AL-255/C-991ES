@@ -1,0 +1,129 @@
+{
+  "timestamp_utc": "2026-10-06T19:24:36.228362+00:00",
+  "purpose": "User-authorized artifact history cleanup, durable research documentation migration and handoff consolidation.",
+  "remote_main_before_cleanup": "a97ee50d3ebb453da1734dc11dbbc98e11779dfe",
+  "cleanup_commit_before_filter": "ef6de2d3ba224569037008084e26b6cb8f62d80f",
+  "verified_filtered_history_head": "40d7fd1fe9434a4ecf655f0541f6d4bceee8de51",
+  "removed_history_paths": [
+    "analysis/",
+    "eps-emu/",
+    ".vscode/",
+    "casio-understanding-matplotlib-*/",
+    "tools/plot_code_understanding.py",
+    "tools/report_code_understanding.py",
+    "agents.md"
+  ],
+  "local_policy": {
+    "preserved_and_ignored": [
+      "analysis/",
+      "eps-emu/",
+      ".vscode/"
+    ],
+    "retired_and_removed": [
+      "casio-understanding-matplotlib-*/",
+      "tools/plot_code_understanding.py",
+      "tools/report_code_understanding.py"
+    ],
+    "handoff": "AGENTS.md is the single current merged handoff.",
+    "recovery": "Local-only analysis/build/repository-history-cleanup-20261006T191445Z/history-before.bundle; absent from active Git refs and published history."
+  },
+  "documentation": {
+    "root": "doc/reverse-engineering/",
+    "markdown_files": 20,
+    "topics": [
+      "natural display and exact radical flow",
+      "rational/pi recognition and special-angle replacements",
+      "parser and numeric records/kernels/corrections",
+      "runtime/controllers/protocol/LCD and parity limits",
+      "firmware lineage and host scheduling"
+    ],
+    "evidence_policy": "Raw traces, generated reports, full disassembly and external emulator files remain local; plain evidence paths are not download links."
+  },
+  "verification": {
+    "old_commits_including_cleanup": 51,
+    "filtered_commits": 45,
+    "pruned_empty_commits": 6,
+    "surviving_commit_trees_and_metadata_verified": 45,
+    "protected_local_files_verified": 2697,
+    "all_target_paths_absent": true,
+    "non_target_historical_blobs_unchanged": true,
+    "pending_C_and_tools_preserved": true,
+    "filtered_head": "40d7fd1fe9434a4ecf655f0541f6d4bceee8de51",
+    "native_clean_source_build": {
+      "status": "pass",
+      "preexisting_analysis_or_eps_required": false,
+      "smoke_tokens": "364f3228312b3229",
+      "result_tokens": "31",
+      "meaning": "6 / 2(1+2) follows original implicit-multiplication precedence and yields 1."
+    },
+    "target_metadata_preserved": [
+      "author",
+      "committer",
+      "timestamps",
+      "timezones"
+    ],
+    "pack_size_after_filter_mib": 2.35,
+    "scope": "Every surviving historical tree equals its old tree after removing listed paths. Native C/UI source bytes are unchanged. Scope/importer/documentation updates are intentional; pending firmware changes remain uncommitted."
+  },
+  "pruned_empty_commits": [
+    "3398d3eafdd5fe3b6dc1e1e2fac20afffae83007",
+    "418eecfc8c481d8af49511fdd136175c17d5a9fe",
+    "67e79136326a12e4d5cf057dd0e252393fd8c6dc",
+    "75fddcd8df2ac74bcf51142b7ae711ccaf5300f4",
+    "a97ee50d3ebb453da1734dc11dbbc98e11779dfe",
+    "b569bbafaf608433e4474331bdb2775084a40572"
+  ],
+  "rewritten_commit_map": {
+    "05dd32c2fa5369b9b28cf7de03d3e00906797f65": "b27c743690748f06a26b792aa524b4ca363a730c",
+    "079a14d321e0b8e2e8117895e167c3ace7f1f108": "3dcb3936fa584387a9f314fb760f0202afe8d85b",
+    "0875d6272aef997420df691d2d5d24bde40058e1": "be762c5aec840b22abf230f6a9c88349316def53",
+    "0e609d3d188f759a178fa597459dbb1402be919a": "2be7cded6617a365d7ceec618cabaf6dbf55c2eb",
+    "19ce75d453cecab882b73200693ff066d677fa49": "08c743f3e50fecd08e8676f508044b4b3a04be49",
+    "1dcb026a04173d0cf922c5b2fecaca5fa2ceef20": "f853e4cf0f63ba6f9c07fdb86a45169e5e4e9425",
+    "221e9ee43038719124315ada9721d570cd220eb4": "07a9d0a533168b1b47f248097c8e9941d1baae14",
+    "2e49bfb497efce84733ecc8dba10252cc580d8ff": "1c73d7a1ad876f9be5f0023f196b5fe9381f03ce",
+    "3057f9b2f79084d6bdfc46eeb6afaf05c22d89be": "a882193f63d30eb5a7178805c0826dfccd95f0f6",
+    "309e7750fd74d453cd118e863251e4f803640b37": "4a993789abf00140429396b8c64e2cd46703bbdd",
+    "34f3aa611db9a1dda6cbb5948218933fc25a687e": "3980da4c52d6de2b256e5c275737f10f6b49c145",
+    "361cfaeb5674b45fc09de35c99abb98d5e86b383": "53db2fc5afd1e81701a13b293a14c9b4cbc81013",
+    "480027e0208b6c565926fd80edcb2b6f2702b9a1": "7080809e6d2f9c102f122d5452bcb75982d12e49",
+    "512f92e359df47aef188939a754d7bca3fd9f69d": "bfd960191b51c13f6122f7a82294290257d8c9bb",
+    "51864f769b6bc89ca377bce3a03c3b69e2192faf": "9412201803c1799064ba6c952b2a3007c35af0cf",
+    "56d30d6cdb679f2f39f422c014e92373fd426c8b": "f79422ff82307e0b87c1b85294f9b59084408b3a",
+    "5914e2529cce92f401ef5ff41d70a453d1ab7246": "399fad03a1ac321fec52ecae90fe34557126893c",
+    "5a30aea1f4921affad24aa665a7afad234865e7f": "91b1581fb86b898377ce5b6637e98743878be140",
+    "5ff43dbc17764337d30ad32b667f004ff27871e9": "93dac565cc795ffb168444884e6ade2deb8102cf",
+    "60f1dda9df7b76b441065b9e0a88b125d56a2f3c": "7c83b6ea860c51567ed5419ac7fb1e440d0c7f24",
+    "643bd3da8a133a1c319a1ac258250f38e009715b": "93eb5eab2833bd87912924df31e598872570fd1c",
+    "65ee4e7729d333383bd70533a9eaffb32ba3239c": "685501dd307301c541ca64049cfc8c37dfcbdccd",
+    "6784c37ee63614beaf4a4bb0d538024847cf23f6": "48cf2b712d253422ba718d06acda42f79c07ef97",
+    "6b07990d45f987b0019ef368832f94c8f9558fe3": "220b1beb4c681fa394a4f353ed47b39cf311e185",
+    "92211514f6e4c386314aef73bf335c231d5158b5": "8bcb3de551d70ccd02cd250fd61ad4f7cad9c236",
+    "93063ca14c9051702e4b322e3999b8cf9178a291": "f9d5d4625fe68b273d9580854db0b57a6c7358fc",
+    "a2c8ead01afdb7ef45095f21d3eeb1b5601f71e1": "bcd37db8fae22e69cf94a0dc9e825b39fb0a6c10",
+    "a4f0cb483dc70d290a572e0de2954056faf54fce": "909108ccc8516e3fc26e9878043f2183b946d6e4",
+    "a9077d419cadd2462be267d6a058fc5726d1a1e0": "c0a640b1a24beb30e142f11e27075bd16004002a",
+    "ab4e94a79b7bfa0a6709814e1ef246c350637977": "e9d2df345440eb0626af38e227d360dc53c32e3c",
+    "ace85712584cf6ed3d085dd31b8a0482398ac6ea": "423e6b34531229e1266ad144ddafc594d57156f6",
+    "b690c8575d3d32940b10a59fc96da8f03e17dc1e": "c5b33ffebe8ad30f24ae182dc659cd3d630196d7",
+    "bd216d3280f3ce5bdf44a0835bdb74ae67f4abda": "e398752fd0d9f3a5ac1ab6b926ab0c28e904ac1c",
+    "be3f662fe89eae9ba07932425fac03d3e3391569": "65dd3ea523f8dbd225f0b02dbed1003903aa62dd",
+    "d3e4ff0032dbd16b14c12951b3678eb69e1af73d": "0dcaa4a0cce99382a15d47ac9f4096d5c5566e5f",
+    "dbd1ec18e2a3d4edbcef6ccfb9c3dc14dbb0f00c": "557a9b2acde562ae29f938694415c902c5934a0f",
+    "df036024344998e004dcacbd39f4eaa3d24adf91": "0ae3ac7b46905916c6a95e8ab83c45e40b5b56ea",
+    "e0edab50f33d4c2bbc40aeff9b64835acce32d65": "78026452e7ab6cb1dd71c9027dc208b0cdab56bb",
+    "ea668267a42512e42accef183e9d7aac4fe58acc": "49cdb980362ae915d59f89ddd1333a4fe9cc49a0",
+    "eb4ea5d40b7a202c0ce3bdfdc8a30c61b17256e7": "3d33e56957834fb72f721cc0936e756f5ca844fe",
+    "ee1743839af41e11456dc30adef3b01ddfeaa828": "1163a226eb896f8f94b453ece607acdfa6b5229d",
+    "ee6c9445f765defdc3fc1f67fb08c47546c5edb5": "b11215db97007036bcaa12876583fc259609fbd7",
+    "ef6de2d3ba224569037008084e26b6cb8f62d80f": "40d7fd1fe9434a4ecf655f0541f6d4bceee8de51",
+    "f21d12d9f7fbf8b7c6b0d0e7c5b89be8224fbd14": "ee771f10b86236d3b8d2e8c0ddd01457ac0f6461",
+    "f3c2ab3f7079c749fafe977a0768a5288d216018": "4946319a4099160b2de032b700b08058c55074c1"
+  },
+  "limitations": [
+    "The full firmware audit remains paused and incomplete.",
+    "Canonical reports with changed tool dependencies remain stale; no stored proof hashes were retagged.",
+    "The pure instruction counter still needs local disassembly and semantic models.",
+    "Old identifiers in the earlier doc/history-rewrite.json describe the previous rewrite; use this mapping for the subsequent cleanup."
+  ]
+}
