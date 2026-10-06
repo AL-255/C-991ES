@@ -452,7 +452,7 @@ def main():
     args = parser.parse_args()
     parsed = urlsplit(args.url)
     local = parsed.scheme == "http" and parsed.hostname in ("127.0.0.1", "localhost")
-    public = args.backend == "wasm" and parsed.scheme == "https" and parsed.netloc == "al-255.github.io" and parsed.path == "/casio-explore/"
+    public = args.backend == "wasm" and parsed.scheme == "https" and parsed.netloc == "al-255.github.io" and parsed.path == "/C-991ES/"
     if (not local and not public) or parsed.username or parsed.password:
         parser.error("Use the local simulator or the explicitly authorized Casio Explore Pages URL")
     if args.collect_fixture and args.backend != "wasm":

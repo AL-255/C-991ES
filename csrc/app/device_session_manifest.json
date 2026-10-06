@@ -34,7 +34,7 @@
   ],
   "browser_transport": {
     "manifest": "csrc/app/device_browser_manifest.json",
-    "preview": "https://al-255.github.io/casio-explore/device/",
+    "preview": "https://al-255.github.io/C-991ES/device/",
     "ownership": "The same persistent opaque C device, exposed through validated WASM-facing functions."
   },
   "distribution_runtime": {

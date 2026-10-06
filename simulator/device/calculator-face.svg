@@ -1,9 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="405" height="816" viewBox="0 0 405 816" role="img" aria-label="Redrawn calculator casing">
+<svg xmlns="http://www.w3.org/2000/svg" width="405" height="816" viewBox="0 0 405 816" role="img" aria-label="C-991ES calculator casing">
   <!-- Flat vector artwork; the LCD and physical keys remain live HTML elements. -->
   <path d="M49 8C127 1 283 1 356 10C383 12 397 28 399 56L392 683C389 750 375 784 338 803C304 816 105 816 67 804C24 787 12 754 9 687L5 63C5 30 20 12 49 8Z" fill="#dce0dd" stroke="#525b68" stroke-width="5"/>
   <rect x="35" y="119" width="335" height="151" rx="18" fill="#ced5cb"/>
   <rect x="48" y="124" width="310" height="123" rx="10" fill="#c0cbb3" stroke="#94a28d" stroke-width="1.5"/>
-  <text x="53" y="104" fill="#303a3e" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="900" letter-spacing="-.6">CASIO</text>
+  <text x="53" y="104" fill="#303a3e" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="900" letter-spacing="-.6">C-991ES</text>
   <text x="187" y="102" fill="#357e77" font-family="Arial,Helvetica,sans-serif" font-size="16" font-weight="700" font-style="italic" letter-spacing="-.5">NATURAL-V.P.A.M.</text>
   <ellipse cx="203" cy="339" rx="51" ry="46" fill="#8797b1" stroke="#56677f" stroke-width="2"/>
   <text x="203" y="342" fill="#344d6a" font-family="Arial,Helvetica,sans-serif" font-size="10" text-anchor="middle">REPLAY</text>

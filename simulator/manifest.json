@@ -46,7 +46,7 @@
       "builder": "simulator/build_web.py",
       "output_directory": "simulator/dist",
       "deployment_workflow": ".github/workflows/pages.yml",
-      "hosted_target": "https://al-255.github.io/casio-explore/",
+      "hosted_target": "https://al-255.github.io/C-991ES/",
       "scope": "Static deployment of the same high-level C engine compiled for browser execution; JavaScript transport/runtime glue is separate from C calculator arithmetic",
       "toolchain": "Official emsdk6.0.11",
       "emsdk_tag_commit": "dd8e25632640cfc1fb570c7fa4cc374e8a5e5a72",
@@ -409,7 +409,7 @@
   "latest_release_verification": "simulator/verification/verify-clear-release.json",
   "historical_verification_note": "Earlier verification summaries retain their actual frozen source/artifact versions. Current-release.json describes the latest local build; current public deployment is recorded separately after verification.",
   "device_preview": {
-    "url": "https://al-255.github.io/casio-explore/device/",
+    "url": "https://al-255.github.io/C-991ES/device/",
     "manifest": "csrc/app/device_browser_manifest.json",
     "sources": [
       "csrc/app/fx_device_session.c",

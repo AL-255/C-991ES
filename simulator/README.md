@@ -1,6 +1,6 @@
 # Virtual calculator
 
-The [webpage](https://al-255.github.io/casio-explore/) uses the original fx-991ES PLUS C layout: LCD, Replay pad, scientific keys, SHIFT/ALPHA legends, and numeric keypad. The casing and keycaps use simple flat SVG/HTML/CSS graphics. Original photos and emulator bitmaps are not bundled. The `/device/` route presents the same calculator.
+The [webpage](https://al-255.github.io/C-991ES/) uses the original fx-991ES PLUS C layout: LCD, Replay pad, scientific keys, SHIFT/ALPHA legends, and numeric keypad. The casing and keycaps use simple flat SVG/HTML/CSS graphics. Original photos and emulator bitmaps are not bundled. The `/device/` route presents the same calculator.
 
 Clicks submit actual original column/row packets to the persistent high-level C runtime. SHIFT, ALPHA, MODE, editing, menus, evaluation and display formatting run in C. The 384-byte C LCD snapshot contains 12 bytes of status-segment controls followed by 31 bitmap rows. JavaScript renders the 18 verified indicators as labels and symbols, and draws rows 1–31 on the canvas. S/A and D/R/G have machine-style boxes; memory, mode, format, Math and history markers occupy their original slots. The C engine decides which segments are active. The raw snapshot and operation trace stay intact. ON invokes the existing virtual-device reset and is outside the 49-key matrix. Rapid taps are queued in order. Engineering controls remain in a closed drawer below the calculator.
 

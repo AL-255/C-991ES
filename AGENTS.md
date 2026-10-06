@@ -4,7 +4,7 @@
 
 The user wants a readable, handwritten high-level C implementation of every
 firmware subsystem, comparison against original execution, and an interactive
-calculator published at https://al-255.github.io/casio-explore/.
+calculator published at https://al-255.github.io/C-991ES/.
 The CPU under `tools/nxu8` is a test oracle only; assembly translation or a CPU
 interpreter is not an acceptable C engine.
 
@@ -29,9 +29,11 @@ Matplotlib/CSV progress workflow was retired at the user's request.
   `doc/firmware-extraction.txt`; original execution tools: `tools/nxu8`.
 - Engine sources, manifests and instruction ledgers: `csrc/`. The authored
   SVG/HTML/CSS UI in `simulator/device/` retains the original keypad layout.
-  No original interface bitmaps are bundled.
+  No original interface bitmaps are bundled. Webpage branding, titles and
+  accessibility text must use `C-991ES`; historical Casio references may remain
+  in repository research documentation.
 - Authorized destination: remote `explore`,
-  `git@github.com:AL-255/casio-explore.git`, branch `main`.
+  `git@github.com:AL-255/C-991ES.git`, branch `main`.
   Commit/push/Pages publishing has already been explicitly authorized.
 - History cleanup records: `doc/history-rewrite.json` and
   `doc/history-cleanup.json`. Recovery bundles are local-only; never upload them.

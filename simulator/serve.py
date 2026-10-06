@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Serve the calculator UI and carry requests to the high-level C engine."""
+"""Serve the C-991ES UI and carry requests to the high-level C engine."""
 from __future__ import annotations
 
 import argparse
@@ -121,7 +121,7 @@ class Engine:
 
 def handler_for(engine: Engine):
     class Handler(BaseHTTPRequestHandler):
-        server_version = "CasioExplore/1"
+        server_version = "C-991ES/1"
 
         def reply(self, status: int, content: bytes, mime: str, token: str | None = None):
             self.send_response(status)
@@ -213,7 +213,7 @@ def main() -> int:
     except (OSError, subprocess.CalledProcessError) as exc:
         print(f"Simulator startup failed: {exc}", file=sys.stderr)
         return 1
-    print(f"Calculator simulator: http://127.0.0.1:{args.port}", flush=True)
+    print(f"C-991ES simulator: http://127.0.0.1:{args.port}", flush=True)
     try:
         server.serve_forever()
     except KeyboardInterrupt:
